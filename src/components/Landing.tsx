@@ -873,6 +873,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             spot. Your real odds at every top school — from {rows} real applications and official
             data, not forum guesses.
           </p>
+          <HeroDemo />
           <OddsTicker />
           <div className="cta-row">
             <button type="button" className="btn ld-btn-xl" onClick={onStart}>Check my chances — free</button>
@@ -894,7 +895,6 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             </span>
             <span className="ld-authority-sub"><b>{rows}</b> real applications analyzed</span>
           </div>
-          <HeroDemo />
         </section>
       </div>
 
