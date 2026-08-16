@@ -84,3 +84,13 @@
 @media print {
   .po > *:not(.report) { display: none !important; }
 }
+
+/* Timeline card */
+.po-clock { list-style: none; display: flex; flex-direction: column; }
+.po-clock li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+.po-clock li:first-child { border-top: none; }
+.po-clock-school { display: flex; align-items: center; gap: 8px; font-weight: 550; }
+.po-clock-when { margin-left: auto; color: var(--ink-3); }
+.po-clock-days { font-weight: 650; color: var(--accent); width: 44px; text-align: right; }
+.po-clock-soon .po-clock-days { color: var(--coral); }
+.po-clock-note { font-size: 11.5px; color: var(--ink-3); margin-top: 10px; }

@@ -11,6 +11,7 @@ import SchoolPage from "./components/SchoolPage";
 import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
 import Portal from "./components/Portal";
+import Review from "./components/Review";
 import { LogoMark, Wordmark } from "./components/Logo";
 
 // URL routing (hash-based, static-host friendly):
@@ -26,6 +27,7 @@ type View =
   | { kind: "pricing" }
   | { kind: "auth" }
   | { kind: "portal" }
+  | { kind: "review" }
   | { kind: "school"; name: string };
 
 const STORE = "tcm.profile.v1";
@@ -37,6 +39,7 @@ function viewFromHash(): View {
   if (h === "pricing") return { kind: "pricing" };
   if (h === "login") return { kind: "auth" };
   if (h === "portal") return { kind: "portal" };
+  if (h === "review") return { kind: "review" };
   if (h.startsWith("schools/")) {
     const id = h.slice("schools/".length);
     const s = MODEL.schools.find((x) => x.id === id);
@@ -117,6 +120,7 @@ export default function App() {
             <Wordmark />
           </a>
           <nav className="mastnav">
+            <a className="btn-quiet" href="#/review">Deep review</a>
             <a className="btn-quiet" href="#/pricing">Pricing</a>
             {session ? (
               <>
@@ -142,6 +146,9 @@ export default function App() {
       {view.kind === "auth" && <main><Auth onDone={handleAuth} /></main>}
       {view.kind === "portal" && (
         <main><Portal session={session} profile={profile} go={nav} /></main>
+      )}
+      {view.kind === "review" && (
+        <main><Review profile={profile} onChange={setProfile} /></main>
       )}
       {view.kind === "school" && (
         <main>

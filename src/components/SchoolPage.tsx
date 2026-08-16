@@ -1,6 +1,7 @@
 import { MODEL } from "../engine";
 import type { School } from "../engine";
 import { useReveal } from "../hooks/useReveal";
+import { countdown } from "../lib/deadlines";
 import Tile from "./Tile";
 import "./schoolpage.css";
 
@@ -142,6 +143,7 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
   }
 
   const c = s.counsel;
+  const cd = countdown(s.name);
   // Only link co-admits that have a page of their own in the model.
   const coadmits = s.coadmit
     .map(stripCount)
@@ -186,6 +188,12 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
           <b>{s.gpa.p50 != null ? s.gpa.p50.toFixed(2) : "—"}</b>
           <span className="sp-cap">admitted-GPA median (n={s.nGpa})</span>
         </div>
+        {cd && (
+          <div className="sp-stat">
+            <b style={{ color: cd.days <= 45 ? "var(--coral)" : "var(--accent)" }}>{cd.days} days</b>
+            <span className="sp-cap">until the typical deadline ({cd.label}{cd.note ? ` — ${cd.note}` : ""}) · verify on the school's site</span>
+          </div>
+        )}
       </div>
 
       {thin && (

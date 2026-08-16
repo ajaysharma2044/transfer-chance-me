@@ -5,6 +5,7 @@ import type { Session } from "../lib/auth";
 import { analyzeEssay } from "../lib/essay";
 import Tile from "./Tile";
 import Report from "./Report";
+import { countdown } from "../lib/deadlines";
 import "./portal.css";
 
 // The signed-in home: your file, your chances, and a working school list
@@ -121,6 +122,27 @@ export default function Portal({ session, profile, go }: Props) {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="po-card">
+          <div className="po-card-head">
+            <h2>Timeline</h2>
+          </div>
+          <ul className="po-clock">
+            {(list.length > 0 ? list.map((l) => l.school) : ests.slice(0, 5).map((e) => e.school.name))
+              .map((name) => ({ name, cd: countdown(name) }))
+              .filter((x) => x.cd)
+              .sort((a, b) => a.cd!.days - b.cd!.days)
+              .slice(0, 6)
+              .map(({ name, cd }) => (
+                <li key={name} className={cd!.days <= 45 ? "po-clock-soon" : ""}>
+                  <span className="po-clock-school"><Tile name={name} size={20} /> {name}</span>
+                  <span className="po-clock-when">{cd!.label}</span>
+                  <span className="po-clock-days num">{cd!.days}d</span>
+                </li>
+              ))}
+          </ul>
+          <p className="po-clock-note">Typical fall-transfer deadlines — always verify on the school's site.</p>
         </section>
 
         <section className="po-card">

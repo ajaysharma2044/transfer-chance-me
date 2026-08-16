@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { MODEL } from "../engine";
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
+import { countdown } from "../lib/deadlines";
 import GpaStrip from "./GpaStrip";
 import Tile from "./Tile";
 import "./landing.css";
@@ -12,63 +13,83 @@ import "./landing.css";
 // with product visuals, findings from the study, numbers band, FAQ, closing
 // CTA. All visuals are ours, drawn from the dataset.
 
-const CURVE_SCHOOLS: { name: string; color: string }[] = [
-  { name: "UCLA", color: "#2478e5" },
-  { name: "Cornell", color: "#6c4be0" },
-  { name: "Michigan", color: "#14b8a0" },
-  { name: "Stanford", color: "#ee6352" },
+const LADDER = [
+  "UNC", "Michigan", "Vanderbilt", "Notre Dame", "UC Berkeley", "UCLA",
+  "Northwestern", "Cornell", "Columbia", "UPenn", "Stanford", "Yale", "Harvard",
 ];
 
-/** Smooth admitted-GPA density curves (real histogram data, 3.0–4.0). */
-function DistCurves() {
-  const W = 860, H = 200, PAD = 8;
-  const paths = CURVE_SCHOOLS.map(({ name, color }) => {
-    const s = MODEL.schools.find((x) => x.name === name)!;
-    // moving-average smoothing so the curves read as densities, not bar noise
-    const sm = s.hist.map((_, i, a) => {
-      const win = a.slice(Math.max(0, i - 1), i + 2);
-      return win.reduce((x, y) => x + y, 0) / win.length;
-    });
-    const peak = Math.max(...sm);
-    const pts = sm.map((v, i) => [
-      PAD + (i / (sm.length - 1)) * (W - 2 * PAD),
-      H - 24 - (v / peak) * (H - 56),
-    ]);
-    // Catmull-Rom → cubic bezier for a smooth curve
-    let d = `M ${pts[0][0]} ${pts[0][1]}`;
-    for (let i = 0; i < pts.length - 1; i++) {
-      const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
-      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
-      const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
-      d += ` C ${c1[0]} ${c1[1]}, ${c2[0]} ${c2[1]}, ${p2[0]} ${p2[1]}`;
-    }
-    return { d, color, name };
-  });
+/** Hero visual: a layered composite of the product itself — chances rows,
+ *  an essay-review note, and a live deadline countdown. */
+function HeroStage() {
+  const uc = countdown("UC Berkeley");
+  const rows = [
+    { name: "Michigan", band: "26–50%", tier: "Strong target", cls: "ok" },
+    { name: "Cornell", band: "11–21%", tier: "Target", cls: "mid" },
+    { name: "Stanford", band: "2.6–5%", tier: "High reach", cls: "low" },
+  ];
   return (
-    <figure className="curves">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Admitted-transfer GPA distributions at UCLA, Cornell, Michigan, and Stanford, from 3.0 to 4.0">
-        <line x1={PAD} y1={H - 24} x2={W - PAD} y2={H - 24} stroke="var(--line-strong)" />
-        {[3.0, 3.25, 3.5, 3.75, 4.0].map((g) => {
-          const x = PAD + ((g - 3.0) / 1.0) * (W - 2 * PAD);
-          return (
-            <g key={g}>
-              <line x1={x} y1={H - 24} x2={x} y2={H - 19} stroke="var(--line-strong)" />
-              <text x={x} y={H - 6} textAnchor="middle" fontSize="11" fill="var(--ink-3)">{g.toFixed(2)}</text>
-            </g>
-          );
-        })}
-        {paths.map((p, i) => (
-          <g key={p.name}>
-            <path className="curve-fill" style={{ animationDelay: `${400 + i * 180}ms` }} d={`${p.d} L ${W - PAD} ${H - 24} L ${PAD} ${H - 24} Z`} fill={p.color} />
-            <path className="curve-line" style={{ animationDelay: `${i * 180}ms` }} pathLength={1} d={p.d} fill="none" stroke={p.color} strokeWidth="2.5" strokeLinecap="round" />
-          </g>
+    <div className="ld-stage" aria-hidden="true">
+      <div className="ld-stage-card ld-stage-chances">
+        <p className="mock-label">Your chances</p>
+        {rows.map((r) => (
+          <div className="ld-stage-row" key={r.name}>
+            <Tile name={r.name} size={22} />
+            <span className="ld-stage-name">{r.name}</span>
+            <span className={`ld-stage-band ld-${r.cls} num`}>{r.band}</span>
+            <span className="ld-stage-tier">{r.tier}</span>
+          </div>
         ))}
-      </svg>
+      </div>
+      <div className="ld-stage-card ld-stage-essay">
+        <p className="mock-label">Essay review</p>
+        <p className="ld-stage-quote">"I've always dreamed of attending a school with more opportunities…"</p>
+        <p className="ld-stage-issue">Reads as escape, not fit — admits name the program.</p>
+        <p className="ld-stage-fix">Fix: name Dyson's food-economics track and the professor whose lab you'd join.</p>
+      </div>
+      {uc && (
+        <div className="ld-stage-card ld-stage-clock">
+          <p className="mock-label">Deadline</p>
+          <p className="ld-stage-days num">{uc.days}</p>
+          <p className="ld-stage-clock-sub">days until the UC window closes ({uc.label})</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Official transfer admit rates, highest to lowest —
+ *  the ~50× spread is the single most striking fact in the dataset. */
+function RateLadder() {
+  const schools = LADDER
+    .map((n) => MODEL.schools.find((s) => s.name === n)!)
+    .sort((a, b) => b.rate - a.rate);
+  const max = schools[0].rate;
+  return (
+    <figure className="ld-ladder" aria-label="Official transfer admit rates from highest to lowest">
+      <div className="ld-ladder-rows">
+        {schools.map((s, i) => (
+          <button
+            type="button"
+            className="ld-ladder-row"
+            key={s.id}
+            onClick={() => window.location.assign(`#/schools/${s.id}`)}
+          >
+            <span className="ld-ladder-school">
+              <Tile name={s.name} size={22} />
+              <span>{markOf(s.name).word}</span>
+            </span>
+            <span className="ld-ladder-barwrap">
+              <span
+                className="ld-ladder-bar"
+                style={{ width: `${(s.rate / max) * 100}%`, animationDelay: `${250 + i * 70}ms` }}
+              />
+            </span>
+            <span className="ld-ladder-rate num">{s.rate.toFixed(1)}%</span>
+          </button>
+        ))}
+      </div>
       <figcaption>
-        {CURVE_SCHOOLS.map(({ name, color }) => (
-          <span key={name}><i style={{ background: color }} />{name}</span>
-        ))}
-        <span className="cap-note">Admitted-transfer GPA, from the dataset</span>
+        Official transfer admit rates, latest Common Data Set — a {Math.round(schools[0].rate / schools[schools.length - 1].rate)}× spread across the T25. Click any school.
       </figcaption>
     </figure>
   );
@@ -287,7 +308,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             <span className="ld-authority-sep" aria-hidden="true">·</span>
             <span><b>{rows}</b> real applications analyzed</span>
           </div>
-          <DistCurves />
+          <HeroStage />
         </section>
       </div>
 
@@ -318,6 +339,12 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
       </section>
 
       <div className="shell"><FeatureStrip /></div>
+
+      <section className="shell ld-field reveal" aria-label="Official admit rates">
+        <h2 className="ld-field-h">The field, measured</h2>
+        <p className="sec-dek">Official transfer admit rates across the T25 — the spread is enormous.</p>
+        <RateLadder />
+      </section>
 
       <Findings rows={rows} />
 
