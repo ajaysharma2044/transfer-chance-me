@@ -36,6 +36,24 @@
     "programs": []
   },
   {
+    "name": "Amherst",
+    "applicants": 717,
+    "admitted": 55,
+    "rate": 7.7,
+    "cycle": "CDS 2025-2026 (most recent filing; see watchout on the cycle label)",
+    "typical": "55 admits out of 717 applicants, and only 24 actually enrolled. Amherst requires 32 completed credits (a full year of college) to apply as a transfer rather than as a first-year; a high school transcript, college transcripts, an essay, and a statement of good standing are required of all, while interviews and standardized test scores are NOT required (D5). No minimum GPA is published (D6/D7 both list NA). Amherst does not release GPA ranges or sending institutions for admitted transfers, so anyone quoting a 'typical transfer GPA' for Amherst is guessing. The realistic admit is someone with a full year of strong college work who can name what they would do with an open curriculum. Amherst is part of the Five College Consortium (Smith, Mount Holyoke, Hampshire, UMass Amherst), so cross-registration across five campuses is part of what transferring in actually buys. Prior year for context: CDS 2024-2025 reported 638 applicants, 55 admitted, 31 enrolled (8.6%).",
+    "levers": [
+      "Open curriculum: Amherst has no distribution requirements, so the essay has to name specific courses, a major path, and faculty. A generic 'small classes and great professors' pitch reads as unresearched at a college whose entire structure assumes you already know what you want to study.",
+      "Two doors, not one: Amherst admits transfers for both fall (closes 3/1) and spring (closes 11/1, reply 12/17) per D3 and D9. A strong first semester of sophomore year gives you a second application window that Williams simply does not offer."
+    ],
+    "watchouts": [
+      "The credit cap is brutal and real: a maximum of 64 credits transfers in from either a two-year or four-year college (D13/D14), and you must complete 64 credits at Amherst to earn the degree (D16). You owe four semesters no matter how much coursework you bring.",
+      "Amherst's 2025-26 Section D reports 717/55/24, but the form's own D2 prompt text still reads 'Fall 2024' and the admit count (55) is identical to the prior filing. The applicant and enrolled counts did change year over year, so this reads as a stale template label rather than duplicated data. Confirm the cycle with Amherst before quoting the year."
+    ],
+    "feeders": "Not published. Neither the Common Data Set nor Amherst releases a sending-institution breakdown for its transfer cohort, so treat any 'top feeder schools for Amherst transfers' list you find elsewhere as unsourced. What is verifiable: with only 24 transfers en",
+    "programs": []
+  },
+  {
     "name": "Arizona",
     "applicants": 9717,
     "admitted": 6410,
@@ -90,6 +108,24 @@
     "programs": []
   },
   {
+    "name": "Barnard",
+    "applicants": 1142,
+    "admitted": 262,
+    "rate": 22.9,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS D2 for Fall 2025: 1,142 applied, 262 admitted, 142 enrolled — a 54% yield and one of the largest transfer cohorts at any highly selective college. This is the rare case where transferring is materially easier than applying out of high school: 22.9% transfer versus 10.1% first-year (1,048 admits of 10,426). Every applicant is a woman; Barnard is a women's college. Eligibility is hard-gated at 24 completed college credits (D4). Barnard publishes no minimum GPA (D7 blank). Required: HS transcript, college transcripts, essay, statement of good standing; interview and test scores not required.",
+    "levers": [
+      "D4 sets a hard 24-credit floor to apply as a transfer. Time the application to the spring of your first college year with 24+ credits already banked — below that you are rejected on eligibility, not on merit, and the essay never gets read on its strengths.",
+      "Cross-registration at Columbia is the actual asset you are buying. Name the specific Columbia department, lab, or course sequence you need that your current institution cannot offer. That is the one argument only Barnard can satisfy, and it separates you from the generic 'I want a small liberal arts college' transfer essay."
+    ],
+    "watchouts": [
+      "Credit cap bites: maximum 60 credits from either a two-year or four-year institution (D13/D14), and the lowest transferable grade is a C (D12). A rising junior arriving with 90 credits loses roughly 30, and anything below C is gone entirely — budget for extra semesters.",
+      "Barnard is a women's college; the entire 1,142-applicant pool is women. This pathway is simply not open to all applicants, whatever the attractive 22.9% rate suggests."
+    ],
+    "feeders": "No published feeder list — Barnard does not release transfer origin data, so any named feeder school would be speculation. Structurally, the 24-credit minimum plus the 60-credit cap concentrate the pool at students one to two years into another four-year colle",
+    "programs": []
+  },
+  {
     "name": "Baruch",
     "applicants": 7244,
     "admitted": 3687,
@@ -105,6 +141,24 @@
       "CUNY's associate-degree guarantee gets you admission to a CUNY senior college, not to Baruch specifically. Baruch is the system's most selective transfer destination, so do not read the CUNY-wide guarantee as a Baruch guarantee. Separately, CDS D16 requires at least 31 credits completed at Baruch for the bachelor's, which caps how much you can front-load elsewhere."
     ],
     "feeders": "CUNY community colleges dominate: BMCC (nearest and the largest CUNY community college), Queensborough, Kingsborough, LaGuardia, Bronx CC, and Hostos. Baruch also draws from Nassau CC and other SUNY two-year colleges, and from within-CUNY lateral transfers out",
+    "programs": []
+  },
+  {
+    "name": "Bates",
+    "applicants": 165,
+    "admitted": 34,
+    "rate": 20.6,
+    "cycle": "Fall 2025 entry (CDS 2025-2026)",
+    "typical": "CDS D2 for Fall 2025: 165 transfer applicants, 34 admitted, 10 enrolled — a 20.6% admit rate on a cohort that fits in one seminar room. The prior year was brutally different: 188 applied, 18 admitted (9.6%). Admits come overwhelmingly from students already at four-year colleges — Bates requires a minimum of 4 credits completed (roughly one full Bates-equivalent semester) or you must apply as a first-year, and the high school transcript is still Required of All, so your secondary record stays in the file. Essay, college transcript, and a statement of good standing from your current school are also Required of All; interview is Recommended; test scores are Not Required. Only 10 of 34 admits enrolled, so Bates admits about three transfers for every bed it fills.",
+    "levers": [
+      "Build the file around entering with sophomore standing, not junior-plus. Bates caps transferable credit at 16 (of the 32 needed to graduate) from either a two-year or a four-year school, and requires 16 credits completed at Bates. Anyone arriving with more than half a degree is asking Bates to discard the surplus — say explicitly in the application how your remaining 16 Bates credits map to a major and its required senior thesis.",
+      "Use the recommended interview, since it is the only optional channel left once tests are off the table. Make it concrete about Bates' 4-4-1 calendar: two four-course semesters plus the five-week Short Term module in May. A transfer who can name what they would do in Short Term and which thesis-track major they are entering reads as informed; generic 'small classes and close faculty' does not."
+    ],
+    "watchouts": [
+      "Fall entry only. D3 checks Fall and nothing else — no winter, spring, or summer transfer path, so a missed March 1 deadline costs a full year. The window is also tight on the back end: decisions May 15, reply due May 20.",
+      "The rate is not stable enough to plan around. Fall 2024 was 18 admits from 188 applicants (9.6%); Fall 2025 was 34 from 165 (20.6%). On cohorts this size, a dozen extra open beds moves the published rate by ten points, so treat 20.6% as one year's weather, not the climate."
+    ],
+    "feeders": "Bates publishes no transfer feeder list, and the CDS has no field for origin institutions — anyone quoting one is guessing. What the CDS does imply: the 4-credit minimum and the identical 16-credit cap on two-year and four-year credit mean the pool skews towar",
     "programs": []
   },
   {
@@ -182,6 +236,24 @@
     ]
   },
   {
+    "name": "Bowdoin",
+    "applicants": 362,
+    "admitted": 29,
+    "rate": 8,
+    "cycle": "CDS 2025-2026 (Fall 2025 entering transfers)",
+    "typical": "Verified from Bowdoin's own CDS D2: 362 transfer applicants (179 men, 183 women), 29 admitted (18 men, 11 women), 12 enrolled — an 8.0% admit rate and a 41% yield. For scale, the same CDS reports 14,045 first-year applicants and 957 admits (6.8%), so transferring is not an easier side door; it is a comparably steep gate for 12 seats instead of 515. Who gets in: students clearing the stated 3.00 college GPA minimum by a wide margin, with a liberal-arts transcript (Bowdoin awards transfer credit only for liberal arts courses graded C or higher) and roughly one year of college completed. Required to apply: high school transcript and college transcript(s). Bowdoin admits transfers for Fall only — no winter, spring, or summer entry, and no rolling review. Bowdoin states its transfer requirements at www.bowdoin.edu/admissions/apply/transfers/.",
+    "levers": [
+      "Apply as a sophomore-entry candidate. Bowdoin caps transfer credit at 16 courses and requires 16 courses completed on campus toward its 32-course degree, so one year of prior college fits the math exactly; arriving with two-plus years guarantees credit loss and still requires two years in residence.",
+      "Build the transcript out of liberal-arts courses graded C or better. Bowdoin's CDS states it accepts transfer credit only for liberal arts courses at C or above, and it grants no ACE, CLEP, or DANTES credit and no credit for military training or experiential learning — pre-professional, technical, and vocational credits simply will not convert."
+    ],
+    "watchouts": [
+      "Money, not just admission, is the binding constraint. Bowdoin's CDS says financial aid is \"occasionally available for transfer students, but is often limited by the commitment the College has made to assist already enrolled and incoming first-year students\" — a sharp break from its need-blind, full-need first-year policy. Budget as if aid may not materialize.",
+      "One entry point per year. Fall only, application closes March 1, decisions May 5, reply June 1, no rolling review — missing the date costs a full year, and there is no January or spring fallback."
+    ],
+    "feeders": "Bowdoin publishes no feeder list, and with only 12 enrolled transfers the cohort is far too small to produce a stable pipeline — no single school reliably sends anyone. The admitted group skews toward students already at four-year colleges and universities see",
+    "programs": []
+  },
+  {
     "name": "Brandeis",
     "applicants": 581,
     "admitted": 287,
@@ -197,6 +269,24 @@
       "The Brandeis Core still applies to transfers — writing, foreign language proficiency, and the experiential-learning requirement — and clearing all three inside four semesters alongside a major is the usual reason a transfer needs a fifth semester. Sort the language requirement before you arrive."
     ],
     "feeders": "Not reported in the CDS. In practice: Massachusetts and greater-Boston community colleges, other New England four-years, and lateral moves from larger public flagships. Note that Brandeis is private and therefore outside MassTransfer, which covers Massachusetts public institutions only — there is no state guarantee or automatic articulation into Brandeis, so every credit is evaluated individually.",
+    "programs": []
+  },
+  {
+    "name": "Bucknell",
+    "applicants": 146,
+    "admitted": 58,
+    "rate": 39.7,
+    "cycle": "Fall 2025 (CDS 2025-26, Section D2)",
+    "typical": "146 applied, 58 admitted, 32 enrolled (20 men, 12 women) — a 55% yield, so admitted transfers largely come. This is the rare case where transfer is EASIER than first-year: Bucknell's Fall 2025 first-year rate was 32.2% (3,723 admits of 11,561 applicants, CDS C1) against 39.7% for transfers. The published academic floor is genuinely low for this tier — CDS D7 states a minimum college GPA of 2.5, and CDS D12 accepts transfer credit for grades down to a D. CDS D4 (2025-26) requires no minimum credit count to apply. Required of ALL: high school transcript, college transcript(s), essay/personal statement, statement of good standing; interview and standardized test scores are not required. But the 39.7% is inflated by a one-year collapse in applications: Fall 2024 saw 233 applicants and 48 admits (20.6%), so the pool fell 37% while admits rose.",
+    "levers": [
+      "Pick the right college and map your credits to it before you apply. Bucknell admits into three distinct undergraduate colleges — Arts & Sciences, Engineering, and the Freeman College of Management — and the credit math decides whether a transfer can finish on time. CDS D13/D14 allow up to 80 semester hours in (from two-year or four-year institutions), while D16 requires only 48 semester hours completed at Bucknell. That leaves real room, but an engineering path is sequence-locked: the calculus/physics/chemistry chain has to be substantially complete on arrival or the remaining semesters will not close. Bucknell does not publish per-college transfer rates, so choose on credit fit, not on guessed odds.",
+      "Take the 2.5 GPA floor at face value — this is the school on the list where a mid-B transcript is genuinely live. CDS D7 sets the stated minimum at 2.5 and D12 accepts D grades for transfer credit, both unusually permissive for a school of this selectivity. Combined with a 39.7% transfer rate against a 32.2% first-year rate, a 2.7-3.2 applicant who self-selects out is misreading the data. Because no interview or test score is required, spend the effort on the essay and on a specific academic reason for Bucknell. Spring is a second cycle (D9 closing 11/15) if fall does not land."
+    ],
+    "watchouts": [
+      "The 39.7% is a one-year artifact and will likely revert — do not build a plan on it. Applicants dropped from 233 (Fall 2024) to 146 (Fall 2025) while admits rose from 48 to 58. The two-year blended rate is 106 of 379 = 28.0%, and the prior year alone was 20.6%. Treat high-20s as the planning number and 39.7% as upside.",
+      "You will be a small minority arriving into a first-year-built culture, on an isolated campus. 32 transfers entered against a first-year class of 1,037 (CDS C1) — roughly 3%. Bucknell is in Lewisburg, PA, with no Claremont- or Five College-style cross-registration consortium to broaden course access or social life, so everything you need must exist on that one campus. Housing and Greek-dominated social structures are organized around cohorts that arrived together."
+    ],
+    "feeders": "Bucknell publishes no transfer feeder list and the CDS reports no breakdown by prior institution, so no specific feeder can be sourced — treat any named school as unverified. The structural read: the 80-semester-hour transfer cap (D13/D14) with only 48 hours r",
     "programs": []
   },
   {
@@ -453,6 +543,24 @@
     ]
   },
   {
+    "name": "Carleton",
+    "applicants": 132,
+    "admitted": 28,
+    "rate": 21.2,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS D2, Fall 2025: 132 applied, 28 admitted (21.2%), 15 enrolled. Admits skewed female — 19 women vs 9 men admitted from a near-even applicant pool (67 women, 65 men). The ~54% yield is high for a transfer cohort, so the people admitted generally want to be there. Carleton requires at least two years in residence including the senior year, so realistic admits are second-year students entering as juniors; there is effectively no late-junior entry. The 21% rate looks friendlier than Carleton's first-year rate, but it is 28 seats total.",
+    "levers": [
+      "Map your completed coursework onto a named Carleton major and show it finishes inside six 10-week terms. Carleton runs a trimester calendar with 6-credit course units, and the two-years-in-residence rule means the admissions read is partly a scheduling question: can this person actually graduate on time. Answering it explicitly in the essay does work no GPA can.",
+      "Do the transfer interview. Carleton conducts transfer interviews in early spring — unusual among small liberal arts colleges — and with only 28 admits it is a real differentiator, not a formality. It is the one place the 'why Carleton, why now' case gets made live."
+    ],
+    "watchouts": [
+      "Your credit evaluation arrives with the acceptance letter, not before. Carleton awards credit only for C- or higher from regionally accredited institutions, and semester credits must convert into Carleton's 6-credit units — students routinely land a term behind and only learn it after committing.",
+      "28 admits is the entire national and international transfer class. The percentage is the reassuring number; the count is the real one."
+    ],
+    "feeders": "Carleton does not publish feeder institutions in the CDS, so treat any specific list as unverified. Observed pattern: Minnesota two-year colleges (Normandale, Minneapolis College, Century), the University of Minnesota system, and students leaving large researc",
+    "programs": []
+  },
+  {
     "name": "Case Western",
     "applicants": 661,
     "admitted": 173,
@@ -507,6 +615,24 @@
     "programs": []
   },
   {
+    "name": "Claremont McKenna",
+    "applicants": 307,
+    "admitted": 25,
+    "rate": 8.1,
+    "cycle": "Fall 2025 (CDS 2025-26)",
+    "typical": "CDS D2, Fall 2025: 307 transfer applicants (170 men, 136 women, 1 unknown), 25 admitted (15 men, 10 women), 14 enrolled (9 men, 5 women) = 8.1% admit rate. So about a dozen actual seats. Who gets in: applicants who already look like CMC students rather than generic strong students — a year-plus of college work with near-straight-A grades, a clearly articulated policy/econ/government direction, and a specific reason only CMC serves it (Robert Day School sequence, one of the research institutes, the DC/Silicon Valley programs). Verification note: the PDF's running header still reads 'Common Data Set 2024-2025', but the D2 question in the body reads 'Fall 2025' and the file is CMC's posted 2025-26 CDS — the header is a stale label, the data is Fall 2025. Other CDS D-section facts: no minimum credit count to apply (D4 = No), no stated minimum college GPA (D7 blank), standardized tests Not Required, interview recommended, HS transcript / college transcripts / essay / statement of good standing all required. Max 64 semester credits transfer in from either a two-year or four-year school, 64 must be completed at CMC for the bachelor's, and C is the lowest grade that transfers.",
+    "levers": [
+      "Use the spring cycle. CMC is one of the few selective LACs running a real second transfer round (CDS D3 lists Fall and Spring; spring closes 10/15, notification 12/5). It is a separate, smaller pool against the same file, so a strong applicant gets two genuine shots per year instead of one.",
+      "Name the institute, not the college. CMC's identity is applied and pre-professional — Robert Day School, Rose Institute, Keck, Kravis. A transfer file that says 'I want to do redistricting research at the Rose Institute and here is the quantitative coursework I already finished' reads as a fit; one that praises small classes and the liberal arts reads as interchangeable with the 306 others."
+    ],
+    "watchouts": [
+      "Transfer admission is need-aware. CMC states ability to pay can factor into the transfer decision — a different standard than its first-year process, and the single most under-discussed fact about transferring here.",
+      "Consortium math: 5C cross-registration already lets Pomona, Scripps, Pitzer, and Mudd students take CMC courses. Transferring in buys the CMC degree, major, and institute affiliation — not classroom access. If you are already at a 5C, the case for a formal transfer is much thinner than it looks."
+    ],
+    "feeders": "Neither the CDS nor CMC publishes a sending-school list, so any named feeder ranking you see elsewhere is unsourced. Structurally the pool is California community colleges (the CC-to-LAC pipeline CMC actively recruits) plus students at large public and private",
+    "programs": []
+  },
+  {
     "name": "Clemson",
     "applicants": 3731,
     "admitted": 2181,
@@ -522,6 +648,24 @@
       "37 of your last 43 hours must be completed in residence at Clemson, and the lowest grade that transfers is a C. Credits picked up elsewhere late in the game will not count toward the degree."
     ],
     "feeders": "Tri-County Technical College dominates by a wide margin through the Bridge program, followed by Greenville Technical College, Trident Technical College, Midlands Technical College and Spartanburg Community College. Secondary flow comes from four-year swirl wit",
+    "programs": []
+  },
+  {
+    "name": "Colgate",
+    "applicants": 423,
+    "admitted": 58,
+    "rate": 13.7,
+    "cycle": "Fall 2025 (CDS 2025-26, Section D2)",
+    "typical": "423 applied, 58 admitted, only 13 actually enrolled (7 men, 6 women) — a 22% yield, meaning most admitted transfers choose somewhere else. Transfer is HARDER than first-year here: Colgate's Fall 2025 first-year rate was 17.5% (3,030 admits of 17,310 applicants, CDS C1) versus 13.7% for transfers. Prior year was harsher still: Fall 2024 saw 676 applicants and 65 admits = 9.6%. The pool nearly halved in one year while admits held roughly flat. CDS D5 requires of ALL applicants: high school transcript, college transcript(s), essay/personal statement, and a statement of good standing from prior institutions. Interview and standardized test scores are explicitly NOT required — so there is no interview to rescue a thin transcript and no test score to offset a weak GPA. The case rests almost entirely on college grades plus the essay. CDS D4 says no minimum credit count is required to apply, so a student one semester into college is technically eligible.",
+    "levers": [
+      "Do the residency math and time your entry to exactly junior year. Colgate caps transfer credit at 16 course credits (from either two-year or four-year institutions) and requires 4 terms / 16 course credits in residence — precisely half of the 32-credit degree (CDS D13, D14, D16, and the D17 note: transfer students must be in residence a minimum of 4 terms). Arriving with more than 16 credits earns you nothing; arriving with 12-16 is the efficient entry. Frame the application as a junior-year entrant with a declared departmental path, not as someone shopping for a fresh start.",
+      "Treat spring as a genuine second door, not a consolation. CDS D3 confirms Colgate admits transfers for both Fall and Spring, and D9 gives Spring its own calendar: closing 11/1, notification 12/9, reply 12/23. A spring application is a separate shot at a differently-sized pool in the same academic year, and given the tiny cohort, one or two open beds moves the odds meaningfully. Applying fall and then spring is two swings, not one."
+    ],
+    "watchouts": [
+      "The cohort is tiny and the rate is unstable — do not plan around a single year. Only 13 transfers enrolled in Fall 2025 out of 423 applicants (roughly 3 admitted per 100 who applied actually matriculated). The admit rate swung from 9.6% (Fall 2024: 65 of 676) to 13.7% (Fall 2025: 58 of 423) purely because the applicant pool collapsed from 676 to 423, not because Colgate opened the gates. The two-year blended rate is 123 of 1,099 = 11.2%.",
+      "Transferring in can cost you a full year and a full year's tuition. Half the degree must be completed at Colgate (16 of 32 course credits, minimum 4 terms), and the lowest grade that transfers at all is a C / 2.0 quality points (CDS D12). A student arriving with three years of credit still owes two years. Audit your transcript for C-minus and D grades before counting them — they will not carry."
+    ],
+    "feeders": "Colgate publishes no feeder-school list, and the CDS reports no breakdown of transfers by prior institution, so any named feeder would be invention. What the structure does signal: the 16-course-credit cap makes a completed associate degree a poor fit (much of",
     "programs": []
   },
   {
@@ -558,6 +702,24 @@
       "Admission is to the major. Engineering, computer science, and business set their own standards above the university floor, so check the specific program's requirement rather than planning against the 65% overall rate — and note the C- minimum means a D in a prerequisite has to be retaken."
     ],
     "feeders": "Front Range Community College (Larimer, Westminster, and Boulder County campuses) is the dominant feeder given proximity to Fort Collins, followed by Aims Community College in Greeley, Arapahoe Community College, Community College of Denver, Red Rocks Communit",
+    "programs": []
+  },
+  {
+    "name": "Davidson",
+    "applicants": 152,
+    "admitted": 28,
+    "rate": 18.4,
+    "cycle": "Fall 2025 (CDS 2025-26)",
+    "typical": "CDS D2: 152 transfer applicants, 28 admitted, 17 enrolled — an 18.4% admit rate. Split by gender: men 76 applied / 15 admitted / 11 enrolled; women 76 applied / 13 admitted / 6 enrolled. Davidson states successful transfer applicants have earned at least a B+ at their current college alongside an outstanding high school record — the high school transcript is still required and still weighed, which is unusual and catches community college applicants off guard. Two structural gates define the pool: you must complete at least one full year of college coursework by enrollment, and you must plan to spend at least two academic years (16 courses) at Davidson. Together those mean the realistic admit is a rising sophomore, not a junior.",
+    "levers": [
+      "Time the application to the 16-course residency rule. Applying with exactly one year of college done fits Davidson's structure perfectly; applying with two years done or an associate degree fights it, because you cannot finish in the two years Davidson requires you to spend there. This single timing choice moves the odds more than any essay.",
+      "Line up three separate endorsements early — Davidson requires an Instructor Evaluation, a second teacher recommendation (high school teacher, counselor, or another college professor), and a College Official's Report. That is more endorsement paperwork than most peer LACs, and the College Official's Report routes through your dean of students, so any conduct record surfaces. Ask your current professor in the first weeks of the term, not in March."
+    ],
+    "watchouts": [
+      "Twenty-eight admits, seventeen enrolled. Davidson's transfer rate (18.4%) is actually higher than its 12.6% first-year rate (1,127 admitted of 8,933) in the same CDS, which makes it look approachable — but the absolute cohort is small enough that a single strong year in the applicant pool swings it hard. Build a full list; never run Davidson-or-bust.",
+      "Davidson left every D9 transfer deadline row blank in its own CDS. The published date is April 1 with decisions in early June — later than most, meaning you may be sitting on a deposit at another school while you wait. Confirm the current date directly with admission rather than trusting the CDS here."
+    ],
+    "feeders": "Davidson publishes no feeder list. Structurally the pool skews toward students at other selective four-years and state flagships looking for a smaller, Division I liberal arts environment, plus North Carolina community college students. Davidson is standalone ",
     "programs": []
   },
   {
@@ -709,6 +871,60 @@
     ]
   },
   {
+    "name": "Grinnell",
+    "applicants": 90,
+    "admitted": 17,
+    "rate": 18.9,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "90 transfer applicants, 17 admitted (18.9%), 8 enrolled. That is the rare case where transferring is easier than applying as a freshman: the same CDS reports 9,758 first-year applicants and 1,416 admits (14.5%). The cohort is still tiny — eight people. Grinnell requires at least one full year of completed college coursework, so rising sophomores and juniors only; the split of admits (7 men, 7 women, 3 another gender) shows how thin each slice is.",
+    "levers": [
+      "Build two college faculty recommenders months ahead. Grinnell requires two written academic evaluations from current or former professors — a single high school teacher letter substitutes only if you have been out of high school under a year — plus a final high school transcript and transcripts from every college attended. This is the piece most transfer applicants under-build and the cheapest place to separate yourself in a 90-person pool.",
+      "Write directly to the open curriculum. Grinnell has no distribution requirements and an individually advised curriculum, so the essay has to show a self-directed plan rather than a list of majors. Pair that with sophomore entry: at most 62 credits transfer in and 62 must be earned at Grinnell (CDS D13/D14/D16), so no more than half the degree can come from elsewhere, and nothing below a C transfers at all (D12)."
+    ],
+    "watchouts": [
+      "No merit aid for domestic transfers — need-based only, and the CSS Profile is required alongside the FAFSA. Grinnell states that need-based aid or scholarships for international transfer applicants are incredibly rare, so international candidates should plan on full pay.",
+      "Only 8 of 17 admits enrolled, which tells you fit doubts are real once people visit. Grinnell, Iowa is a town of roughly 9,000 and there is no consortium cross-registration of the Claremont or Five College kind — the campus is the entire academic menu, unlike the consortium schools a transfer applicant is probably also considering."
+    ],
+    "feeders": "The only named pathway Grinnell publishes is the DMACC Preview Program for Des Moines Area Community College students (grinnell.edu/admission/apply/transfer/dmacc). No broader articulation agreements are published; the rest of the pool is students at other fou",
+    "programs": []
+  },
+  {
+    "name": "Hamilton College",
+    "applicants": 225,
+    "admitted": 42,
+    "rate": 18.7,
+    "cycle": "Fall 2025 entry (CDS 2025-2026)",
+    "typical": "CDS D2 for Fall 2025: 225 transfer applicants, 42 admitted, 14 enrolled — 18.7%. The year before was 282 applicants, 35 admitted (12.4%). Hamilton is unusually open at the front door for a NESCAC school: D4 is 'No,' meaning there is no minimum credit count, so a student one semester into college can apply as a transfer rather than being forced into the first-year pool, and D6/D7 are blank — no published minimum high school or college GPA. Required of All: high school transcript, college transcript(s), essay or personal statement, and a statement of good standing from prior institution(s). Interview is Recommended of All. Standardized tests are Not Required. Fall 2025 skewed male on both sides of the funnel — 134 men applied and 29 were admitted, versus 91 women and 13 admitted — but on counts this small that split is noise, not a pattern to plan around.",
+    "levers": [
+      "Lead with the concentration, because Hamilton's open curriculum removes the usual transfer-credit puzzle. There are no distribution requirements for your incoming credits to satisfy, so the review collapses onto two questions: does the major work, and do the remaining 16 Hamilton credits fit? Credit is capped at 64 semester hours / 16 Hamilton units from either a two-year or four-year school, and 16 units must be earned at Hamilton, which includes the senior program in your concentration. Map that explicitly.",
+      "Consider the spring cycle, which is a genuine second door in the same academic year: D9 lists a spring closing date of November 1, notification December 1, reply December 15. It is a far less crowded queue than March. Separately, treat the statement of good standing as a gating item, not paperwork — it is Required of All, so a pending leave of absence, incomplete, or judicial matter at your current school needs to be resolved before you file, not explained afterward."
+    ],
+    "watchouts": [
+      "Hamilton over-admits transfers relative to beds and the cohort whipsaws: 35 admits from 282 applicants (12.4%) for Fall 2024, then 42 from 225 (18.7%) for Fall 2025, with only 14 of those 42 actually enrolling. A rate built on 42 decisions can move ten points on a housing forecast.",
+      "Credit past the halfway mark is simply lost. C is the lowest grade that transfers at all (D12), and the 16-unit ceiling means a junior-standing applicant repeats time regardless of how well they have done. Run the arithmetic on your own transcript before applying — the cost of transferring in with 20 transferable courses is four courses of tuition and a semester of your life."
+    ],
+    "feeders": "Hamilton does not publish transfer origin institutions, and the CDS contains no field for them, so no verifiable feeder list exists — the honest answer is that the 225-applicant pool composition is not public. Consortium note: Hamilton is a member of the New Y",
+    "programs": []
+  },
+  {
+    "name": "Harvey Mudd",
+    "applicants": 136,
+    "admitted": 4,
+    "rate": 2.9,
+    "cycle": "Fall 2025 (CDS 2025-26)",
+    "typical": "CDS D2, Fall 2025: 136 transfer applicants (96 men, 40 women), 4 admitted (3 men, 1 woman), 2 enrolled (1 man, 1 woman) = 2.9% admit rate. Four admits, two matriculants — that is the entire transfer class. Read that literally: Mudd is not running a transfer pipeline, it is backfilling a couple of seats. Who gets in: someone who has already completed the calculus / physics / chemistry / CS sequence at real rigor, earned essentially perfect grades in it, and can slot into the Common Core without restarting it. Values were read from the PDF's form fields (the table renders as empty text otherwise). Other CDS D-section facts: no minimum credit count required to apply (D4 = No), standardized test scores Not Required, interview Not Required, HS transcript / college transcripts / statement of good standing required. Max 64 semester credits transfer in from a two-year or four-year school, 64 must be completed at HMC for the bachelor's, and 2.0 (C) is the lowest transferable grade.",
+    "levers": [
+      "Bring the Core in hand. Roughly a third of a Mudd degree is the Common Core — math, physics, chemistry, biology, CS, engineering, writing. With only 64 credits transferable and 64 required in residence, the only viable transfer is one whose completed coursework maps onto that sequence. Get every Core-equivalent course done and documented before applying; a file with gaps in the sequence has nowhere to be placed.",
+      "Fall only, and only once. CDS D3 lists Fall as the sole entry term, with a 3/15 closing date, 5/15 notification, and 6/1 reply. There is no spring round and no second attempt within a cycle, so the single application has to be complete on submission — transcripts, statement of good standing, and a technical narrative specific to Mudd's Core-plus-clinic structure rather than to engineering generally."
+    ],
+    "watchouts": [
+      "4 admitted out of 136 is functionally a closed door. Never build a transfer plan with Mudd as the primary target — treat it as a lottery ticket attached to a realistic list, and set expectations with the student before they spend a cycle on it.",
+      "Fall-only entry plus the 64-credit residency requirement means you arrive on roughly a sophomore clock regardless of credits earned. Combined with Core sequencing prerequisites, transferring in commonly adds time to degree rather than saving it."
+    ],
+    "feeders": "No feeder list is published in the CDS or by HMC, and with 4 admits a feeder pattern would not be statistically meaningful anyway — do not trust any source claiming one. The applicant pool skews heavily male (96 of 136) and comes from students already deep in ",
+    "programs": []
+  },
+  {
     "name": "Howard",
     "applicants": 910,
     "admitted": 701,
@@ -835,6 +1051,24 @@
     "programs": []
   },
   {
+    "name": "Kenyon",
+    "applicants": 103,
+    "admitted": 48,
+    "rate": 46.6,
+    "cycle": "Fall 2024 entry (CDS 2024-2025, Section D2)",
+    "typical": "48 of 103 admitted, 13 enrolled. Nearly half the applicants got in — by far the friendliest transfer math among comparable LACs, and the reason is the pool: only 103 people applied, and they are heavily self-selected for the rural, all-residential Gambier experience. The CDS records a 3.0 GPA minimum for transfer applicants. Transfers may enter in fall or spring (D3). Consortium caveat: Kenyon is in the Five Colleges of Ohio and the GLCA with Oberlin, Denison, Wooster, and Ohio Wesleyan, but the campuses are far apart and this buys shared resources rather than Claremont-style cross-registration. Gambier is genuinely isolated, so the courses and faculty on Kenyon's own campus are the entire offer.",
+    "levers": [
+      "Write to the writing school. The Kenyon Review is the institution's self-image; a transfer essay tied to specific work you would do there — the Review, the Collegian, a named professor's seminar — lands far harder than a generic 'small classes' pitch.",
+      "The 4/1 deadline falls after most decisions elsewhere and Kenyon notifies 5/1, so a strong fall-and-spring upswing on your current college transcript is still in play. Send the updated transcript; the near-50% rate means the real bottleneck is applying at all with a 3.0-plus."
+    ],
+    "watchouts": [
+      "D13/D14 cap transferable credit at 64 and D16 requires 64 credits earned at Kenyon — two full years in Gambier no matter how much you bring in. A junior-standing transfer does not graduate in two years unless the credits map cleanly.",
+      "Only 13 of 48 admits enrolled, a 27% yield. Many admitted transfers get in and go elsewhere, most often over money. Compare the actual aid package before treating the admit as the finish line."
+    ],
+    "feeders": "Kenyon publishes no feeder list, and with a 103-applicant pool no single school could dominate it; treat any named source as inference. The observed pattern skews toward other four-year liberal arts colleges and mid-size universities rather than community coll",
+    "programs": []
+  },
+  {
     "name": "Lehigh",
     "applicants": 804,
     "admitted": 195,
@@ -868,6 +1102,24 @@
       "CDS D13 caps two-year college credit at 60 semester units and D16 requires 30 units in residence; CDS D8 also requires high school transcripts from anyone with fewer than 30 semester hours, so sub-30-unit applicants get read partly on their high school record."
     ],
     "feeders": "Los Angeles Community College District campuses under the district-wide agreement, plus Santa Monica College on its own TAG, and Honors Transfer Council of California honors programs that list LMU as a transfer partner. Westside and South Bay LA colleges domin",
+    "programs": []
+  },
+  {
+    "name": "Macalester",
+    "applicants": 190,
+    "admitted": 52,
+    "rate": 27.4,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS D2, Fall 2025: 190 applied, 52 admitted (27.4%), 13 enrolled. The applicant pool skewed female (109 women, 81 men) and so did admits (29 women, 23 men). The striking number is yield: only 13 of 52 admits enrolled, about 25%, which means Macalester admits roughly four transfers for every one who comes — usually a sign admitted students are choosing between Mac and a better aid or credit offer elsewhere. Per CDS D4, you need at least 12 completed credits to apply as a transfer at all.",
+    "levers": [
+      "Answer the actual prompt: Macalester names its transfer essay 'why Mac and why now?' The 'why now' half is the one applicants skip. Tie it to Macalester's stated pillars — internationalism, multiculturalism, service to society — with a specific destination like the Institute for Global Citizenship rather than a general admiration of the mission.",
+      "Choose the single recommender deliberately. Macalester requires one letter from a college academic instructor, and one letter carries disproportionate weight. Pick the professor who can describe you in a discussion-driven seminar, since that is the format Macalester teaches in — not the lecture instructor with the higher title."
+    ],
+    "watchouts": [
+      "March 15 is simultaneously the application deadline and the financial aid priority date. There is no second window to fix an aid application afterward, and the yield gap (52 admitted, 13 enrolled) suggests aid is exactly where these admits are lost.",
+      "The 12-credit floor from CDS D4 is a hard gate: below 12 completed credits you are a first-year applicant, not a transfer, competing in an entirely different and far more selective pool."
+    ],
+    "feeders": "Macalester does not publish feeder institutions in the CDS, so treat any specific list as unverified. Observed pattern: Twin Cities two-year colleges (Normandale, Century, Minneapolis College), the University of Minnesota, and students moving down from larger ",
     "programs": []
   },
   {
@@ -925,6 +1177,24 @@
     "programs": []
   },
   {
+    "name": "Middlebury",
+    "applicants": 323,
+    "admitted": 27,
+    "rate": 8.4,
+    "cycle": "Fall 2024 (CDS 2024-2025, Section D2)",
+    "typical": "323 applied, 27 admitted (8.4%), 9 enrolled. That is the brutal fact: nine transfer students in the entire entering cohort. Middlebury is roughly two and a half times harder to transfer into than Wesleyan, and the ceiling is set by vacancies — how many current students are abroad, on leave, or gone — not by how many strong applications arrive. The CDS lists a 3.0 minimum GPA for transfer applicants and requires the high school transcript alongside all college transcripts, an essay, and a statement of good standing from prior institutions; standardized test scores are not required. Who actually gets in: students already a year into a selective four-year college with strong grades in a demanding load, plus a reason that is specifically Middlebury — languages, environmental studies, the Schools Abroad network, the February calendar — rather than a general move up the NESCAC ladder.",
+    "levers": [
+      "Consider February entry instead of fall. Middlebury is one of the few colleges with a built-in midyear cohort (the 'Febs'), and the CDS confirms transfers may enroll in fall, winter, and spring terms — the spring/February application closes November 1 and is judged against a different, space-driven pool than the March 1 fall round.",
+      "Lead with language and off-campus study. Middlebury's institutional identity is its Language Schools and 30-plus Schools Abroad sites, and the transfer cohort is small enough that fit is doing most of the work. A serious language track already underway, plus a specific plan naming a Middlebury language major or a School Abroad site, reads as institution-specific in a way a generic 'small liberal arts college' essay cannot."
+    ],
+    "watchouts": [
+      "Admission is space-driven, not merit-capped: 27 offers produced only 9 enrollments, and Middlebury states it enrolls transfers in September and February depending on available space. A spring applicant can be told in early December that there were no vacancies at all and be offered only the option of fall reconsideration — a strong file can lose to arithmetic.",
+      "Credit conversion will cost you standing. Middlebury runs a 4-1-4 calendar and counts in course units rather than semester hours, with a required January Winter Term, so semester-hour credits get converted down and you should expect to arrive with less advanced standing than your transcript's credit total suggests. Confirm the conversion in writing before you commit."
+    ],
+    "feeders": "Not published — the CDS does not report sending institutions, and with 9 transfers enrolled in Fall 2024 the cohort is too small to form a stable feeder pattern in any case. Middlebury lists no community-college articulation agreements. Note the consortium poi",
+    "programs": []
+  },
+  {
     "name": "Minnesota Twin Cities",
     "applicants": 6071,
     "admitted": 3270,
@@ -976,6 +1246,24 @@
       "If you transfer fewer than 30 credits, D11 requires high school transcripts, which pulls your secondary record back into a file you probably assumed was decided on college work alone."
     ],
     "feeders": "County College of Morris, Bergen Community College, Passaic County Community College, Essex County College, Hudson County Community College, Union College of Union County, and Raritan Valley Community College are the core North Jersey pipeline. Bloomfield Coll",
+    "programs": []
+  },
+  {
+    "name": "Mount Holyoke",
+    "applicants": 258,
+    "admitted": 76,
+    "rate": 29.5,
+    "cycle": "Fall 2025 entering (CDS 2025-2026)",
+    "typical": "CDS D2: 258 transfer applicants, 76 admitted, 32 enrolled — 29.5%, the more forgiving of the two Pioneer Valley Sisters, and about 9 points softer than Smith. Mind the cycle gap: MHC has posted 2025-26 data while Smith's latest is 2024-25, so the two rates are one year apart and not strictly like-for-like. Who gets in: at least 16 completed credits or you must apply as a first-year (D4), a transcript with nothing below C- (D12), and a concrete reason for MHC specifically. No minimum college GPA is stated in the CDS, which pushes weight onto the transcript trajectory, the statement of good standing, and the essay. Five College member, so cross-registration at Amherst, Smith, Hampshire and UMass comes with the seat.",
+    "levers": [
+      "Frances Perkins Program: MHC's dedicated track for students returning to college after a break, reviewed on its own terms with its own advising and aid. A non-linear timeline stops being a liability and becomes the reason you fit the program.",
+      "Fall transfer is rolling (CDS D9 marks the rolling-admission column), with notification in mid-April and a May 1 reply. A complete file — transcripts and statement of good standing included — submitted weeks ahead of the Mar 1 priority date gets read against a thinner pool."
+    ],
+    "watchouts": [
+      "Same two-year math as Smith: 64 credits maximum in (D13/D14), 64 required in residence (D16), nothing below C- accepted. A finished associate's degree buys junior standing and not one day less than two more years.",
+      "Only 32 of 76 admits enrolled (42% yield). An admit is not the finish line — model the transfer aid offer against your current school's net price before you count on landing there."
+    ],
+    "feeders": "Massachusetts community colleges (Holyoke CC, Springfield Technical, Greenfield CC) and students leaving large universities for a small-college environment; the Frances Perkins track pulls regional adult learners. MHC publishes no feeder list — directional inf",
     "programs": []
   },
   {
@@ -1050,6 +1338,42 @@
       "Co-op is the whole point of Northeastern and it is sequenced. Transferring in at high standing can leave room for only one co-op cycle instead of two or three — ask admissions in writing how many co-ops your entry term and credit count actually allow before you commit."
     ],
     "feeders": "No official feeder list is published. The pattern is Northeast-heavy and unusually four-year-to-four-year for a school this selective — students leaving other private universities and large publics for the co-op model — layered on Massachusetts community colleges (Bunker Hill, MassBay, Middlesex and similar), whose students hit the 60-credit two-year transfer cap.",
+    "programs": []
+  },
+  {
+    "name": "Oberlin",
+    "applicants": 256,
+    "admitted": 68,
+    "rate": 26.6,
+    "cycle": "Fall 2024 entry (CDS 2024-2025, Section D2)",
+    "typical": "68 of 256 admitted, 28 enrolled — a real cohort, not a token one, and the most open door of the elite Ohio LACs. Published floors: 3.0 college GPA (D7) and 16 completed credits (D4); below 16 credits you must apply as a first-year instead. Admits in practice run well above the floor — A-/A work in a liberal-arts curriculum, faculty recommendations, and a reason that is Oberlin-specific rather than generic-LAC. D5 lists standardized test scores and interview as not required. Consortium caveat: Oberlin belongs to the Five Colleges of Ohio and the GLCA, but this is nothing like Claremont — the member campuses sit one to two hours apart, so membership buys shared library and staff resources, not daily cross-registration. The department you transfer into is the department you get.",
+    "levers": [
+      "Apply for spring, not just fall: CDS D9 confirms a genuine spring cycle (11/15 close, 12/15 decision) — a second shot in the same academic year against a smaller field.",
+      "Name the Conservatory. Oberlin is the only US liberal arts college with a peer conservatory attached; concrete plans for private study, ensembles, or the five-year double-degree read as Oberlin-specific and are impossible to fake from a template essay."
+    ],
+    "watchouts": [
+      "D13 caps two-year-college credit at 32 credits against a 112-credit degree. A community college student finishing an associate degree still loses roughly half of it and lands near sophomore standing — budget for three more years, not two.",
+      "The 26.6% rate blends the College of Arts and Sciences with the Conservatory of Music. Conservatory transfer runs on a separate audition track and is far tighter than the headline number implies; do not read 26.6% as your odds if you are auditioning."
+    ],
+    "feeders": "Oberlin publishes no feeder list in the CDS or elsewhere, so treat this as inference, not data: geography plus the 32-credit two-year cap points to nearby Ohio community colleges (Lorain County CC is about 10 miles away, Cuyahoga CC in Cleveland) alongside fou",
+    "programs": []
+  },
+  {
+    "name": "Occidental",
+    "applicants": 369,
+    "admitted": 131,
+    "rate": 35.5,
+    "cycle": "Fall 2025 (CDS 2025-2026, Section D2)",
+    "typical": "369 applied, 131 admitted, 39 enrolled — 35.5%, far more open than Oxy's first-year door. Published floors are real: 32 completed credit hours (one full year) or you must apply as a freshman, and a 3.0 college GPA minimum. Admitting 131 for 39 seats means Oxy expects heavy melt and admits wide. Test scores not required; interview recommended of all. Not part of a consortium, though cross-registration with Caltech and the 3-2 engineering path exist.",
+    "levers": [
+      "Two required pieces no freshman applicant submits: a graded writing sample from a college course (with instructor commentary if possible) and an Academic Evaluation from a college instructor via the Common App. Pick the professor who can describe how you argue in seminar, not the one who gave the highest grade — this is where a CC transcript becomes a person.",
+      "Fall is checked as rolling admission with a 3/1 priority date and 6/1 close, and the interview is 'Recommended of All.' Complete the file by 3/1 and take the interview: files read early compete for a full seat map, and the interview is an explicit invitation Oxy extends to transfers that most LACs do not."
+    ],
+    "watchouts": [
+      "Hard 64-semester-hour cap on credit from a two-year institution, and 64 hours minimum must be completed at Oxy. On a 128-unit degree that locks you to exactly two years on campus — banking 80 CC units does not buy an early degree, it burns 16 units.",
+      "The 3.0 GPA is a published floor, not the admitted profile, and the lowest transferable grade is C-. Anything below C- is dead weight on the transcript and still counts in the GPA the reader sees."
+    ],
+    "feeders": "Neither the CDS nor Oxy publishes an institution-level feeder list, so treat this as structural inference, not data. The 64-hour two-year cap maps exactly onto a completed California AA, and Oxy sits in Eagle Rock surrounded by LA-area community colleges, so t",
     "programs": []
   },
   {
@@ -1179,6 +1503,24 @@
     "programs": []
   },
   {
+    "name": "Pomona College",
+    "applicants": 519,
+    "admitted": 57,
+    "rate": 11.0,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS 2025-26 D2: 519 transfer applicants (269 women, 250 men), 57 admitted (25 women, 32 men) = 10.98%, 29 enrolled. Against Pomona's first-year cycle the same year — 12,470 applied, 890 admitted, 7.1% (CDS C1) — the transfer door is wider but not wide. At 29 enrolled, Pomona runs one of the largest transfer cohorts among elite liberal arts colleges, so this is a real pathway rather than a token one. D4 requires a minimum of one year of credits completed, so rising sophomores and juniors only. Required of all applicants: high school transcript, college transcript(s), essay or personal statement, and a statement of good standing; interview and standardized test scores are explicitly Not Required (D5). No minimum GPA is published (D6/D7 blank). Consortium matters enormously here: Pomona is one of the Claremont Colleges, so cross-registration at Harvey Mudd, Claremont McKenna, Scripps, and Pitzer comes with the seat.",
+    "levers": [
+      "The 5C consortium is the actual product — a Pomona transfer gets Harvey Mudd engineering and CS, CMC economics and government, and Scripps/Pitzer offerings on top of a 32-course Pomona degree. Name the specific cross-registered courses and faculty your plan depends on; that is an argument no other LAC can answer.",
+      "Interview and test scores are Not Required while the essay and statement of good standing are Required of All (CDS D5) — the entire subjective case runs through the written file. Pomona's community-college pipeline is visible in the cohort size, so a CC applicant with a completed breadth sequence and an unambiguous major path is a core profile here, not an exception."
+    ],
+    "watchouts": [
+      "The February 15 closing date (CDS D9) lands before any spring grades exist — your fall transcript at the current institution carries the whole academic case, and D4 already requires a full year of credits completed. Notification April 1, reply June 1, fall entry only (D3).",
+      "Credit math caps the payoff: a maximum of 16 courses transfer from either a two-year or four-year institution (D13/D14) against Pomona's 32-course degree, so even a completed associate degree leaves roughly two years to go. Pomona also rejects ACE, CLEP, and DSST credit entirely (D18)."
+    ],
+    "feeders": "Pomona does not publish transfer-origin counts in the CDS, so there is no citable feeder table. The structural signal is the cohort size (29 enrolled) plus a Claremont location and California residency base, which points to California community colleges (Pasad",
+    "programs": []
+  },
+  {
     "name": "Purdue",
     "applicants": 4422,
     "admitted": 1882,
@@ -1230,6 +1572,24 @@
       "Portfolio is mandatory for Architecture and Games & Simulation Arts and Sciences (optional for Electronic Arts and Music), and Architecture, GSAS and Music admit transfers for FALL ONLY. Transfers cannot apply to the accelerated B.S./M.D. program."
     ],
     "feeders": "RPI names no individual feeder schools, but publishes two partner networks on its transfer page: 30 affiliated community colleges in the 2:2 A.S.-to-junior-standing program and 35+ liberal arts colleges in the 3:2 Engineering plan. Confirm your school is on th",
+    "programs": []
+  },
+  {
+    "name": "Richmond",
+    "applicants": 362,
+    "admitted": 165,
+    "rate": 45.6,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "CDS D2: 362 transfer applicants, 165 admitted, 60 enrolled — a 45.6% admit rate and a 36% yield. Richmond's published floors are low: D4 requires 24 completed credits to be read as a transfer at all (fewer and you reapply as a first-year), and D7 lists a 2.00 minimum college GPA. Those are floors, not the profile — Richmond publishes no transfer GPA middle-50, so treat any quoted transfer GPA as unsourced. The structurally honest read: with 165 admits against 362 applicants, this is the most open door of any school at Richmond's selectivity tier, and the pool is small and self-selected. Admits skew to students with 30-60 credits (see the 60-credit residency rule below), meaning rising sophomores and early juniors from Virginia community colleges and other four-years.",
+    "levers": [
+      "Name Robins School of Business or the Jepson School of Leadership Studies specifically. Jepson is the only school of leadership studies in the country — it is a 'why Richmond' answer no other application can copy. For Robins, show the prerequisite economics/accounting/calculus sequence already done so the major is reachable inside the credits you have left.",
+      "Apply with 30-60 credits, not 75+. CDS D16 requires 60 credits earned at Richmond for the bachelor's, so a rising sophomore or early junior fits the residency math cleanly and keeps more semesters of aid eligibility in play."
+    ],
+    "watchouts": [
+      "The 45.6% rate is the most misread number here. Richmond's first-year rate in the same CDS is 22.2% (3,585 admitted of 16,152), so the transfer door is genuinely about twice as open — but there are only 60 seats. Twice as open as 22% is not a safety.",
+      "The 60-credit residency requirement (CDS D16) strands credit for anyone arriving with an associate degree or 75+ credits. Get a written credit evaluation before depositing; a junior transfer can find a semester or more of completed work unusable toward the degree."
+    ],
+    "feeders": "Not officially published by Richmond. Structurally the pool skews toward Virginia Community College System campuses (Reynolds, Brightpoint, Northern Virginia, Tidewater) plus VCU and other Virginia four-years, with a meaningful out-of-state four-year contingen",
     "programs": []
   },
   {
@@ -1431,6 +1791,42 @@
     "programs": []
   },
   {
+    "name": "Scripps",
+    "applicants": 117,
+    "admitted": 37,
+    "rate": 31.6,
+    "cycle": "Fall 2025 (CDS 2025-2026, Section D2)",
+    "typical": "117 applied, 37 admitted, 8 enrolled — 31.6%. Read that against the prior year from the same office: Fall 2024 was 22 admitted from 156 applicants, or 14.1%. Same college, rate more than doubled, because 37 admits is small enough that a few seats swing everything. Scripps is a women's college and one of the five Claremont Colleges. No minimum high school or college GPA is published (D6 and D7 are blank), and technically one completed college course clears the transfer threshold. Test scores not required; interview recommended of all.",
+    "levers": [
+      "With no published GPA floor and no test requirement, the decision rests on the college transcript's rigor plus the essay and the statement of good standing. That makes course selection the lever: a semester of genuinely demanding, Scripps-adjacent coursework moves this file more than raw GPA, because there is no cutoff to clear and nothing else in the file to hide behind.",
+      "Only 1 completed course is required to apply, but 16 of the 32 courses in a Scripps degree must be earned at Scripps. Sophomore entry is therefore the strategic slot — it is the latest point that still leaves four semesters, which is what you need to complete Core, a senior thesis, and use the 5C cross-registration you are actually paying for. Say in the essay which Pomona, CMC, Pitzer, or Mudd courses your plan depends on; the consortium is the answer to 'why here' that a 900-student catalog alone cannot support."
+    ],
+    "watchouts": [
+      "The cohort is tiny and the rate is unstable: 14.1% in Fall 2024, 31.6% in Fall 2025. Do not build a list around either number — plan for the pessimistic one and treat a good year as luck.",
+      "Maximum 16 courses transfer from a two-year institution and 16 from a four-year, with 16 required in residence and a lowest transferable grade of C. A junior-level applicant carrying 20+ courses forfeits the surplus, so extra credit past 16 courses converts to nothing."
+    ],
+    "feeders": "No feeder list is published by Scripps or in the CDS; this is structural inference. The pool skews women at community colleges and at large co-ed publics who want a women's college, and the 16-course cap lines up with a completed two-year associate degree. The",
+    "programs": []
+  },
+  {
+    "name": "Smith",
+    "applicants": 383,
+    "admitted": 79,
+    "rate": 20.6,
+    "cycle": "Fall 2024 entering (CDS 2024-2025)",
+    "typical": "CDS D2: 383 transfer applicants, 79 admitted, 41 enrolled — 20.6%, and every applicant recorded in the women's column. So ~40 transfers arrive each fall: a real cohort, not a token one. Who gets in: a college record clearing the stated 3.0 floor (D7) by a comfortable margin, a college transcript with no grade below C (D12), high school transcript plus statement of good standing (both required, D5), and an academic direction specific enough to name a Smith program. Tests not required; interview only recommended. Smith is a Five College member (Amherst, Hampshire, Mount Holyoke, UMass Amherst), so transferring in buys free cross-registration across five campuses — the practical argument for choosing Smith over a large public you already attend.",
+    "levers": [
+      "Ada Comstock Scholars: if you are 24+ or returning after a break in schooling, apply through this track rather than standard transfer — it is Smith's own separately reviewed pathway for non-traditional students, with part-time enrollment allowed, and it is the single biggest structural advantage Smith offers over peer LACs.",
+      "Open curriculum plus Five College access: with no distribution requirements, nearly any of your 64 transferable credits can count, so spend the essay on a Smith-only hook — Picker Engineering (the only ABET-accredited engineering program at a women's college) or a Five College certificate — instead of generic fit language."
+    ],
+    "watchouts": [
+      "Hard floors are published: 3.0 minimum college GPA (CDS D7) and nothing below a C transfers (D12). One weak semester is disqualifying on paper before anyone reads the essay.",
+      "64-credit transfer cap (D13/D14) and 64 credits required in residence at Smith (D16): you are doing two full years regardless of how many credits you bring, so a near-complete associate's degree does not shorten the clock."
+    ],
+    "feeders": "Western Massachusetts community colleges inside the Five College orbit — Holyoke CC, Greenfield CC, Springfield Technical CC — feed both the standard transfer pool and the Ada Comstock track; the rest skews students leaving large publics and co-ed LACs. Smith ",
+    "programs": []
+  },
+  {
     "name": "Sonoma State",
     "applicants": 4236,
     "admitted": 2506,
@@ -1518,6 +1914,24 @@
       "Credit rules: maximum 84 transferable credits from either two-year or four-year institutions, minimum grade of C to transfer, and at least 36 credits must be completed at Stony Brook for the bachelor's degree."
     ],
     "feeders": "Suffolk County Community College and Nassau Community College are the dominant pipelines, followed by CUNY community colleges (BMCC, Queensborough, Kingsborough, LaGuardia) and other SUNY two-years; also steady lateral transfer from Farmingdale State and nearb",
+    "programs": []
+  },
+  {
+    "name": "Swarthmore",
+    "applicants": 421,
+    "admitted": 42,
+    "rate": 10.0,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS 2025-26 D2: 421 transfer applicants, 42 admitted (9.98%), 19 enrolled. Read that against Swarthmore's own first-year cycle the same year — 12,995 applied, 977 admitted, 7.5% (CDS C1) — transfer is NOT an easier door, just a slightly wider one. Swarthmore reports no minimum college GPA (D6/D7 blank), so there is no published bar; what the file structure implies is a candidate with a full year of college work, two college faculty willing to write academic evaluations (D8), and a documented reason Swarthmore's seminar model is the fix. Credit is evaluated case-by-case from syllabus, transcript, written work, exams, and class hours (D17) — nothing is pre-articulated. Note the consortium: Swarthmore is in the Tri-College Consortium (Bryn Mawr, Haverford) and the Quaker Consortium (adds Penn), so cross-registration is part of what transferring in actually buys.",
+    "levers": [
+      "Two academic evaluation letters are a Swarthmore-specific required item (CDS D8, listed verbatim as 'Two Academic Evaluation Letters') on top of the standard transcript set — recruit two current college professors early who can testify you drive seminar discussion, not just that you earn A's.",
+      "Name what only Swarthmore provides: its B.S. in Engineering (nearly unique among liberal arts colleges) and Tri-College/Quaker Consortium cross-registration at Bryn Mawr, Haverford, and Penn. A generic 'I want a small liberal arts college' essay is invisible against 421 applicants."
+    ],
+    "watchouts": [
+      "Residency and credit caps bind hard: transfers must complete four full-time semesters at Swarthmore to earn the degree (CDS D17), and at most 16 credits transfer from either a two-year or four-year institution (D13/D14) against a 32-credit degree. Senior entry is impossible and a completed AA buys half a degree at best. Lowest transferable grade is a straight C (D12).",
+      "Fall entry only (D3 marks Fall alone) with an April 1 closing date and May 15 notification (D9) — no winter, spring, or summer cycle. Miss it and you wait a full year. Yield is also low (19 enrolled of 42 admitted), which means the admitted pool is cross-shopping, not that seats loosen."
+    ],
+    "feeders": "Swarthmore publishes no transfer-origin table in the CDS or elsewhere, and with 19 enrolled per year the sample is too small for stable patterns — any feeder list is anecdote, not data. What IS documented: veterans have a dedicated policy page (CDS D21, swarth",
     "programs": []
   },
   {
@@ -1764,6 +2178,24 @@
     "programs": []
   },
   {
+    "name": "Vassar",
+    "applicants": 365,
+    "admitted": 54,
+    "rate": 14.8,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "CDS D2 for Fall 2025: 365 applied, 54 admitted, 14 enrolled. Those are fall-only figures — Vassar runs a separate spring cycle it does not report in D2. Yield was 26%, so the cohort that actually arrives is about a dozen students. Vassar publishes no minimum college GPA (D7 blank) and sets no minimum credit floor to apply (D4 = No), so students with one semester elsewhere compete in the same pool as community college students finishing an associate degree. Required: HS transcript, college transcripts, essay, and a statement of good standing. Interview and test scores are explicitly not required.",
+    "levers": [
+      "Vassar reports fall and spring transfer cycles separately (D9). The Nov 1 spring round, decisions Dec 15, is a genuine second application against a smaller pool that most applicants never look at.",
+      "No minimum credit floor to apply (D4), so a strong single year elsewhere is enough — but D13/D14 cap you at 16 transferred units and D16 requires 16 units earned at Vassar. Pitch yourself as a sophomore entrant with two full years of Vassar coursework planned, naming departments and courses, not as a rising junior looking to finish fast."
+    ],
+    "watchouts": [
+      "Transferring in is harder than applying from high school: 14.8% transfer versus 20.9% first-year (2,327 admits of 11,118) in the very same CDS. Do not let a published 'Vassar admit rate' mislead you.",
+      "Only 14 of 54 admits enrolled. By arithmetic the resident transfer cohort is roughly a dozen per year, so transfer-specific peer community and programming are thin."
+    ],
+    "feeders": "No published feeder list — Vassar does not release transfer origin data, so any named feeder school would be speculation. Structurally, the absence of a credit floor (D4) means the 365-applicant pool mixes first-year students at other four-year colleges with c",
+    "programs": []
+  },
+  {
     "name": "Villanova",
     "applicants": 552,
     "admitted": 239,
@@ -1877,6 +2309,42 @@
     "programs": []
   },
   {
+    "name": "Washington and Lee",
+    "applicants": 284,
+    "admitted": 16,
+    "rate": 5.6,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "Brutal math: 284 transfer applicants, 16 admitted (5.6%), 5 actually enrolled. The same CDS shows 8,213 first-year applicants and 1,147 admits (14.0%) — transferring into W&L is roughly 2.5x harder than applying out of high school. Admissions states successful transfers have a very strong high school record and college grades at B (3.0) or above; most submit SAT/ACT. CDS D4 requires 30 completed credits, and D7 lists a 3.0 college GPA floor.",
+    "levers": [
+      "Target sophomore entry, not junior. W&L caps transfer credit at 60 hours (CDS D13/D14) and requires six full-time terms in residence before a degree, so a junior transfer still owes two years and cannot shorten the clock. Applicants with roughly 30-60 credits who can still complete the FDR requirements and the 4-week Spring Term cycle are the ones the file fits.",
+      "Treat your high school record as live and send scores. W&L's CDS lists the high school transcript as a required item for transfer applicants, and admissions says successful transfers generally have a very strong HS record and submit SAT or ACT — only applicants who never sat the exams get a clean test-optional path. Add the required statement of good standing from every prior institution."
+    ],
+    "watchouts": [
+      "16 admits and 5 enrollees means the transfer class is whatever attrition happens to open. A strong file can lose to zero available seats in a given year, and there is no waitlist mechanism published for transfers.",
+      "No merit aid for transfers — W&L states transfers are ineligible for merit-based awards. Need-based aid only, though transfers who apply for aid and meet the income thresholds are eligible for the W&L Promise. Transfer credit is also discretionary: only work comparable to W&L in level, nature, and field is accepted, assigned by department heads and the registrar."
+    ],
+    "feeders": "No published articulation agreement, transfer partnership, or feeder list, and no consortium cross-registration — VMI shares Lexington but is not a credit pathway, so what you transfer into is the whole of what you get. The pool skews toward students already a",
+    "programs": []
+  },
+  {
+    "name": "Wesleyan",
+    "applicants": 473,
+    "admitted": 95,
+    "rate": 20.1,
+    "cycle": "Fall 2022 (CDS 2022-2023, Section D2)",
+    "typical": "473 applied, 95 admitted (20.1%), 39 enrolled. By NESCAC standards that is a wide door — roughly one in five, and a 39-person transfer class is one of the largest among elite LACs. IMPORTANT: 2022-2023 is the most recent Common Data Set Wesleyan posts as a public PDF; later years were moved to a wesleyan0.sharepoint.com folder that is not publicly fetchable, so this is the last independently checkable figure, not necessarily this year's. Who actually gets in: students sitting inside the 6-16 Wesleyan-credit window (one to two full years of college done), strong current college grades, two substantive evaluations from college instructors, and a clear academic direction. CDS D12 sets the lowest transferable grade at C-, and D16 requires 16 course equivalents completed at Wesleyan (half the 32-credit degree). Community college students are genuinely in this pool.",
+    "levers": [
+      "Hit the 6-16 Wesleyan-credit window exactly — minimum one full year, maximum two full years, where 1 Wesleyan credit = 4 semester hours (so 24-64 semester hours at the point of enrollment). Applicants get eliminated structurally here, not competitively; time the application so you land inside the band rather than above it.",
+      "Build the file around current college work, not high school. Wesleyan requires two instructor evaluations from college-level courses plus a College Report attesting to good standing, and the open curriculum has no distribution requirements — so pitch a concrete four-semester finish plan (16 credits transferred in, 16 done at Wesleyan) tied to a named major. That specificity is the fit signal here."
+    ],
+    "watchouts": [
+      "The 20.1% is a Fall 2022 number. Wesleyan stopped posting public CDS PDFs after 2022-2023, so treat this as a stale ceiling — verify with the admission office before planning around it.",
+      "Fall entry only (CDS D3 checks Fall alone), so there is exactly one application per year and no spring fallback. Residency rules can also cost you time rather than save it: a first-semester sophomore owes a minimum of 5 semesters on campus, a second-semester sophomore or first-semester junior owes 4."
+    ],
+    "feeders": "Not published — the CDS does not report sending institutions and Wesleyan lists no community-college articulation agreements. Structurally the pool is students one to two years into other four-year colleges plus strong community college students; the one defin",
+    "programs": []
+  },
+  {
     "name": "William & Mary",
     "applicants": 963,
     "admitted": 440,
@@ -1892,6 +2360,24 @@
       "W&M requires a minimum 60 credits completed in residence for the bachelor's (CDS D16), so an associate degree does not automatically retire half the degree; fall closing is a firm March 1 with May 1 notification, well before most spring grades post."
     ],
     "feeders": "Virginia Community College System campuses plus Richard Bland College, W&M's own associate-degree branch. The GAA and the RBC junior-standing agreement make the transfer pipeline structurally in-state Virginia; W&M does not publish a campus-by-campus feeder breakdown in the CDS.",
+    "programs": []
+  },
+  {
+    "name": "Williams",
+    "applicants": 595,
+    "admitted": 23,
+    "rate": 3.9,
+    "cycle": "CDS 2025-2026 (fall 2025 entering class)",
+    "typical": "23 admits out of 595 applicants, and 15 enrolled. By gender the filing reports men 296 applied / 13 admitted / 9 enrolled, women 259 / 10 / 6, unknown 40 / 0 / 0. Williams requires approximately 30 credits (D4) and admits transfers for fall only (D3), so you need a full year of college on the transcript. Beyond the usual transcripts and essay, D8 specifies two faculty letters of recommendation and a Transfer College Report. No minimum GPA is published. Williams does not release GPA ranges or sending institutions for admitted transfers. The realistic admit is a student with a full year of near-perfect college work who can speak to Williams' tutorial system specifically. Williams is NOT part of a consortium: there is no Five College or Claremont style cross-registration to broaden the course catalog, which makes the 'why Williams' answer entirely about what Williams itself offers.",
+    "levers": [
+      "Two faculty letters of recommendation plus a Transfer College Report are required (CDS D8). These come from your current college, not high school, so you need two professors who can write about your seminar and discussion work by the end of your first term. This is the single most concrete, verifiable requirement Williams names.",
+      "Fall-only entry with a ~30-credit minimum (D3, D4) means the application rests on one complete year of college work. Use that year to engage what is structurally distinctive at Williams: the Oxford-style tutorials and the mandatory Winter Study term, both of which every transfer must complete."
+    ],
+    "watchouts": [
+      "23 admitted from 595 applicants is a 3.9% rate, and only 15 enrolled. This is a long shot for a 4.0 student with perfect recommendations, not a plan. Build the list assuming Williams does not happen.",
+      "Residency and credit caps: at most 18 courses transfer in from either a two-year or four-year college (D13/D14), and you must complete 18 courses at Williams (D16), specified as 16 regular semester courses plus 2 Winter Study courses. Anything beyond two years' worth of credit is lost, and Winter Study is not optional."
+    ],
+    "feeders": "Not published. Williams does not release the sending institutions for its transfer cohort, and with 15 transfers enrolling per year any 'feeder school' claim is statistical noise. Note also that Williams has no consortium affiliation: unlike Amherst in the Fiv",
     "programs": []
   },
   {
