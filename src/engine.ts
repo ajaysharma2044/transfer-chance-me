@@ -6,6 +6,7 @@
 // essay specificity). Every adjustment is surfaced as a named driver.
 
 import model from "./data/model.json";
+import ucData from "./data/uc_data.json";
 
 export interface Counsel {
   typical: string;
@@ -36,6 +37,58 @@ export interface School {
 }
 
 export const MODEL = model as unknown as { meta: Record<string, unknown>; schools: School[] };
+
+// ── The rest of the UC system, from official UC admit data (Fall 2026) ──
+// UC no longer publishes admitted-GPA ranges, so gpa percentiles are null
+// and the engine estimates position from campus selectivity instead.
+interface UcCampus {
+  rate: number; applicants: number; admitted: number;
+  gpaP25: number | null; gpaP75: number | null; cycle: string; ccNote: string;
+}
+const UC_JSON = ucData as unknown as {
+  campuses: Record<string, UcCampus>;
+  tag: { campuses: string[]; minGpa: Record<string, number> };
+};
+
+export const TAG_CAMPUSES: Record<string, number> = Object.fromEntries(
+  UC_JSON.tag.campuses.map((c) => [c, UC_JSON.tag.minGpa[c] ?? 3.4]),
+);
+
+for (const [name, c] of Object.entries(UC_JSON.campuses)) {
+  if (MODEL.schools.some((s) => s.name === name)) continue;
+  const tagMin = TAG_CAMPUSES[name];
+  MODEL.schools.push({
+    id: name.toLowerCase().replace(/\s+/g, "-"),
+    name,
+    rate: c.rate,
+    applicants: c.applicants,
+    admitted: c.admitted,
+    cycle: `${c.cycle} (UC admit data)`,
+    n: 0, nAdmits: 0, nGpa: 0,
+    gpa: { p10: null, p25: null, p50: null, p75: null, p90: null },
+    hist: [],
+    majors: [],
+    feeder: "California community colleges",
+    coadmit: [],
+    trend: [],
+    counsel: {
+      typical: `${c.ccNote} The standard admit is a California CC junior with IGETC progress and major prep done${tagMin ? `; TAG guarantees admission at a ${tagMin.toFixed(1)}+ GPA with on-time filing` : ""}.`,
+      floor: tagMin ?? null,
+      levers: [
+        ...(tagMin ? [`File TAG in September — guaranteed admission at ${tagMin.toFixed(1)}+ GPA (major criteria apply)`] : []),
+        "Finish IGETC and your major's articulated prerequisites (check ASSIST.org)",
+        "Apply in the Aug 1–Nov 30 UC filing window — there is no late round",
+      ],
+      watchouts: [
+        ...(tagMin ? [] : ["No TAG at this campus — admission is competitive, not guaranteed"]),
+        "Impacted majors (CS, engineering, some biology) run far more selective than the campus rate",
+      ],
+      feeders: c.ccNote,
+      programs: tagMin ? ["TAG", "IGETC"] : ["IGETC"],
+    },
+  });
+}
+MODEL.meta.schools = MODEL.schools.length;
 
 export type Institution = "cc" | "public4" | "private4";
 export type Standing = "sophomore" | "junior";
@@ -126,9 +179,12 @@ export interface Estimate {
   thin: boolean;       // small observed sample
 }
 
-export type Tier = "Likely" | "Strong target" | "Target" | "Reach" | "High reach" | "Long shot";
+export type Tier = "TAG guarantee" | "Likely" | "Strong target" | "Target" | "Reach" | "High reach" | "Long shot";
 
-const UC = new Set(["UCLA", "UC Berkeley"]);
+const UC = new Set([
+  "UCLA", "UC Berkeley", "UC Davis", "UC Irvine", "UC San Diego",
+  "UC Santa Barbara", "UC Santa Cruz", "UC Riverside", "UC Merced",
+]);
 const PUBLICS = new Set(["UCLA", "UC Berkeley", "Michigan", "UNC"]);
 // Schools whose dominant transfer lane runs through business programs
 const BUSINESS_GAUNTLET = new Set(["UPenn", "Cornell", "Michigan", "UC Berkeley"]);
@@ -149,19 +205,43 @@ export function estimate(profile: Profile, s: School): Estimate {
   const drivers: Driver[] = [];
   let mult = 1;
 
+  // ── TAG: six UCs guarantee admission to qualifying CA CC juniors ──
+  const tagMin = TAG_CAMPUSES[s.name];
+  if (
+    tagMin != null &&
+    profile.institution === "cc" &&
+    profile.caResident &&
+    profile.standing === "junior" &&
+    profile.gpa >= tagMin
+  ) {
+    return {
+      school: s,
+      p: 0.95, lo: 0.9, hi: 0.99,
+      tier: "TAG guarantee",
+      drivers: [
+        { dir: "up", text: `You meet ${s.name}'s TAG criteria (${tagMin.toFixed(1)}+ GPA, CA community college, junior standing) — filing TAG by September 30 guarantees admission` },
+        { dir: "flat", text: "The guarantee holds if you complete major prerequisites and maintain your GPA; some impacted majors are excluded — verify yours on ASSIST" },
+      ],
+      thin: false,
+    };
+  }
+
   // ── GPA vs the school's observed admitted distribution ──
-  const med = s.gpa.p50 ?? 3.95;
-  const q25 = s.gpa.p25 ?? med - 0.12;
+  // UC campuses without published GPA ranges get a selectivity-based estimate.
+  const noGpaData = s.gpa.p50 == null && UC.has(s.name);
+  const med = s.gpa.p50 ?? (noGpaData ? Math.min(3.7, Math.max(3.25, 3.9 - (s.rate / 100) * 0.8)) : 3.95);
+  const q25 = s.gpa.p25 ?? (noGpaData ? med - 0.25 : med - 0.12);
   const mid = (med + q25) / 2;
   const spread = Math.max(0.045, (med - q25) / 1.35);
   const gpaFactor = 0.22 + 2.2 / (1 + Math.exp(-(profile.gpa - mid) / spread));
   mult *= gpaFactor;
+  const est = noGpaData ? " (estimated — UC no longer publishes admitted-GPA ranges)" : "";
   if (profile.gpa >= med) {
-    drivers.push({ dir: "up", text: `Your ${profile.gpa.toFixed(2)} sits at or above the observed admit median (${med.toFixed(2)})` });
+    drivers.push({ dir: "up", text: `Your ${profile.gpa.toFixed(2)} sits at or above the ${noGpaData ? "estimated" : "observed"} admit median (${med.toFixed(2)})${est}` });
   } else if (profile.gpa >= q25) {
-    drivers.push({ dir: "flat", text: `Your ${profile.gpa.toFixed(2)} is inside the admit range (25th percentile ${q25.toFixed(2)}, median ${med.toFixed(2)})` });
+    drivers.push({ dir: "flat", text: `Your ${profile.gpa.toFixed(2)} is inside the admit range (25th percentile ${q25.toFixed(2)}, median ${med.toFixed(2)})${est}` });
   } else {
-    drivers.push({ dir: "down", text: `Your ${profile.gpa.toFixed(2)} is below the 25th percentile of observed admits (${q25.toFixed(2)})` });
+    drivers.push({ dir: "down", text: `Your ${profile.gpa.toFixed(2)} is below the 25th percentile of ${noGpaData ? "estimated" : "observed"} admits (${q25.toFixed(2)})${est}` });
   }
   const floor = s.counsel?.floor;
   if (floor != null && profile.gpa < floor) {
@@ -180,7 +260,7 @@ export function estimate(profile: Profile, s: School): Estimate {
     if (profile.institution === "cc") {
       if (profile.caResident) {
         mult *= 1.5;
-        drivers.push({ dir: "up", text: "California community college is this campus's dominant admit lane (~92% of UCLA transfer admits)" });
+        drivers.push({ dir: "up", text: "California community college is this campus's dominant admit lane (≈90%+ of UC transfer admits)" });
         if (profile.igetc) {
           mult *= 1.15;
           drivers.push({ dir: "up", text: "IGETC completion matches the standard admitted pathway" });

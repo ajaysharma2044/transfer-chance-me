@@ -163,8 +163,12 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
         <div>
           <h1>{s.name} transfer profile</h1>
           <p className="sp-sum">
-            <b>{s.rate.toFixed(1)}%</b> official transfer admit rate · built from{" "}
-            <b>{s.n.toLocaleString()}</b> recorded applicant outcomes in our dataset
+            <b>{s.rate.toFixed(1)}%</b> official transfer admit rate
+            {s.n > 0 ? (
+              <> · built from <b>{s.n.toLocaleString()}</b> recorded applicant outcomes in our dataset</>
+            ) : (
+              <> · official UC admit data, {s.cycle.replace(" (UC admit data)", "")}</>
+            )}
           </p>
         </div>
       </header>
@@ -180,14 +184,23 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
           </b>
           <span className="sp-cap">applied → admitted ({s.cycle || "latest CDS"})</span>
         </div>
-        <div className="sp-stat">
-          <b>{s.nAdmits.toLocaleString()}</b>
-          <span className="sp-cap">observed admits in the dataset</span>
-        </div>
-        <div className="sp-stat">
-          <b>{s.gpa.p50 != null ? s.gpa.p50.toFixed(2) : "—"}</b>
-          <span className="sp-cap">admitted-GPA median (n={s.nGpa})</span>
-        </div>
+        {s.nAdmits > 0 ? (
+          <div className="sp-stat">
+            <b>{s.nAdmits.toLocaleString()}</b>
+            <span className="sp-cap">observed admits in the dataset</span>
+          </div>
+        ) : (
+          <div className="sp-stat">
+            <b style={{ color: "var(--teal)" }}>CA CC</b>
+            <span className="sp-cap">{c?.feeders ?? "dominant transfer pathway"}</span>
+          </div>
+        )}
+        {s.gpa.p50 != null && (
+          <div className="sp-stat">
+            <b>{s.gpa.p50.toFixed(2)}</b>
+            <span className="sp-cap">admitted-GPA median (n={s.nGpa})</span>
+          </div>
+        )}
         {cd && (
           <div className="sp-stat">
             <b style={{ color: cd.days <= 45 ? "var(--coral)" : "var(--accent)" }}>{cd.days} days</b>
@@ -196,31 +209,35 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
         )}
       </div>
 
-      {thin && (
+      {thin && s.nGpa > 0 && (
         <p className="sp-note">
           Small sample: only {s.nGpa} admitted GPAs observed here — treat the GPA distribution as
           directional, not definitive.
         </p>
       )}
 
-      <div className={`sp-charts reveal${hasTrend ? "" : " sp-one"}`}>
-        <figure className="sp-card">
-          <h2>Admitted GPA distribution</h2>
-          <p className="sp-dek">
-            Observed admitted transfers, 3.0–4.0 scale (n={s.nGpa})
-          </p>
-          <GpaHistogram s={s} />
-        </figure>
-        {hasTrend && (
-          <figure className="sp-card">
-            <h2>Transfer admit rate over time</h2>
-            <p className="sp-dek">
-              Official rate by cycle, {s.trend[0][0]}–{s.trend[s.trend.length - 1][0]}
-            </p>
-            <TrendChart s={s} />
-          </figure>
-        )}
-      </div>
+      {(s.nGpa > 0 || hasTrend) && (
+        <div className={`sp-charts reveal${s.nGpa > 0 && hasTrend ? "" : " sp-one"}`}>
+          {s.nGpa > 0 && (
+            <figure className="sp-card">
+              <h2>Admitted GPA distribution</h2>
+              <p className="sp-dek">
+                Observed admitted transfers, 3.0–4.0 scale (n={s.nGpa})
+              </p>
+              <GpaHistogram s={s} />
+            </figure>
+          )}
+          {hasTrend && (
+            <figure className="sp-card">
+              <h2>Transfer admit rate over time</h2>
+              <p className="sp-dek">
+                Official rate by cycle, {s.trend[0][0]}–{s.trend[s.trend.length - 1][0]}
+              </p>
+              <TrendChart s={s} />
+            </figure>
+          )}
+        </div>
+      )}
 
       {c && (
         <section className="sp-play reveal">

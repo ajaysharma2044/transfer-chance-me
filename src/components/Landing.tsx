@@ -14,8 +14,9 @@ import "./landing.css";
 // CTA. All visuals are ours, drawn from the dataset.
 
 const LADDER = [
-  "UNC", "Michigan", "Vanderbilt", "Notre Dame", "UC Berkeley", "UCLA",
-  "Northwestern", "Cornell", "Columbia", "UPenn", "Stanford", "Yale", "Harvard",
+  "UC Riverside", "UC Santa Cruz", "UC Santa Barbara", "UC Davis", "UC San Diego",
+  "UNC", "UC Irvine", "Michigan", "UC Berkeley", "UCLA", "Cornell",
+  "Columbia", "UPenn", "Stanford", "Yale", "Harvard",
 ];
 
 /** Hero visual: a layered composite of the product itself — chances rows,
@@ -354,7 +355,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <div className="shell factline">
           <span><b><CountUp value={Number(MODEL.meta.rows)} /></b> recorded outcomes</span>
           <span><b><CountUp value={Number(MODEL.meta.admits)} /></b> observed admits</span>
-          <span><b><CountUp value={Number(MODEL.meta.schools)} duration={900} /></b> top-25 universities</span>
+          <span><b><CountUp value={MODEL.schools.length} duration={900} /></b> top universities</span>
           <span><b><CountUp value={15} duration={900} /></b> application cycles</span>
         </div>
       </section>

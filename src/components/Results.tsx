@@ -6,6 +6,7 @@ import Tile from "./Tile";
 import Report from "./Report";
 
 const TIER_CLASS: Record<Tier, string> = {
+  "TAG guarantee": "tier-tag",
   Likely: "tier-likely",
   "Strong target": "tier-strong",
   Target: "tier-target",

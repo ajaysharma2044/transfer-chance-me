@@ -15,7 +15,7 @@ function x(g: number): number {
 export default function GpaStrip({ school, gpa }: { school: School; gpa: number }) {
   const { p10, p25, p50, p75, p90 } = school.gpa;
   if (p50 == null) {
-    return <div className="strip" style={{ fontSize: 12, color: "var(--ink-3)" }}>Not enough GPA data</div>;
+    return <div className="strip" style={{ fontSize: 12, color: "var(--ink-3)" }}>GPA range not published</div>;
   }
   const below = gpa < LO;
   const ux = x(gpa);

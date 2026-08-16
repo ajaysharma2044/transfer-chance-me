@@ -418,6 +418,7 @@ textarea:focus {
 .row .odds { text-align: right; }
 .row .odds .band { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .row .odds .tier { display: block; font-size: 12.5px; margin-top: 1px; }
+.tier-tag { color: var(--teal); font-weight: 700; }
 .tier-likely, .tier-strong { color: var(--good); }
 .tier-target { color: var(--accent); }
 .tier-reach { color: var(--ink-3); }

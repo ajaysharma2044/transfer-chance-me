@@ -1,0 +1,98 @@
+{
+  "campuses": {
+    "UC Davis": {
+      "rate": 58.3,
+      "applicants": 17400,
+      "admitted": 10138,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "93.3% of admitted transfer students were from California community colleges."
+    },
+    "UC Irvine": {
+      "rate": 36.4,
+      "applicants": 27004,
+      "admitted": 9839,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "95.6% of admitted transfer students were from California community colleges."
+    },
+    "UC San Diego": {
+      "rate": 47.4,
+      "applicants": 26339,
+      "admitted": 12473,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "89.3% of admitted transfer students were from California community colleges."
+    },
+    "UC Santa Barbara": {
+      "rate": 61.6,
+      "applicants": 18870,
+      "admitted": 11620,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "92.2% of admitted transfer students were from California community colleges."
+    },
+    "UC Santa Cruz": {
+      "rate": 67.5,
+      "applicants": 13546,
+      "admitted": 9141,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "96.5% of admitted transfer students were from California community colleges."
+    },
+    "UC Riverside": {
+      "rate": 69.6,
+      "applicants": 14915,
+      "admitted": 10382,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "96% of admitted transfer students were from California community colleges."
+    },
+    "UC Merced": {
+      "rate": 67.5,
+      "applicants": 6635,
+      "admitted": 5089,
+      "gpaP25": null,
+      "gpaP75": null,
+      "cycle": "Fall 2026",
+      "ccNote": "96.6% of admitted transfer students were from California community colleges. Note: UC's page states a 67.5% overall admit rate, though the listed counts (5,089/6,635) compute to 76.7%."
+    }
+  },
+  "tag": {
+    "campuses": ["UC Davis", "UC Irvine", "UC Merced", "UC Riverside", "UC Santa Barbara", "UC Santa Cruz"],
+    "minGpa": {
+      "UC Davis": 3.2,
+      "UC Irvine": 3.4,
+      "UC Merced": 2.8,
+      "UC Riverside": 2.7,
+      "UC Santa Barbara": 3.4,
+      "UC Santa Cruz": 3.0
+    },
+    "minGpaNotes": {
+      "UC Davis": "3.2 for Colleges of Agricultural & Environmental Sciences, Biological Sciences, and Letters & Science; 3.5 for College of Engineering (by end of summer 2026).",
+      "UC Irvine": "3.4 minimum GPA by end of fall 2026, all majors.",
+      "UC Merced": "2.8 for Social Sciences/Humanities/Arts (Psychology and Public Health 3.0); 2.9 Natural Sciences; 3.0 Engineering (by end of summer 2026).",
+      "UC Riverside": "2.7 for Education and Public Policy; 2.8 for CHASS/CNAS/Business (exceptions up to 3.6, e.g. Computer Science 3.6); 3.0 for Engineering (by end of summer 2026).",
+      "UC Santa Barbara": "3.4 GPA by end of fall 2026 for all majors.",
+      "UC Santa Cruz": "3.0 GPA by end of summer 2026 for all majors.",
+      "source": "Fall 2027 / Spring 2028 TAG matrix (accurate as of June 9, 2026); values are the lowest college/school threshold per campus, some majors require higher."
+    }
+  },
+  "sources": [
+    "https://admission.universityofcalifornia.edu/campuses-majors/davis/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/irvine/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/san-diego/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/santa-barbara/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/santa-cruz/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/riverside/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/campuses-majors/merced/transfer-admit-data.html",
+    "https://admission.universityofcalifornia.edu/admission-requirements/transfer-requirements/uc-transfer-programs/transfer-admission-guarantee-tag.html",
+    "https://admission.universityofcalifornia.edu/_assets/files/transfer-requirements/updated_202728-tag-matrix_ada.pdf"
+  ]
+}
