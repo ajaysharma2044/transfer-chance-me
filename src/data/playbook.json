@@ -1,0 +1,230 @@
+[
+  {
+    "id": "campus-officer-seat",
+    "title": "Take an officer seat in a club that is electing this month",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 3,
+    "effort": "2-3 hrs/week",
+    "steps": [
+      "Pull your college's club roster and list every org tied to your major that meets weekly.",
+      "Email the current president: say you want an officer role this term and name what you would run.",
+      "Take the unglamorous open seat — treasurer, secretary, events — they go unfilled and still count.",
+      "Log the start date and your hours from week one so the activity has a verifiable span."
+    ],
+    "why": "Club leadership is 11% of everything admitted transfers list, and campus-anchored roles recur throughout admit files.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Treasurer, Economics Society — elected Sep 2026, 3 hrs/week, manage a $2,400 event budget across 6 events.",
+    "realism": "Most campus orgs fill officer vacancies in the first three weeks of term and are actively short of volunteers."
+  },
+  {
+    "id": "tutor-center",
+    "title": "Get hired at the campus tutoring or writing center",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 4,
+    "effort": "4-6 hrs/week",
+    "steps": [
+      "Ask the learning center which subjects they are short of tutors in this term.",
+      "Request a recommendation from the professor whose course you scored highest in.",
+      "Apply for the paid position, not the volunteer one — paid work reads as substance.",
+      "Track students seen and hours weekly so you can state a number on the application."
+    ],
+    "why": "Tutoring and teaching roles are 6% of admit activities and pair the academic core with campus service.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Peer tutor, Math Learning Center — 6 hrs/week, ~14 students/term in calculus and statistics.",
+    "realism": "Learning centers hire every term and prioritize students who did well in the courses they will tutor."
+  },
+  {
+    "id": "faculty-research-ask",
+    "title": "Ask a professor to join their project as an assistant",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 5,
+    "effort": "3-5 hrs/week",
+    "steps": [
+      "Pick the professor whose class you did best in and whose subject matches your intended major.",
+      "Go to office hours with one specific ask: can you help with data, sourcing, or lab setup this term.",
+      "Offer a fixed weekly commitment and put it in writing so both of you can point to a start date.",
+      "Keep a one-line log of what you produced each week — that becomes your description."
+    ],
+    "why": "Faculty research appears in 7% of admit activity lists and is the strongest 'already doing the work' signal in the corpus.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Research assistant to Prof. Nakamura, Applied Economics — coded and cleaned 3 survey datasets, 4 hrs/week.",
+    "realism": "Faculty at community colleges and regional publics are rarely asked and often say yes to a specific, bounded offer."
+  },
+  {
+    "id": "ptk-join",
+    "title": "Join Phi Theta Kappa if your GPA qualifies",
+    "tag": "Credential",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "one application",
+    "steps": [
+      "Check your college's PTK chapter page for the GPA cutoff — usually 3.5 with 12+ credits.",
+      "Submit the membership form and one-time fee before this term's induction date.",
+      "Sign up for one chapter service project so you can describe participation, not just a line item.",
+      "Add the induction date to your activities list."
+    ],
+    "why": "PTK is part of the institutional stack that recurs across community-college admit files, and every admissions reader recognizes it in one line.",
+    "lever": "ptk",
+    "leverValue": "true",
+    "proof": "Phi Theta Kappa Honor Society — inducted Fall 2026; chapter service project (campus food pantry drive).",
+    "realism": "It is a form, a fee, and a GPA check — the only real deadline is your chapter's induction date."
+  },
+  {
+    "id": "honors-program",
+    "title": "Enroll in your college's honors program for the term",
+    "tag": "Credential",
+    "horizon": "sprint",
+    "minWeeks": 3,
+    "effort": "application + honors sections",
+    "steps": [
+      "Find the honors program's rolling application and this term's cutoff date.",
+      "Swap one already-planned course for its honors section so you add rigor, not workload.",
+      "Ask whether the program has a transfer-agreement list — several feed named partner universities.",
+      "Note your entry term; even one honors semester is listable."
+    ],
+    "why": "Honors-program membership is a documented part of the institutional stack in admit files and signals rigor a GPA alone cannot.",
+    "lever": "honors",
+    "leverValue": "true",
+    "proof": "Honors Program, Fall 2026 — honors sections of Microeconomics and Composition.",
+    "realism": "Most honors programs admit on a rolling basis and let you convert an existing enrollment to the honors section early in the term."
+  },
+  {
+    "id": "igetc-finish",
+    "title": "Close the last gaps in IGETC before you file",
+    "tag": "Coursework",
+    "horizon": "semester",
+    "minWeeks": 8,
+    "effort": "1-2 courses",
+    "steps": [
+      "Run your transcript against the IGETC worksheet with a counselor and list exactly what is missing.",
+      "Check ASSIST.org for which of your remaining courses articulate to your target campus and major.",
+      "Register for the missing areas this term; if a section is full, join the waitlist and petition in week one.",
+      "Confirm certification timing with your counselor so it is reportable on the application."
+    ],
+    "why": "IGETC completion is the UC breadth pattern, and finishing it is one of the few coursework moves the engine scores directly.",
+    "lever": "igetc",
+    "leverValue": "true",
+    "proof": "IGETC — complete, certified by the counseling office prior to transfer.",
+    "realism": "Most students are one or two areas short; a single term usually closes it if you register before sections fill."
+  },
+  {
+    "id": "essay-name-programs",
+    "title": "Rewrite the essay to name programs, courses, and a professor",
+    "tag": "Essay",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "6-8 hrs",
+    "steps": [
+      "For each target, open the department's course catalog and pull two courses you could not take where you are.",
+      "Find one professor whose actual research matches what you want to study and read one abstract.",
+      "Replace every sentence about what your current school lacks with what their program specifically offers.",
+      "Keep one core essay and swap only the named-specifics paragraph per school."
+    ],
+    "why": "A school-specific 'why transfer' essay naming programs and professors is the single differentiator admits credit most; complaint-shaped essays fail.",
+    "lever": "essay",
+    "leverValue": "named",
+    "proof": "Opening names the Dyson Applied Economics track, two upper-division courses, and the professor whose lab you would join.",
+    "realism": "This is a rewrite of material you already have — the research per school takes about an hour."
+  },
+  {
+    "id": "surface-your-job",
+    "title": "Put your paid job on the application, with hours",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "30 minutes",
+    "steps": [
+      "List every paid role you have held while enrolled, including the ones you dismissed as unrelated.",
+      "For each, write the hours per week and the span in months.",
+      "Name one responsibility that involved judgment, money, or other people.",
+      "Move it above your high-school entries."
+    ],
+    "why": "Paid work is 13% of admit activities — the second most common category — and reads as substance and maturity, never as a gap.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "Shift lead, campus bookstore — 18 hrs/week while enrolled full-time; trained 4 new hires, closed nightly registers.",
+    "realism": "This is documentation, not commitment: the work already happened."
+  },
+  {
+    "id": "quantify-activities",
+    "title": "Put a number on every activity description you have",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "1 hour",
+    "steps": [
+      "For each activity, add hours per week and the months you have done it.",
+      "Add one outcome with a number: people reached, dollars handled, sessions run, items produced.",
+      "Cut adjectives — 'passionate', 'dedicated' — and replace them with the count.",
+      "Reorder so campus-anchored activities appear first."
+    ],
+    "why": "Admit descriptions are specific and campus-anchored — 50% of their listed activities are campus-level and carry concrete outputs.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "Before: 'Volunteered at a food bank.' After: 'Food bank volunteer, 22 months, 4 hrs/week — coordinated Saturday intake for ~60 families.'",
+    "realism": "Pure rewriting of what you already did; no new commitment at all."
+  },
+  {
+    "id": "tag-file",
+    "title": "File your UC TAG before September 30",
+    "tag": "Timeline",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "one form + counselor check",
+    "steps": [
+      "Confirm your campus GPA floor: Davis 3.2, Irvine 3.4, Santa Barbara 3.4, Santa Cruz 3.0, Riverside 2.7, Merced 2.8.",
+      "Verify your major prep on ASSIST.org for that campus — TAG requires the coursework pattern, not just the GPA.",
+      "Submit the TAG application in the UC Transfer Admission Planner by September 30. There is no late round.",
+      "Then file the UC application itself during the Aug 1 - Nov 30 window."
+    ],
+    "why": "TAG is a genuine contractual guarantee of admission at six UC campuses — not improved odds, a signed agreement.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "TAG agreement on file with UC Davis for Fall 2027 entry.",
+    "realism": "It is one form, but the September 30 date is absolute — the single most expensive deadline a California transfer can miss."
+  },
+  {
+    "id": "measurable-project",
+    "title": "Run one project inside your club and finish it",
+    "tag": "Extracurricular",
+    "horizon": "semester",
+    "minWeeks": 10,
+    "effort": "3-4 hrs/week",
+    "steps": [
+      "Propose one bounded project to your org: a workshop series, a tutoring night, a campus drive.",
+      "Set a target you can count — attendance, dollars, students served — and write it down in week one.",
+      "Recruit two people so it survives your schedule and you can honestly say you led a team.",
+      "Close it out with the final number before applications are due."
+    ],
+    "why": "What separates admit activity descriptions is a measurable output attached to a campus-anchored role, not the prestige of the organization.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Founded and ran a weekly transfer-prep workshop — 7 sessions, 41 attendees, 3 volunteers trained.",
+    "realism": "A single semester is enough for one project with a real number if you scope it small and start in week one."
+  },
+  {
+    "id": "student-government",
+    "title": "Run for a student government seat this term",
+    "tag": "Extracurricular",
+    "horizon": "semester",
+    "minWeeks": 8,
+    "effort": "3-5 hrs/week",
+    "steps": [
+      "Check the student senate calendar — many seats go uncontested or sit vacant mid-year.",
+      "File for a vacant seat or an appointed committee position if elections have passed.",
+      "Pick one issue with a documented outcome you can point to by application time.",
+      "Record meetings attended and anything you voted on or authored."
+    ],
+    "why": "Student government appears in 3% of admit activity lists and is unambiguously campus-anchored institutional involvement.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Senator, Associated Students — authored the resolution that extended library hours through finals week.",
+    "realism": "Vacant and uncontested seats are common; appointment is often faster than a full election cycle."
+  }
+]
