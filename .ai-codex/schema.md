@@ -49,6 +49,7 @@ interface Profile {
 | `tcm.list.v1` | My Schools tracker `{school: {status, notes}}` |
 | `tcm.waitlist.v1` | pricing waitlist emails |
 | `tcm.schooldomain.v1` | favicon domain overrides |
+| `tcm.next.v1` (sessionStorage) | post-login redirect target, e.g. "results" |
 
 ## Env (build-time, .env.example)
 `VITE_REVIEW_ENDPOINT` (e.g. `/api/review` → proxy mode) · `VITE_GOOGLE_CLIENT_ID` (enables Google login) · server-side: `ANTHROPIC_API_KEY`, `ALLOWED_ORIGIN`

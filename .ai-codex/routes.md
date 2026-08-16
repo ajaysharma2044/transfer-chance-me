@@ -8,7 +8,7 @@ Hash-based SPA router in `src/App.tsx` (`viewFromHash()` parses `location.hash`,
 |---|---|---|---|
 | `#/` | landing | `Landing` | Marketing page |
 | `#/check` | check | `Intake` | 3-step profile intake |
-| `#/results` | results | `Results` | Chance estimates for all 31 measured schools |
+| `#/results` | results | `Results` | Chance estimates for all 43 measured schools. **Gated**: no session → `ResultsGate` (blurred teaser + create-account card); signup stores `tcm.next.v1` = "results" so `handleAuth` returns here instead of the portal |
 | `#/pricing` | pricing | `Pricing` | Free / Plus $9 / Counselor $49 (waitlists) |
 | `#/login` | login | `Auth` | Local accounts + optional Google sign-in |
 | `#/portal` | portal | `Portal` | Signed-in dashboard (redirects to login if no session) |

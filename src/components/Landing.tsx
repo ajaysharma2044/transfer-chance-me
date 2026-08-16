@@ -118,45 +118,6 @@ function HeroDemo() {
   );
 }
 
-/** Hero visual: a layered composite of the product itself — chances rows,
- *  an essay-review note, and a live deadline countdown. */
-function HeroStage() {
-  const uc = countdown("UC Berkeley");
-  const rows = [
-    { name: "Michigan", band: "26–50%", tier: "Strong target", cls: "ok" },
-    { name: "Cornell", band: "11–21%", tier: "Target", cls: "mid" },
-    { name: "Stanford", band: "2.6–5%", tier: "High reach", cls: "low" },
-  ];
-  return (
-    <div className="ld-stage" aria-hidden="true">
-      <div className="ld-stage-card ld-stage-chances">
-        <p className="mock-label">Your chances</p>
-        {rows.map((r) => (
-          <div className="ld-stage-row" key={r.name}>
-            <Tile name={r.name} size={22} />
-            <span className="ld-stage-name">{r.name}</span>
-            <span className={`ld-stage-band ld-${r.cls} num`}>{r.band}</span>
-            <span className="ld-stage-tier">{r.tier}</span>
-          </div>
-        ))}
-      </div>
-      <div className="ld-stage-card ld-stage-essay">
-        <p className="mock-label">Essay review</p>
-        <p className="ld-stage-quote">"I've always dreamed of attending a school with more opportunities…"</p>
-        <p className="ld-stage-issue">Reads as escape, not fit — admits name the program.</p>
-        <p className="ld-stage-fix">Fix: name Dyson's food-economics track and the professor whose lab you'd join.</p>
-      </div>
-      {uc && (
-        <div className="ld-stage-card ld-stage-clock">
-          <p className="mock-label">Deadline</p>
-          <p className="ld-stage-days num">{uc.days}</p>
-          <p className="ld-stage-clock-sub">days until the UC window closes ({uc.label})</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /** Official transfer admit rates, highest to lowest —
  *  the ~50× spread is the single most striking fact in the dataset. */
 function RateLadder() {
