@@ -5,7 +5,7 @@ import { analyzeEssay } from "./lib/essay";
 import { getSession, setSession } from "./lib/auth";
 import type { Session } from "./lib/auth";
 import Intake from "./components/Intake";
-import Results from "./components/Results";
+import Results, { ResultsGate } from "./components/Results";
 import Landing from "./components/Landing";
 import SchoolPage from "./components/SchoolPage";
 import Pricing from "./components/Pricing";
@@ -35,6 +35,8 @@ type View =
   | { kind: "school"; name: string };
 
 const STORE = "tcm.profile.v1";
+/** Where to land after signing in, when auth interrupted something. */
+const NEXT_KEY = "tcm.next.v1";
 
 function viewFromHash(): View {
   const h = window.location.hash.replace(/^#\/?/, "").replace(/\/+$/, "");
@@ -110,7 +112,13 @@ export default function App() {
   function handleAuth(s: Session) {
     setSession(s);
     setSessionState(s);
-    nav("portal");
+    // Came from the results gate? Send them straight to what they were promised.
+    let next = "portal";
+    try {
+      const pending = sessionStorage.getItem(NEXT_KEY);
+      if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
+    } catch { /* ok */ }
+    nav(next);
   }
 
   function logout() {
@@ -150,7 +158,19 @@ export default function App() {
         <main><Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} /></main>
       )}
       {view.kind === "results" && (
-        <main><Results profile={profile} onRevise={() => nav("check")} onOpenSchool={openSchool} /></main>
+        <main>
+          {session ? (
+            <Results profile={profile} onRevise={() => nav("check")} onOpenSchool={openSchool} />
+          ) : (
+            <ResultsGate
+              profile={profile}
+              onSignup={() => {
+                try { sessionStorage.setItem(NEXT_KEY, "results"); } catch { /* ok */ }
+                nav("login");
+              }}
+            />
+          )}
+        </main>
       )}
       {view.kind === "pricing" && <main><Pricing onStart={() => nav("check")} /></main>}
       {view.kind === "auth" && <main><Auth onDone={handleAuth} /></main>}

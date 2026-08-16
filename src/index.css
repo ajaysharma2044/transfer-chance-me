@@ -223,6 +223,51 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .numbers .factline b { color: var(--accent); font-size: 20px; margin-right: 6px; }
 
+/* ── Results signup gate ── */
+.gate { max-width: 920px; padding: 56px 24px 96px; text-align: center; }
+.gate h2 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 650; letter-spacing: -0.02em; }
+.gate-dek { color: var(--ink-2); margin-top: 10px; font-size: 15px; }
+.gate-dek b { color: var(--ink); font-weight: 650; }
+.gate-stage {
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px;
+  margin-top: 32px; text-align: left; align-items: start;
+}
+.gate-preview {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
+  padding: 8px 20px; position: relative; overflow: hidden;
+  box-shadow: 0 2px 4px rgba(20, 24, 63, 0.04), 0 14px 40px rgba(20, 24, 63, 0.07);
+}
+.gate-preview::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
+  background: linear-gradient(transparent, var(--bg));
+  pointer-events: none;
+}
+.gate-row {
+  display: flex; align-items: center; gap: 10px; padding: 13px 0;
+  border-top: 1px solid var(--line); font-size: 14px;
+}
+.gate-row:first-child { border-top: none; }
+.gate-name { font-weight: 600; }
+.gate-blur {
+  margin-left: auto; font-weight: 700;
+  color: var(--ink-2); filter: blur(5px); user-select: none;
+}
+.gate-tier { margin-left: 0; width: 84px; text-align: right; font-size: 12px; font-weight: 550; }
+.gate-card {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
+  padding: 24px; box-shadow: 0 2px 4px rgba(20, 24, 63, 0.05), 0 18px 46px rgba(20, 24, 63, 0.10);
+}
+.gate-card h3 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.gate-card ul { list-style: none; margin: 14px 0 20px; }
+.gate-card li { font-size: 13.5px; color: var(--ink-2); padding: 5px 0 5px 20px; position: relative; }
+.gate-card li::before { content: "✓"; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+.gate-card .btn { width: 100%; text-align: center; }
+.gate-alt { margin-top: 12px; font-size: 12.5px; color: var(--ink-3); text-align: center; }
+.linklike { color: var(--blue); font-weight: 550; text-decoration: underline; }
+@media (max-width: 720px) {
+  .gate-stage { grid-template-columns: 1fr; }
+}
+
 /* ── FAQ ── */
 .faq { max-width: 680px; padding: 72px 24px; }
 .faq h2 { margin-bottom: 28px; }

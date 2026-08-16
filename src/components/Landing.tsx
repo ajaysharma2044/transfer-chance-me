@@ -757,7 +757,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           <OddsTicker />
           <div className="cta-row">
             <button type="button" className="btn ld-btn-xl" onClick={onStart}>Check my chances — free</button>
-            <p className="aside">2 minutes · no signup needed · nothing leaves your browser</p>
+            <p className="aside">2 minutes · free account to see your report · nothing leaves your browser</p>
           </div>
           <div className="ld-authority">
             <span className="ld-authority-claim">Made by students who transferred into multiple Ivies</span>
