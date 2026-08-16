@@ -182,9 +182,11 @@ type FocusKind = "upload" | "field" | "act" | null;
 /** A simulated pointer: moves to a target element, clicks it, then the
  *  caller types into it. Positions are measured against the panel so the
  *  motion is pixel-accurate at any width, not guessed. */
+const SCREEN_TITLES = ["Your profile", "Researching your file", "Specific feedback", "Your chances"];
+
 function HeroDemo() {
-  // 0 upload+profile+activities · 1 judging activities · 2 researching · 3 upgrades+chances
-  const [step, setStep] = useState(0);
+  // 0 your profile · 1 researching · 2 specific feedback · 3 your chances — one at a time
+  const [screen, setScreen] = useState(0);
   const [fieldIdx, setFieldIdx] = useState(0);   // fields fully filled (extracted or typed)
   const [actIdx, setActIdx] = useState(0);       // activities fully typed
   const [judged, setJudged] = useState(0);
@@ -211,7 +213,7 @@ function HeroDemo() {
 
   useEffect(() => {
     if (reduced) {
-      setStep(3); setFieldIdx(DEMO_FIELDS.length); setActIdx(DEMO_ACTS.length);
+      setScreen(3); setFieldIdx(DEMO_FIELDS.length); setActIdx(DEMO_ACTS.length);
       setJudged(DEMO_ACTS.length); setScan(DEMO_SCANS.length); setCursorOn(false);
       setUploadDone(true); setReading(false);
       return;
@@ -247,7 +249,7 @@ function HeroDemo() {
     };
 
     const run = async () => {
-      setStep(0); setFieldIdx(0); setActIdx(0); setJudged(0); setScan(0);
+      setScreen(0); setFieldIdx(0); setActIdx(0); setJudged(0); setScan(0);
       setReading(false); setUploadDone(false);
       setFocus({ kind: null, idx: -1, phase: "moving" });
       setActiveText("");
@@ -301,8 +303,8 @@ function HeroDemo() {
       await moveTo(scanBtnRef.current, 10);
       if (cancelled) return;
       await click();
-      setStep(1);
       await wait(140);
+      // Verdicts land on the activities before we ever leave this screen.
       for (let i = 0; i < DEMO_ACTS.length; i++) {
         if (cancelled) return;
         setJudged(i + 1);
@@ -311,8 +313,8 @@ function HeroDemo() {
 
       if (cancelled) return;
       setCursorOn(false);
-      await wait(260);
-      setStep(2);
+      await wait(360);
+      setScreen(1);
       for (let i = 0; i < DEMO_SCANS.length; i++) {
         if (cancelled) return;
         setScan(i + 1);
@@ -320,8 +322,11 @@ function HeroDemo() {
       }
 
       if (cancelled) return;
-      await wait(260);
-      setStep(3);
+      await wait(900);
+      setScreen(2);
+      await wait(2600);
+      if (cancelled) return;
+      setScreen(3);
       await wait(3400);
       if (cancelled) return;
       run();
@@ -336,130 +341,148 @@ function HeroDemo() {
   const isUpload = focus.kind === "upload";
 
   return (
-    <div className="ld-demo" aria-hidden="true">
-      {/* 1 — the file, as they'd actually enter it: upload extracts, a live cursor fills the rest */}
-      <div className="ld-demo-panel ld-demo-in" ref={panelRef}>
-        <p className="mock-label">Your profile</p>
-        <div
-          className={`ld-demo-upload${uploadDone ? " done" : ""}${isUpload ? " targeting" : ""}`}
-          ref={uploadRef}
-        >
-          <svg width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true">
-            <path d="M1 1h5.5L10 4.5V12H1V1Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-            <path d="M6.3 1v3.3h3.4" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
-          </svg>
-          <span className="ld-demo-uploadname">transcript.pdf</span>
-          <span className="ld-demo-uploadstate">
-            {reading ? "reading…" : uploadDone ? "extracted" : ""}
-          </span>
+    <div className="ld-mac">
+      <div className="ld-mac-lid"><span className="ld-mac-cam" /></div>
+
+      <div className="ld-mac-screen" aria-hidden="true">
+        <div className="ld-mac-topline">
+          <span className="ld-mac-count num">{String(screen + 1).padStart(2, "0")} / 04</span>
+          <span className="ld-mac-title">{SCREEN_TITLES[screen]}</span>
+          {screen === 1 && <span className="ld-demo-live">live</span>}
+          {screen === 2 && <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>}
         </div>
-        {DEMO_FIELDS.map((f, i) => (
-          <div
-            className={`ld-demo-field${i < fieldIdx || isField(i) ? " on" : ""}${isField(i) ? " targeting" : ""}`}
-            key={f.label}
-            ref={(el) => { fieldRefs.current[i] = el; }}
-          >
-            <span className="ld-demo-flabel">{f.label}</span>
-            <span className="ld-demo-fvalue">
-              {i < fieldIdx ? f.value : isField(i) && focus.phase === "typing" ? activeText : ""}
-              {isField(i) && focus.phase === "typing" && <i className="ld-caret" />}
-              {i < fieldIdx && f.via === "extract" && <i className="ld-demo-src">PDF</i>}
-            </span>
-            <span className="ld-demo-fhint">{i < fieldIdx ? f.hint : ""}</span>
-          </div>
-        ))}
-        <p className="ld-demo-sub">Your activities, as you'd type them</p>
-        {DEMO_ACTS.map((a, i) => (
-          <div
-            className={`ld-demo-act${i < judged ? " judged" : ""}${i < actIdx || isAct(i) ? " on" : ""}${isAct(i) ? " targeting" : ""}`}
-            key={a.raw}
-            ref={(el) => { actRefs.current[i] = el; }}
-          >
-            <span className="ld-demo-actraw">
-              {i < actIdx ? a.raw : isAct(i) && focus.phase === "typing" ? activeText : ""}
-              {isAct(i) && focus.phase === "typing" && <i className="ld-caret" />}
-            </span>
-            {i < judged && (
-              <span className={`ld-demo-actv ld-demo-${a.tone}`}>{a.verdict}</span>
-            )}
-          </div>
-        ))}
-        <div className="ld-demo-runbtn" ref={scanBtnRef}>
-          <span className="ld-demo-runicon">↻</span> Analyze my file
+        <div className="ld-mac-steps">
+          {[0, 1, 2, 3].map((i) => (
+            <span className={`ld-mac-step${screen >= i ? " done" : ""}`} key={i}><span className="ld-mac-step-fill" /></span>
+          ))}
         </div>
 
-        {cursorOn && (
-          <div className="ld-cursor" style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}>
-            <svg width="15" height="18" viewBox="0 0 15 18" fill="none">
-              <path d="M1 1L1 15.5L4.6 12.2L6.9 17L9.3 15.9L7 11.2L11.8 11.1L1 1Z" fill="var(--ink)" stroke="#fff" strokeWidth="1.1" strokeLinejoin="round" />
-            </svg>
-            <span key={pulse} className="ld-click-ring" />
+        {screen === 0 && (
+          <div className="ld-mac-panel ld-demo-in" ref={panelRef} key="s0">
+            <div
+              className={`ld-demo-upload${uploadDone ? " done" : ""}${isUpload ? " targeting" : ""}`}
+              ref={uploadRef}
+            >
+              <svg width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true">
+                <path d="M1 1h5.5L10 4.5V12H1V1Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+                <path d="M6.3 1v3.3h3.4" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+              </svg>
+              <span className="ld-demo-uploadname">transcript.pdf</span>
+              <span className="ld-demo-uploadstate">
+                {reading ? "reading…" : uploadDone ? "extracted" : ""}
+              </span>
+            </div>
+            <div className="ld-mac-cols">
+              <div>
+                {DEMO_FIELDS.map((f, i) => (
+                  <div
+                    className={`ld-demo-field${i < fieldIdx || isField(i) ? " on" : ""}${isField(i) ? " targeting" : ""}`}
+                    key={f.label}
+                    ref={(el) => { fieldRefs.current[i] = el; }}
+                  >
+                    <span className="ld-demo-flabel">{f.label}</span>
+                    <span className="ld-demo-fvalue">
+                      {i < fieldIdx ? f.value : isField(i) && focus.phase === "typing" ? activeText : ""}
+                      {isField(i) && focus.phase === "typing" && <i className="ld-caret" />}
+                      {i < fieldIdx && f.via === "extract" && <i className="ld-demo-src">PDF</i>}
+                    </span>
+                    <span className="ld-demo-fhint">{i < fieldIdx ? f.hint : ""}</span>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <p className="ld-demo-sub">Your activities, as you'd type them</p>
+                {DEMO_ACTS.map((a, i) => (
+                  <div
+                    className={`ld-demo-act${i < judged ? " judged" : ""}${i < actIdx || isAct(i) ? " on" : ""}${isAct(i) ? " targeting" : ""}`}
+                    key={a.raw}
+                    ref={(el) => { actRefs.current[i] = el; }}
+                  >
+                    <span className="ld-demo-actraw">
+                      {i < actIdx ? a.raw : isAct(i) && focus.phase === "typing" ? activeText : ""}
+                      {isAct(i) && focus.phase === "typing" && <i className="ld-caret" />}
+                    </span>
+                    {i < judged && (
+                      <span className={`ld-demo-actv ld-demo-${a.tone}`}>{a.verdict}</span>
+                    )}
+                  </div>
+                ))}
+                <div className="ld-demo-runbtn" ref={scanBtnRef}>
+                  <span className="ld-demo-runicon">↻</span> Analyze my file
+                </div>
+              </div>
+            </div>
+
+            {cursorOn && (
+              <div className="ld-cursor" style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}>
+                <svg width="15" height="18" viewBox="0 0 15 18" fill="none">
+                  <path d="M1 1L1 15.5L4.6 12.2L6.9 17L9.3 15.9L7 11.2L11.8 11.1L1 1Z" fill="var(--ink)" stroke="#fff" strokeWidth="1.1" strokeLinejoin="round" />
+                </svg>
+                <span key={pulse} className="ld-click-ring" />
+              </div>
+            )}
+          </div>
+        )}
+
+        {screen === 1 && (
+          <div className="ld-mac-panel ld-demo-scan" key="s1">
+            {DEMO_SCANS.map((sc, i) => (
+              <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan ? " active" : ""}`} key={sc.run}>
+                <span className="ld-demo-scanicon">
+                  {i < scan ? "✓" : i === scan ? <span className="ld-demo-spin" /> : "·"}
+                </span>
+                <span className="ld-demo-scantext">
+                  {sc.run}
+                  {i < scan && <b>{sc.found}</b>}
+                </span>
+              </div>
+            ))}
+            <div className={`ld-demo-patterns${scan >= DEMO_SCANS.length ? " on" : ""}`}>
+              <p className="ld-demo-patternhead">Real patterns this file matches — not a guess</p>
+              {DEMO_PATTERNS.map((p, i) => (
+                <div className="ld-demo-pattern" key={p.stat} style={{ transitionDelay: `${i * 110}ms` }}>
+                  <b className="num">{p.stat}</b>
+                  <span>{p.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {screen === 2 && (
+          <div className="ld-mac-panel ld-demo-fix" key="s2">
+            {DEMO_UPGRADES.map((u, i) => (
+              <div
+                className="ld-demo-up on"
+                key={u.tag}
+                style={{ animationDelay: `${i * 150}ms`, "--fx": u.c } as CSSProperties}
+              >
+                <span className="ld-demo-uptag">{u.tag}</span>
+                <p className="ld-demo-before">{u.before}</p>
+                <p className="ld-demo-after">{u.after}</p>
+                <p className="ld-demo-upwhy">{u.why}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {screen === 3 && (
+          <div className="ld-mac-panel ld-demo-out" key="s3">
+            {DEMO_ROWS.map((e, i) => (
+              <DemoOdds key={e.school.id} e={e} active delay={i * 150} />
+            ))}
+            <div className="ld-demo-stack on">
+              {DEMO_EC_LIFT >= 0.1 ? (
+                <>Fixing the activities lane alone → <b className="num">+{DEMO_EC_LIFT.toFixed(1)} pts</b> across your list</>
+              ) : (
+                <>Same work, made legible — the whole plan is worth <b className="num">+{DEMO_PLAN.stackedPp.toFixed(1)} pts</b></>
+              )}
+            </div>
           </div>
         )}
       </div>
 
-      {/* 2 — reading each activity against the corpus, then the patterns this file matches */}
-      <div className={`ld-demo-panel ld-demo-scan${step >= 1 ? " on" : ""}`}>
-        <p className="mock-label">
-          Researching your file
-          {(step === 1 || step === 2) && <span className="ld-demo-live">live</span>}
-        </p>
-        {DEMO_SCANS.map((sc, i) => (
-          <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan && step === 2 ? " active" : ""}`} key={sc.run}>
-            <span className="ld-demo-scanicon">
-              {i < scan ? "✓" : i === scan && step === 2 ? <span className="ld-demo-spin" /> : "·"}
-            </span>
-            <span className="ld-demo-scantext">
-              {sc.run}
-              {i < scan && <b>{sc.found}</b>}
-            </span>
-          </div>
-        ))}
-        <div className={`ld-demo-patterns${scan >= DEMO_SCANS.length ? " on" : ""}`}>
-          <p className="ld-demo-patternhead">Real patterns this file matches — not a guess</p>
-          {DEMO_PATTERNS.map((p, i) => (
-            <div className="ld-demo-pattern" key={p.stat} style={{ transitionDelay: `${i * 110}ms` }}>
-              <b className="num">{p.stat}</b>
-              <span>{p.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3 — each activity, upgraded */}
-      <div className={`ld-demo-panel ld-demo-fix${step >= 3 ? " on" : ""}`}>
-        <p className="mock-label">
-          Specific feedback, activity by activity
-          <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>
-        </p>
-        {DEMO_UPGRADES.map((u, i) => (
-          <div
-            className={`ld-demo-up${step >= 3 ? " on" : ""}`}
-            key={u.tag}
-            style={{ transitionDelay: `${i * 160}ms`, "--fx": u.c } as CSSProperties}
-          >
-            <span className="ld-demo-uptag">{u.tag}</span>
-            <p className="ld-demo-before">{u.before}</p>
-            <p className="ld-demo-after">{u.after}</p>
-            <p className="ld-demo-upwhy">{u.why}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* 4 — what it does to the odds */}
-      <div className={`ld-demo-panel ld-demo-out${step >= 3 ? " on" : ""}`}>
-        <p className="mock-label">Your chances</p>
-        {DEMO_ROWS.map((e, i) => (
-          <DemoOdds key={e.school.id} e={e} active={step >= 3} delay={i * 150} />
-        ))}
-        <div className={`ld-demo-stack${step >= 3 ? " on" : ""}`}>
-          {DEMO_EC_LIFT >= 0.1 ? (
-            <>Fixing the activities lane alone → <b className="num">+{DEMO_EC_LIFT.toFixed(1)} pts</b> across your list</>
-          ) : (
-            <>Same work, made legible — the whole plan is worth <b className="num">+{DEMO_PLAN.stackedPp.toFixed(1)} pts</b></>
-          )}
-        </div>
-      </div>
+      <div className="ld-mac-base"><span className="ld-mac-notch" /></div>
     </div>
   );
 }

@@ -385,39 +385,78 @@
 .faq details[open] p { animation: ld-faq 280ms ease; }
 @keyframes ld-faq { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
-/* ── Hero demo: profile → live research → odds → dated action plan ────── */
-.ld-demo {
-  margin: 48px auto 8px;
-  max-width: 1180px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  align-items: stretch;
+/* ── Hero demo: one screen at a time, staged inside a MacBook ───────── */
+.ld-mac {
+  margin: 52px auto 8px;
+  max-width: 660px;
   text-align: left;
 }
-.ld-demo-panel {
+.ld-mac-lid {
   position: relative;
-  overflow: hidden;
+  background: linear-gradient(180deg, #303036, #1b1b1f);
+  border-radius: 20px 20px 0 0;
+  padding: 13px 13px 0;
+  box-shadow: 0 34px 70px -24px rgba(20, 24, 63, 0.38), 0 12px 28px rgba(20, 24, 63, 0.14);
+}
+.ld-mac-cam {
+  position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #050506; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+}
+.ld-mac-screen {
+  position: relative; overflow: hidden;
   background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px 18px;
-  box-shadow: 0 2px 4px rgba(20, 24, 63, 0.05), 0 18px 46px rgba(20, 24, 63, 0.10);
-  min-height: 268px;
+  border-radius: 7px 7px 0 0;
+  min-height: 430px;
+  padding: 16px 20px 20px;
 }
-.ld-demo .mock-label { display: flex; align-items: center; gap: 8px; }
-
-/* Panels wake up in sequence, with a lift and a brand-tinted ring */
-.ld-demo-scan, .ld-demo-out, .ld-demo-fix {
-  opacity: 0.28; transform: translateY(14px) scale(0.985);
-  transition: opacity 520ms ease, transform 520ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 520ms ease;
+.ld-mac-base {
+  position: relative;
+  height: 13px;
+  background: linear-gradient(180deg, #dcdce1, #b8b8c0);
+  border-radius: 0 0 11px 11px;
+  box-shadow: 0 8px 16px rgba(20, 24, 63, 0.16);
 }
-.ld-demo-scan.on, .ld-demo-out.on, .ld-demo-fix.on { opacity: 1; transform: none; }
-.ld-demo-scan.on { box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 18px 46px rgba(20,24,63,0.10), 0 0 0 2px rgba(36,120,229,0.16); }
-.ld-demo-out.on { box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 18px 46px rgba(20,24,63,0.10), 0 0 0 2px rgba(108,75,224,0.16); }
-.ld-demo-fix.on { box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 22px 54px rgba(20,24,63,0.13), 0 0 0 2px rgba(20,184,160,0.20); }
+.ld-mac-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 92px; height: 6px;
+  background: linear-gradient(180deg, #c9c9d1, #adadb6);
+  border-radius: 0 0 9px 9px;
+}
 
-/* Panel 1 — a simulated pointer fills the form in, live */
+/* Technical readout above the active screen: which of 4, and progress */
+.ld-mac-topline {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 9px;
+}
+.ld-mac-count {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: var(--ink-3);
+}
+.ld-mac-title { font-size: 12.5px; font-weight: 700; color: var(--ink); letter-spacing: -0.005em; }
+.ld-mac-steps { display: flex; gap: 5px; margin-bottom: 16px; }
+.ld-mac-step { flex: 1; height: 3px; border-radius: 2px; background: var(--bg-soft); overflow: hidden; }
+.ld-mac-step-fill {
+  display: block; height: 100%; width: 0; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--accent));
+  transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-mac-step.done .ld-mac-step-fill { width: 100%; }
+
+/* Each screen mounts fresh (key={screen}), so a keyframe plays every time
+   without needing a class-toggle-after-mount trick. */
+.ld-mac-panel {
+  position: relative;
+  animation: ld-scr-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  min-height: 300px;
+}
+@keyframes ld-scr-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+}
+
+/* Screen 1 — profile: two columns so nothing is squeezed vertically */
+.ld-mac-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0 26px;
+  padding-top: 4px;
+}
 .ld-demo-in { overflow: visible; }
 
 .ld-cursor {
@@ -626,21 +665,21 @@
 .ld-demo-stack.on { opacity: 1; }
 .ld-demo-stack b { color: var(--teal); font-weight: 800; font-size: 13px; }
 
-@media (max-width: 1120px) {
-  .ld-demo { grid-template-columns: 1fr 1fr; max-width: 760px; }
-}
-@media (max-width: 620px) {
-  .ld-demo { grid-template-columns: 1fr; }
-  .ld-demo-panel { min-height: 0; }
+@media (max-width: 700px) {
+  .ld-mac { max-width: 92vw; }
+  .ld-mac-screen { min-height: 0; padding: 14px 16px 18px; }
+  .ld-mac-cols { grid-template-columns: 1fr; gap: 16px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ld-demo-field, .ld-demo-row, .ld-demo-fixrow, .ld-demo-out, .ld-demo-fix,
-  .ld-demo-scan, .ld-demo-scanrow, .ld-demo-scanfoot, .ld-demo-stack, .ld-demo-patterns, .ld-demo-pattern {
-    opacity: 1; transform: none; transition: none;
+  .ld-demo-scan, .ld-demo-scanrow, .ld-demo-scanfoot, .ld-demo-stack, .ld-demo-patterns, .ld-demo-pattern,
+  .ld-mac-panel, .ld-demo-up {
+    opacity: 1; transform: none; transition: none; animation: none;
   }
   .ld-caret, .ld-demo-spin, .ld-demo-live, .ld-demo-lift, .ld-demo-src { animation: none; }
   .ld-demo-metre-fill { transition: none; }
   .ld-cursor, .ld-click-ring, .ld-demo-runbtn { display: none; }
+  .ld-mac-step-fill { transition: none; }
   .ld-demo-field.targeting, .ld-demo-act.targeting, .ld-demo-upload.targeting { box-shadow: none; }
   .ld-demo-field.targeting::before, .ld-demo-field.targeting::after,
   .ld-demo-act.targeting::before, .ld-demo-act.targeting::after { display: none; }
@@ -818,14 +857,13 @@
 .ld-demo-warn { color: #a86a1f; }
 .ld-demo-bad { color: var(--coral); }
 
-/* Per-activity upgrade cards */
+/* Per-activity upgrade cards — mounts fresh each cycle, so a keyframe
+   (not a transition) is what actually plays the entrance. */
 .ld-demo-up {
   padding: 9px 0 9px 11px; border-left: 3px solid var(--fx, var(--accent));
   margin-bottom: 9px;
-  opacity: 0; transform: translateY(12px) scale(0.97);
-  transition: opacity 480ms ease, transform 480ms cubic-bezier(0.22, 1.25, 0.36, 1);
+  animation: ld-scr-in 420ms cubic-bezier(0.22, 1.25, 0.36, 1) both;
 }
-.ld-demo-up.on { opacity: 1; transform: none; }
 .ld-demo-uptag {
   font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--fx, var(--accent));
