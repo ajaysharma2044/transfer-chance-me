@@ -182,12 +182,13 @@
 .ld-ladder-bar {
   display: block; height: 100%; border-radius: 6px;
   background: linear-gradient(90deg, var(--blue), var(--accent));
-  transform-origin: left; animation: ld-grow 800ms cubic-bezier(0.25, 1, 0.35, 1) backwards;
+  transform-origin: left; transform: scaleX(0);
+  transition: transform 900ms cubic-bezier(0.25, 1, 0.35, 1);
 }
+.reveal.in .ld-ladder-bar { transform: scaleX(1); }
 .ld-ladder-row:nth-child(-n+2) .ld-ladder-bar { background: linear-gradient(90deg, var(--teal), var(--blue)); }
 .ld-ladder-row:nth-last-child(-n+3) .ld-ladder-bar { background: linear-gradient(90deg, var(--coral), var(--accent)); }
 .ld-ladder-rate { text-align: right; font-size: 13px; font-weight: 650; color: var(--ink-2); }
-@keyframes ld-grow { from { transform: scaleX(0); } }
 .ld-ladder figcaption { margin-top: 14px; text-align: center; font-size: 12.5px; color: var(--ink-3); }
 @media (max-width: 640px) {
   .ld-ladder-row { grid-template-columns: 118px 1fr 48px; gap: 10px; }
@@ -203,10 +204,24 @@
   border-radius: 16px; padding: 18px 20px; text-align: left;
   box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 24px 60px rgba(20,24,63,0.13);
 }
-.ld-stage-chances { left: 4%; top: 12px; width: 46%; transform: rotate(-2deg); animation: ld-bob 7s ease-in-out infinite; }
-.ld-stage-essay { right: 2%; top: 0; width: 44%; transform: rotate(1.6deg); animation: ld-bob 8.5s ease-in-out infinite 600ms; }
-.ld-stage-clock { left: 40%; bottom: 0; width: 26%; transform: rotate(-1deg); animation: ld-bob 6s ease-in-out infinite 300ms; z-index: 2; }
+.ld-stage-chances {
+  left: 4%; top: 12px; width: 46%; transform: rotate(-2deg);
+  translate: calc(var(--px, 0) * -9px) calc(var(--py, 0) * -5px);
+  animation: ld-cardin 750ms cubic-bezier(0.22, 1, 0.36, 1) 380ms backwards, ld-bob 7s ease-in-out 1.2s infinite;
+}
+.ld-stage-essay {
+  right: 2%; top: 0; width: 44%; transform: rotate(1.6deg);
+  translate: calc(var(--px, 0) * 7px) calc(var(--py, 0) * 4px);
+  animation: ld-cardin 750ms cubic-bezier(0.22, 1, 0.36, 1) 540ms backwards, ld-bob 8.5s ease-in-out 1.4s infinite;
+}
+.ld-stage-clock {
+  left: 40%; bottom: 0; width: 26%; transform: rotate(-1deg); z-index: 2;
+  translate: calc(var(--px, 0) * -13px) calc(var(--py, 0) * -8px);
+  animation: ld-cardin 750ms cubic-bezier(0.22, 1, 0.36, 1) 700ms backwards, ld-bob 6s ease-in-out 1.6s infinite;
+}
+.ld-stage-card { transition: translate 260ms ease-out; }
 @keyframes ld-bob { 0%,100% { margin-top: 0; } 50% { margin-top: -9px; } }
+@keyframes ld-cardin { from { opacity: 0; translate: 0 30px; } }
 .ld-stage-row { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; }
 .ld-stage-row:first-of-type { border-top: none; }
 .ld-stage-name { font-weight: 550; }
@@ -279,3 +294,90 @@
 /* Marquee pills: never shrink, never wrap — kills the overlap collisions */
 .ld-marquee .ld-wallgrid { width: max-content; flex-wrap: nowrap; }
 .ld-marquee .ld-wall-btn { flex: 0 0 auto; white-space: nowrap; }
+
+/* ── Motion layer ─────────────────────────────────────────────── */
+
+/* Headline: words cascade up one by one; the whole-h1 rise is retired */
+.hero .ld-h1 { animation: none; }
+.ld-h1 .ld-w { display: inline-block; animation: ld-word 620ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.ld-h1 .ld-w:nth-child(1) { animation-delay: 60ms; }
+.ld-h1 .ld-w:nth-child(2) { animation-delay: 140ms; }
+.ld-h1 .ld-w:nth-child(3) { animation-delay: 220ms; }
+.ld-h1 .ld-w:nth-child(4) { animation-delay: 310ms; }
+.ld-h1 .ld-w:nth-child(5) { animation-delay: 400ms; }
+.ld-h1 .ld-w:nth-child(6) { animation-delay: 470ms; }
+@keyframes ld-word { from { opacity: 0; transform: translateY(0.55em); } to { opacity: 1; transform: none; } }
+
+/* The gradient word shimmers slowly */
+.ld-grad { background-size: 200% 100%; animation: ld-shimmer 6s ease-in-out infinite alternate; }
+.ld-h1 .ld-grad.ld-w { animation: ld-word 620ms cubic-bezier(0.22, 1, 0.36, 1) 310ms backwards, ld-shimmer 6s ease-in-out 1s infinite alternate; }
+@keyframes ld-shimmer { from { background-position: 0% 0; } to { background-position: 100% 0; } }
+
+/* Ticker: a thin progress bar times each 2.6s cycle */
+.ld-ticker { position: relative; overflow: hidden; }
+.ld-ticker-bar {
+  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+  transform-origin: left; transform: scaleX(0);
+  animation: ld-tickbar 2600ms linear forwards;
+  opacity: 0.75;
+}
+@keyframes ld-tickbar { to { transform: scaleX(1); } }
+
+/* Findings: the big figure pops in after its card lands */
+.reveal .ld-fig { opacity: 0; }
+.reveal.in .ld-fig {
+  opacity: 1;
+  animation: ld-pop 620ms cubic-bezier(0.2, 1.4, 0.4, 1) backwards;
+  animation-delay: calc(var(--d, 0ms) + 140ms);
+}
+@keyframes ld-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+
+/* Marquee: soft fade at both edges */
+.ld-marquee {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+/* Feature rows: copy slides from the left, visual from the right */
+.ld-feature.reveal { opacity: 1; transform: none; }
+.ld-feature.reveal .f-copy, .ld-feature.reveal .f-visual {
+  opacity: 0; transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-feature.reveal .f-copy { transform: translateX(-26px); }
+.ld-feature.reveal .f-visual { transform: translateX(26px); transition-delay: 90ms; }
+.ld-feature.reveal.in .f-copy, .ld-feature.reveal.in .f-visual { opacity: 1; transform: none; }
+
+/* Hero glow orbs also answer the cursor, at the deepest layer */
+.ld-orb { translate: calc(var(--px, 0) * 14px) calc(var(--py, 0) * 10px); transition: translate 400ms ease-out; }
+
+/* Numbers band: the tri-color wash pans slowly */
+.numbers { background-size: 220% 220%; animation: ld-bandpan 16s ease-in-out infinite alternate; }
+@keyframes ld-bandpan { from { background-position: 0% 40%; } to { background-position: 100% 60%; } }
+
+/* Closing band: slow aurora drift on the navy */
+.closing { position: relative; overflow: hidden; }
+.closing::before {
+  content: ""; position: absolute; inset: -30%;
+  background:
+    radial-gradient(circle at 28% 45%, rgba(108, 75, 224, 0.45), transparent 42%),
+    radial-gradient(circle at 72% 55%, rgba(36, 120, 229, 0.38), transparent 42%),
+    radial-gradient(circle at 52% 80%, rgba(20, 184, 160, 0.25), transparent 38%);
+  animation: ld-aurora 12s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.closing .shell { position: relative; z-index: 1; }
+@keyframes ld-aurora { from { transform: translate3d(-3%, -2%, 0) scale(1); } to { transform: translate3d(3%, 2%, 0) scale(1.08); } }
+
+/* FAQ: answers ease open */
+.faq details[open] p { animation: ld-faq 280ms ease; }
+@keyframes ld-faq { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+/* Reduced motion: everything present, nothing moving */
+@media (prefers-reduced-motion: reduce) {
+  .ld-h1 .ld-w, .ld-grad, .ld-ticker-bar, .numbers, .closing::before { animation: none; }
+  .ld-ladder-bar, .reveal.in .ld-ladder-bar { transform: scaleX(1); transition: none; }
+  .reveal .ld-fig { opacity: 1; animation: none; }
+  .ld-feature.reveal .f-copy, .ld-feature.reveal .f-visual { opacity: 1; transform: none; }
+  .ld-stage-card, .ld-orb { translate: none; transition: none; }
+  .ld-stage-chances, .ld-stage-essay, .ld-stage-clock { animation: none; }
+}

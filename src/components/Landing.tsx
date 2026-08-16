@@ -82,7 +82,7 @@ function RateLadder() {
             <span className="ld-ladder-barwrap">
               <span
                 className="ld-ladder-bar"
-                style={{ width: `${(s.rate / max) * 100}%`, animationDelay: `${250 + i * 70}ms` }}
+                style={{ width: `${(s.rate / max) * 100}%`, transitionDelay: `${120 + i * 70}ms` }}
               />
             </span>
             <span className="ld-ladder-rate num">{s.rate.toFixed(1)}%</span>
@@ -188,6 +188,7 @@ function OddsTicker() {
         </span>
       </span>
       <span className="ld-ticker-num num" style={{ color }}>{disp.toFixed(1)}%</span>
+      <span className="ld-ticker-bar" key={`b${i}`} style={{ background: color }} />
     </div>
   );
 }
@@ -337,7 +338,7 @@ function Findings({ rows }: { rows: string }) {
       <p className="ld-sec-dek">Findings from {rows} recorded outcomes — some of them surprising.</p>
       <div className="ld-findgrid">
         {FINDINGS.map((f, i) => (
-          <div key={f.title} className="reveal" style={{ transitionDelay: `${i * 90}ms` }}>
+          <div key={f.title} className="reveal" style={{ transitionDelay: `${i * 90}ms`, "--d": `${i * 90}ms` } as CSSProperties}>
             <div className="ld-findcard" style={{ "--fc": f.color } as CSSProperties}>
               <span className="ld-fig">
                 {f.figure}
@@ -362,9 +363,29 @@ function Findings({ rows }: { rows: string }) {
 export default function Landing({ onStart, onOpenSchool }: { onStart: () => void; onOpenSchool: (name: string) => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
   useReveal();
+
+  // Pointer parallax: the hero's cards and glow orbs drift a few pixels
+  // toward the cursor at different depths. Off under reduced motion.
+  const heroRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--px", (((e.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
+        el.style.setProperty("--py", (((e.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
+      });
+    };
+    el.addEventListener("mousemove", onMove);
+    return () => { el.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+  }, []);
+
   return (
     <main>
-      <div className="ld-herowrap">
+      <div className="ld-herowrap" ref={heroRef}>
         <div className="ld-orbs" aria-hidden="true">
           <span className="ld-orb ld-orb-a" />
           <span className="ld-orb ld-orb-b" />
@@ -374,7 +395,11 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <section className="shell hero">
           <OrbitLogos />
           <span className="badge">{rows} real transfer applications analyzed · 2011–2026</span>
-          <h1>Where would you <em className="ld-grad">actually</em> get in?</h1>
+          <h1 className="ld-h1">
+            <span className="ld-w">Where</span> <span className="ld-w">would</span>{" "}
+            <span className="ld-w">you</span> <em className="ld-grad ld-w">actually</em>{" "}
+            <span className="ld-w">get</span> <span className="ld-w">in?</span>
+          </h1>
           <p className="dek">
             Harvard takes <b className="ld-coral">0.7%</b> of transfers. UNC takes{" "}
             <b className="ld-teal">37%</b>. Six UCs will <b className="ld-purple">guarantee</b> your
@@ -443,7 +468,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         </div>
       </section>
 
-      <section className="shell faq">
+      <section className="shell faq reveal">
         <h2>Questions people ask</h2>
         <details>
           <summary>Where does the data come from?</summary>
@@ -481,7 +506,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
       </section>
 
       <section className="closing">
-        <div className="shell">
+        <div className="shell reveal">
           <h2>Two minutes. Real numbers.</h2>
           <button type="button" className="btn" onClick={onStart}>Check my chances</button>
         </div>
