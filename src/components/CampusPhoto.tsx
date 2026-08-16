@@ -40,18 +40,66 @@ const TITLE_OVERRIDES: Record<string, string> = {
 interface WikiInfo { img: string | null; page: string | null }
 const memo = new Map<string, Promise<WikiInfo>>();
 
+const NOT_A_PHOTO = /logo|seal|crest|coat[_ ]of[_ ]arms|wordmark|emblem|shield|banner|icon|map|locator|flag|signature|president|chancellor|provost|professor|dean|founder|police|protest|riot|encampment|rally|\bprint\b|woodcut|front[_ ]view/i;
+const LOOKS_LIKE_CAMPUS = /campus|aerial|montage|hall|library|tower|quad|lawn|plaza|chapel|dome|arch|gate|court|walk|green|building|stadium|observatory|garden|square|skyline|panorama|view of/i;
+
+interface MediaItem { type?: string; title?: string; srcset?: { src: string }[] }
+
+const HISTORICAL = /engraving|lithograph|painting|drawing|sketch|portrait|bust|statue|medal|stamp|document|charter|deed|daguerreotype|\bold\b|historic|circa|postcard/i;
+const OLD_YEAR = /\b1[5-9]\d{2}\b/; // 1500–1999 in the filename → likely archival
+
+/** Pick a modern campus photograph from the article's media, never a logo. */
+function pickPhoto(items: MediaItem[]): string | null {
+  const photos = items.filter(
+    (m) =>
+      m.type === "image" &&
+      m.srcset?.length &&
+      m.title &&
+      !/\.svg$/i.test(m.title) &&
+      !NOT_A_PHOTO.test(m.title),
+  );
+  if (photos.length === 0) return null;
+  const scored = photos.map((m, i) => {
+    const t = m.title!;
+    let s = 0;
+    if (/montage|aerial|skyline|panorama/i.test(t)) s += 3;
+    if (LOOKS_LIKE_CAMPUS.test(t)) s += 2;
+    if (/\.jpe?g$/i.test(t)) s += 1;
+    if (OLD_YEAR.test(t)) s -= 4;
+    if (HISTORICAL.test(t)) s -= 5;
+    return { m, s, i };
+  });
+  scored.sort((a, b) => b.s - a.s || a.i - b.i);
+  const best = scored[0];
+  // Require a positive campus signal — a clean gradient beats a wrong photo.
+  if (!best || best.s < 2) return null;
+  const src = best.m.srcset![best.m.srcset!.length - 1].src;
+  return src.startsWith("//") ? `https:${src}` : src;
+}
+
 function lookup(name: string): Promise<WikiInfo> {
   if (!memo.has(name)) {
     const title = (TITLE_OVERRIDES[name] ?? name).replace(/ /g, "_");
+    const enc = encodeURIComponent(title);
     memo.set(
       name,
-      fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => ({
-          img: d?.originalimage?.source ?? d?.thumbnail?.source ?? null,
-          page: d?.content_urls?.desktop?.page ?? null,
-        }))
-        .catch(() => ({ img: null, page: null })),
+      Promise.all([
+        fetch(`https://en.wikipedia.org/api/rest_v1/page/media-list/${enc}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null),
+        fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${enc}`)
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null),
+      ]).then(([media, summary]) => {
+        const fromMedia = media?.items ? pickPhoto(media.items as MediaItem[]) : null;
+        // The lead image is a fallback only if it isn't logo-shaped
+        const lead: string | null = summary?.originalimage?.source ?? null;
+        const leadOk = lead && !NOT_A_PHOTO.test(lead) && !/\.svg/i.test(lead);
+        return {
+          img: fromMedia ?? (leadOk ? lead : null),
+          page: summary?.content_urls?.desktop?.page ?? null,
+        };
+      }),
     );
   }
   return memo.get(name)!;
