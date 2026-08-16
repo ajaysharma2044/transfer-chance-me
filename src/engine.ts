@@ -77,6 +77,10 @@ export interface Profile {
   /** Hours/week working while enrolled (context for review) */
   workHours: number | null;
   firstGen: boolean;
+  /** Activities & extracurriculars in their own words */
+  activitiesText: string;
+  /** Awards & honors in their own words */
+  awardsText: string;
 }
 
 export const DEFAULT_PROFILE: Profile = {
@@ -103,6 +107,8 @@ export const DEFAULT_PROFILE: Profile = {
   gpaTrend: "flat",
   workHours: null,
   firstGen: false,
+  activitiesText: "",
+  awardsText: "",
 };
 
 export interface Driver {

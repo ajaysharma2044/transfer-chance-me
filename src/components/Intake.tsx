@@ -320,6 +320,32 @@ export default function Intake({ profile, onChange, onDone }: Props) {
             </p>
           </div>
 
+          <div className="field">
+            <label htmlFor="acts">Your activities, in your own words</label>
+            <textarea
+              id="acts" rows={5}
+              placeholder={"One per line, as you'd write them in the application:\nTreasurer, Economics Club — ran a $3k budget, organized 6 speaker events\nMath tutor, campus learning center — 8 hrs/week"}
+              value={profile.activitiesText}
+              onChange={(e) => set("activitiesText", e.target.value)}
+            />
+            <p className="hint">
+              The deep review grades these descriptions and rewrites the weak ones.
+            </p>
+          </div>
+
+          <div className="field">
+            <label htmlFor="awards">Awards & honors <span style={{ fontWeight: 400, color: "var(--ink-3)" }}>(optional)</span></label>
+            <textarea
+              id="awards" rows={3}
+              placeholder={"Dean's List (3 semesters)\nPhi Theta Kappa\nHackathon finalist, 2025"}
+              value={profile.awardsText}
+              onChange={(e) => set("awardsText", e.target.value)}
+            />
+            <p className="hint">
+              Institutional honors — Dean's List, PTK, honors societies — recur in admits' files far more than flashy external prizes.
+            </p>
+          </div>
+
           <div className="step-nav">
             <button type="button" className="btn" onClick={onDone}>See my chances</button>
             <button type="button" className="btn-quiet" onClick={() => setStep(1)}>Back</button>

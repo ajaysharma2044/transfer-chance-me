@@ -29,6 +29,8 @@ export default function Report({ profile, ests, date }: { profile: Profile; ests
             <tr><td>Intended major</td><td>{profile.majorDetail || profile.major}</td></tr>
             {profile.transferReason && <tr><td>Transfer reason</td><td>{profile.transferReason}</td></tr>}
             {profile.courses.length > 0 && <tr><td>Coursework</td><td>{profile.courses.slice(0, 24).join(", ")}{profile.courses.length > 24 ? "…" : ""}</td></tr>}
+            {profile.activitiesText && <tr><td>Activities</td><td>{profile.activitiesText.split(/\n+/).slice(0, 6).join(" · ")}</td></tr>}
+            {profile.awardsText && <tr><td>Awards & honors</td><td>{profile.awardsText.split(/\n+/).join(" · ")}</td></tr>}
             {profile.sat != null && <tr><td>SAT</td><td>{profile.sat}</td></tr>}
             <tr><td>Credentials</td><td>{[profile.ptk && "Phi Theta Kappa", profile.honors && "Honors program", profile.igetc && "IGETC"].filter(Boolean).join(", ") || "—"}</td></tr>
             <tr><td>Path</td><td>{profile.hook}</td></tr>

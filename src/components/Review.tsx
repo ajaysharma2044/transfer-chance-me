@@ -13,14 +13,14 @@ import "./review.css";
 
 const DOCS_KEY = "tcm.appdocs.v1";
 
-interface Docs { statement: string; activities: string }
+interface Docs { statement: string; activities?: string }
 
 function loadDocs(): Docs {
   try {
     const raw = localStorage.getItem(DOCS_KEY);
-    if (raw) return { statement: "", activities: "", ...JSON.parse(raw) };
+    if (raw) return { statement: "", ...JSON.parse(raw) };
   } catch { /* fresh */ }
-  return { statement: "", activities: "" };
+  return { statement: "" };
 }
 
 interface Props {
@@ -43,6 +43,16 @@ export default function Review({ profile, onChange }: Props) {
     localStorage.setItem(DOCS_KEY, JSON.stringify(docs));
   }, [docs]);
 
+  // One-time migration: activities used to live here; they're part of the
+  // shared profile now (also editable in the intake).
+  useEffect(() => {
+    if (!profile.activitiesText && docs.activities) {
+      onChange({ ...profile, activitiesText: docs.activities });
+      setDocs((d) => ({ statement: d.statement }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function setEssay(text: string) {
     if (!text.trim()) {
       onChange({ ...profile, essayText: "", essayNamed: [], essayVerdict: null });
@@ -54,7 +64,7 @@ export default function Review({ profile, onChange }: Props) {
 
   async function go() {
     setError(null);
-    if (!profile.essayText.trim() && !docs.statement.trim() && !docs.activities.trim()) {
+    if (!profile.essayText.trim() && !docs.statement.trim() && !profile.activitiesText.trim()) {
       setError("Paste at least one thing to review — an essay, statement, or activities list.");
       return;
     }
@@ -69,7 +79,7 @@ export default function Review({ profile, onChange }: Props) {
         targets,
         whyTransfer: profile.essayText,
         statement: docs.statement,
-        activities: docs.activities,
+        activities: profile.activitiesText,
       });
       setResult(r);
     } catch (e) {
@@ -144,8 +154,8 @@ export default function Review({ profile, onChange }: Props) {
             <textarea
               id="rv-acts" rows={7}
               placeholder={"One per line, exactly as written in your application:\nFounder, tutoring business — taught 41 students…"}
-              value={docs.activities}
-              onChange={(e) => setDocs((d) => ({ ...d, activities: e.target.value }))}
+              value={profile.activitiesText}
+              onChange={(e) => onChange({ ...profile, activitiesText: e.target.value })}
             />
           </div>
 

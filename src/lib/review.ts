@@ -95,6 +95,7 @@ ${schoolContext(input.targets)}
 - Entering as: ${p.standing}; intended major: ${p.major}${p.majorDetail ? ` — specifically: ${p.majorDetail}` : ""}
 - Credentials: ${[p.ptk && "Phi Theta Kappa", p.honors && "honors program", p.igetc && "IGETC", p.firstGen && "first-generation"].filter(Boolean).join(", ") || "none listed"}
 - Path: ${p.hook}${p.sat ? `; SAT ${p.sat}` : ""}${p.workHours ? `; works ${p.workHours} hrs/week while enrolled` : ""}
+${p.awardsText ? `- Awards & honors (their words): ${p.awardsText.replace(/\n+/g, "; ")}` : ""}
 ${p.transferReason ? `- Their stated reason for transferring (raw, unpolished): "${p.transferReason}" — assess whether this reason, as framed, helps or hurts, and how to frame it.` : ""}
 ${p.courses.length ? `- Courses taken: ${p.courses.slice(0, 40).join(", ")} — assess major-prep completeness for their intended major and each target.` : ""}
 
