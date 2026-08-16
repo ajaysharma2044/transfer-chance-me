@@ -1074,7 +1074,7 @@ function OddsTicker() {
   const raf = useRef(0);
 
   useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % TICKER.length), 2600);
+    const t = setInterval(() => setI((x) => (x + 1) % TICKER.length), 5200);
     return () => clearInterval(t);
   }, []);
 
@@ -1086,7 +1086,7 @@ function OddsTicker() {
     }
     const from = disp;
     const t0 = performance.now();
-    const dur = 700;
+    const dur = 1100;
     const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / dur);
       const eased = 1 - Math.pow(1 - p, 3);
@@ -1119,14 +1119,14 @@ function OddsTicker() {
 
 /** School logos drifting behind the hero. */
 const ORBIT: { n: string; top: string; left: string; s: number; d: number }[] = [
-  { n: "Harvard", top: "12%", left: "6%", s: 34, d: 11 },
-  { n: "Stanford", top: "30%", left: "12%", s: 26, d: 14 },
-  { n: "UCLA", top: "62%", left: "7%", s: 30, d: 12 },
-  { n: "Cornell", top: "16%", left: "90%", s: 30, d: 13 },
-  { n: "Michigan", top: "40%", left: "94%", s: 26, d: 10 },
-  { n: "UC Berkeley", top: "66%", left: "89%", s: 34, d: 15 },
-  { n: "Yale", top: "82%", left: "16%", s: 24, d: 12 },
-  { n: "Columbia", top: "84%", left: "82%", s: 24, d: 11 },
+  { n: "Harvard", top: "12%", left: "6%", s: 34, d: 20 },
+  { n: "Stanford", top: "30%", left: "12%", s: 26, d: 25 },
+  { n: "UCLA", top: "62%", left: "7%", s: 30, d: 22 },
+  { n: "Cornell", top: "16%", left: "90%", s: 30, d: 23 },
+  { n: "Michigan", top: "40%", left: "94%", s: 26, d: 18 },
+  { n: "UC Berkeley", top: "66%", left: "89%", s: 34, d: 27 },
+  { n: "Yale", top: "82%", left: "16%", s: 24, d: 22 },
+  { n: "Columbia", top: "84%", left: "82%", s: 24, d: 20 },
 ];
 
 function OrbitLogos() {

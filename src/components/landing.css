@@ -168,7 +168,7 @@
 .ld-marquee { overflow: hidden; width: 100%; }
 .ld-marquee-track {
   display: flex; gap: 12px; width: max-content;
-  animation: ld-pan 55s linear infinite;
+  animation: ld-pan 130s linear infinite;
 }
 .ld-marquee:hover .ld-marquee-track,
 .ld-marquee:focus-within .ld-marquee-track { animation-play-state: paused; }
