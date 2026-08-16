@@ -95,3 +95,60 @@
   .rv-grid { display: block; }
   .rv-report { border: none; box-shadow: none; padding: 0; }
 }
+
+/* ── The review panel: four specialists reading at once ──────────── */
+.rv-panelrun {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
+  padding: 22px 24px;
+}
+.rv-panelrun-h { font-size: 14px; font-weight: 650; color: var(--ink); margin-bottom: 14px; }
+.rv-agent {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 0; border-top: 1px solid var(--line);
+  opacity: 0.55; transition: opacity 260ms ease;
+}
+.rv-agent:first-of-type { border-top: none; }
+.rv-agent.running, .rv-agent.done { opacity: 1; }
+.rv-agent-dot {
+  width: 24px; height: 24px; flex: 0 0 24px; border-radius: 8px;
+  display: grid; place-items: center; font-size: 12px; font-weight: 800;
+  background: color-mix(in srgb, var(--ac, var(--accent)) 12%, var(--bg));
+  color: var(--ac, var(--accent));
+}
+.rv-agent.done .rv-agent-dot { background: var(--ac, var(--accent)); color: #fff; }
+.rv-agent.failed .rv-agent-dot { background: var(--coral); color: #fff; }
+.rv-agent-text { flex: 1; min-width: 0; }
+.rv-agent-text b { display: block; font-size: 13.5px; font-weight: 650; }
+.rv-agent-text i { display: block; font-style: normal; font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+.rv-agent-state {
+  font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+.rv-agent.running .rv-agent-state { color: var(--ac, var(--accent)); }
+.rv-agent.done .rv-agent-state { color: var(--teal); }
+.rv-spinner.sm { width: 12px; height: 12px; border-width: 2px; }
+
+.rv-bylines { font-size: 11.5px; color: var(--ink-3); margin-top: 8px; }
+
+.rv-spec {
+  margin-top: 20px; border: 1px solid var(--line); border-radius: 14px;
+  border-left: 3px solid var(--ac, var(--accent));
+  padding: 18px 20px; background: var(--bg);
+}
+.rv-spec-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 12px; }
+.rv-spec-grade {
+  flex: 0 0 auto; font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
+  color: #fff; background: var(--ac, var(--accent));
+  border-radius: 10px; padding: 6px 12px; line-height: 1.15;
+}
+.rv-spec-head h3 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.rv-spec-head p { font-size: 13px; color: var(--ink-2); margin-top: 3px; line-height: 1.5; }
+.rv-spec-actions { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.rv-spec-actions h4 {
+  font-size: 10px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-3); margin-bottom: 6px;
+}
+.rv-spec-actions ul { list-style: none; }
+.rv-spec-actions li { font-size: 13px; color: var(--ink); padding: 4px 0 4px 18px; position: relative; line-height: 1.5; }
+.rv-spec-actions li::before { content: "→"; position: absolute; left: 0; color: var(--ac, var(--accent)); font-weight: 700; }
+.rv-missing { margin-top: 10px; font-size: 11.5px; color: var(--ink-3); font-style: italic; }

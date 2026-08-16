@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { MODEL } from "../engine";
 import type { Profile } from "../engine";
 import { analyzeEssay } from "../lib/essay";
-import { getApiKey, loadLastReview, proxyMode, runReview, setApiKey } from "../lib/review";
+import { getApiKey, loadLastReview, proxyMode, setApiKey } from "../lib/review";
+import { loadPanel, runPanel, SPECIALISTS } from "../lib/panel";
+import type { PanelResult } from "../lib/panel";
 import type { ReviewResult } from "../lib/review";
 import Tile from "./Tile";
 import "./review.css";
@@ -38,6 +40,8 @@ export default function Review({ profile, onChange }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReviewResult | null>(loadLastReview);
+  const [panel, setPanel] = useState<PanelResult | null>(loadPanel);
+  const [stage, setStage] = useState<Record<string, "running" | "done" | "failed">>({});
 
   useEffect(() => {
     localStorage.setItem(DOCS_KEY, JSON.stringify(docs));
@@ -73,15 +77,21 @@ export default function Review({ profile, onChange }: Props) {
       return;
     }
     setBusy(true);
+    setStage({});
+    setPanel(null);
     try {
-      const r = await runReview({
-        profile,
-        targets,
-        whyTransfer: profile.essayText,
-        statement: docs.statement,
-        activities: profile.activitiesText,
-      });
-      setResult(r);
+      const r = await runPanel(
+        {
+          profile,
+          targets,
+          whyTransfer: profile.essayText,
+          statement: docs.statement,
+          activities: profile.activitiesText,
+        },
+        (id, state) => setStage((s) => ({ ...s, [id]: state })),
+      );
+      setPanel(r);
+      setResult(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong — try again.");
     } finally {
@@ -194,18 +204,112 @@ export default function Review({ profile, onChange }: Props) {
         </section>
 
         <section className="rv-output" aria-live="polite">
-          {!result && !busy && (
+          {!result && !panel && !busy && (
             <div className="rv-empty">
               <p>Your report appears here — grades, quote-level notes, per-school verdicts, and your fix list.</p>
             </div>
           )}
           {busy && (
-            <div className="rv-empty rv-busy">
-              <span className="rv-spinner" aria-hidden="true" />
-              <p>Reading your application against the dataset…</p>
+            <div className="rv-panelrun">
+              <p className="rv-panelrun-h">Four reviewers are reading your file at once</p>
+              {SPECIALISTS.map((sp) => {
+                const st = stage[sp.id] ?? "waiting";
+                return (
+                  <div className={`rv-agent ${st}`} key={sp.id} style={{ ["--ac" as string]: sp.color }}>
+                    <span className="rv-agent-dot" aria-hidden="true">
+                      {st === "done" ? "✓" : st === "failed" ? "!" : st === "running" ? <span className="rv-spinner sm" /> : "·"}
+                    </span>
+                    <span className="rv-agent-text">
+                      <b>{sp.name}</b>
+                      <i>{sp.role}</i>
+                    </span>
+                    <span className="rv-agent-state">
+                      {st === "done" ? "done" : st === "running" ? "reading" : st === "failed" ? "failed" : "queued"}
+                    </span>
+                  </div>
+                );
+              })}
+              <div className={`rv-agent ${stage.lead ?? "waiting"}`} style={{ ["--ac" as string]: "var(--ink)" }}>
+                <span className="rv-agent-dot" aria-hidden="true">
+                  {stage.lead === "done" ? "✓" : stage.lead === "running" ? <span className="rv-spinner sm" /> : "·"}
+                </span>
+                <span className="rv-agent-text">
+                  <b>Lead reviewer</b>
+                  <i>Weighs the four reports into one verdict</i>
+                </span>
+                <span className="rv-agent-state">
+                  {stage.lead === "done" ? "done" : stage.lead === "running" ? "synthesising" : "waiting on the panel"}
+                </span>
+              </div>
             </div>
           )}
-          {result && !busy && (
+
+          {panel && !busy && (
+            <article className="rv-report">
+              <header className="rv-r-head">
+                <span className="rv-grade">{panel.grade}</span>
+                <div>
+                  <h2>The honest read</h2>
+                  <p>{panel.summary}</p>
+                  <p className="rv-bylines">
+                    Reviewed by {panel.reports.length} specialists ·{" "}
+                    {panel.reports.map((r) => {
+                      const sp = SPECIALISTS.find((x) => x.id === r.id);
+                      return `${sp?.name ?? r.id} ${r.grade}`;
+                    }).join(" · ")}
+                  </p>
+                </div>
+              </header>
+
+              <div className="rv-cols">
+                <div>
+                  <h3>Working for you</h3>
+                  <ul>{panel.strengths.map((s) => <li key={s}>{s}</li>)}</ul>
+                </div>
+                <div>
+                  <h3 className="rv-risk">Working against you</h3>
+                  <ul>{panel.risks.map((s) => <li key={s}>{s}</li>)}</ul>
+                </div>
+              </div>
+
+              {panel.reports.map((r) => {
+                const sp = SPECIALISTS.find((x) => x.id === r.id);
+                return (
+                  <section className="rv-spec" key={r.id} style={{ ["--ac" as string]: sp?.color ?? "var(--accent)" }}>
+                    <div className="rv-spec-head">
+                      <span className="rv-spec-grade">{r.grade}</span>
+                      <div>
+                        <h3>{sp?.name ?? r.id}</h3>
+                        <p>{r.headline}</p>
+                      </div>
+                    </div>
+                    {r.notes.map((n, i) => (
+                      <div className="rv-note" key={i}>
+                        <blockquote>{n.quote}</blockquote>
+                        <p className="rv-issue">{n.issue}</p>
+                        <p className="rv-fix">{n.fix}</p>
+                      </div>
+                    ))}
+                    {r.actions.length > 0 && (
+                      <div className="rv-spec-actions">
+                        <h4>Do this</h4>
+                        <ul>{r.actions.map((a) => <li key={a}>{a}</li>)}</ul>
+                      </div>
+                    )}
+                    {r.missing.length > 0 && (
+                      <p className="rv-missing">Couldn't judge: {r.missing.join("; ")}</p>
+                    )}
+                  </section>
+                );
+              })}
+
+              <section className="rv-actions">
+                <h3>Before you submit</h3>
+                <ol>{panel.priorities.map((a) => <li key={a}>{a}</li>)}</ol>
+              </section>
+            </article>
+          )}
+          {result && !panel && !busy && (
             <article className="rv-report">
               <header className="rv-r-head">
                 <span className="rv-grade">{result.grade}</span>
