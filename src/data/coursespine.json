@@ -1,0 +1,48 @@
+{
+  "courses": [
+    { "key": "ENGL_COMP1", "label": "English composition I", "group": "Writing", "match": ["english composition", "composition 1", "composition i", "engl 1a", "eng 101", "engl 101", "freshman composition", "college composition", "reading and composition", "expository writing", "写"] },
+    { "key": "ENGL_COMP2", "label": "Composition II / critical thinking", "group": "Writing", "match": ["composition 2", "composition ii", "engl 1b", "engl 1c", "eng 102", "critical thinking", "critical reasoning", "argumentation", "advanced composition"] },
+    { "key": "COMM_PUBSPK", "label": "Public speaking", "group": "Writing", "match": ["public speaking", "oral communication", "speech", "comm 1", "communication studies"] },
+
+    { "key": "MATH_CALC1", "label": "Calculus I", "group": "Math", "match": ["calculus 1", "calculus i", "calc 1", "calc i", "math 1a", "math 150", "math 180", "differential calculus", "calculus with analytic geometry i", "single variable calculus"] },
+    { "key": "MATH_CALC2", "label": "Calculus II", "group": "Math", "match": ["calculus 2", "calculus ii", "calc 2", "calc ii", "math 1b", "math 151", "integral calculus", "calculus with analytic geometry ii"] },
+    { "key": "MATH_CALC3", "label": "Multivariable calculus", "group": "Math", "match": ["calculus 3", "calculus iii", "calc 3", "multivariable", "multivariate calculus", "vector calculus", "math 1c", "math 2a"] },
+    { "key": "MATH_LINALG", "label": "Linear algebra", "group": "Math", "match": ["linear algebra", "matrix algebra", "math 2b"] },
+    { "key": "MATH_DIFEQ", "label": "Differential equations", "group": "Math", "match": ["differential equations", "diff eq", "ordinary differential"] },
+    { "key": "MATH_STATS", "label": "Statistics", "group": "Math", "match": ["statistics", "statistical", "stat 1", "intro to stats", "probability and statistics", "elementary statistics", "biostatistics"] },
+    { "key": "MATH_DISCRETE", "label": "Discrete mathematics", "group": "Math", "match": ["discrete math", "discrete structures", "discrete mathematics"] },
+
+    { "key": "CS_INTRO", "label": "Programming I", "group": "Computer science", "match": ["intro to programming", "introduction to programming", "programming 1", "programming i", "cs 1", "cs1", "computer science 1", "intro to computer science", "python programming", "java programming", "cis 22a", "cs 61a"] },
+    { "key": "CS_OOP", "label": "Programming II / object-oriented", "group": "Computer science", "match": ["programming 2", "programming ii", "object oriented", "object-oriented", "cs 2", "cs2", "computer science 2", "cis 22b", "advanced programming"] },
+    { "key": "CS_DATA", "label": "Data structures & algorithms", "group": "Computer science", "match": ["data structures", "algorithms", "cis 22c", "cs 61b"] },
+    { "key": "CS_ARCH", "label": "Computer architecture", "group": "Computer science", "match": ["computer architecture", "assembly language", "computer organization", "cs 61c"] },
+
+    { "key": "PHYS_MECH", "label": "Physics: mechanics (calc-based)", "group": "Science", "match": ["physics 4a", "physics 2a", "mechanics", "physics for scientists", "calculus-based physics", "phys 1a", "general physics 1", "physics 1"] },
+    { "key": "PHYS_EM", "label": "Physics: electricity & magnetism", "group": "Science", "match": ["electricity and magnetism", "physics 4b", "physics 2b", "e&m", "phys 1b", "general physics 2", "physics 2"] },
+    { "key": "CHEM_GEN1", "label": "General chemistry I", "group": "Science", "match": ["general chemistry 1", "general chemistry i", "chem 1a", "chemistry 1a", "chem 101", "general chemistry"] },
+    { "key": "CHEM_GEN2", "label": "General chemistry II", "group": "Science", "match": ["general chemistry 2", "general chemistry ii", "chem 1b", "chemistry 1b", "chem 102"] },
+    { "key": "CHEM_ORG1", "label": "Organic chemistry I", "group": "Science", "match": ["organic chemistry", "orgo", "chem 12a", "chem 3a"] },
+    { "key": "BIO_GEN1", "label": "General biology (majors)", "group": "Science", "match": ["general biology", "biology 1a", "bio 1a", "cell biology", "molecular biology", "biol 101", "principles of biology"] },
+
+    { "key": "ECON_MICRO", "label": "Microeconomics", "group": "Economics & business", "match": ["microeconomics", "micro economics", "econ 1", "econ 2", "principles of microeconomics"] },
+    { "key": "ECON_MACRO", "label": "Macroeconomics", "group": "Economics & business", "match": ["macroeconomics", "macro economics", "principles of macroeconomics"] },
+    { "key": "ACCT_FIN", "label": "Financial accounting", "group": "Economics & business", "match": ["financial accounting", "accounting 1", "accounting i", "acct 1", "principles of accounting"] },
+    { "key": "ACCT_MGMT", "label": "Managerial accounting", "group": "Economics & business", "match": ["managerial accounting", "management accounting", "accounting 2", "accounting ii"] },
+    { "key": "BUS_LAW", "label": "Business law", "group": "Economics & business", "match": ["business law", "legal environment of business"] },
+
+    { "key": "PSYC_INTRO", "label": "Introductory psychology", "group": "Social science", "match": ["psychology", "psych 1", "intro to psychology", "general psychology"] },
+    { "key": "SOC_INTRO", "label": "Introductory sociology", "group": "Social science", "match": ["sociology", "soc 1", "intro to sociology"] },
+    { "key": "POLI_AMGOV", "label": "American government", "group": "Social science", "match": ["american government", "political science 1", "poli sci 1", "us government", "american politics"] }
+  ],
+  "byMajor": {
+    "cs": { "core": ["CS_INTRO", "CS_OOP", "CS_DATA", "MATH_CALC1", "MATH_CALC2", "MATH_DISCRETE"], "strong": ["MATH_LINALG", "CS_ARCH", "PHYS_MECH"] },
+    "engineering": { "core": ["MATH_CALC1", "MATH_CALC2", "MATH_CALC3", "MATH_DIFEQ", "PHYS_MECH", "PHYS_EM", "CHEM_GEN1"], "strong": ["MATH_LINALG", "CS_INTRO"] },
+    "business": { "core": ["ECON_MICRO", "ECON_MACRO", "ACCT_FIN", "ACCT_MGMT", "MATH_STATS"], "strong": ["MATH_CALC1", "BUS_LAW"] },
+    "econ": { "core": ["ECON_MICRO", "ECON_MACRO", "MATH_CALC1", "MATH_STATS"], "strong": ["MATH_CALC2", "MATH_LINALG", "ACCT_FIN"] },
+    "stem": { "core": ["CHEM_GEN1", "CHEM_GEN2", "BIO_GEN1", "MATH_CALC1"], "strong": ["CHEM_ORG1", "PHYS_MECH", "MATH_STATS"] },
+    "social": { "core": ["MATH_STATS", "PSYC_INTRO"], "strong": ["SOC_INTRO", "POLI_AMGOV", "ECON_MICRO"] },
+    "humanities": { "core": ["ENGL_COMP1", "ENGL_COMP2"], "strong": ["COMM_PUBSPK", "POLI_AMGOV"] },
+    "undecided": { "core": ["ENGL_COMP1", "ENGL_COMP2", "MATH_STATS"], "strong": ["ECON_MICRO", "PSYC_INTRO"] }
+  },
+  "universal": ["ENGL_COMP1", "ENGL_COMP2"]
+}

@@ -6,6 +6,7 @@ import { analyzeEssay } from "../lib/essay";
 import Tile from "./Tile";
 import Report from "./Report";
 import ActionPlan from "./ActionPlan";
+import CourseGaps from "./CourseGaps";
 import { buildPlan } from "../lib/actionplan";
 import { countdown } from "../lib/deadlines";
 import "./portal.css";
@@ -117,6 +118,10 @@ export default function Portal({ session, profile, go }: Props) {
 
       <section className="po-planwrap">
         <ActionPlan profile={profile} ests={ests} />
+      </section>
+
+      <section className="po-planwrap">
+        <CourseGaps profile={profile} onEdit={() => go("check")} />
       </section>
 
       <div className="po-grid">

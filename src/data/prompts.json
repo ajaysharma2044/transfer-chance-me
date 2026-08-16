@@ -1,5 +1,20 @@
 [
   {
+    "name": "Boston College",
+    "usesCommonApp": false,
+    "cycle": "Fall 2026 / Spring 2027 (page verified August 2026; fall deadline March 15, spring deadline November 1)",
+    "prompts": [
+      {
+        "text": "Please provide a statement that addresses your reasons for transferring and why you are choosing to apply to Boston College.",
+        "words": "650 words",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://www.bc.edu/bc-web/sites/common-data-set.html",
+    "transferUrl": "https://www.bc.edu/bc-web/admission/apply/transfer.html",
+    "notes": "Two-part prompt at full personal-statement length, so give real weight to both halves: a concrete, non-blaming account of why the current school cannot deliver the path you want, then a BC-specific answer (named programs, the Core, faculty) that no other school would satisfy. BC's own transfer page routes applicants to the Boston College Transfer Application portal rather than the Common App, so treat this as an institutional application; third-party claims of a 'Common Application for Transfer' at BC are not corroborated by bc.edu."
+  },
+  {
     "name": "Boston University",
     "usesCommonApp": true,
     "cycle": "2026-2027 transfer cycle (verified against BU's live transfer page as of August 2026; BU does not version-label this requirement, and its transfer deadlines page did not resolve)",
@@ -73,6 +88,141 @@
     "cdsUrl": null,
     "transferUrl": "https://www.admissions.caltech.edu/apply/transfer-applicants",
     "notes": "Correction to a common error: Caltech does NOT take the Common App or the Coalition App for transfer - its requirements page states it accepts only one application for transfer admission, its own, at apply.caltech.edu. Third-party sites claiming Coalition are stale. There is no single \"supplement\" here: the whole application is six required writing pieces, five of them explicitly STEM-framed, so the STEM content carries the file and the two short answers are the only place to show anything else. The transfer-specific prompt is #2 - it pairs \"experiences at your current school\" with \"ready to take the next step,\" so it wants evidence the current institution has been exhausted academically, not a complaint about it. Note also that essays are not the binding constraint: Caltech requires math and physics entrance exams (due February 15) plus two recommendations from college math/science/engineering faculty, and admits only for fall (\"We do not admit students for the winter or spring terms\"). cdsUrl is null: I could not locate a Common Data Set page on any caltech.edu domain - registrar.caltech.edu/records/common-data-set, caltech.edu/about/common-data-set and iro.caltech.edu subpages all returned 404, and iro.caltech.edu mentions the CDS as a data source without linking it. Rather than guess a URL, this is left unverified."
+  },
+  {
+    "name": "Duke",
+    "usesCommonApp": false,
+    "cycle": "2025-26 transfer cycle (Fall 2026 entry); deadline March 15, 2026 - most recent cycle verifiable on Duke's live apply page as of Aug 2026",
+    "prompts": [
+      {
+        "text": "We would like to understand more about you and your reason(s) for transferring. Why and how did you choose your current or most recent college or university and what do you hope to gain by transferring?",
+        "words": "650",
+        "required": true
+      },
+      {
+        "text": "Duke University offers students the opportunity to choose up to three academic pathways through majors, minors, and certificates. Describe how you intend to explore your academic and intellectual interests at Duke University.",
+        "words": "250",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://ir.provost.duke.edu/duke-numbers/common-data-sets/",
+    "transferUrl": "https://admissions.duke.edu/apply/",
+    "notes": "Duke explicitly states it will not accept the Common App for transfers this cycle - applicants use the Duke Transfer Application or the Coalition/Scoir app, so the 650-word prompt replaces (not supplements) the usual Common App transfer essay and must carry the full transfer narrative. It asks two separable things - why you chose your current school AND what transferring gains you - so justify the original choice on its own terms before naming the specific gap; the 250-word prompt keys on Duke's 'up to three academic pathways' framing, so name actual majors, minors, and certificates and how they combine."
+  },
+  {
+    "name": "Emory",
+    "usesCommonApp": true,
+    "cycle": "Fall 2026 entry; application deadline March 15, 2026, notification early May 2026 - as listed on Emory's own transfer page",
+    "prompts": [],
+    "cdsUrl": "https://provost.emory.edu/planning-administration/data/common-data-set.html",
+    "transferUrl": "https://apply.emory.edu/apply/transfer.html",
+    "notes": "Emory's own transfer page confirms the Common Application is required but does not publish any transfer supplement prompt text, and its admission FAQ is silent on transfer essays - widely circulated versions of an Emory 'unique resources, experiences, or opportunities' prompt could not be traced to an Emory-owned source, so nothing is recorded here rather than guessed. Verify the live prompt inside the Common App Emory member screen before drafting, since the supplement question set is set there and can change per cycle."
+  },
+  {
+    "name": "Georgetown",
+    "usesCommonApp": false,
+    "cycle": "Fall 2026/Spring 2027 transfer cycle; Transfer Application Supplement due March 1, 2026. Application now closed; the Fall 2027/Spring 2028 transfer application becomes available September 2026",
+    "prompts": [],
+    "cdsUrl": "https://oads.georgetown.edu/commondataset/",
+    "transferUrl": "https://uadmissions.georgetown.edu/apply/transfer-applicants/application-requirements-and-forms-transfer/",
+    "notes": "Georgetown does not use the Common App for transfer - note that its Aug 1, 2026 Common App adoption applies only to first-year applicants entering fall 2027, so transfers still use Georgetown's own two-part application. The Supplement's short answer and essay questions unlock only after Part 1 is submitted and are not published anywhere public, so the actionable move is to submit Part 1 as soon as the cycle opens in September purely to read the prompts, and to build the essay around a clean academic record narrative since a Dean's Report and a professor recommendation are also required."
+  },
+  {
+    "name": "Notre Dame",
+    "usesCommonApp": true,
+    "cycle": "2026-27 cycle verified on page (Spring 2027 entry, deadline October 1, 2026; Fall 2027 entry, deadline March 15, 2027)",
+    "prompts": [],
+    "cdsUrl": null,
+    "transferUrl": "https://admissions.nd.edu/apply/resources-for/transfer-applicants/",
+    "notes": "PARTIAL — the transfer page loaded and its deadlines/cycle are verified, but it published no verbatim supplemental prompt text, so prompts is empty rather than guessed. What the page does establish: a personal statement covering interest in Notre Dame, academic and professional goals, and how transferring advances them — so the essay should braid all three into one causal arc (goal -> what's missing now -> the specific Notre Dame program that closes the gap), not treat them as three separate paragraphs. Given the page's stated 3.75 admitted-GPA average and the 24-credit/one-full-year minimum, the essay carries the burden of explaining fit, since the transcript alone won't differentiate. Caveats: usesCommonApp:true is my prior belief, NOT verified — the page never stated it, and the schema required a boolean with no null option. cdsUrl is null because I never located Notre Dame's CDS page. Confirm the exact prompt wording and word limit in the live Common App before publishing."
+  },
+  {
+    "name": "Tufts",
+    "usesCommonApp": true,
+    "cycle": "2026-27 transfer cycle (Common Application for Transfer due March 15, 2027, per Tufts' transfer page verified August 2026)",
+    "prompts": [],
+    "cdsUrl": "https://provost.tufts.edu/institutionalresearch/about-tufts/common-data-set/",
+    "transferUrl": "https://admissions.tufts.edu/apply/applying-as-a-transfer-candida/",
+    "notes": "Tufts confirms transfer applicants answer 'the Tufts short answer questions' inside the Common Application for Transfer but does not publish the transfer wording or word limits on its site (its public Short Answer Questions page lists only first-year Class of 2031 prompts), so the exact prompts must be read in the Common App portal and none are reported here rather than guessed. Verified strategy point: Tufts states it expects re-applicants to submit an entirely new set of essays reflecting maturity and growth since entering college, so anchor the writing in college-level evidence, not high school material."
+  },
+  {
+    "name": "UNC",
+    "usesCommonApp": true,
+    "cycle": "2026-2027",
+    "prompts": [],
+    "cdsUrl": "https://oira.unc.edu/reports/reports-archives/common-data-set/",
+    "transferUrl": "https://admissions.unc.edu/apply/types-of-applications/transfer/",
+    "notes": "UNC has no school-specific supplement this cycle — it removed both short answer questions for 2026-2027 (\"We're removing the two short answer supplemental questions\"), so the Common App transfer essay is the only prose UNC reads. That essay has to do double duty: carry the reason-for-transfer narrative AND the Carolina-specific evidence a supplement would normally hold, so name the actual major, courses, or 2+2 pathway rather than leaving the choice of UNC implied."
+  },
+  {
+    "name": "UPenn",
+    "usesCommonApp": true,
+    "cycle": "2026-2027 (fall 2027 entry; March 15, 2027 transfer deadline)",
+    "prompts": [
+      {
+        "text": "Please explain your reasons for transferring from your current institution and what you hope to gain by transferring to another institution.",
+        "words": "50-400 words (2,000 characters)",
+        "required": true
+      },
+      {
+        "text": "Write a short thank-you note to someone you have not yet thanked and would like to acknowledge. (We encourage you to share this note with that person, if possible, and reflect on the experience!)",
+        "words": "50-200 words (2,295 characters)",
+        "required": true
+      },
+      {
+        "text": "How will you explore community at Penn? Consider how Penn will help shape your perspective, and how your experiences and perspective will help shape Penn.",
+        "words": "50-200 words (2,295 characters)",
+        "required": true
+      },
+      {
+        "text": "Considering the specific undergraduate school you have selected, describe how you intend to explore your academic and intellectual interests at the University of Pennsylvania.",
+        "words": "50-200 words (2,295 characters)",
+        "required": true
+      },
+      {
+        "text": "Common App universal transfer essay (not Penn-specific; required of all Common App transfer applicants).",
+        "words": "250-650 words",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://ira.upenn.edu/penn-numbers/common-data-set",
+    "transferUrl": "https://admissions.upenn.edu/how-to-apply/transfer-applicants/requirements-deadlines",
+    "notes": "Penn transfers apply directly into one of four undergraduate schools, and prompt 4 is read against that school specifically — cite courses, faculty, and program structures unique to the College, Engineering, Nursing, or Wharton, because a generic \"Penn\" answer reads as applying to the wrong place. Note the transfer essay (prompt 1) overlaps heavily with the Common App universal transfer essay, so deliberately split the material: the universal one for the narrative of why you are leaving, prompt 1 for what specifically you cannot get where you are; and keep the thank-you note an actual note to an actual person rather than a disguised achievement essay."
+  },
+  {
+    "name": "UT Austin",
+    "usesCommonApp": true,
+    "cycle": "2026-27 (page verified August 2026; summer/fall deadline March 1, spring deadline September 1)",
+    "prompts": [
+      {
+        "text": "The statement of purpose will provide an opportunity to explain any extenuating circumstances that you feel could add value to your application.",
+        "words": "500-650 words (about 3,000 characters with spaces)",
+        "required": true
+      },
+      {
+        "text": "Personal interaction with objects, images and spaces can be so powerful as to change the way one thinks about particular issues or topics.",
+        "words": "word limit not stated on UT's essays page",
+        "required": false
+      }
+    ],
+    "cdsUrl": "https://reports.utexas.edu/common-data-set",
+    "transferUrl": "https://admissions.utexas.edu/apply/transfer-students/",
+    "notes": "Topic A is a statement of purpose, not a personal narrative: UT says it should address your interest in and preparation for your first-choice major, so build it around specific coursework, projects, and work experience in that discipline rather than a general 'why UT' story. Topic D is an extra upload required only of School of Architecture applicants, and Nursing applicants are told to address the goal of becoming a nurse inside Topic A."
+  },
+  {
+    "name": "Vanderbilt",
+    "usesCommonApp": true,
+    "cycle": "2026-2027 (fall 2027 entry, Feb 15 priority deadline; the prompt page itself does not clearly re-label the cycle, so re-check the live Common App before drafting)",
+    "prompts": [
+      {
+        "text": "Vanderbilt University's motto, Crescere aude, is Latin for 'dare to grow.' In your response, reflect on how one or more aspects of your identity, culture, or background has played a role in your personal growth, and how it will contribute to our campus community as you dare to grow at Vanderbilt.",
+        "words": "approximately 250 words",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://www.vanderbilt.edu/dsa/common-data-set/",
+    "transferUrl": "https://admissions.vanderbilt.edu/apply/transfer-process/",
+    "notes": "The Crescere aude short answer is an identity-and-growth prompt, not a \"why Vanderbilt\" prompt — the transfer rationale belongs in the Common App essay, which Vanderbilt explicitly wants answering why Vanderbilt and why now. At roughly 250 words, commit to one aspect of background and trace it to one concrete way you would contribute on campus; the prompt's two-part structure (growth, then contribution) means an essay that only does the reflection half is incomplete."
   },
   {
     "name": "Washington",
