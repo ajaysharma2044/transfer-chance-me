@@ -54,6 +54,24 @@
     "programs": []
   },
   {
+    "name": "Appalachian State",
+    "applicants": 3415,
+    "admitted": 3093,
+    "rate": 90.6,
+    "cycle": "2025-26 (Fall 2025 entering cohort) -- the most recent App State CDS, and it has a fully populated D2 table (the 2024-25 edition's",
+    "typical": "App State is meaningfully more selective-feeling on paper for freshmen than ECU, but transfer admission is comparatively easier: about 9 in 10 transfer applicants were admitted in Fall 2025. The minimum college GPA required is 2.25 (CDS D7). As a UNC System school, App State also honors North Carolina's Comprehensive Articulation Agreement, guaranteeing junior-status admission to AA/AS completers with a 2.0+ GPA -- though App State layers its own Aspire Appalachian pathway on top with earlier, more structured guarantees.",
+    "levers": [
+      "Aspire Appalachian pathway program: formal guaranteed-admission partnership with 27+ NC community colleges (Caldwell CC&TI, Catawba Valley CC, Central Piedmont CC, Wilkes CC, Wake Tech, and others) -- students who complete the associate degree through the partnership are guaranteed admission, on top of the statewide CAA guarantee.",
+      "Priority/scholarship deadline effect: completing the application by February 15 (and the Transfer Student Scholarship application by March 1) puts a candidate into priority review and scholarship consideration, which in practice front-loads the strongest applicant pool into the rolling read."
+    ],
+    "watchouts": [
+      "Two specific majors -- RN-to-BSN and Health Sciences -- carry admission requirements beyond the general transfer floor (e.g., the BSN track requires 60 earned hours and a 2.5 GPA plus specific nursing core/cognate coursework), so the 90%+ overall rate does not apply evenly across programs.",
+      "Boone's location and limited capacity mean popular terms/majors fill on a rolling basis -- CDS shows Fall, Spring, and Summer all marked rolling with no fixed closing date, so late applicants in a given cycle can be squeezed out even though the overall admit rate is high."
+    ],
+    "feeders": "Concentrated among western/central NC community colleges via the Aspire Appalachian network: Caldwell Community College & Technical Institute, Wake Technical CC, Central Piedmont CC, Catawba Valley CC, and Wilkes CC are cited by App State's own transfer office",
+    "programs": []
+  },
+  {
     "name": "Arizona",
     "applicants": 9717,
     "admitted": 6410,
@@ -87,6 +105,24 @@
       "This CDS is for ASU Campus Immersion (the physical campuses) only; ASU Online files a separate CDS, so do not apply this rate to the online degrees. Also note nonresidents face a 2.5 GPA minimum versus 2.0 for Arizona residents."
     ],
     "feeders": "Overwhelmingly the Maricopa County Community College District (Mesa, Glendale, Phoenix, Scottsdale, Chandler-Gilbert, Rio Salado) plus Pima CC in Tucson, layered on top of a national MyPath2ASU partner network of 300+ colleges that feeds a large out-of-state transfer flow.",
+    "programs": []
+  },
+  {
+    "name": "Arkansas",
+    "applicants": 4326,
+    "admitted": 2211,
+    "rate": 51.1,
+    "cycle": "Fall 2025 (CDS 2025-2026, the newest available)",
+    "typical": "Fall 2025: 4,326 applied, 2,211 admitted, 1,196 enrolled (51.1% admit rate, university-wide). UA's explicit floor is 24+ transferable credit hours with at least a 2.0 college GPA (no minimum HS GPA is set in the CDS). Applicants below 24 hours are also evaluated under first-year freshman criteria (HS transcript, test scores required of some). UA Fayetteville is the state flagship, not a regional commuter campus (about 85% of first-year students live on campus) -- the sub-52% rate is a real signal, not just a low floor.",
+    "levers": [
+      "Bank 24+ transferable credit hours with at least a 2.0 college GPA before applying -- UA's explicit minimum (CDS D4/D7) -- which moves you out of freshman-style document review.",
+      "Take Arkansas Course Transfer System (ACTS)-verified courses at an Arkansas public two-year college -- e.g., NorthWest Arkansas Community College in Bentonville, ~25 minutes from campus. ACTS-listed comparable courses are guaranteed to transfer for full credit (grades of 'D' are not guaranteed), maximizing what counts toward the UA degree."
+    ],
+    "watchouts": [
+      "Standardized test scores and HS transcripts are still 'required of some' transfer applicants (CDS D5) -- specifically those under the 24-hour threshold -- so students transferring very early face de facto freshman-level scrutiny.",
+      "UA's CDS reports only a notification target (August 1) for Fall transfer applicants, not a published priority or closing date -- apply well ahead of that to secure fall registration and housing, since there's no fixed early deadline the way LSU has."
+    ],
+    "feeders": "Arkansas public two-year colleges under the statewide Arkansas Course Transfer System (ACTS), most notably NorthWest Arkansas Community College (NWACC) in Bentonville given its proximity to Fayetteville. Arkansas Act 98 (1989) and Act 747 (2011) require a mini",
     "programs": []
   },
   {
@@ -254,6 +290,24 @@
     "programs": []
   },
   {
+    "name": "Bowling Green State University",
+    "applicants": 965,
+    "admitted": 639,
+    "rate": 66.2,
+    "cycle": "CDS 2025-26 (Fall 2025 entering transfer cohort) — BGSU's current CDS, published via an interactive dashboard rather than a static",
+    "typical": "At 66.2% admitted, plus a policy of no maximum on transferable credits and a D-grade minimum for transfer credit (CDS Transfer Credit Policies), BGSU reads as a broad-access regional/commuter-friendly university rather than a selective gate — even though CDS D10 technically states open admission doesn't apply to transfers, the numbers function close to it for most majors. Ohio's Transfer to Degree Guarantee (Ohio Transfer Module + Transfer Assurance Guides, ODHE) applies here as well, guaranteeing gen-ed and many major-specific credits from Ohio's public two-year colleges.",
+    "levers": [
+      "Credits transfer with no stated cap and a D grade still counts (CDS Transfer Credit Policies) — front-loading gen-ed at a cheaper Ohio community college costs very little credit on the way in.",
+      "Apply well ahead of the Aug 1 fall closing date — BGSU notifies by Oct 1, so earlier applicants get more runway on housing/aid and avoid any late-cycle capacity crunch in popular majors."
+    ],
+    "watchouts": [
+      "Selective direct-entry programs (Nursing and other health-science majors are the typical pattern at regional Ohio publics) usually run their own, tighter admission than the 66% university-wide rate — don't assume the headline number applies to a capped major.",
+      "A minimum of 30 credit hours must still be completed in residence at BGSU to earn the bachelor's degree (CDS Transfer Credit Policies), so students transferring in with very large credit loads should confirm the residency-credit math before committing."
+    ],
+    "feeders": "Not published in the CDS. Geographically plausible feeders: Owens Community College (Toledo/Perrysburg, adjacent to BGSU) and other northwest Ohio two-year colleges (Terra State, Northwest State) — informed inference, not a sourced fact.",
+    "programs": []
+  },
+  {
     "name": "Brandeis",
     "applicants": 581,
     "admitted": 287,
@@ -413,6 +467,24 @@
       "Fall-only entry with a hard Nov 30 close — CDS D9 lists dates for fall alone (closing 11/30, notification 4/1, reply 5/1) and leaves winter, spring and summer blank. Cal Poly also converted from quarters to semesters in Fall 2026, so ASSIST agreements and transfer selection guides written in quarter units need to be re-verified against the current lists before you lock in a course plan."
     ],
     "feeders": "Cuesta College, Cal Poly's local San Luis Obispo County college, plus the high-volume Central Coast and statewide CCCs — Allan Hancock, Santa Barbara City, Moorpark, De Anza, Diablo Valley, Pasadena City, Santa Monica and Orange Coast. There is no UC-style TAG at Cal Poly, so the pattern is statewide rather than partner-based: admits come from students anywhere in California who followed a published transfer selection guide course-for-course.",
+    "programs": []
+  },
+  {
+    "name": "Cal State Bakersfield",
+    "applicants": 4468,
+    "admitted": 3883,
+    "rate": 86.9,
+    "cycle": "Fall 2024 (CDS 2024-2025, Section D2)",
+    "typical": "The base admit rate is high (86.9%) but yield is what actually filters the class: only 1,234 of the 3,883 admits (about 32%) enrolled, so most admits are choosing other options rather than being screened out by CSUB. Typical admits meet the D6/D7 minimums (2.5 HS GPA / 2.0 college GPA) with 60+ transferable semester units; ADT (AA-T/AS-T) holders and Transfer Success Pathway (TSP) agreement-signers get guaranteed admission outside the general pool, and local Kern County / Antelope Valley CCC students get service-area priority.",
+    "levers": [
+      "Sign a Transfer Success Pathway (TSP) agreement as a first-time CCC freshman (enrollment window opens August 1, closes in November each year) — it guarantees future admission to 30+ majors at the main campus (8 at the Antelope Valley Campus) if you complete 60+ transferable units, earn C- or better in the Golden 4, keep a 2.0+ GPA, and transfer within 3 years (2 years if in Kern Promise or completing an ADT).",
+      "Complete an ADT (AA-T/AS-T) in a major CSUB deems similar — this triggers CSU-systemwide guaranteed admission plus CSUB's local-service-area priority, which matters most for capacity-limited programs like Nursing that use tighter criteria than the base GPA minimums."
+    ],
+    "watchouts": [
+      "Nursing (BSN/RN-to-BSN) and other high-demand programs apply more selective, program-specific criteria on top of the D6/D7 base minimums — don't assume the 2.0 college GPA floor is sufficient for those majors.",
+      "Fall admission is NOT rolling (only Spring is) and has a hard Nov 30 priority/closing date with notification not until Feb 1 — missing it pushes you to the Spring cycle (Aug 31 deadline, Oct 1 notification)."
+    ],
+    "feeders": "Bakersfield College (primary feeder, same city), plus Porterville College, Taft College, and Cerro Coso Community College; Antelope Valley College feeds CSUB's separate Antelope Valley Campus.",
     "programs": []
   },
   {
@@ -597,6 +669,24 @@
     "programs": []
   },
   {
+    "name": "Cincinnati",
+    "applicants": 5328,
+    "admitted": 2554,
+    "rate": 47.9,
+    "cycle": "2024-2025 CDS (Fall 2024 transfer cohort) — the most recent UC Common Data Set found; UC's 2025-2026 CDS was not located",
+    "typical": "Minimums-based general review: college transcripts required of all and a 2.0+ college GPA (D7), no essay, interview, or test scores required, and no minimum-credit floor to be treated as a transfer applicant (D4 = No). At a 48% admit rate UC is meaningfully more selective than UK's headline number, and the CDS itself flags selective review for some programs on top of that.",
+    "levers": [
+      "UC's CDS explicitly documents open admission at its regional campuses (UC Blue Ash, UC Clermont) as a separate, less-selective entry lane (C6) that can lead into Uptown degree programs — a real, school-specific side door.",
+      "Ohio's statewide Transfer Assurance Guide (TAG) / Ohio Transfer 36 module guarantees block transfer of gen-ed credit from Ohio public two-year colleges, which protects your credit count and strengthens the GPA case UC is actually screening on (D7)."
+    ],
+    "watchouts": [
+      "UC checked 'selective admission to some programs' (CDS C6) — DAAP (design/architecture/art/planning), nursing, engineering, CS, and business likely run separate, tougher review well below the 48% headline rate.",
+      "UC's open-admission language in C6 applies specifically to its regional campuses, not the main Uptown campus or its competitive majors — know which pathway is actually reviewing your application."
+    ],
+    "feeders": "Ohio public two-year colleges (Cincinnati State Technical and Community College, Sinclair Community College, Columbus State CC, etc.) via Ohio's statewide TAG/Ohio Transfer 36 articulation, plus UC's own open-admission regional campuses (UC Blue Ash, UC Clermo",
+    "programs": []
+  },
+  {
     "name": "City College (CUNY)",
     "applicants": 7855,
     "admitted": 3626,
@@ -648,6 +738,24 @@
       "37 of your last 43 hours must be completed in residence at Clemson, and the lowest grade that transfers is a C. Credits picked up elsewhere late in the game will not count toward the degree."
     ],
     "feeders": "Tri-County Technical College dominates by a wide margin through the Bridge program, followed by Greenville Technical College, Trident Technical College, Midlands Technical College and Spartanburg Community College. Secondary flow comes from four-year swirl wit",
+    "programs": []
+  },
+  {
+    "name": "Cleveland State",
+    "applicants": 1539,
+    "admitted": 1539,
+    "rate": 100,
+    "cycle": "Fall 2021 (2021-2022 CDS) — the newest CDS I could actually open; CSU's 2023-24 and 2024-25 CDS files exist per their CDS page but",
+    "typical": "The one CDS D2 table I could verify (Fall 2021: 1,539 applied, 1,539 admitted, 875 enrolled) shows CSU admitting essentially every transfer applicant that cycle, gated mainly by the 2.0 cumulative GPA floor. CSU is a large urban commuter public in Cleveland; a high admit rate here reflects self-selection (students who already know they clear the bar tend to be the ones who apply) more than genuine holistic competition. Treat this rate as directional and dated, not current — recommend re-pulling once a public (non-SharePoint) 2023-24 or 2024-25 CDS is available.",
+    "levers": [
+      "Clear the 2.0 cumulative transfer GPA floor (2.5 for College of Education and Human Services, 2.2 for Fenn College of Engineering per CSU's transfer requirements page) — this is the primary gate",
+      "Bring Ohio Transfer Module (OTM) / Transfer Assurance Guide (TAG)-approved gen-ed and pre-major coursework so it transfers as a block rather than a course-by-course petition"
+    ],
+    "watchouts": [
+      "CDS D10 marks CSU as NOT formally open-admission for transfers even though the one verified year shows a 100% admit rate, so don't assume every GPA band or program clears automatically — Education (2.5 GPA) and Engineering (2.2 GPA) set higher floors",
+      "The D2 figures I could access are from 2021-22 (Fall 2021), four cycles old; newer CDS editions were inaccessible (SharePoint 403), so applicant volume and rate may have shifted since"
+    ],
+    "feeders": "Dominant feeder is Cuyahoga Community College (Tri-C, all four campuses), typical for a Cleveland-based commuter public; Lakeland CC and Lorain County CC are secondary sources. (Not independently confirmed via a CSU-published feeder list — based on regional pa",
     "programs": []
   },
   {
@@ -705,6 +813,24 @@
     "programs": []
   },
   {
+    "name": "Creighton",
+    "applicants": 73,
+    "admitted": 69,
+    "rate": 94.5,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "Transfer pool is very small (73 applicants total) with a near-open admit rate (94.5%) but only ~51% yield (35/69 enroll) — the review is decentralized by receiving college (Arts & Sciences, Heider College of Business, or Nursing), with emphasis on college grades and an essay/personal statement recommended. Lowest transferable grade is C-; no published minimum college GPA.",
+    "levers": [
+      "Metropolitan Community College (Omaha) — official published transfer guide/pathway; specific prerequisites apply (e.g., completing ENGL 1020 before transfer) to enter as a junior",
+      "Central Community College (Nebraska) — named articulation pathway specifically for students aiming at Creighton's College of Nursing"
+    ],
+    "watchouts": [
+      "Creighton's traditional BSN program does NOT accept general transfer students — the only entry route is a niche 3+1 partnership (Hastings College + Mary Lanning Healthcare feeding into the Accelerated BSN), so most nursing-track transfer applicants will be turned away outright",
+      "PharmD (School of Pharmacy and Health Professions) transfer credit is evaluated at the Assistant/Associate Dean's discretion only AFTER formal admission — applicants cannot get a pre-acceptance guarantee on how many credits will actually transfer"
+    ],
+    "feeders": "Metropolitan Community College (Omaha, NE) and Central Community College (Grand Island/Hastings/Columbus, NE) are the two community colleges with named, published articulation/transfer guides on Creighton's registrar site; Hastings College is the sole feeder i",
+    "programs": []
+  },
+  {
     "name": "Davidson",
     "applicants": 152,
     "admitted": 28,
@@ -720,6 +846,24 @@
       "Davidson left every D9 transfer deadline row blank in its own CDS. The published date is April 1 with decisions in early June — later than most, meaning you may be sitting on a deposit at another school while you wait. Confirm the current date directly with admission rather than trusting the CDS here."
     ],
     "feeders": "Davidson publishes no feeder list. Structurally the pool skews toward students at other selective four-years and state flagships looking for a smaller, Division I liberal arts environment, plus North Carolina community college students. Davidson is standalone ",
+    "programs": []
+  },
+  {
+    "name": "DePaul",
+    "applicants": 4329,
+    "admitted": 2724,
+    "rate": 62.9,
+    "cycle": "Fall 2024 (CDS 2024-25, Sec. D2)",
+    "typical": "4,329 transfer applicants, 2,724 admitted (62.9%), 1,048 enrolled in Fall 2024 — a ~38% yield on admits. The floor is a 2.00/4.0 college GPA (CDS D7) plus being in good standing and eligible to return to the last institution attended (CDS D8); no essay, interview, or test scores are required for general transfer admission.",
+    "levers": [
+      "Chicagoland Community College Transfer Scholarship: $10,000/year, renewable into senior year with a 2.5+ GPA, for students entering as juniors with an earned associate degree from a Chicago City College or other Chicagoland community college (new as of Fall 2025 cycle).",
+      "Transfer Articulation Center (TRAC) and DePaul's published course-by-course Transfer Guides for Illinois community colleges let students pre-map exactly how credits will apply before submitting an application, reducing credit loss."
+    ],
+    "watchouts": [
+      "School of Music and The Theatre School admit transfer students for fall term only and require auditions — the year-round rolling policy (all four terms checked 'rolling' in CDS D3/D9) does not apply to those two programs.",
+      "CDS D9 shows no fixed closing date (rolling review for Fall/Winter/Spring/Summer), but program review can start up to a year ahead of the term — applying late risks missing scholarship consideration like the $10k Chicagoland Community College Transfer Scholarship."
+    ],
+    "feeders": "City Colleges of Chicago and Chicagoland-area community colleges (e.g., College of DuPage, Oakton, Harper, Triton), supported by DePaul's published Transfer Guides and the Transfer Articulation Center (TRAC).",
     "programs": []
   },
   {
@@ -741,6 +885,24 @@
     "programs": []
   },
   {
+    "name": "Denison University",
+    "applicants": 270,
+    "admitted": 61,
+    "rate": 22.6,
+    "cycle": "Fall 2024",
+    "typical": "Holistic file review: college transcript, personal essay/statement, and statement of good standing are required of all transfer applicants; interview is recommended; standardized test scores are explicitly not required. No minimum GPA is published in the CDS. The admit rate (22.6%) understates the real bottleneck — only 28 transfers actually enrolled Fall 2024 out of 270 applicants, so seats are scarce even for qualified candidates.",
+    "levers": [
+      "No minimum credits or GPA threshold to apply as transfer (CDS D4/D6/D7 all blank/No) — students with even one semester of college coursework can apply; up to 63 credits per semester from either 2-year or 4-year schools transfer in (C grade minimum), counted against a 64-credit in-residence requirement for the bachelor's degree.",
+      "Test-optional and interview-recommended: the essay and optional interview are the levers to pull since standardized scores carry no weight in transfer review — lean into narrative fit rather than test prep."
+    ],
+    "watchouts": [
+      "Cohort size, not the admit rate, is the real constraint: only 28 transfers enrolled in Fall 2024 — treat every cycle as capacity-constrained regardless of file strength.",
+      "Fall deadline is fixed, not rolling: applications close April 15, decisions go out May 15, and admitted students must reply by June 1 — missing the window pushes you to the Nov 15 spring-term cycle."
+    ],
+    "feeders": "Not broken out by Denison's CDS or admissions office — no institution-level transfer-origin data is published. As a selective Ohio LAC it likely draws some transfers from Ohio community colleges (e.g., Columbus State, Sinclair) and other four-year schools, but",
+    "programs": []
+  },
+  {
     "name": "Drexel",
     "applicants": 2596,
     "admitted": 1511,
@@ -756,6 +918,60 @@
       "The 58.2% university-wide rate badly overstates your odds in the direct-entry health programs. Nursing (ACE), Physician Assistant and the accelerated BS/MD-type programs run separate, far more restrictive transfer processes - some accept no external transfers at all."
     ],
     "feeders": "Philadelphia-metro two-years dominate: Community College of Philadelphia, Montgomery County CC, Delaware County CC, Bucks County CC, and Camden County College (NJ). Meaningful four-year lateral flow as well - Penn State branch campuses, Temple, and Rowan - whi",
+    "programs": []
+  },
+  {
+    "name": "East Carolina",
+    "applicants": 3170,
+    "admitted": 2662,
+    "rate": 84,
+    "cycle": "2023-24 (Fall 2023 entering cohort). This is the most recent ECU Common Data Set with a populated D2 table. The newest published C",
+    "typical": "ECU is a large, broad-access UNC System regional flagship, not a selective gate. Roughly 4 in 5 transfer applicants who clear the floor requirements (24+ transferable credit hours, ~2.0 college GPA) are admitted. NC community college students with an AA/AS and a 2.0+ GPA are essentially guaranteed junior-status admission under the state articulation agreement. The real selectivity pressure shows up later, at the program level (e.g., Nursing/BSN, other capacity-limited majors), not at the university admission gate.",
+    "levers": [
+      "North Carolina's Comprehensive Articulation Agreement (CAA): community college students who complete an AA or AS with a 2.0+ GPA get guaranteed admission with junior standing to any UNC System school, including ECU.",
+      "Pirate Promise co-admission program: ECU's partnership with specific NC community colleges (e.g., Edgecombe CC) lets students access ECU advising, library, and some services while still enrolled at the CC, smoothing the transfer path and improving matriculation odds."
+    ],
+    "watchouts": [
+      "Below the 24-credit-hour / ~2.0 GPA floor, ECU reviews the applicant as a first-year student using high school record instead -- a materially different and often less favorable review path.",
+      "High admit rate at the university level does not carry over to space-limited programs like the BSN (Nursing) and other competitive majors, which have separate, tougher internal transfer/change-of-major gates."
+    ],
+    "feeders": "Primarily eastern North Carolina community colleges given ECU's Greenville location and regional draw: Pitt Community College (same city), Edgecombe CC (formal Pirate Promise partner), Wake Tech, Lenoir CC, Craven CC, and Wayne CC. ECU's College of Education a",
+    "programs": []
+  },
+  {
+    "name": "Elon University",
+    "applicants": 429,
+    "admitted": 241,
+    "rate": 56.2,
+    "cycle": "Fall 2024 (CDS 2024-25, published by Elon Institutional Research)",
+    "typical": "Fall 2024 CDS shows 241 of 429 transfer applicants admitted (56.2%) but only 72 enrolled - roughly 30% yield on admits. Admission is fairly attainable once a student clears the 2.7 cumulative GPA / one full semester (12 transferable credits) bar; the bigger filter is which admits actually choose Elon over other offers.",
+    "levers": [
+      "Clear the explicit 2.7 min. college GPA + 12 transferable-credit threshold (CDS D6/D7); NCICU-NCCCS Comprehensive Articulation Agreement course equivalencies make NC community-college credits transfer cleanly.",
+      "Alamance Community College Scholarship - a named, school-specific award for ACC transfers with 24+ transferable credits (direct local pipeline)."
+    ],
+    "watchouts": [
+      "SAT/ACT is technically required for transfer applicants per Elon's own site and listed 'Recommended of Some' in CDS D5 - it's only waived case-by-case for advanced/nontraditional students, so don't assume transfer = test-optional.",
+      "Rolling admission with a July 1 fall priority date; after that, decisions are made on a space-available basis, so late applicants compete for shrinking seats."
+    ],
+    "feeders": "Alamance Community College (named scholarship partner, 8.8 mi from campus) and Guilford Technical Community College - both share the Greater Greensboro Consortium with Elon; broader pipeline via the NCICU-NCCCS Comprehensive Articulation Agreement covering all",
+    "programs": []
+  },
+  {
+    "name": "Fairfield University",
+    "applicants": 518,
+    "admitted": 50,
+    "rate": 9.7,
+    "cycle": "2024-25 (Fall 2024)",
+    "typical": "CDS D2 for Fall 2024: 518 applied (244 men, 273 women, 1 unknown), 50 admitted, 41 enrolled — a strikingly tight cycle. General transfer floor is a 2.5 college GPA; the Dolan School of Business sets its own higher 2.8 minimum. No minimum-credit rule gates who must apply as transfer vs. first-year (CDS D4 = No).",
+    "levers": [
+      "Fairfield Bellarmine: Fairfield's own 2-year associate-degree program for Greater Bridgeport-area students, with 35 fully funded transfer seats reserved annually into Fairfield's bachelor's programs (including Dolan Business) — a named, guaranteed internal pipeline rather than the general applicant pool.",
+      "Target the 2.8 Dolan School of Business GPA floor specifically (not just the university's general 2.5) if the intended major is business — Dolan's bar is the binding constraint for a large share of applicants."
+    ],
+    "watchouts": [
+      "Fall 2024's 9.7% admit rate (50/518) is a sharp drop from the ~34% rate commonly cited for Fairfield transfers in older cycles — verify with admissions whether this is a one-year anomaly or a new normal before benchmarking against older 'easier' figures.",
+      "CDS lists a spring transfer closing date (11/15) but no published fall closing date — only an April 1 priority date — so fall functions as rolling/space-available after priority; apply as early as possible rather than assuming a fixed fall cutoff."
+    ],
+    "feeders": "Primary named 2-year feeder is Fairfield's own Fairfield Bellarmine campus (guaranteed 35 seats/year). Otherwise Fairfield accepts up to 60 credits from a two-year school and up to 60 from a four-year school, evaluated individually — no other named CC articula",
     "programs": []
   },
   {
@@ -792,6 +1008,24 @@
       "The admit rate is six years old. Fordham stopped publishing its CDS after 2019-2020, so there is no verifiable recent transfer rate. Anyone quoting a current Fordham transfer percentage is not sourcing it from Fordham's own CDS."
     ],
     "feeders": "Heavily New York metro. The transfer pipeline runs from CUNY and SUNY two-year campuses (Borough of Manhattan CC, Bronx CC, Westchester CC and peers) plus regional four-year schools, with New York students who commute to Rose Hill or Lincoln Center. Two markers confirm the pattern: Fordham waives the $80 application fee for community college students in Phi Theta Kappa, and it runs a dedicated pathway for students currently in New York's HEOP/EOP/CD/SEEK opportunity programs, answered through the Common App Member Questions for transfers.",
+    "programs": []
+  },
+  {
+    "name": "Furman University",
+    "applicants": 233,
+    "admitted": 60,
+    "rate": 25.8,
+    "cycle": "Fall 2025",
+    "typical": "Transfer admits typically clear Furman's 3.00 minimum college GPA (CDS D7) by a comfortable margin, since test scores are not used in review — the essay and the required statement of good standing from the prior school (D5) carry real weight given only 26 of 233 applicants actually enrolled.",
+    "levers": [
+      "Minimum college GPA of 3.00 is required of all transfer applicants (CDS D7); essay/personal statement and a statement of good standing from the current institution are required of all, not just recommended (D5).",
+      "Furman accepts transfers for both Fall and Spring (D3), with a Fall priority date of Jan 15 well ahead of the Jul 15 closing date (D9) — applying early in that window, or targeting Spring entry, avoids the compressed late-cycle pool."
+    ],
+    "watchouts": [
+      "Transfer is a marginal pathway into Furman: only 26 students enrolled out of 233 Fall 2025 applicants (CDS D2) — the 25.75% admit rate overstates how many seats are actually open.",
+      "Credit transfer is capped at 68 credits from a 4-year school / 64 from a 2-year school, with 60 credits required in residence (D13/D14/D16) — students with 2+ years elsewhere may still face close to two full years at Furman."
+    ],
+    "feeders": "Not published in Furman's CDS or admissions site — no institution-by-institution transfer feeder list is available. Given its Greenville, SC location, regional schools (e.g., Greenville Technical College, Clemson, USC) are plausible sources, but this is infere",
     "programs": []
   },
   {
@@ -846,6 +1080,24 @@
       "Admission to UGA is not admission to Terry College of Business: no one is admitted directly into a business major from outside the university, everyone enters as 'intended business,' and UGA restates the transfer GPA thresholds each term based on space."
     ],
     "feeders": "Overwhelmingly in-state Georgia public two-year and state colleges — Georgia State's Perimeter College campuses, Georgia Gwinnett, Georgia Highlands, Athens Technical and Gwinnett Technical — plus laterals from Kennesaw State and Georgia Southern. Out-of-state",
+    "programs": []
+  },
+  {
+    "name": "Georgia State",
+    "applicants": 3980,
+    "admitted": 1866,
+    "rate": 46.9,
+    "cycle": "Fall 2025 (CDS 2025-26)",
+    "typical": "GSU's transfer gate is real, not a rubber stamp: CDS Section D10 confirms transfers do NOT get open admission (unlike parts of GSU's freshman story). The university floor is a 2.5 cumulative college GPA plus 30 transferable credit hours; under 30 hours, GSU also weighs your high school record. About 47% of applicants clear the bar, and admits skew heavily toward students already inside the GSU system via the Perimeter College AA-to-BA pipeline. Selective majors (Robinson College of Business, Nursing, CS) can require GPAs above the university-wide floor.",
+    "levers": [
+      "Perimeter College AA-to-BA pathway: finish an associate degree at GSU's own Perimeter College campuses and move to the Atlanta campus without reapplying — the single largest transfer feeder at roughly 1,500 admits/year.",
+      "Clear the 2.5 cumulative college GPA + 30 transferable-credit threshold cleanly; under 30 credits GSU folds in your high school record too, so thin-credit transfers get freshman-level scrutiny."
+    ],
+    "watchouts": [
+      "Transfer admission is NOT open admission at GSU (CDS D10 = No) — the 46.9% rate is a genuine filter, not a formality.",
+      "Selective programs (e.g., Robinson College of Business, Nursing) can impose GPA or space requirements above the university-wide 2.5 floor — check the program page separately from the university-wide CDS number."
+    ],
+    "feeders": "Perimeter College (GSU's own two-year division, merged in 2016) is by far the dominant feeder at ~1,500 admits/yr; the remainder come from other University System of Georgia two-year/state colleges around metro Atlanta.",
     "programs": []
   },
   {
@@ -1051,6 +1303,60 @@
     "programs": []
   },
   {
+    "name": "Kennesaw State",
+    "applicants": 4694,
+    "admitted": 3016,
+    "rate": 64.3,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "A somewhat tighter gate than Towson but still broad: 3,016 of 4,694 fall 2024 transfer applicants were admitted (64%). KSU requires only a college transcript (D5) plus one named course-completion hurdle — denials cluster among applicants who haven't cleared that hurdle or the 30-hour minimum, not among applicants losing out to stronger competing files.",
+    "levers": [
+      "Complete at least 30 transferable semester hours, including the equivalent of ENGL 1101 and 1102 (or higher) with a grade of C or better, and hold a cumulative college GPA of 2.00+ (D4, D7, D8) — under 30 hours, KSU reviews you as a first-year applicant instead.",
+      "Georgia's University System (USG) runs a common Core Curriculum (Areas A-E, ~42 hours) and common course numbering across its two- and four-year campuses, so credit earned at a USG or Technical College System of Georgia school maps cleanly onto KSU's requirements — Georgia has no NC-style statewide law guaranteeing admission by GPA, so KSU's own review still decides the outcome."
+    ],
+    "watchouts": [
+      "The named English-composition requirement (ENGL 1101/1102-equivalent, grade C+) is a specific, checkable trip-up — applicants who are short one of those two courses, or under the 30-hour floor, get pushed into freshman-style review.",
+      "KSU is a very large, heavily commuter/regional university (about 43,000 undergrads; 86% of undergrads live off-campus or commute; only 2-4% are from out of state) — read the 64% admit rate as an access-institution number, not evidence of real selectivity."
+    ],
+    "feeders": "The CDS does not itemize feeder schools. Given KSU's Cobb County/Metro Atlanta location, plausible large transfer pipelines include Chattahoochee Technical College, Georgia Highlands College, and Perimeter College at Georgia State — this is inference from geog",
+    "programs": []
+  },
+  {
+    "name": "Kent State",
+    "applicants": 2013,
+    "admitted": 1666,
+    "rate": 82.8,
+    "cycle": "Fall 2025 (2025-2026 CDS, Kent campus)",
+    "typical": "Blended ~83% transfer admit rate (2,013 applied / 1,666 admitted, CDS D2) is largely a GPA-floor process, not holistic review: clear the 2.0 cumulative college GPA (CDS D7) and admission is close to automatic outside a few capacity-limited majors. A meaningful share of the 'transfer' pool is internal — Kent State's own regional-campus students (Stark, Trumbull, Ashtabula, Geauga, Salem, Tuscarawas, East Liverpool) moving to the Kent campus — which pulls the headline rate up versus a pure external-transfer rate.",
+    "levers": [
+      "Complete Ohio Transfer Module (OTM) / Transfer Assurance Guide (TAG) coursework at the sending school so gen-ed and pre-major credits transfer as an approved block instead of course-by-course petition review",
+      "Clear the 2.0 cumulative college GPA floor (CDS D7) — this is the main gate; below it triggers case-by-case secondary review and is the most common denial reason"
+    ],
+    "watchouts": [
+      "Capacity-limited majors (e.g., Nursing, Fashion Design/Merchandising, Architecture) run separate secondary transfer review with higher GPA/space cutoffs not reflected in the university-wide D2 rate",
+      "Because many transfer applicants are Kent State's own regional-campus students moving to the Kent campus, the 83% figure is not a clean read on how hard it is to get in as an outside community-college transfer"
+    ],
+    "feeders": "Ohio's two-year system plus Kent State's own regional campuses: Cuyahoga Community College (Tri-C), Stark State College, Lorain County CC, and Lakeland CC are typical external feeders; a large internal stream comes from Kent State Stark/Trumbull/Ashtabula/Geau",
+    "programs": []
+  },
+  {
+    "name": "Kentucky",
+    "applicants": 2143,
+    "admitted": 1870,
+    "rate": 87.3,
+    "cycle": "2025-2026 CDS (Fall 2025 transfer cohort)",
+    "typical": "General transfer review reads as minimums-based, not holistic: 24+ transferable credit hours and a 2.0+ college GPA (CDS D4/D7), with no essay, interview, or test scores required. High school transcript is only 'recommended of some.' At an 87% admit rate, clearing the published numeric bar is most of the fight outside gated majors.",
+    "levers": [
+      "Hit the two hard numbers UK actually checks: 24+ transferable credit hours and a 2.0 college GPA (D4, D7) — there's no essay/interview/test-score layer for general transfer to clear on top of that.",
+      "Kentucky's statewide public-to-public transfer policy lets an Associate in Arts/Associate in Science from a Kentucky Community and Technical College System (KCTCS) school transfer as a block toward a UK bachelor's, giving in-state CC transfers a predictable, pre-mapped pathway (UK also allows up to 90 credits in from a 4-year institution, D14)."
+    ],
+    "watchouts": [
+      "UK checked 'selective admission to some programs' (CDS C6) — competitive majors (nursing, engineering, business, etc.) almost certainly run a tougher secondary review than the 87% headline rate suggests.",
+      "Below 24 transferable credit hours you're not evaluated as a transfer applicant at all — you're routed into first-year admission instead, where high school record and test scores (optional) come back into play."
+    ],
+    "feeders": "Kentucky Community and Technical College System (KCTCS) campuses (Bluegrass CTC, Jefferson CTC, Owensboro CTC, etc.) plus other Kentucky and regional two- and four-year transfers; KCTCS AA/AS degrees are designed to transfer as a block under Kentucky's statewi",
+    "programs": []
+  },
+  {
     "name": "Kenyon",
     "applicants": 103,
     "admitted": 48,
@@ -1087,6 +1393,60 @@
     "programs": []
   },
   {
+    "name": "Louisiana State",
+    "applicants": 4348,
+    "admitted": 2763,
+    "rate": 63.5,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "Fall 2024: 4,348 applied, 2,763 admitted, 1,091 enrolled (63.5% admit rate, university-wide). LSU's explicit floor is 30+ transferable credit hours from a regionally-accredited college, 2.5 cumulative college GPA, and a C-or-better in the gen-ed English and Math courses. Applicants with fewer than 30 transferable hours are also screened as freshmen (official HS transcript, ACT/SAT, ~3.0 HS GPA). LSU Baton Rouge is the state flagship, not a commuter school -- the ~64% rate is a broad but real floor, and competitive majors add their own review on top of it.",
+    "levers": [
+      "Clear LSU's explicit transfer floor before applying: 30+ transferable credit hours, 2.5 cumulative college GPA, and a C-or-better in the gen-ed English and Math courses -- clearing 30 hours also exempts you from submitting ACT/SAT scores.",
+      "Apply early for Fall: LSU reviews transfer applications on a rolling basis with April 15 as the outside closing date, so popular majors and space fill before that date."
+    ],
+    "watchouts": [
+      "The 63.5% figure is a university-wide average; capacity-limited majors (e.g., Business, Engineering, Nursing) typically run separate, more selective internal review beyond the CDS floor -- confirm requirements directly with the college/department.",
+      "Under 30 transferable hours, you're evaluated under freshman admission standards too (HS transcript, ACT/SAT, GPA benchmark), not just transfer criteria."
+    ],
+    "feeders": "Louisiana Community and Technical College System (LCTCS) schools -- e.g., Baton Rouge Community College, River Parishes CC, SLCC. Louisiana's Board of Regents statewide articulation agreement guarantees that AA/AS graduates from an LCTCS college have met all g",
+    "programs": []
+  },
+  {
+    "name": "Louisville",
+    "applicants": 2935,
+    "admitted": 2016,
+    "rate": 68.7,
+    "cycle": "Fall 2024 cohort, reported in the 2024-2025 CDS (Section D2)",
+    "typical": "2,016 of 2,935 fall-2024 transfer applicants were admitted (~68.7%; 1,026 enrolled). CDS D10 confirms an open-admission policy applies to transfer students, and the floor is a 2.0 college GPA plus 24 completed semester hours (D4/D7). Most admits come out of Kentucky's KCTCS system — heavily Jefferson Community & Technical College, which sits in the same city — via statewide Transfer Pathways that certify gen-ed completion; selective units (nursing, engineering, business honors) can still impose higher GPA/space bars the D2 topline doesn't capture.",
+    "levers": [
+      "The ULtra partnership with Jefferson Community & Technical College (same-city KCTCS school) guarantees UofL admission once a student completes 24 transferable credit hours at JCTC (major-specific GPA/prerequisites still apply), with a dedicated ULtra advisor while the student is still enrolled at JCTC.",
+      "Kentucky's statewide KCTCS Transfer Pathways guarantee that designated AA/AS coursework transfers intact into a specific UofL major and certifies full general-education completion, so admits aren't forced to repeat core courses."
+    ],
+    "watchouts": [
+      "UofL is not Kentucky's flagship (that's UK) — it's a large urban research university with a sizable regional/commuter population, so the 68.7% topline reflects broad access more than flagship-level selectivity; individual majors can still gate harder.",
+      "CDS D9 marks every term (Fall/Winter/Spring/Summer) as rolling admission with all specific date fields left blank — 'apply ~6 weeks before term start' is the admissions office's practical guidance, not a CDS-verified hard deadline."
+    ],
+    "feeders": "Kentucky's KCTCS system, led by Jefferson Community & Technical College in Louisville via the ULtra guaranteed-admission pathway, plus other KCTCS colleges statewide and lateral transfers from other Kentucky four-year institutions.",
+    "programs": []
+  },
+  {
+    "name": "Loyola Chicago",
+    "applicants": 2918,
+    "admitted": 1511,
+    "rate": 51.8,
+    "cycle": "Fall 2024 (CDS 2024-25, Sec. D2)",
+    "typical": "2,918 transfer applicants, 1,511 admitted (51.8%), 414 enrolled in Fall 2024. Admits skew slightly more competitive than the headline rate suggests once you split by program: the minimum required college GPA ranges from 2.0/4.0 for a general BA/BS up to 2.5/4.0 for Business/Education/Social Work and 3.0/4.0 for Engineering (BS) (CDS D7). Yield on admits was about 27% (414/1,511).",
+    "levers": [
+      "Illinois Articulation Initiative (IAI): an AA/AS from a public Illinois community college automatically satisfies Loyola's Core Curriculum (minus mission-specific courses), so finishing the associate's degree before transferring skips most gen-ed requirements.",
+      "Arrupe College pathway: Loyola's own two-year college has a dedicated CCC/Arrupe transfer counselor and a direct, internally-supported pipeline into Loyola bachelor's programs — a warmer route than an external City Colleges transfer."
+    ],
+    "watchouts": [
+      "Minimum transfer GPA is program-specific and steep for some majors: 2.0/4.0 clears a general BA/BS, but Engineering (BS) requires 3.0/4.0 and Business/Ed/Social Work require 2.5/4.0 (CDS D7) — a 2.6 GPA transfer is fine for liberal arts but not competitive for Engineering.",
+      "Nursing (Marcella Niehoff School of Nursing) transfer admission is separately capacity-constrained and not broken out in the blended D2 total, so the 51.8% overall rate should not be assumed to apply there."
+    ],
+    "feeders": "City Colleges of Chicago (including Arrupe College, Loyola's own two-year feeder), Oakton Community College, College of DuPage, and Harper College, chiefly via Illinois Articulation Initiative (IAI) agreements.",
+    "programs": []
+  },
+  {
     "name": "Loyola Marymount",
     "applicants": 3036,
     "admitted": 1706,
@@ -1102,6 +1462,24 @@
       "CDS D13 caps two-year college credit at 60 semester units and D16 requires 30 units in residence; CDS D8 also requires high school transcripts from anyone with fewer than 30 semester hours, so sub-30-unit applicants get read partly on their high school record."
     ],
     "feeders": "Los Angeles Community College District campuses under the district-wide agreement, plus Santa Monica College on its own TAG, and Honors Transfer Council of California honors programs that list LMU as a transfer partner. Westside and South Bay LA colleges domin",
+    "programs": []
+  },
+  {
+    "name": "Loyola University Maryland",
+    "applicants": 347,
+    "admitted": 137,
+    "rate": 39.5,
+    "cycle": "Fall 2024",
+    "typical": "Fall 2024: 137 of 347 transfer applicants admitted (39.5%), with 58 enrolling. No minimum credit-hour threshold is required to apply as a transfer rather than first-year applicant, but a minimum college GPA of 2.70 is required. High school transcript, college transcript(s), an essay/personal statement, and a statement of good standing from prior institution(s) are required of all applicants; an interview is required of some; standardized test scores are not required.",
+    "levers": [
+      "Seamless Transfer Program: Maryland community college students who complete an AA or AS degree have most core requirements waived and can finish a Loyola bachelor's degree in as little as 2 years.",
+      "Guaranteed-admission honors pathways: CCBC's Honors Articulation Agreement and Montgomery College's honors pathway (AA/AS/AAT plus 12+ honors credits and a 3.2 GPA) grant guaranteed admission plus an application fee waiver."
+    ],
+    "watchouts": [
+      "Only 60 credits transfer in maximum from either a two-year or a four-year institution, and a minimum of 60 credits must be completed at Loyola — students arriving with more credit than that lose hours toward the degree.",
+      "Fall admission is rolling but the priority date (3/15) is four months ahead of the closing date (7/15) — applying near the closing date risks missing priority scholarship and housing consideration."
+    ],
+    "feeders": "Maryland community colleges broadly via the Seamless Transfer Program (AA/AS completers); Community College of Baltimore County (CCBC) via an Honors Articulation Agreement; Montgomery College via its guaranteed-admission honors pathway.",
     "programs": []
   },
   {
@@ -1159,6 +1537,24 @@
     "programs": []
   },
   {
+    "name": "Miami University (Ohio)",
+    "applicants": 1426,
+    "admitted": 696,
+    "rate": 48.8,
+    "cycle": "CDS 2024-25 (Fall 2024 entering transfer cohort) — the newest CDS Miami has posted",
+    "typical": "Miami's transfer admit rate (48.8%) is notably tighter than its freshman rate, and CDS D10 confirms open admission does NOT apply to transfers — this is a real gate, not a rubber stamp. The published minimum college GPA is only 2.0 (CDS D7), but that's a floor, not the competitive bar: it's capacity in specific programs, not raw GPA, that screens people out. Ohio's Transfer to Degree Guarantee (Ohio Transfer Module + Transfer Assurance Guides, run by the Ohio Dept. of Higher Education) locks in gen-ed and many major credits from any Ohio public 2-year or 4-year college, so students coming from an Ohio community college lose very little credit on paper — the real constraint is which major has open seats.",
+    "levers": [
+      "Apply to an open-capacity major (e.g., Arts & Science) first and petition into Farmer School of Business or Engineering after enrolling — direct transfer admission into those two schools is capacity-limited most terms.",
+      "Use Miami Regionals (Hamilton or Middletown) as a lower-friction entry point, then move to the Oxford campus via the guaranteed regional-to-Oxford pathway once space allows in your target major."
+    ],
+    "watchouts": [
+      "Farmer School of Business and Engineering are effectively selective/closed to direct transfer in many terms — don't plan around the CDS-listed 2.0 minimum GPA as if it were the real bar.",
+      "The CDS D9 date fields show an internal inconsistency (priority date listed as June 1 but reply date shown with an earlier year, likely a stale template value) — treat Miami's fall transfer window as rolling with a soft ~June 1 priority date, and confirm exact current dates on Miami's own admissions site."
+    ],
+    "feeders": "Not published in the CDS (feeder institutions aren't a CDS field). Geographically plausible feeders given Ohio's public two-year network: Sinclair Community College (Dayton), Cincinnati State, Columbus State Community College, and Miami's own regional campuses",
+    "programs": []
+  },
+  {
     "name": "Michigan State",
     "applicants": 3315,
     "admitted": 2619,
@@ -1210,6 +1606,24 @@
       "Carlson and Nursing have a hard February 1 fall deadline with no space-available extension, while CLA stays open to July 1 and CSE/CBS to June 1 — the single 'UMN deadline' does not exist."
     ],
     "feeders": "Minnesota State two-year colleges are the dominant pipeline, especially the Twin Cities metro ones — Normandale, Century, Minneapolis College, North Hennepin, Anoka-Ramsey — with MnTC completion as the standard entry ticket. Secondary streams are lateral trans",
+    "programs": []
+  },
+  {
+    "name": "Mississippi State",
+    "applicants": 3902,
+    "admitted": 2765,
+    "rate": 70.9,
+    "cycle": "Fall 2023 (CDS 2023-24) — used instead of the newer filing because it's internally consistent",
+    "typical": "University-level transfer admission is broad-access: about 7 in 10 fall applicants were admitted in the last reliable cycle, with a 2.0 cumulative college GPA as the stated CDS floor (D7). Real selectivity shows up later, when transfers have to clear separate, higher internal GPA/course requirements to get into capacity-limited majors like Business, Engineering, and Nursing — general transfer admission to MSU itself is not the hard gate.",
+    "levers": [
+      "Push cumulative transfer GPA well above the CDS's 2.0 floor — Business, Engineering, and Nursing set higher internal thresholds once you declare.",
+      "Earn an AA or complete the 30-hour IHL core curriculum at a Mississippi community college — the MCCB/IHL Statewide Articulation Agreement guarantees it satisfies MSU's core outright."
+    ],
+    "watchouts": [
+      "MSU's own Fall 2024 CDS (cds2024_2025.xlsx, Section D2) reports Admitted Applicants (5,801) exceeding Applicants (4,364) — an apparent data/column error in their filing, so that year's published rate is unusable; we report Fall 2023 instead.",
+      "MSU is a broad land-grant gate for in-state community-college transfers, not a highly selective filter — oversubscribed majors add their own secondary admission hurdle beyond university-level D2."
+    ],
+    "feeders": "Mississippi's 15 public community colleges under the Mississippi Community College Board (MCCB), especially those nearest Starkville — East Mississippi CC, Itawamba CC, Northeast Mississippi CC, and Holmes CC.",
     "programs": []
   },
   {
@@ -1323,6 +1737,42 @@
     "programs": []
   },
   {
+    "name": "Nevada Las Vegas",
+    "applicants": 4517,
+    "admitted": 3365,
+    "rate": 74.5,
+    "cycle": "Fall 2024 (CDS 2024-2025, Section D2) -- UNLV's 2025-2026 CDS D2 table was not yet populated when checked, so the prior year is us",
+    "typical": "Very accessible for NSHE two-year grads: anyone finishing an AA/AB/AS at an NSHE community college (College of Southern Nevada, Great Basin College, Truckee Meadows CC, Western Nevada College) with a 2.0+ GPA is GUARANTEED admission to UNLV under NSHE system policy, and that pipeline is the main driver of the ~75% headline D2 rate. Transfers without an NSHE associate degree instead face a 2.5 GPA floor. Impacted majors (nursing, hospitality, some engineering) run separate, more selective secondary review.",
+    "levers": [
+      "Earn an AA/AB/AS from an NSHE two-year school (especially CSN) with a 2.0+ GPA -- this triggers NSHE's guaranteed-admission policy and a full lower-division gen-ed block transfer, bypassing UNLV's standalone 2.5 GPA transfer bar.",
+      "If previously denied, use CSN's Guaranteed Transfer Program: finish roughly half the bachelor's degree at CSN with a 2.5+ cumulative GPA and no disciplinary holds to move to UNLV at junior standing without reapplying."
+    ],
+    "watchouts": [
+      "The ~75% rate is inflated by NSHE two-year guaranteed-admission grads (mostly from CSN); transfers without that associate degree face a real 2.5 GPA floor and are a smaller, less certain slice of the pool.",
+      "Impacted programs (nursing, hospitality, some engineering majors) run separate competitive secondary admission well below the university-wide rate."
+    ],
+    "feeders": "College of Southern Nevada (CSN) is by far the largest feeder, followed by the other NSHE two-year colleges (Nevada State, Great Basin College, Truckee Meadows CC, Western Nevada College) that share the same guaranteed-admission pathway.",
+    "programs": []
+  },
+  {
+    "name": "New Mexico",
+    "applicants": 2619,
+    "admitted": 1876,
+    "rate": 71.6,
+    "cycle": "Fall 2025 (CDS 2025-2026, Section D2)",
+    "typical": "Broadly accessible: NM residents with 24+ transferable credits and a 2.0+ GPA (or a completed AA/AS) clear UNM's own transfer bar and get in at ~72%. New Mexico's SB 161 (2005) plus the 2017 gen-ed law guarantee that approved gen-ed courses transfer statewide via the New Mexico Transfer Module -- that's a course-transfer guarantee, not a guaranteed-admission law like NC's CAA. Competitive majors (nursing, architecture, engineering) run separate secondary review below the headline rate.",
+    "levers": [
+      "Hit 24+ transferable credits with a 2.0+ cumulative GPA, or finish an AA/AS -- this is UNM's explicit published bar and the main gate below it.",
+      "Apply by the Aug 1 fall priority date; UNM's CDS lists no separate hard closing date, so early filing is what secures priority processing, housing, and scholarship review."
+    ],
+    "watchouts": [
+      "The 71.6% rate is university-wide; nursing, architecture, and engineering run limited-enrollment secondary admission with meaningfully lower effective odds.",
+      "No fixed fall closing date is reported beyond the Aug 1 priority date, so late-cycle applicants risk losing housing/registration slots even if still technically admissible."
+    ],
+    "feeders": "Central New Mexico Community College (CNM, Albuquerque) is the dominant in-state feeder, plus UNM's own branch campuses (Gallup, Los Alamos, Taos, Valencia) via the Branch Transition pathway.",
+    "programs": []
+  },
+  {
     "name": "Northeastern",
     "applicants": 3420,
     "admitted": 675,
@@ -1410,6 +1860,42 @@
       "Transfer credit is capped at 60 hours from a two-year institution and 90 from a four-year, and 30 credits must be earned at OU for the bachelor's (CDS D13, D14, D16). Stacking 75+ hours at a community college buys no additional standing."
     ],
     "feeders": "Oklahoma's two-year system supplies most of the volume: Oklahoma City Community College, Tulsa Community College, and Rose State, plus Cameron University and other Oklahoma State System institutions, several with named pathway and program-level articulation ag",
+    "programs": []
+  },
+  {
+    "name": "Old Dominion",
+    "applicants": 3264,
+    "admitted": 2868,
+    "rate": 87.9,
+    "cycle": "Fall 2025 transfer applicants (CDS 2025-26, Section D2)",
+    "typical": "ODU admits the large majority of transfer applicants (~88%) and functions as a genuinely access-oriented, regional/commuter gate for most transfers, backed by Virginia's statewide VCCS Guaranteed Admission Agreement plus ODU's own Hampton Roads partnerships. It is not a highly selective transfer gate outside a few capacity-limited programs.",
+    "levers": [
+      "Use the ODU-VCCS Guaranteed Admission Agreement: submit a Letter of Intent to Transfer after 15+ transferable credits and a 2.5 cumulative GPA (before 90 days prior to community-college graduation) for guaranteed admission.",
+      "If below ODU's regular admission bar, the Monarch Ready pathway with Tidewater Community College guarantees admission after 24 credits and a 2.5 cumulative GPA, with a reverse-transfer option to still finish the associate degree."
+    ],
+    "watchouts": [
+      "The high overall admit rate reflects ODU's access mission; nursing and other capacity-limited health/engineering programs are reviewed separately and are notably more competitive.",
+      "Monarch Ready is a Tidewater Community College-specific pathway — students from other VCCS colleges should confirm the equivalent guaranteed-admission terms directly with ODU's transfer office."
+    ],
+    "feeders": "Tidewater Community College (Norfolk/Virginia Beach/Chesapeake/Portsmouth) is by far the dominant feeder given ODU's Hampton Roads location, alongside other VCCS schools (Paul D. Camp, Virginia Peninsula) under the statewide GAA.",
+    "programs": []
+  },
+  {
+    "name": "Ole Miss",
+    "applicants": 2926,
+    "admitted": 2024,
+    "rate": 69.2,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "Transfer admission at the university level is fairly open, though it moves year to year: 69.2% of fall 2024 applicants were admitted, down sharply from 89.8% the year before (CDS 2023-24), so always check the current cycle rather than assuming. A 2.0 GPA is the stated floor (D6/D7); admission is rolling with an April 1 fall priority date. Business, Nursing, and Pharmacy run their own tighter secondary review after general admission.",
+    "levers": [
+      "Apply and submit all materials by the April 1 fall priority date — Ole Miss admits transfers on a rolling basis, but priority filers get first shot at housing and scholarship dollars.",
+      "Complete an AA or the 30-hour IHL core curriculum at a Mississippi community college — guaranteed by the MCCB/IHL Statewide Articulation Agreement to satisfy Ole Miss's core requirement outright."
+    ],
+    "watchouts": [
+      "The fall transfer admit rate swung from 89.8% (Fall 2023, CDS 2023-24) to 69.2% (Fall 2024, CDS 2024-25) — both computed cleanly from Ole Miss's own CDS D2, so pull the latest filing rather than quoting an older number.",
+      "University-wide admission is broad-access; competitive/limited-enrollment programs (Business, Nursing, Pharmacy) apply their own higher GPA bar and secondary review after general admission."
+    ],
+    "feeders": "Mississippi's public community colleges (MCCB system) — especially Northwest Mississippi CC (Senatobia), Itawamba CC, and Holmes CC — plus a substantial out-of-state pool from Tennessee, Texas, and other SEC-country states.",
     "programs": []
   },
   {
@@ -1521,6 +2007,24 @@
     "programs": []
   },
   {
+    "name": "Providence College",
+    "applicants": 195,
+    "admitted": 118,
+    "rate": 60.5,
+    "cycle": "2021-22 (Fall 2021) — most recent CDS PC has publicly released",
+    "typical": "CDS D2 splits the pool into UG (day college) and SCE (School of Continuing Education). Reported numbers here are UG-only: 195 applied, 118 invited, 48 enrolled, roughly even men/women. To apply as a transfer rather than a first-year, D4/D7 require 9+ transferable credits and a 2.75 college GPA. IMPORTANT: this is the newest transfer data PC has published — as of Aug 2026 their institutional research page lists the CDS as 'Coming Soon,' and PC's freshman admit rate has dropped sharply since 2021, so the real current-cycle transfer rate is very likely lower than 60.5%.",
+    "levers": [
+      "CCRI Guaranteed Admission & Tuition Agreement (GATA): Community College of RI students who sign the agreement before hitting 30 credits and complete an articulated major get conditional acceptance plus a ~33% tuition discount — but this pathway lands students in PC's School of Continuing Education (SCE), not the competitive day-college UG track.",
+      "Rolling transfer review with an April 1 priority date (best shot at aid/housing) and a June 1 final fall deadline per admission.providence.edu — applying at priority date matters more here than for most schools since PC does not publish a hard fall closing date in its CDS."
+    ],
+    "watchouts": [
+      "No newer CDS than 2021-22 is publicly posted (page marked 'Coming Soon' as of Aug 2026) — treat the 60.5% UG rate as dated context, not a current-cycle prediction; confirm live numbers with PC's Office of Admission (pcadmiss@providence.edu).",
+      "Don't conflate the SCE transfer track with day-college UG admission — in the same CDS cycle, all 50 SCE applicants were invited (a near-open pathway) while UG admission was materially more selective; make sure any 'PC transfer rate' you see elsewhere specifies which track it's describing."
+    ],
+    "feeders": "Only publicly named 2-year pathway is CCRI via the GATA agreement (SCE-only, capped at an articulated set of majors). No broad published articulation list for the day UG program — PC evaluates transfer coursework case-by-case, with a 60-credit cap on credits t",
+    "programs": []
+  },
+  {
     "name": "Purdue",
     "applicants": 4422,
     "admitted": 1882,
@@ -1572,6 +2076,24 @@
       "Portfolio is mandatory for Architecture and Games & Simulation Arts and Sciences (optional for Electronic Arts and Music), and Architecture, GSAS and Music admit transfers for FALL ONLY. Transfers cannot apply to the accelerated B.S./M.D. program."
     ],
     "feeders": "RPI names no individual feeder schools, but publishes two partner networks on its transfer page: 30 affiliated community colleges in the 2:2 A.S.-to-junior-standing program and 35+ liberal arts colleges in the 3:2 Engineering plan. Confirm your school is on th",
+    "programs": []
+  },
+  {
+    "name": "Rhodes College",
+    "applicants": 136,
+    "admitted": 30,
+    "rate": 22.1,
+    "cycle": "Fall 2024",
+    "typical": "A very small admitted pool (30 of 136 applicants, only 8 enrolled) that clears Rhodes's 3.00 minimum college GPA floor (CDS D7) and submits a clean statement of good standing plus essay (D5) — standardized test scores are not used in review.",
+    "levers": [
+      "Minimum college GPA of 3.00 is required of all transfer applicants (CDS D7); essay/personal statement and statement of good standing from the prior institution(s) are required of all (D5) — interview and test scores are not required, so the academic record and essay carry the weight.",
+      "Rhodes accepts transfers for Fall and Spring (D3); the Spring cycle has its own priority (Nov 15), closing (Dec 15), and reply (Jan 5) dates (D9) — Spring entry into a smaller applicant pool can be a real alternative to the Fall cycle."
+    ],
+    "watchouts": [
+      "Transfer is a marginal pathway at Rhodes: only 8 students enrolled from 136 Fall 2024 applicants (CDS D2) — a 22.06% admit rate is not the same as 22.06% of applicants actually enrolling; the funnel narrows sharply after admission.",
+      "Maximum transfer credit is capped at 64 credits from either two- or four-year institutions (D13/D14) — verify course-by-course equivalency early, since Rhodes does not publish a blanket articulation guarantee with any specific feeder school."
+    ],
+    "feeders": "Not published in Rhodes's CDS or transfer admissions page. Rhodes lists academic partnerships (dual-degree engineering with University of Memphis, Christian Brothers University, and Washington University in St. Louis) but no dedicated transfer articulation agr",
     "programs": []
   },
   {
@@ -1809,6 +2331,24 @@
     "programs": []
   },
   {
+    "name": "Skidmore College",
+    "applicants": 160,
+    "admitted": 63,
+    "rate": 39.4,
+    "cycle": "Fall 2025",
+    "typical": "39.4% of Fall 2025 transfer applicants were admitted (63 of 160) and 20 enrolled -- a smaller, more self-selected pool than the 12,273-applicant freshman pool. Every transfer applicant must submit a recommendation from a current-institution professor plus a mid-term progress report (CDS D5/D8); applicants holding an associate degree are exempt from standardized testing.",
+    "levers": [
+      "Minimum 12 completed college credits required to apply as a transfer (CDS D4) -- with fewer credits you must apply as a first-year applicant instead, so timing matters.",
+      "Both Fall and Spring transfer entry are open (CDS D3, no Summer/Winter transfer), giving a second entry point (Spring closing date Nov 1) if Fall doesn't work out."
+    ],
+    "watchouts": [
+      "Max 60 transfer credits accepted, but a minimum of 60 credits must still be completed AT Skidmore for the bachelor's (CDS D14/D16) -- no more than half the degree can come from transfer credit even with more coursework banked.",
+      "All transfer applicants need a current-professor recommendation and mid-term report (CDS D8) -- a heavier documentation bar than many peer transfer processes."
+    ],
+    "feeders": "Not disclosed in the CDS Section D responses; Skidmore's published transfer-credit policy page names no specific partner community colleges or four-year articulation agreements.",
+    "programs": []
+  },
+  {
     "name": "Smith",
     "applicants": 383,
     "admitted": 79,
@@ -2025,6 +2565,78 @@
     "programs": []
   },
   {
+    "name": "Texas State",
+    "applicants": 4484,
+    "admitted": 4079,
+    "rate": 91,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "CDS D10 marks an open-admission policy as applying to transfer students, and D7 sets the min. transferable college GPA at 2.25 — effectively the whole gate. At a ~91% D2 admit rate, Texas State reads as a broad-access gate at the central admissions level; real selectivity, where it exists, is pushed downstream into specific colleges/majors (e.g., Nursing, Honors) rather than sitting at the transfer-admission gate itself. No statewide TX transfer-guarantee law (unlike NC's CAA); TXST runs its own partner-college MOUs instead.",
+    "levers": [
+      "Clear the 2.25 minimum transferable GPA (CDS D7) — with open admission applying to transfers (D10), that GPA floor is effectively the whole screen for most applicants.",
+      "Come in via Austin Community College's 'Bats to Cats' guaranteed-admission partnership: ACC auto-sends transcripts each term and pairs students with dedicated TXST advising."
+    ],
+    "watchouts": [
+      "The 91% CDS admit rate is a central-admissions number only — high-demand majors (e.g., Nursing) run separate competitive secondary review not captured in D2, so 'admitted to TXST' isn't 'admitted to major.'",
+      "Big gap between CDS D9's Fall priority date (Dec 1) and final closing date (Jul 15): late applicants still get in, but lose scholarship, housing, and preferred-registration priority."
+    ],
+    "feeders": "Austin Community College is the largest single feeder, via the formal 'Bats to Cats' guaranteed-admission partnership; also draws heavily from Alamo Colleges (San Antonio) and other Central Texas CCs, given San Marcos sits between Austin and San Antonio.",
+    "programs": []
+  },
+  {
+    "name": "Texas Tech",
+    "applicants": 5420,
+    "admitted": 4169,
+    "rate": 76.9,
+    "cycle": "Fall 2024 (CDS 2024-2025, published 6/3/25)",
+    "typical": "CDS D7 sets min. college GPA at 2.0, but TTU's own published assured-admission bands are 2.5 GPA w/ 12-23 transferable hours or 2.25 GPA w/ 24+ hours. Applicants below that but at/above 2.0 GPA get holistic review weighing major fit, course pattern, HS record, essays, and test scores (CDS D8/D11). Texas has no statewide transfer guarantee like NC's CAA; TTU substitutes its own campus-to-campus MOU instead.",
+    "levers": [
+      "Formal 'Texan to Red Raider' guaranteed-admission MOU with South Plains College (signed July 2024): concurrent enrollment (12-15 TTU hrs + 39-42 SPC hrs) with a grandfathered catalog year and campus access.",
+      "Hit the CDS-published assured-admission bands directly: 2.5 GPA at 12-23 transferable hours, or 2.25 GPA at 24+ hours, which bypasses holistic review entirely."
+    ],
+    "watchouts": [
+      "CDS D9 shows rolling admission with no fixed closing date, but real off-CDS deadlines exist: May 1 priority app, Jan 1 priority scholarship — waiting past those costs money, not the seat.",
+      "Sub-2.0 transferable college GPA falls outside both the assured-admit bands and the holistic-review path described in CDS D8/D11 — treat 2.0 as a hard floor, not a target."
+    ],
+    "feeders": "South Plains College (Levelland, TX) via the formal 'Texan to Red Raider' MOU (July 2024); broader draw from West Texas/Panhandle community colleges given TTU's Lubbock location.",
+    "programs": []
+  },
+  {
+    "name": "Towson",
+    "applicants": 2820,
+    "admitted": 2568,
+    "rate": 91.1,
+    "cycle": "Fall 2024 (CDS 2024-25 — Towson's most recent Common Data Set with full Section D transfer data)",
+    "typical": "This is an access gate, not a competitive one: 2,568 of 2,820 fall 2024 transfer applicants were admitted (91%), so Towson is essentially clearing anyone who meets the minimum credit/GPA bar rather than selecting winners from a deep pool. CDS D5-D8 show no essay, interview, or test score required — only official college transcripts.",
+    "levers": [
+      "Bank at least 24 transferable college credits with a cumulative college GPA of 2.0+ (D401/D701) — under 24 credits, Towson evaluates you as a first-year applicant on your high school record instead, per D801.",
+      "If you're a Maryland community-college AA/AS graduate with a 2.0+ GPA, Maryland's statewide transfer regulation (COMAR 13B.06.01, administered via the ARTSYS articulation system) guarantees admission to a public 4-year USM institution with junior standing and general-education requirements satisfied — this is a state-level backstop, not a Towson-specific promise of your first-choice campus."
+    ],
+    "watchouts": [
+      "Falling short of the 24-transferable-credit threshold flips your file into freshman-style review (HS GPA, coursework units) instead of the much easier transfer path — a common trap for students who transfer after one semester or less.",
+      "Towson is a regional, mostly in-state, semi-commuter campus (67% of undergrads live off-campus/commute, only 8% out-of-state) — the 91% admit rate reflects an access-oriented mission, not weak underlying standards being beaten."
+    ],
+    "feeders": "The CDS does not itemize feeder schools (this data point isn't part of Common Data Set reporting). Given Towson's location just north of Baltimore, the largest realistic transfer pipelines are Maryland community colleges near the city — Community College of Ba",
+    "programs": []
+  },
+  {
+    "name": "Trinity College (Connecticut)",
+    "applicants": 193,
+    "admitted": 61,
+    "rate": 31.6,
+    "cycle": "CDS 2024-25, Fall 2024 transfer cohort",
+    "typical": "Fall 2024: 193 applied, 61 admitted (31.6%), but only 18 enrolled — a ~30% yield on admits, so an offer is not a lock to attend and Trinity extends more offers than a small headline rate might suggest. CDS D6/D7 (minimum GPA) are blank and D4 (minimum credits) is 'No', so there is no published GPA or credit floor; admission is a holistic read of transcripts, essay, and a recommended (not required) interview, with standardized test scores marked 'Not Required' (D5). Transfers must enroll with at least two years remaining to graduate in residence, and must live on campus.",
+    "levers": [
+      "Phi Theta Kappa / Honors Transfer Council of California partnership: Trinity is a named admissions partner offering a PTK-specific scholarship and a sophomore-entry pathway for honors community-college transfers (confirmed via honorstransfercouncil.org/transfer-partners/trinity-college-ct) — non-CA PTK members should ask admissions if the same scholarship line applies to them.",
+      "Do the optional interview and lean on the essay: CDS D5 marks the interview 'Recommended of All' and tests 'Not Required', so in a small pool (193 applicants/61 admits) the interview and personal essay carry outsized weight relative to test scores."
+    ],
+    "watchouts": [
+      "Two-year residency rule: Trinity requires transfer students to complete at least two years in residence before graduating, so applicants arriving with 3+ years of credit already earned may not fit the timeline.",
+      "On-campus housing is required for transfer students (commuter status only by later approval), which changes the cost calculus versus other transfer options."
+    ],
+    "feeders": "Trinity's CDS does not publish a feeder-school breakdown and no official feeder list was found. The one concrete, named pipeline confirmed is the Honors Transfer Council of California partnership for community-college honors students; no Connecticut-specific a",
+    "programs": []
+  },
+  {
     "name": "Tufts",
     "applicants": 1631,
     "admitted": 178,
@@ -2096,6 +2708,24 @@
     "programs": []
   },
   {
+    "name": "UNC Charlotte",
+    "applicants": 4739,
+    "admitted": 4196,
+    "rate": 88.5,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "About 9 in 10 transfer applicants get in (4,196 of 4,739 admitted, 2,568 enrolled, Fall 2024) — a wide gate built on North Carolina's Comprehensive Articulation Agreement (CAA), which gives NC Community College System AA/AS graduates with a 2.0+ GPA priority junior-standing consideration and guaranteed block transfer of credit. The published floor is 24 transferable semester hours and a 2.0 college GPA (CDS explicitly notes the minimum 'does not guarantee admission'). That topline rate is blended across every major, though — capacity-limited programs (nursing, mechanical/electrical engineering, business) run tighter, unpublished effective bars that this CDS-wide number hides.",
+    "levers": [
+      "Clear the 24-transferable-hour / 2.0-GPA floor (CDS D4, D11), then front-load your intended major's prerequisite sequence — nursing/engineering/business enforce course and GPA requirements above the university-wide minimum that this admit rate doesn't reflect.",
+      "File by the fall closing date even though CDS marks the process rolling — priority filers (by 5/15) get first access to limited on-campus housing and major-specific seats before capacity-limited programs fill."
+    ],
+    "watchouts": [
+      "The 88.5% rate is a blend across dozens of majors — it overstates your odds in capacity-constrained programs (nursing, engineering) and understates the bar if you're near the 2.0 GPA / 24-hour floor.",
+      "Charlotte is an urban, majority-commuter R1 in a fast-growing metro, not a flagship gate like UNC-Chapel Hill — for most majors, admission is closer to meeting a checklist (transcripts, standing, GPA) than holistic competition."
+    ],
+    "feeders": "Central Piedmont Community College (CPCC), Charlotte's own NCCCS campus, is the dominant feeder, alongside other North Carolina Community College System schools via the statewide CAA pipeline.",
+    "programs": []
+  },
+  {
     "name": "USC",
     "applicants": 10827,
     "admitted": 2929,
@@ -2160,6 +2790,132 @@
     ]
   },
   {
+    "name": "Union College",
+    "applicants": 193,
+    "admitted": 61,
+    "rate": 31.6,
+    "cycle": "Fall 2025",
+    "typical": "31.6% of Fall 2025 transfer applicants were admitted (61 of 193) and 19 enrolled. Union enforces an explicit 3.0 minimum college GPA for transfers (CDS D7) and requires at least 3 completed college courses to apply as transfer rather than first-year (CDS D4).",
+    "levers": [
+      "Union runs on trimesters and is one of the few schools accepting transfers for Fall, Winter, AND Spring (CDS D3) -- the Winter entry point (closing 11/1) is an uncommon extra pathway most peer LACs don't offer.",
+      "All three transfer terms (Fall 4/15, Winter 11/1, Spring 2/1) are reviewed on a rolling basis (CDS D9) -- applying earlier in the cycle rather than at the deadline can matter for review order and seat availability."
+    ],
+    "watchouts": [
+      "3.0 minimum college GPA is an explicit stated bar (CDS D7), stricter and more concrete than Skidmore's unspecified floor -- applicants below 3.0 are unlikely to be competitive.",
+      "Union does NOT accept ACE, CLEP, or DSST military/veteran transfer credit (CDS D18, all marked No), and military/veteran transfer credit policy is not published on its website (CDS D21) -- veterans should confirm credit treatment directly with admissions."
+    ],
+    "feeders": "Not disclosed in the CDS Section D responses; no named community-college or four-year articulation partners appear in Union's Common Data Set.",
+    "programs": []
+  },
+  {
+    "name": "University of Denver",
+    "applicants": 504,
+    "admitted": 405,
+    "rate": 80.4,
+    "cycle": "Fall 2024 transfer cohort (CDS 2024-25, Section D2)",
+    "typical": "CDS floor is a 3.0 college GPA (no minimum credit-hour requirement — you can transfer with very few credits). But 'competitive' is well above the floor: outside profiles of admits cluster around 3.7-3.9 GPA. College transcripts, an essay/personal statement, and a statement of good standing are required of all; high school transcript is only 'recommended of some'; no interview or test scores required. DU frames its ideal transfer as someone who 'worked hard in college so far' and stayed involved on campus/in the community.",
+    "levers": [
+      "Colorado GT Pathways + Statewide Articulation Agreements (STAAs): a 60-credit AA/AS 'with designation' in one of 24 named fields (Biology, Chemistry, Physics, Poli Sci, Psychology, Econ, CS, English, Math, History, etc.) earned at any Colorado Community College System school guarantees junior-status transfer credit into the matching DU bachelor's program.",
+      "Transfer merit scholarships of $12,000-$25,000 for applicants with a 3.5+ GPA and SAT 1140+/ACT 25+; stackable with an additional $2,500 award for Phi Theta Kappa members. About 70% of incoming transfers receive some merit aid."
+    ],
+    "watchouts": [
+      "Daniels College of Business requires a separate secondary application for transfer applicants who want to declare a Business major — general DU admission does not itself secure a Business-school seat.",
+      "Spring-quarter transfer entry is explicitly listed as 'not recommended' on DU's own transfer page, with students told to talk to a DU transfer counselor first; fall is the default term, and even fall runs on rolling admission with no fixed closing date (CDS shows ~July 1 as the typical notification point)."
+    ],
+    "feeders": "No feeder-school breakdown is published in DU's CDS. The concrete pathway is systemic, not a named short list: any Colorado Community College System school (Arapahoe CC, Community College of Aurora, Community College of Denver, Front Range CC, Red Rocks CC, et",
+    "programs": []
+  },
+  {
+    "name": "University of Houston",
+    "applicants": 8358,
+    "admitted": 7390,
+    "rate": 88.4,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "At an 88% overall admit rate, UH's transfer gate is wide open for most applicants — a 2.5+ transferable GPA and 15+ transferable hours clears the university-wide bar easily. The real selectivity sits one level down, at the college/major level (Bauer Business, Cullen Engineering, Nursing), which cap seats and run their own, tighter review; the CDS D2 number does not capture that layer.",
+    "levers": [
+      "Complete the Texas 42-hour Core Curriculum at a Texas public community college — Texas Education Code Sec. 61.822 guarantees it transfers as a satisfied block, covering UH's general-education requirements outright.",
+      "Keep transferable GPA at or above 2.5 and bank at least 15 transferable credit hours before applying — fall below either threshold and UH reviews you as an entering freshman (high school transcript and test scores required)."
+    ],
+    "watchouts": [
+      "Direct-entry colleges — C.T. Bauer College of Business, Cullen College of Engineering, nursing/health programs — run separate, more selective transfer review than the 88% campus-wide figure suggests; no CDS breakout exists by major.",
+      "UH is a large commuter/regional-serving flagship: most transfer applicants are already Houston-area community-college students on an established local pipeline, so the aggregate rate is a weak proxy for an out-of-state or highly competitive-major applicant."
+    ],
+    "feeders": "Houston Community College (HCC), Lone Star College, San Jacinto College, and Wharton County Junior College are the dominant local feeders, reflecting UH's Houston-metro commuter base.",
+    "programs": []
+  },
+  {
+    "name": "University of North Texas",
+    "applicants": 7493,
+    "admitted": 5397,
+    "rate": 72,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "UNT is a broad-access DFW-metroplex research university, not a hard gate: about 72% of transfer applicants are admitted. Texas has no statewide guaranteed-transfer law comparable to North Carolina's CAA — the Top 10%/Top 6% auto-admit rule (Texas Education Code §51.803) is freshman-only and does not apply to community-college transfers. Instead, UNT runs its own institution-level 'Eagle Bound' automatic-admission partnerships: an AA/AS with 45+ transferable hours and a 2.0 GPA from a partner community college (confirmed for Collin College) triggers automatic admission with no holistic review.",
+    "levers": [
+      "Eagle Bound / Admission Partnership Agreements: an AA/AS with 45+ transferable hours and a 2.0 GPA from a partner CC (confirmed for Collin College) means automatic admission, bypassing the general review pool entirely.",
+      "Apply by the June 1 priority date — it gates the Transfer Excellence Scholarship and preferred orientation/housing, not admission itself, since UNT still reviews applications submitted later."
+    ],
+    "watchouts": [
+      "The 72% university-wide rate hides selective, capacity-limited transfer programs (e.g., Nursing, Radiologic Sciences) that run separate, more competitive review — don't assume their odds match the headline number.",
+      "June 1 is a priority/scholarship date, not a hard cutoff — applying after it doesn't block admission but does cost scholarship eligibility and early access to housing/registration."
+    ],
+    "feeders": "Collin College, Dallas College, Tarrant County College, Grayson College, and North Central Texas College are UNT's named partner community colleges (per Transfer Excellence Scholarship eligibility and the Collin College Eagle Bound agreement).",
+    "programs": []
+  },
+  {
+    "name": "University of San Diego",
+    "applicants": 1502,
+    "admitted": 999,
+    "rate": 66.5,
+    "cycle": "Fall 2024 transfer cohort (CDS 2024-25, Section D2)",
+    "typical": "USD's own transfer-info sheet is explicit that the stated floor (3.0 cumulative GPA, 24 semester/36 quarter transferable units) is a minimum, not a target: 'admission preference will be given to strong applicants who have far exceeded the minimum unit and GPA requirements,' especially those with strong grades in First-Year Writing and Mathematical Reasoning (IGETC 1A/2A). College transcript, essay, and a statement of good standing are required of all; interview and test scores are not required.",
+    "levers": [
+      "Chancellor Carroll Trailblazer Scholarship: 10 full-tuition scholarships reserved specifically for graduates of the San Diego Community College District (City, Mesa, or Miramar College) who transfer to USD.",
+      "USD publishes an IGETC-to-core-curriculum crosswalk for California community college students — mapping courses to IGETC areas 1A, 2A, 3A, 4, and 5 satisfies USD's core-curriculum requirements and streamlines the transfer-credit evaluation."
+    ],
+    "watchouts": [
+      "Prospective Business majors (Knauss School of Business) are pushed to complete Calculus, Micro/Macroeconomics, and Financial/Managerial Accounting before transferring — except accountancy-bound students transferring after only one CC year, who are told to hold off and take Financial/Managerial Accounting at USD instead.",
+      "A Transfer Midterm Report (in-progress grades) is required at the time of application, and anyone previously denied as a first-year applicant must complete a full year of college elsewhere before reapplying as a transfer."
+    ],
+    "feeders": "USD's CDS does not publish a feeder-school list. The named, incentivized pathway is the San Diego Community College District — City, Mesa, and Miramar College — via the Chancellor Carroll Trailblazer full-tuition scholarship reserved for their graduates.",
+    "programs": []
+  },
+  {
+    "name": "University of San Francisco",
+    "applicants": 1956,
+    "admitted": 1077,
+    "rate": 55.1,
+    "cycle": "Fall 2024",
+    "typical": "Fall 2024: 1,077 of 1,956 transfer applicants admitted (55.1%), with 274 enrolling. Previous academic record is weighted most heavily. A cumulative college GPA of 2.50+ is the recommended threshold to be competitive for general majors; Nursing transfer applicants need 3.0+ because of limited clinical-rotation classroom space. Applicants with fewer than 24 transfer credits must also submit SAT scores.",
+    "levers": [
+      "Nursing is a separately gated, more competitive pathway (3.0+ GPA minimum, limited clinical-rotation seats) versus the general 2.50 GPA bar — target a non-impacted major if GPA is borderline.",
+      "USF's community-college partner scholarship ($4,000, rising to $6,000 in year two) and the cohort-based Humanities Mellon Scholars Program ($10,000/yr for up to 2 years plus guaranteed paid internships and mentorship) both target CC transfers — apply by the 3/1 fall priority date to be considered."
+    ],
+    "watchouts": [
+      "SAT scores are required (not just optional) for transfer applicants with fewer than 24 transferable semester credits, unlike USF's test-optional first-year policy.",
+      "Nursing transfer admission is gated by clinical-rotation seat availability, not GPA alone — a 3.0 GPA does not guarantee a seat in a given cycle."
+    ],
+    "feeders": "City College of San Francisco has explicit major-by-major course articulations with USF (Biology, Business, Computer Science, Psychology, Public Health); more broadly, transfers come through the California Community College system via ASSIST.org.",
+    "programs": []
+  },
+  {
+    "name": "University of Texas at Dallas",
+    "applicants": 4362,
+    "admitted": 2788,
+    "rate": 63.9,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "UTD admits about 64% of transfer applicants overall, but the school is explicit that GPA thresholds — not a flat bar — drive the decision: 3.0+ for applicants under 60 transferable hours ('sophomores'), 2.5+ for those with 54 or more transferable hours, with applicants below those lines still eligible for holistic review. Popular majors in the Jonsson School (CS, engineering) and Jindal School (business) are the tighter real constraint, not the campus-wide number.",
+    "levers": [
+      "Push past 54 transferable credit hours before applying — UTD's own GPA bar drops from 3.0 (under 60 hrs) to 2.5 (54+ hrs) at that threshold.",
+      "File early against UTD's stated calendar (Fall priority date Jan 15, final close Jul 1, rolling admission with notification upon decision) — earlier files get faster decisions and more room in capacity-limited majors."
+    ],
+    "watchouts": [
+      "The Naveen Jindal School of Management requires at least half of upper-division business credit hours (minimum 51 upper-division hours total) to be completed at UTD — real risk of losing course-equivalency value for late transfers into business.",
+      "Computer Science and other Erik Jonsson School of Engineering & Computer Science majors are understood to be the most capacity-constrained on campus; the CDS does not break out D2 by major, so no verifiable CS-specific admit rate exists to cite — treat the 64% figure as a campus-wide ceiling, not a CS estimate."
+    ],
+    "feeders": "Dallas College (the merged DCCCD system — Richland, Eastfield, Brookhaven, etc.) and Collin College are UTD's primary DFW-area transfer pipelines, both with formal articulation/transfer-pathway agreements.",
+    "programs": []
+  },
+  {
     "name": "Utah",
     "applicants": 3599,
     "admitted": 3065,
@@ -2175,6 +2931,24 @@
       "The U reports no minimum transfer GPA at all (CDS D6 and D7 are both blank) and no cap on two-year credits (D13 blank), so there is no published number to aim at and no ceiling to reassure you. The lowest transferable grade is D-, and only 30 credits must be completed at the U for a bachelor's — meaning credit that is 'accepted' can still land as elective filler rather than counting toward the major. Verify course by course."
     ],
     "feeders": "Salt Lake Community College dominates at roughly 40-45% of all transfers into the U — the one feeder share the university states directly. The remainder comes from the regional USHE institutions (Utah Valley University, Weber State, Snow College, Utah State) p",
+    "programs": []
+  },
+  {
+    "name": "VCU",
+    "applicants": 2658,
+    "admitted": 2326,
+    "rate": 87.5,
+    "cycle": "Fall 2024 transfer applicants (CDS 2024-25, Section D2)",
+    "typical": "VCU admits the large majority of transfer applicants (~87-88%) at the general-university level, especially those completing an AA/AS via Virginia's statewide VCCS Guaranteed Admission Agreement (GAA) with a 2.5 cumulative GPA and C-or-better in transferable courses. The university-wide gate is not very selective; selectivity is concentrated in specific competitive programs (nursing, business, VCUarts) reviewed separately.",
+    "levers": [
+      "Use the VCU-VCCS Guaranteed Admission Agreement: earn an AA/AS at a Virginia community college with 2.5+ cumulative GPA and C-or-better in transferable courses, and declare GAA intent before graduating, to lock general admission and junior standing.",
+      "Target competitive/capacity-limited majors (nursing, business, arts, engineering) with their own GPA/prerequisite bar — general admission does not guarantee a seat in these programs."
+    ],
+    "watchouts": [
+      "The ~87.5% headline rate is for general university admission; nursing, the business school, and VCUarts are reviewed separately and are meaningfully more selective.",
+      "GAA guarantees junior standing and gen-ed completion but not every upper-level degree-program prerequisite, so some course sequencing still matters."
+    ],
+    "feeders": "Reynolds Community College (Richmond), John Tyler/Brightpoint Community College, and Northern Virginia Community College (NOVA) are typical high-volume feeders under the statewide VCCS Passport/GAA framework.",
     "programs": []
   },
   {
@@ -2345,6 +3119,24 @@
     "programs": []
   },
   {
+    "name": "West Virginia University",
+    "applicants": 1769,
+    "admitted": 988,
+    "rate": 55.9,
+    "cycle": "Fall 2024 cohort, reported in the 2024-2025 CDS (Section D2)",
+    "typical": "988 of 1,769 fall-2024 transfer applicants were admitted (~55.9%, 349 men + 313 women + 0 unknown/another-gender enrolled of the 662 who enrolled). WVU's bar to even apply is low — CDS D4/D7 show a minimum of just 3 completed credit hours and a 2.0 college GPA (2.5 HS GPA if too few transferable credits) — so admits skew toward anyone who cleared West Virginia's Core Coursework Transfer Agreement gen-eds at a WV community/technical college, plus a large flow of out-of-state transfers (PA/MD/VA/OH) drawn by regional tuition. Capacity-limited majors (nursing, engineering, business) run additional GPA/space screens on top of this university-wide topline.",
+    "levers": [
+      "West Virginia HEPC's Core Coursework Transfer Agreement guarantees up to 35 credit hours of core English/math/science/social-science coursework transfer as general-studies credit to any WV public 4-year, so community-college gen-eds aren't re-litigated at WVU.",
+      "Direct WVU pipelines with WV community & technical colleges (Pierpont C&TC, BridgeValley CTC, Eastern WV CTC, New River CTC, Southern WV CTC) plus a newly announced (Dec 2025) Virginia community-college partnership give dedicated advising routes into WVU."
+    ],
+    "watchouts": [
+      "55.9% is a university-wide CDS topline; nursing, engineering, and other capacity-limited programs run separate, more selective internal transfer review that CDS D2 doesn't break out.",
+      "CDS Section D9 marks Fall admission as 'rolling' with every date field left blank — there is no CDS-verified hard deadline, only practical recommendations from WVU's own site."
+    ],
+    "feeders": "In-state WV community & technical colleges (Pierpont C&TC, BridgeValley CTC, Eastern WV CTC, New River CTC, Southern WV CTC), plus a steady stream of out-of-state transfers from Pennsylvania, Maryland, Virginia, and Ohio, and lateral transfers from other four-",
+    "programs": []
+  },
+  {
     "name": "William & Mary",
     "applicants": 963,
     "admitted": 440,
@@ -2400,5 +3192,23 @@
       "GTAP (guaranteed admission)",
       "Transfer contracts"
     ]
+  },
+  {
+    "name": "Xavier University",
+    "applicants": 250,
+    "admitted": 223,
+    "rate": 89.2,
+    "cycle": "Fall 2023 (CDS 2023-2024; most recent CDS Xavier has posted)",
+    "typical": "Overall transfer admission is broad (89% admit) for non-nursing majors — min. 2.0 college GPA, C or better on any transferred course, no minimum-credit threshold to apply. Yield is modest (76/223 enrolled, ~34%). Nursing (BSN) is walled off as a separate, highly selective direct-admit track, so the 89% headline rate is misleading for anyone targeting nursing.",
+    "levers": [
+      "Cincinnati State Transfer Pathway — dedicated, named articulation route from Cincinnati State Technical and Community College",
+      "Tri-State Community College Scholars Program — guaranteed scholarship track for AA/AS completers (2024-2026) from any OH, KY, or IN community college, plus Phi Theta Kappa members get streamlined direct admission"
+    ],
+    "watchouts": [
+      "Nursing (BSN) is NOT covered by the general transfer rate: sophomore-entry transfers need 24 completed credits including A&P I and A&P II with a B or better; freshman-entry (no college credit) transfers need a B average in HS science courses",
+      "Minimum college GPA of 2.0 and C-grade floor on transferable courses — below that, credits and admission are at risk regardless of the high overall rate"
+    ],
+    "feeders": "Cincinnati State Technical and Community College (named articulation partner); Tri-State Community College Scholars Program covers AA/AS completers from any Ohio, Kentucky, or Indiana community college; Phi Theta Kappa members from any accredited two-year coll",
+    "programs": []
   }
 ]
