@@ -94,3 +94,38 @@
 .po-clock-days { font-weight: 650; color: var(--accent); width: 44px; text-align: right; }
 .po-clock-soon .po-clock-days { color: var(--coral); }
 .po-clock-note { font-size: 11.5px; color: var(--ink-3); margin-top: 10px; }
+
+/* ── Stat band + plan (inside dashboard) ─────────────────────────── */
+.po-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin: 20px 0 22px;
+}
+.po-stat {
+  border: 1px solid var(--line); border-radius: 14px; background: var(--bg);
+  padding: 15px 17px;
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04);
+}
+.po-stat b {
+  display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--ink); line-height: 1.1;
+}
+.po-stat span { display: block; font-size: 11.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.4; }
+.po-stat:nth-child(1) b { color: var(--teal); }
+.po-stat:nth-child(2) b { color: var(--blue); }
+.po-stat:nth-child(4) b { color: var(--accent); }
+.po-stat.urgent { border-color: color-mix(in srgb, var(--coral) 45%, var(--line)); background: linear-gradient(120deg, #fff, #fff6f4); }
+.po-stat.urgent b { color: var(--coral); }
+
+.po-planwrap { margin-bottom: 24px; }
+
+/* School picker chips carry their logo and admit rate */
+.po-add { display: inline-flex; align-items: center; gap: 7px; }
+.po-add-rate { font-style: normal; font-size: 10.5px; color: var(--ink-3); font-weight: 650; }
+.po-add[aria-pressed="true"] .po-add-rate { color: inherit; opacity: 0.75; }
+
+@media (max-width: 860px) {
+  .po-stats { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  .po-stats { grid-template-columns: 1fr; }
+}

@@ -4,6 +4,7 @@ import type { Estimate, Profile, Tier } from "../engine";
 import GpaStrip from "./GpaStrip";
 import Tile from "./Tile";
 import Report from "./Report";
+import ActionPlan from "./ActionPlan";
 
 const TIER_CLASS: Record<Tier, string> = {
   "TAG guarantee": "tier-tag",
@@ -187,6 +188,10 @@ export default function Results({ profile, onRevise, onOpenSchool }: { profile: 
           </li>
         ))}
       </ol>
+
+      <div className="results-plan">
+        <ActionPlan profile={profile} ests={ests} />
+      </div>
 
       <footer className="method">
         <h3>How these numbers are made</h3>

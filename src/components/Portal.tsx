@@ -5,6 +5,8 @@ import type { Session } from "../lib/auth";
 import { analyzeEssay } from "../lib/essay";
 import Tile from "./Tile";
 import Report from "./Report";
+import ActionPlan from "./ActionPlan";
+import { buildPlan } from "../lib/actionplan";
 import { countdown } from "../lib/deadlines";
 import "./portal.css";
 
@@ -73,6 +75,9 @@ export default function Portal({ session, profile, go }: Props) {
   const byName = new Map(ests.map((e) => [e.school.name, e]));
   const listed = new Set(list.map((l) => l.school));
   const targets = ests.filter((e) => e.p >= 0.12).length;
+  const plan = buildPlan(profile, ests);
+  const nextDue = plan.next;
+  const openMoves = plan.moves.filter((m) => !m.done).length;
   const essay = profile.essayText ? analyzeEssay(profile.essayText) : null;
   const firstName = (session.name || session.email).split(" ")[0];
 
@@ -90,6 +95,29 @@ export default function Portal({ session, profile, go }: Props) {
         </div>
         <button type="button" className="btn btn-sm" onClick={() => window.print()}>Download report</button>
       </header>
+
+      <div className="po-stats">
+        <div className="po-stat">
+          <b className="num">{fmtPct(ests[0].lo)}–{fmtPct(ests[0].hi)}%</b>
+          <span>your best position · {ests[0].school.name}</span>
+        </div>
+        <div className="po-stat">
+          <b className="num">{targets}</b>
+          <span>schools at target odds or better</span>
+        </div>
+        <div className={`po-stat${nextDue && nextDue.days <= 45 ? " urgent" : ""}`}>
+          <b className="num">{nextDue ? nextDue.days : "—"}</b>
+          <span>{nextDue ? `days to ${nextDue.school} (${nextDue.label})` : "no deadlines tracked"}</span>
+        </div>
+        <div className="po-stat">
+          <b className="num">{openMoves}</b>
+          <span>moves open on your file</span>
+        </div>
+      </div>
+
+      <section className="po-planwrap">
+        <ActionPlan profile={profile} ests={ests} />
+      </section>
 
       <div className="po-grid">
         <section className="po-card">
@@ -109,7 +137,7 @@ export default function Portal({ session, profile, go }: Props) {
         <section className="po-card">
           <div className="po-card-head">
             <h2>Best positions</h2>
-            <button type="button" className="btn-quiet" onClick={() => go("results")}>All 24 →</button>
+            <button type="button" className="btn-quiet" onClick={() => go("results")}>All {ests.length} →</button>
           </div>
           <ul className="po-best">
             {ests.slice(0, 5).map((e) => (
@@ -201,7 +229,9 @@ export default function Portal({ session, profile, go }: Props) {
                     : setList((ls) => [...ls, { school: s.name, status: "planning", note: "" }])
                 }
               >
+                <Tile name={s.name} size={18} />
                 {s.name}
+                <i className="po-add-rate">{s.rate.toFixed(0)}%</i>
               </button>
             ))}
           </div>
