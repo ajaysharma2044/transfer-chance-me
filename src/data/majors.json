@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Wisconsin",
+    "byMajor": true,
+    "source": "https://admissions.wisc.edu/apply-as-a-transfer/",
+    "note": "UW-Madison admits transfers to the university with a required first- and second-choice major, and a first choice in the School of Business or College of Engineering must be paired with a second choice outside both; engineering transfers are considered for direct admission to their major through the Office of Admissions, Business requires a separate pre-business application and is closed to direct transfer from outside Wisconsin institutions, Nursing runs its own School of Nursing application on a separate timeline, and majors like Computer Sciences are entered by post-enrollment declaration rather than at admission.",
+    "majors": [
+      {
+        "name": "College of Letters & Science",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "24 transferable semester hours of college-level work completed after high school graduation",
+          "AP, A-Level, IB, and CLEP cannot be used toward the 24-credit minimum",
+          "No freshman-level transfers — UW-Madison does not admit below sophomore standing",
+          "No published minimum GPA; GPA is reviewed for the university and for the intended major"
+        ],
+        "note": "L&S is the default landing spot and the mandatory second choice for direct-entry applicants, since admissions.wisc.edu requires a Business or Engineering first choice to be paired with a second choice outside both, so students denied a direct-entry program are frequently still admitted to UW-Madison through L&S."
+      },
+      {
+        "name": "Computer Sciences (College of Letters & Science)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Admission to UW-Madison / L&S (24 transferable credits)",
+          "Credit for COMP SCI 300 and MATH 222 (Calculus and Analytic Geometry 2)",
+          "Grade of BC or higher in COMP SCI 300, COMP SCI/E C E 354, or COMP SCI 400, taken at UW-Madison",
+          "2.250 GPA or higher among major-declaration-eligible coursework"
+        ],
+        "note": "Declaration is requirement-based rather than a capped competitive review and the GPA bar is only 2.250, but the trap for transfers is that the BC-or-higher qualifying course must be taken at UW-Madison, so a transferred CS2 course will not satisfy it and most transfers need a semester on campus before declaring."
+      },
+      {
+        "name": "College of Agricultural and Life Sciences",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "24 transferable semester hours (university-wide transfer minimum)",
+          "Select a CALS major as the first choice on the UW-Madison application",
+          "No CALS-specific prerequisite courses or supplemental application",
+          "At least 30 credits must ultimately be earned at UW-Madison to graduate from CALS"
+        ],
+        "note": "The Guide states flatly that CALS majors do not have enrollment caps and that transfer students are admitted directly to CALS by listing a CALS major first, making it the most open door at UW-Madison for a science-leaning transfer."
+      },
+      {
+        "name": "Wisconsin School of Business (BBA)",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Communications",
+          "Calculus",
+          "Economics (in-progress courses must be finished by the end of the application term)",
+          "3.0 minimum GPA at the time of application and at the conclusion of the spring term"
+        ],
+        "note": "Direct transfer into the BBA is fall-entry only and open only to students coming from Universities of Wisconsin, Wisconsin Technical College, or Wisconsin Tribal College institutions — applicants from private or out-of-state schools must first enroll at UW-Madison and complete a minimum of 12 in-residence credits before applying via the separate pre-business application (resume, essay, Pre-Business 101 workshop), which is completed in early March preceding the intended fall term."
+      },
+      {
+        "name": "Mechanical Engineering (College of Engineering)",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Apply to the Office of Admissions with Mechanical Engineering as first choice plus a second choice outside Business and Engineering",
+          "24 transferable semester hours of college-level work",
+          "Math course sequence through MATH 222 (Calculus and Analytic Geometry 2)",
+          "Introduction to Engineering course specified by the degree program plus four foundational math/engineering courses (progression requirement)"
+        ],
+        "note": "The College's cross-campus page states that \"Due to high student demand, Mechanical Engineering has been especially selective in recent semesters,\" and the Core/Overall GPA thresholds that actually gate progression into the major are maintained on an internal page rather than published, so no verified numeric bar exists for ME."
+      },
+      {
+        "name": "Computer Engineering (College of Engineering)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Apply to the Office of Admissions with Computer Engineering as first choice plus a second choice outside Business and Engineering",
+          "24 transferable semester hours of college-level work",
+          "Math course sequence through MATH 222 (Calculus and Analytic Geometry 2)",
+          "Introduction to Engineering course specified by the degree program plus four foundational math/engineering courses (progression requirement)"
+        ],
+        "note": "UW-Madison publishes no per-major Core or Overall GPA number for Computer Engineering — the Guide only says these requirements are \"defined by CoE departments for each engineering degree program\" behind an internal link — so any specific figure circulating online (such as a 3.2 Core / 2.5 Overall split) should be treated as unverified."
+      },
+      {
+        "name": "Civil Engineering (College of Engineering)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Apply to the Office of Admissions with Civil Engineering as first choice plus a second choice outside Business and Engineering",
+          "24 transferable semester hours of college-level work",
+          "Math course sequence through MATH 222 (Calculus and Analytic Geometry 2)",
+          "Introduction to Engineering course specified by the degree program plus four foundational math/engineering courses (progression requirement)"
+        ],
+        "note": "Civil is commonly treated as one of the more accessible engineering doors at UW-Madison, but the college publishes neither per-major admit rates nor per-major GPA thresholds; the only published numeric floor anywhere is a 2.500 Core GPA below which cross-campus applicants are not considered without an appeal."
+      },
+      {
+        "name": "Nursing, BSN (Traditional) — School of Nursing",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Human Anatomy (ANAT&PHY 337) and Human Physiology (ANAT&PHY 235 or ANAT&PHY 335)",
+          "Chemistry (CHEM 103, 108, or 109) and Microbiology (MICROBIO 101, CHEM 343, or NUTR SCI 332)",
+          "Psychology (PSYCH 202), a Sociology/Anthropology social science course, and Human Growth & Development (ED PSYCH 320/321/331, HDFS 262/263, or PSYCH 460/464)",
+          "2.75 cumulative and 2.75 prerequisite GPA, with C or higher in at least four of the seven prerequisites by the mid-January deadline and in all seven before admission"
+        ],
+        "note": "Nursing requires a second, separate School of Nursing application due mid-January for a fall start with decisions on or before July 1, on top of UW-Madison admission, and eligibility is restricted to applicants who \"have not previously enrolled in a professional Bachelor of Science-Nursing program at another institution\" — so a student already in a BSN program elsewhere is barred outright."
+      }
+    ]
+  }
+]

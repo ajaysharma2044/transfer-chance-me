@@ -1,0 +1,37 @@
+# Cloudflare configuration for local development and optional bindings.
+#
+# Deployed settings live in the Cloudflare dashboard. This file exists so that
+# `npx wrangler pages dev` behaves like production on your laptop, and so that
+# optional bindings (KV) are declared in version control rather than clicked in.
+#
+# SECRETS DO NOT GO HERE. This file is committed to git. Local secrets belong in
+# .dev.vars (gitignored - see CLOUDFLARE.md step 2); deployed secrets belong in
+# the dashboard under Settings -> Variables and secrets.
+
+name = "transfer-chance-me"
+compatibility_date = "2026-08-01"
+pages_build_output_dir = "dist"
+
+# No compatibility_flags are needed. functions/ uses only Web-standard APIs
+# (fetch, Request, Response, Headers, TextEncoder, AbortController), so there is
+# no Node runtime to polyfill - the @vercel/node dependency is gone entirely.
+# If you later import an npm package that needs Node built-ins, add:
+#   compatibility_flags = ["nodejs_compat"]
+
+# ── Optional: durable-ish rate limiting ────────────────────────────────────
+# Without this binding the functions fall back to an in-memory token bucket that
+# is scoped to a single Worker isolate (see functions/api/_shared.ts). To make
+# the limit global, create a KV namespace:
+#
+#     npx wrangler kv namespace create RATE_LIMIT
+#     npx wrangler kv namespace create RATE_LIMIT --preview
+#
+# then paste the printed ids below and uncomment. You must ALSO add the same
+# binding in the dashboard (Settings -> Bindings -> KV namespace) for the
+# deployed project - wrangler.toml alone does not configure a Git-connected
+# Pages deployment.
+#
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "<id printed by wrangler>"
+# preview_id = "<preview id printed by wrangler>"

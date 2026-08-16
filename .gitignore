@@ -26,3 +26,9 @@ dist-ssr
 # Environment files — never commit real keys (.env.example stays tracked)
 .env*
 !.env.example
+
+# Cloudflare / local secrets
+# Cloudflare local secrets and build cache — never commit
+.dev.vars
+.dev.vars.*
+.wrangler/

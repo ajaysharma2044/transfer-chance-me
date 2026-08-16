@@ -1,0 +1,13 @@
+# SPA fallback for Cloudflare Pages. Like _headers, this must land in the build
+# output, so it lives in public/ and Vite copies it to dist/.
+#
+# Request resolution order on Pages:
+#   1. Pages Functions (functions/)  <- /api/review and /api/contribute match here
+#   2. static assets in dist/
+#   3. these _redirects rules
+# The catch-all below therefore cannot swallow /api/*.
+#
+# The app uses a HASH router (#/route), so the server almost always sees "/"
+# already. This rule is the safety net for anyone who types or bookmarks a clean
+# path, and it future-proofs a later move to real history routing.
+/*    /index.html   200
