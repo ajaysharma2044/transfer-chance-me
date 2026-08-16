@@ -275,3 +275,7 @@
   .ld-orbit-item { animation: none; }
   .ld-ticker-school { animation: none; }
 }
+
+/* Marquee pills: never shrink, never wrap — kills the overlap collisions */
+.ld-marquee .ld-wallgrid { width: max-content; flex-wrap: nowrap; }
+.ld-marquee .ld-wall-btn { flex: 0 0 auto; white-space: nowrap; }

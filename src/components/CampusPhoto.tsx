@@ -46,22 +46,60 @@ const LOOKS_LIKE_CAMPUS = /campus|aerial|montage|hall|library|tower|quad|lawn|pl
 interface MediaItem { type?: string; title?: string; srcset?: { src: string }[] }
 
 const HISTORICAL = /engraving|lithograph|painting|drawing|sketch|portrait|bust|statue|medal|stamp|document|charter|deed|daguerreotype|\bold\b|historic|circa|postcard/i;
+
+/** The postcard shot for each featured campus — targeted by landmark name. */
+const ICONIC: Record<string, RegExp> = {
+  "Brown": /university hall|main green/i,
+  "Carnegie Mellon": /hamerschlag|college of fine arts|gates center/i,
+  "Chicago": /rockefeller chapel|harper|hutchinson|main quad/i,
+  "Columbia": /low memorial|low library|butler library/i,
+  "Cornell": /mcgraw tower|libe slope|arts quad|ho plaza/i,
+  "Dartmouth": /baker(-berry)? (memorial )?library|dartmouth green/i,
+  "Duke": /duke chapel|\bchapel\b/i,
+  "Emory": /quadrangle|candler/i,
+  "Georgetown": /healy/i,
+  "Harvard": /widener|harvard yard|memorial hall/i,
+  "Johns Hopkins": /gilman/i,
+  "MIT": /great dome|killian court|maclaurin/i,
+  "Michigan": /law quadrangle|the diag|angell hall/i,
+  "Northwestern": /deering|weber arch|lakefill/i,
+  "Notre Dame": /golden dome|main building|basilica/i,
+  "Princeton": /nassau hall|blair arch/i,
+  "Rice": /lovett hall|sallyport/i,
+  "Stanford": /main quad|memorial church|hoover tower|oval.*panorama/i,
+  "UC Berkeley": /sather tower|campanile|sather gate/i,
+  "UCLA": /royce hall/i,
+  "UNC": /old well/i,
+  "UPenn": /college hall|locust walk/i,
+  "Vanderbilt": /kirkland/i,
+  "Yale": /harkness tower|sterling memorial/i,
+  "UC Davis": /shields library|water tower/i,
+  "UC Irvine": /aldrich park/i,
+  "UC San Diego": /geisel library/i,
+  "UC Santa Barbara": /storke tower|campus point/i,
+  "UC Santa Cruz": /mchenry library|great meadow/i,
+  "UC Riverside": /bell tower|carillon/i,
+  "UC Merced": /beginnings|lake yosemite/i,
+};
 const OLD_YEAR = /\b1[5-9]\d{2}\b/; // 1500–1999 in the filename → likely archival
 
 /** Pick a modern campus photograph from the article's media, never a logo. */
-function pickPhoto(items: MediaItem[]): string | null {
+function pickPhoto(items: MediaItem[], iconic?: RegExp): string | null {
+  // Wikipedia file titles use underscores — normalize before matching
+  const norm = (t: string) => t.replace(/_/g, " ");
   const photos = items.filter(
     (m) =>
       m.type === "image" &&
       m.srcset?.length &&
       m.title &&
       !/\.svg$/i.test(m.title) &&
-      !NOT_A_PHOTO.test(m.title),
+      !NOT_A_PHOTO.test(norm(m.title)),
   );
   if (photos.length === 0) return null;
   const scored = photos.map((m, i) => {
-    const t = m.title!;
+    const t = norm(m.title!);
     let s = 0;
+    if (iconic?.test(t)) s += 6;
     if (/montage|aerial|skyline|panorama/i.test(t)) s += 3;
     if (LOOKS_LIKE_CAMPUS.test(t)) s += 2;
     if (/\.jpe?g$/i.test(t)) s += 1;
@@ -91,7 +129,7 @@ function lookup(name: string): Promise<WikiInfo> {
           .then((r) => (r.ok ? r.json() : null))
           .catch(() => null),
       ]).then(([media, summary]) => {
-        const fromMedia = media?.items ? pickPhoto(media.items as MediaItem[]) : null;
+        const fromMedia = media?.items ? pickPhoto(media.items as MediaItem[], ICONIC[name]) : null;
         // The lead image is a fallback only if it isn't logo-shaped
         const lead: string | null = summary?.originalimage?.source ?? null;
         const leadOk = lead && !NOT_A_PHOTO.test(lead) && !/\.svg/i.test(lead);
