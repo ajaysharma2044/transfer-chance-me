@@ -1,5 +1,578 @@
 [
   {
+    "name": "Duke",
+    "byMajor": true,
+    "source": "https://undergraduate.bulletins.duke.edu/policies/admissions/admissions",
+    "note": "Duke transfer applicants apply to one of exactly two undergraduate schools — Trinity College of Arts & Sciences or the Pratt School of Engineering — and the split is brutally lopsided: for the Fall 2026 class Duke admitted 147 of 2,443 transfer applicants (6% campus-wide), of whom 132 went to Trinity and only 15 to Pratt (8 enrolling). Duke's saving grace is that there is no second gate: once you are in Trinity you may declare any Trinity major, including Computer Science, with no internal application. Duke has no undergraduate business degree at all (Fuqua is graduate-only), and its only BSN is an accelerated second-degree program outside undergraduate admissions.",
+    "majors": [
+      {
+        "name": "Trinity College of Arts & Sciences",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Full-time coursework at an accredited college",
+          "SAT or ACT scores required of transfer applicants",
+          "High school transcript plus all college transcripts",
+          "March 15 deadline; decisions mid-May"
+        ],
+        "note": "This is the big open college and absorbs roughly 90% of Duke's transfer admits (132 of 147 in the most recent cycle), but the campus-wide transfer rate is still only about 6%, so 'open' here means open relative to Pratt, not easy."
+      },
+      {
+        "name": "Pratt School of Engineering",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Calculus required as a prerequisite for admission",
+          "Physics strongly recommended",
+          "SAT or ACT scores required",
+          "March 15 deadline"
+        ],
+        "note": "Pratt took just 15 of Duke's 147 transfer admits and enrolled 8, so an engineering transfer applicant is competing for a single-digit number of seats and must already have calculus done — Duke publishes no separate Pratt transfer rate, but the admit count makes it the hardest door on campus."
+      },
+      {
+        "name": "Computer Science (Trinity)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Admission to Trinity College is the only gate",
+          "No secondary or internal application to declare the CS major",
+          "Calculus recommended for the B.S. track"
+        ],
+        "note": "Unlike Berkeley, UT Austin, or UW, Duke does not gate CS behind a secondary admission — CS lives in Trinity and any admitted Trinity student can declare it, so all of the difficulty is concentrated in the Trinity transfer decision itself."
+      },
+      {
+        "name": "Economics (Trinity)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Admission to Trinity College is the only gate",
+          "No secondary application to declare the major",
+          "Introductory micro- and macroeconomics transfer toward the major"
+        ],
+        "note": "Economics is Duke's de facto business major and is freely declarable inside Trinity — applicants hunting for an undergraduate business school should know Duke does not have one, since Fuqua admits graduate students only."
+      },
+      {
+        "name": "Accelerated BSN, Duke School of Nursing",
+        "status": "closed",
+        "rate": null,
+        "prereqs": [
+          "Completed bachelor's degree in another field required",
+          "Prerequisite science coursework set by the School of Nursing",
+          "Not part of Duke's undergraduate transfer application"
+        ],
+        "note": "There is no traditional undergraduate nursing transfer path at Duke — the only BSN is a second-degree accelerated program for applicants who already hold a bachelor's, so a community college nursing hopeful cannot transfer into it."
+      }
+    ]
+  },
+  {
+    "name": "Emory",
+    "byMajor": true,
+    "source": "https://apply.emory.edu/apply/transfer.html",
+    "note": "Emory is genuinely transfer-friendly at the arts-and-sciences level — the university states its transfer admit rate has historically run about 20–25%, with roughly 100–120 transfers enrolling per year — but the destination matters. Applicants choose Emory College of Arts and Sciences or the Goizueta Business School on the same application; the Nell Hodgson Woodruff School of Nursing runs an entirely separate BSN Transfer Option application with its own prerequisite list; and Oxford College, the two-year Atlanta-area campus, takes first-year students only. Emory College imposes no secondary admission on any of its majors, so CS is reachable for anyone admitted.",
+    "majors": [
+      {
+        "name": "Emory College of Arts and Sciences",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Minimum 28 graded college credit hours completed or in progress",
+          "AP, IB, and dual-enrollment credit do not count toward the 28 hours",
+          "Minimum 3.0 cumulative GPA; admitted students typically 3.5+",
+          "Maximum 62 transfer hours; four semesters must be completed at Emory"
+        ],
+        "note": "This is the main and most accessible door — Emory publishes a historical 20–25% transfer admit rate range rather than a single figure, and the 28-hour floor means you generally cannot apply straight out of high school on AP credit alone."
+      },
+      {
+        "name": "Computer Science (Emory College)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Admission to Emory College is the only gate",
+          "No secondary or internal application to declare the CS major",
+          "Calculus and introductory CS coursework transfer toward the major"
+        ],
+        "note": "CS at Emory has no capacity screen once you are admitted to the College, which makes Emory one of the more realistic private-university targets for a transfer student who wants CS but is locked out of impacted programs elsewhere; note Emory has no engineering school of its own and offers engineering only through a dual-degree arrangement with Georgia Tech."
+      },
+      {
+        "name": "Goizueta Business School (BBA)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "28 graded credit hours completed or in progress, excluding AP/IB/dual enrollment",
+          "Minimum 3.0 GPA; most admits at 3.5 or better",
+          "Little or no prior business coursework preferred",
+          "Must enter early enough to complete the BBA core at Emory"
+        ],
+        "note": "Goizueta admits a small transfer cohort and prefers students who enter by sophomore year with their business coursework still ahead of them — paradoxically, a community college applicant who already stacked accounting, finance, and management courses is a weaker candidate, not a stronger one."
+      },
+      {
+        "name": "Nell Hodgson Woodruff School of Nursing (BSN Transfer Option)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "60 semester hours of graded credit before starting",
+          "Gen Chem I, A&P I and II, and Microbiology, all with lab, plus Nutrition",
+          "Introductory Statistics and Human Growth/Life Span Development",
+          "No pass/fail on prerequisites; A&P within 7 years; TEAS/SAT/ACT/GRE required if GPA is under 3.5"
+        ],
+        "note": "This is a purpose-built junior-entry transfer pathway rather than an afterthought — you finish four prerequisite semesters elsewhere and four nursing semesters at Emory — but admission depends on both competitiveness and clinical space availability, and a single pass/fail prerequisite grade can disqualify you."
+      },
+      {
+        "name": "Oxford College",
+        "status": "closed",
+        "rate": null,
+        "prereqs": [
+          "First-year entry only",
+          "Oxford does not accept transfer applications"
+        ],
+        "note": "Students sometimes assume Oxford is the easier back door into Emory, but it admits only incoming freshmen; transfers must apply directly to Emory College, Goizueta, or Nursing."
+      }
+    ]
+  },
+  {
+    "name": "Georgetown",
+    "byMajor": true,
+    "source": "https://uadmissions.georgetown.edu/applying/transfer/",
+    "note": "Georgetown is one of the strictest school-level admits in the country: transfer applicants must apply directly to one of Georgetown's undergraduate schools AND declare a specific major on the application, and moving between schools after enrolling requires a separate internal transfer process. The campus-wide transfer rate has run roughly 13–17% (296 admitted of 2,241 applicants for Fall 2023), but no school-level transfer rates are published — the freshman-cycle rates by school that circulate online are not transfer rates. Three programs are outright closed to transfer applicants: American Studies, Business and Global Affairs, and International Business, Language, and Culture. Deadline is March 1 with decisions by June 1, and SAT/ACT is required if you finished high school within the past five years.",
+    "majors": [
+      {
+        "name": "Georgetown College of Arts & Sciences",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Apply directly to the school and declare a major on the application",
+          "SAT or ACT required if you left high school within the past five years",
+          "March 1 deadline; decisions by June 1",
+          "American Studies is closed to transfer applicants"
+        ],
+        "note": "The College admits the largest number of transfers of any Georgetown school and is the realistic target for most applicants, but the roughly 13% campus-wide transfer rate is the only published figure — Georgetown does not release per-school transfer numbers."
+      },
+      {
+        "name": "Computer Science (College of Arts & Sciences)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Admission to the College of Arts & Sciences is the only gate",
+          "No secondary application to declare CS after enrolling",
+          "Calculus and introductory programming coursework recommended"
+        ],
+        "note": "Georgetown has no engineering school and no capacity cap on CS, so the major is declarable once you are admitted to the College — the entire contest is the College transfer decision, not a departmental screen."
+      },
+      {
+        "name": "Walsh School of Foreign Service",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Foreign language proficiency required to earn the SFS degree",
+          "Micro- and macroeconomics recommended before transferring",
+          "History and government coursework aligned with the SFS core",
+          "Business and Global Affairs and IBLC are closed to transfers"
+        ],
+        "note": "SFS expects a demonstrated commitment to international affairs and, critically, a language proficiency requirement you must clear to graduate — a transfer who arrives with no language sequence started is signing up for a hard scramble in two years."
+      },
+      {
+        "name": "McDonough School of Business",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "At least one completed semester of 12 or more transferable credits",
+          "Microeconomics and macroeconomics recommended",
+          "Calculus recommended; statistics helpful",
+          "IBLC and Business and Global Affairs closed to transfers"
+        ],
+        "note": "McDonough's business core is rigid and sequenced, so transfer seats are few and effectively limited to sophomore-year entrants who have already cleared micro, macro, and calculus — arriving as a junior usually cannot be made to fit."
+      },
+      {
+        "name": "School of Nursing",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Human Anatomy & Physiology I and II",
+          "Chemistry",
+          "Liberal arts coursework aligned with the Georgetown Core",
+          "100- and 200-level courses from the BSN curriculum guide"
+        ],
+        "note": "Nursing transfers are constrained by clinical cohort capacity, not just academic review, so you must both hit the anatomy/physiology and chemistry prerequisites and enter early enough to complete the full clinical sequence in residence."
+      },
+      {
+        "name": "School of Health",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Liberal arts coursework aligned with the Georgetown Core",
+          "Biology and chemistry recommended for Human Science applicants",
+          "Declare a specific major on the application",
+          "March 1 deadline"
+        ],
+        "note": "The School of Health (Human Science, Global Health, Health Care Management & Policy) is a distinct admitting unit from both Nursing and the College, and because you commit to a named major at application, a Human Science applicant without college bio and chem reads as underprepared."
+      }
+    ]
+  },
+  {
+    "name": "NYU",
+    "byMajor": true,
+    "source": "https://www.nyu.edu/admissions/undergraduate-admissions/how-to-apply/transfer-applicants/additional-program-requirements.html",
+    "note": "NYU transfer applicants apply to one specific school or college, and NYU maintains a dedicated 'Additional Program Requirements for External Transfers' page precisely because the prerequisite and portfolio rules differ school by school. The campus-wide transfer rate is far more forgiving than the roughly 8-9% first-year rate, but it averages across a nearly prerequisite-free College of Arts and Science and a fall-only, prerequisite-gated Stern. NYU does not publish admit rates by school or major, and widely circulated 'sub-5% by school' figures found on third-party sites are unverified — no major-level percentages are reported here for that reason. Across all schools, a maximum of 64 credits transfer and credit requires a C or better with no pass/fail.",
+    "majors": [
+      {
+        "name": "College of Arts and Science",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "No required prerequisites for any CAS program",
+          "Major-relevant coursework reviewed closely",
+          "Maximum 64 transferable credits",
+          "Grade of C or better; no pass/fail credit"
+        ],
+        "note": "CAS is the big open door — it explicitly has no prerequisites for any of its majors, so a strong GPA in courses relevant to your intended major is the whole case, and it is the sensible application target for anyone unsure they can clear Stern's or Tandon's course gates."
+      },
+      {
+        "name": "Tandon School of Engineering — Computer Science, B.S.",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Precalculus-level math completed in high school or college (required minimum)",
+          "College-level calculus (most competitive applicants have it)",
+          "Physics recommended for CS; required for Applied Physics and Mechanical Engineering",
+          "Prerequisite course details submitted via the NYU Applicant Portal"
+        ],
+        "note": "Tandon's floor is only precalculus, which makes it look accessible, but the realistic admitted profile has college calculus already finished — and you must report your calculus, chemistry and physics coursework through the applicant portal, so gaps are visible."
+      },
+      {
+        "name": "Leonard N. Stern School of Business",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Calculus I, II or III completed with a letter grade (no pass/fail)",
+          "Writing/composition",
+          "Microeconomics, statistics/regression and financial accounting for junior-year entry",
+          "Fall entry only"
+        ],
+        "note": "Stern is the hardest school at NYU to transfer into: it considers external transfers for fall only, the prerequisites must be finished in letter-graded courses, and junior-year entrants need the full econ-stats-accounting block done before they apply."
+      },
+      {
+        "name": "Rory Meyers College of Nursing",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Chemistry (CHEM-UA 120 equivalent)",
+          "Nutrition (NUTR-UE 119 equivalent)",
+          "Developmental/child psychology (APSY-UE 1271 equivalent)",
+          "All nursing prerequisites completed with C or better"
+        ],
+        "note": "Meyers runs two distinct tracks — 'traditional transfer' for students without a bachelor's and 'second degree transfer' for those who already hold one — and clinical cohort capacity, not just your GPA, caps how many transfers can be taken in any term."
+      },
+      {
+        "name": "Tisch School of the Arts",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Artistic review: portfolio, audition or creative submission by program",
+          "Program-specific supplemental materials",
+          "Maximum 64 transferable credits",
+          "Grade of C or better; no pass/fail credit"
+        ],
+        "note": "The artistic review, not the transcript, decides Tisch — and because studio training is sequenced from the first year, some programs admit transfers only into specific entry points or not at all in a given cycle."
+      },
+      {
+        "name": "Steinhardt School of Culture, Education, and Human Development",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Program-specific portfolio or audition for music, art and performing arts programs",
+          "Major-relevant prerequisite coursework by program",
+          "Maximum 64 transferable credits",
+          "Grade of C or better; no pass/fail credit"
+        ],
+        "note": "Steinhardt spans everything from education to music performance, so 'transferring to Steinhardt' means nothing until you name the program — the audition-based ones behave like Tisch while the education and applied-psychology ones behave much more like CAS."
+      }
+    ]
+  },
+  {
+    "name": "UC Merced",
+    "byMajor": true,
+    "source": "https://admissions.ucmerced.edu/transfer/major-preparation-schools",
+    "note": "UC Merced is by far the most open UC for transfers — the UC system's official transfer admit data page reports 6,635 applicants and 5,089 admits for the most recent cycle (67.5% campus-wide), with ~97% of admitted transfers coming from California community colleges. But admission is still decided at the school/major level: each of the three schools sets its own minimum transfer GPA (Engineering 3.0, Natural Sciences 2.9, Social Sciences/Humanities/Arts 2.8, with Psychology and Public Health carrying a raised 3.0), and every major in all three schools requires specific lower-division major preparation completed by the end of spring for fall entry. UC Merced does not publish admit rates broken out by individual major, and it has no undergraduate nursing program (Public Health is the closest analog). No major-level percentages are reported here because none are published.",
+    "majors": [
+      {
+        "name": "Computer Science and Engineering, B.S.",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "CSE 20 and CSE 21 equivalents with a grade of B or better",
+          "Calculus I and II",
+          "Additional required math (discrete/linear algebra per articulation)",
+          "School of Engineering minimum 3.0 transfer GPA"
+        ],
+        "note": "This is UC Merced's tightest screen — the two programming courses must be done with B or better, not the usual C, so a student with a C in intro CS is effectively out even at a campus admitting two-thirds of transfers."
+      },
+      {
+        "name": "Mechanical Engineering, B.S.",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Calculus I, II and III",
+          "Calculus-based physics (mechanics and E&M) with lab",
+          "General chemistry",
+          "School of Engineering minimum 3.0 transfer GPA"
+        ],
+        "note": "The full calculus-plus-physics sequence must be finished by the end of spring term, so the sequencing at your community college — not your GPA — is usually what decides whether you are eligible this cycle or next."
+      },
+      {
+        "name": "Biological Sciences, B.S.",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "General biology series with lab",
+          "General chemistry with lab",
+          "Organic chemistry (per articulation)",
+          "School of Natural Sciences minimum 2.9 transfer GPA"
+        ],
+        "note": "A genuinely reachable path for a solid community college science student — the bar is completing the lab science sequence, not out-competing a large applicant pool."
+      },
+      {
+        "name": "Psychology, B.A.",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Introductory psychology",
+          "Statistics",
+          "Required major preparation courses with C or better",
+          "Minimum 3.0 transfer GPA (raised above the 2.8 SSHA floor)"
+        ],
+        "note": "Psychology is the one high-demand major inside the otherwise open SSHA school, and it carries the same 3.0 GPA minimum as Engineering — do not assume the school's 2.8 applies to you."
+      },
+      {
+        "name": "Management and Business Economics, B.S.",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Microeconomics and macroeconomics",
+          "Calculus for business/social science",
+          "Statistics",
+          "School of SSHA minimum 2.8 transfer GPA"
+        ],
+        "note": "UC Merced's business-facing major is unusually accessible compared to business programs at other UCs, but the econ and calculus preparation is still required, not merely recommended."
+      },
+      {
+        "name": "School of Social Sciences, Humanities and Arts (humanities and arts majors)",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Major preparation courses with C or better",
+          "Minimum 2.8 transfer GPA",
+          "60 semester/90 quarter transferable units",
+          "UC transfer course pattern (English composition and math)"
+        ],
+        "note": "This is the big open college and the realistic fallback for anyone screened out of Engineering — the 2.8 floor plus completed major prep is the whole gate, and a TAG agreement can lock in admission before you apply."
+      }
+    ]
+  },
+  {
+    "name": "UPenn",
+    "byMajor": true,
+    "majors": [
+      {
+        "name": "Wharton School (Business/Economics)",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "At least one calculus course completed in the first year of college (a second may be required after credit evaluation)",
+          "Both introductory microeconomics and macroeconomics (or 5s on both AP Econ exams, or IB HL Economics 6-7)",
+          "Two semesters of college-level foreign language, or equivalent placement/test scores",
+          "Must apply as a second-year transfer with exactly one year of credit; must name an intended concentration"
+        ],
+        "note": "Wharton is the hardest door at Penn and admits essentially only rising sophomores, so a student who already has two years of credit is ineligible no matter how strong the record."
+      },
+      {
+        "name": "Penn Engineering (SEAS) — incl. Computer Science",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Two calculus courses",
+          "One calculus-based physics course (a second strongly recommended for BE, CMPE, MEAM, MSE)",
+          "One chemistry course (two recommended for BE, CBE, MSE)",
+          "One computer programming course"
+        ],
+        "note": "SEAS also admits only second-year transfers and requires you to pick a specific BSE or BAS major on the application, so the full first-year math/science/programming sequence must already be done or in progress."
+      },
+      {
+        "name": "School of Nursing (BSN)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Minimum of eight transferable college courses",
+          "Introduction to Chemistry with lab",
+          "Introduction to Biology with lab",
+          "Anatomy and Physiology I with lab (or Human Anatomy with lab)"
+        ],
+        "note": "Nursing accepts both second- and third-year transfers but everyone enters as a second-year student regardless of credits, so plan on three more years and get microbiology, A&P II, nutrition, and statistics done to stay on the clinical sequence."
+      },
+      {
+        "name": "College of Arts and Sciences",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "No school-specific course prerequisites beyond strong college coursework",
+          "Transferable courses must be from a regionally accredited institution, passed with C or better, and comparable in content/credit hours",
+          "Second- or third-year transfer entry permitted",
+          "Roughly one full year of college credit minimum"
+        ],
+        "note": "The College is the widest door at Penn — no extra academic screen and it accepts third-year transfers — but Penn's transfer admit rate is still in the low single digits, and once admitted to a school you cannot switch schools afterward, so the school you apply to is effectively permanent."
+      }
+    ],
+    "source": "https://admissions.upenn.edu/how-to-apply/transfer-applicants",
+    "note": "Penn transfer admission is decided at the undergraduate-school level: you apply directly into the College of Arts and Sciences, Penn Engineering, Nursing, or Wharton, and Penn states that a transfer admitted to one school cannot later transfer between schools. Wharton and Engineering take only second-year transfers; the College and Nursing also take third-year transfers. Penn does not publish transfer admit rates broken out by school, so no per-school percentage should be quoted."
+  },
+  {
+    "name": "USC",
+    "byMajor": true,
+    "source": "https://admission.usc.edu/prospective-students/how-to-apply/transfer-students/",
+    "note": "USC admits transfers to a specific school, and the school's own faculty requirements drive the decision — the campus-wide transfer rate (2,310 admits from 9,488 applicants, roughly 24% in the most recently reported cycle) hides a very wide spread. USC's published transfer profile reports Marshall as about 23% of admitted transfers and Viterbi about 11%, but those are shares of the admitted class, not admit rates, and USC does not publish admit rates by school or major. Transfers are expected to have around 30 transferable units and the mid-50% admitted GPA has run roughly 3.7-4.0. USC has no undergraduate nursing program, so nursing-bound transfers should look elsewhere. No major-level percentages are reported here because none are published.",
+    "majors": [
+      {
+        "name": "Viterbi School of Engineering — Computer Science, B.S.",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Calculus I and II (MATH 125/126 equivalents)",
+          "Programming coursework (may substitute for lab science for CS majors)",
+          "USC writing requirement equivalent (WRIT 150)",
+          "Two additional Viterbi-specific essay prompts"
+        ],
+        "note": "Viterbi publicly states it admits at a rate similar to the university overall, but CS is the single most oversubscribed major inside it — and students who already have Calc I and II should take Linear Algebra (MATH 225 equivalent) rather than Calc III, which is not in the CS curriculum."
+      },
+      {
+        "name": "Marshall School of Business — Business Administration, B.S.",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "College writing (WRIT 150 equivalent)",
+          "Business calculus (MATH 118 equivalent)",
+          "Microeconomics and macroeconomics",
+          "Financial and managerial accounting (two semesters, strongly encouraged)"
+        ],
+        "note": "Marshall takes the largest single share of USC's transfer class, so it is a real target rather than a lottery — but applications are only considered once the writing and business calculus prerequisites are actually complete, so an in-progress calculus course can sink an otherwise strong file."
+      },
+      {
+        "name": "Dornsife College of Letters, Arts and Sciences",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "USC writing requirement equivalent (WRIT 150)",
+          "Progress toward USC General Education categories",
+          "Approximately 30 transferable units",
+          "Major-relevant lower-division coursework per articulation history"
+        ],
+        "note": "Dornsife is the large, comparatively open college and the standard route in for humanities, social science and pre-health transfers — the emphasis is on GPA and completed GE/writing rather than a narrow prerequisite gauntlet."
+      },
+      {
+        "name": "Jimmy Iovine and Andre Young Academy",
+        "status": "closed",
+        "rate": null,
+        "prereqs": [
+          "SlideRoom portfolio submission",
+          "Supplemental Academy application",
+          "Interview by invitation",
+          "Academy-specific essays"
+        ],
+        "note": "The Academy enrolls only a few dozen students per class total and fills essentially all seats at the first-year level, so external transfer admission is rare to nonexistent in most cycles — treat it as a long shot, not a plan."
+      },
+      {
+        "name": "School of Cinematic Arts",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Creative portfolio / supplemental materials via SlideRoom",
+          "Program-specific writing samples",
+          "USC writing requirement equivalent",
+          "Approximately 30 transferable units"
+        ],
+        "note": "Admission is driven by the creative portfolio review rather than by GPA, and transfer seats are limited by how many students the program's production sequences can absorb mid-stream."
+      },
+      {
+        "name": "Annenberg School for Communication and Journalism",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "USC writing requirement equivalent (WRIT 150)",
+          "Introductory communication or journalism coursework per articulation",
+          "Progress toward USC General Education",
+          "Approximately 30 transferable units"
+        ],
+        "note": "Annenberg is materially more selective than Dornsife but does not require a portfolio — the differentiator is demonstrated media, writing or journalism work alongside a high transferable GPA."
+      }
+    ]
+  },
+  {
+    "name": "Vanderbilt",
+    "byMajor": true,
+    "majors": [
+      {
+        "name": "College of Arts and Science",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "At least 12 semester hours of post-high-school college credit to count as a transfer",
+          "Official high school transcript plus transcripts from every college attended",
+          "Two academic letters of recommendation, preferably at least one from a college instructor",
+          "No school-specific course prerequisites"
+        ],
+        "note": "A&S is Vanderbilt's largest undergraduate school with 46 majors and the only unit with no additional application requirements, making it the most realistic target for a transfer without a heavy STEM or audition record."
+      },
+      {
+        "name": "College of Connected Computing (computing / AI)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "No additional application items listed beyond the standard transfer file",
+          "Strong quantitative record; computing coursework expected for advanced standing",
+          "At least 12 semester hours of transferable college credit",
+          "Second bachelor's degree candidates are generally not eligible"
+        ],
+        "note": "This is Vanderbilt's newest undergraduate college and is now a selectable option on the transfer application — confirm with admissions which unit actually houses your intended computing degree, since CS degrees have historically been offered through Engineering (B.S.) and Arts and Science (B.A.)."
+      },
+      {
+        "name": "School of Engineering",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "College-level calculus",
+          "Calculus-based physics",
+          "College chemistry",
+          "Courses must be completed or in progress at the time of admission"
+        ],
+        "note": "Vanderbilt states plainly that a strong background in college-level physics, calculus, and chemistry is critical and expects admitted transfers to have finished that sequence, so a transfer without it will either be denied or lose a year."
+      },
+      {
+        "name": "Peabody College (incl. Human and Organizational Development)",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Must specify an intended major on the application",
+          "Demonstrated fit with that specific major",
+          "At least 12 semester hours of transferable credit",
+          "Second bachelor's degree candidates are not eligible"
+        ],
+        "note": "Peabody says outright that your fit for the intended major and the space available in that major weigh heavily in the decision, which makes HOD — Vanderbilt's de facto pre-business major — a capacity-limited target rather than an open one."
+      },
+      {
+        "name": "Blair School of Music",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "Separate Blair School of Music application",
+          "Prescreening video",
+          "Repertoire list and music resume",
+          "Artistic letters of recommendation"
+        ],
+        "note": "Blair is an audition-gated conservatory admission on top of the university transfer review, so the musical prescreen, not the GPA, is the real filter."
+      }
+    ],
+    "source": "https://admissions.vanderbilt.edu/apply/transfer-process/",
+    "note": "Vanderbilt transfer applicants apply to one of five undergraduate schools — Arts and Science, Connected Computing, Engineering, Peabody, or Blair — and the requirements diverge sharply by school. Vanderbilt has no undergraduate nursing or undergraduate business degree (the School of Nursing is graduate-entry; HOD in Peabody is the business-adjacent option). Vanderbilt does not publish transfer admit rates by school, and third-party figures floating around for the campus-wide transfer rate conflict, so none is quoted here."
+  },
+  {
     "name": "Wisconsin",
     "byMajor": true,
     "source": "https://admissions.wisc.edu/apply-as-a-transfer/",
@@ -102,5 +675,72 @@
         "note": "Nursing requires a second, separate School of Nursing application due mid-January for a fall start with decisions on or before July 1, on top of UW-Madison admission, and eligibility is restricted to applicants who \"have not previously enrolled in a professional Bachelor of Science-Nursing program at another institution\" — so a student already in a BSN program elsewhere is barred outright."
       }
     ]
+  },
+  {
+    "name": "Yale",
+    "byMajor": false,
+    "majors": [
+      {
+        "name": "Yale College (single admission pool, all majors)",
+        "status": "impacted",
+        "rate": null,
+        "prereqs": [
+          "One to two years of transferable college credit at the time of application",
+          "Grades of A or B in at least three-quarters of transferable courses, nothing below C",
+          "Pass/Fail coursework generally does not transfer",
+          "Transfer Common Application, college report, academic evaluations, and transcripts by March 1"
+        ],
+        "note": "Yale admits one small transfer cohort to Yale College as a whole — 34 transfer students enrolled in fall 2025 — with no per-major or per-school quotas, so intended major does not change your odds and the campus-level pool is the entire story."
+      },
+      {
+        "name": "Computer Science",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "No separate major application; the major is declared after enrolling",
+          "Yale's introductory CS gateway course must be completed before upper-level electives",
+          "Calculus and linear algebra for the B.S. track",
+          "Departmental review of any transferred CS credit toward the major"
+        ],
+        "note": "Unlike Penn or Vanderbilt, wanting CS at Yale carries no admissions penalty at all — the only friction is fitting the intro sequence and prerequisite chain into the semesters you have left."
+      },
+      {
+        "name": "Engineering B.S. programs (Yale SEAS)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "Multivariable calculus",
+          "Calculus-based physics sequence",
+          "General chemistry for biomedical and chemical tracks",
+          "Transferred science/math credit must be approved by the department"
+        ],
+        "note": "There is no separate engineering admission, but the accredited B.S. sequences are long enough that a transfer entering with junior standing and without calculus and physics done often cannot finish on time — an advising problem, not an admissions one."
+      },
+      {
+        "name": "Majors requiring a sophomore-year departmental application (e.g. Global Affairs)",
+        "status": "competitive",
+        "rate": null,
+        "prereqs": [
+          "A separate departmental application filed during sophomore year at Yale",
+          "Specific prerequisite courses that vary by department",
+          "Contact the Director of Undergraduate Studies immediately after being offered admission"
+        ],
+        "note": "Yale explicitly warns transfers entering with second-semester sophomore or junior standing to reach out to the DUS right away, because a handful of majors gate entry through an internal sophomore-year application whose window a transfer can easily miss."
+      },
+      {
+        "name": "Economics",
+        "status": "open",
+        "rate": null,
+        "prereqs": [
+          "Introductory microeconomics and macroeconomics",
+          "At least one term of calculus",
+          "Intermediate theory coursework taken at Yale",
+          "Departmental evaluation of transferred economics credit toward the major"
+        ],
+        "note": "Economics is the practical substitute for Yale's nonexistent undergraduate business degree and is fully open to transfers, though the department decides case by case which outside econ courses count toward the major."
+      }
+    ],
+    "source": "https://admissions.yale.edu/transfer",
+    "note": "Yale is the exception among these three: transfer admission is NOT decided by major or school. Applicants apply to Yale College as a single unit, do not select an undergraduate school, and declare a major only after enrolling (by the end of sophomore year). Yale has no undergraduate business, nursing, or separately-admitted engineering school. The real constraint is volume — a very small cohort enrolls each year (34 in fall 2025) — plus Yale's residency rule that at least 18 course credits must be earned at Yale, which caps transferable credit at roughly two years."
   }
 ]

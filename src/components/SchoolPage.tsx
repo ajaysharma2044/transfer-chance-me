@@ -6,6 +6,7 @@ import { markOf } from "../lib/schools";
 import Tile from "./Tile";
 import CampusPhoto from "./CampusPhoto";
 import PromptsPanel from "./PromptsPanel";
+import MajorsPanel from "./MajorsPanel";
 import "./schoolpage.css";
 import "./college.css";
 
@@ -305,6 +306,8 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
           </div>
         </section>
       )}
+
+      <div className="reveal"><MajorsPanel school={s.name} /></div>
 
       <div className="reveal"><PromptsPanel school={s.name} /></div>
 
