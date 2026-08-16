@@ -1,0 +1,78 @@
+/* ── The corpus plot: 8,910 outcomes on a lattice ────────────────── */
+.cf {
+  position: relative;
+  margin: 30px auto 0;
+  max-width: 1100px;
+  height: 300px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 16px 44px rgba(20, 24, 63, 0.06);
+}
+/* faint measuring grid, behind the cells */
+.cf::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(20,24,63,0.05) 0 1px, transparent 1px 72px),
+    repeating-linear-gradient(0deg, rgba(20,24,63,0.05) 0 1px, transparent 1px 72px);
+  pointer-events: none;
+}
+.cf canvas { position: relative; display: block; width: 100%; height: 100%; }
+
+/* Mono readout — describes what is literally on screen */
+.cf-read {
+  position: absolute; top: 10px; left: 14px; right: 14px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: 10.5px; letter-spacing: 0.02em; color: var(--ink-2);
+  font-variant-numeric: tabular-nums; pointer-events: none;
+}
+.cf-read i {
+  font-style: normal; font-weight: 800; letter-spacing: 0.09em;
+  color: var(--ink-3); margin-right: 6px;
+}
+.cf-k { display: inline-flex; align-items: center; }
+.cf-k::before {
+  content: ""; width: 6px; height: 6px; margin-right: 7px; border-radius: 1px;
+}
+.cf-k-admit::before { background: var(--blue); }
+.cf-k-deny::before { background: rgba(20, 24, 63, 0.18); }
+.cf-axis {
+  margin-left: auto; display: flex; gap: 0;
+  font-size: 10px; color: var(--ink-3);
+}
+.cf-axis i { font-weight: 600; letter-spacing: 0; margin: 0; padding-left: 26px; color: var(--ink-3); }
+
+.cf-callout {
+  position: absolute; left: 26px; top: 38%;
+  max-width: 210px;
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.4; pointer-events: none;
+  animation: cf-fade 700ms ease 1000ms backwards;
+}
+.cf-callout b {
+  display: block; color: var(--teal); font-weight: 800;
+  font-size: 30px; letter-spacing: -0.03em; line-height: 1;
+  margin-bottom: 4px;
+}
+.cf-res {
+  position: absolute; left: 22px; right: 22px; bottom: 30px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--ink-3); pointer-events: none;
+  animation: cf-fade 700ms ease 1200ms backwards;
+}
+@keyframes cf-fade { from { opacity: 0; } }
+
+.cf-note {
+  position: absolute; left: 14px; bottom: 9px; right: 14px;
+  font-size: 10.5px; color: var(--ink-3); pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .cf { height: 230px; }
+  .cf-callout { top: 30%; max-width: 150px; }
+  .cf-callout b { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cf-callout, .cf-res { animation: none; }
+}

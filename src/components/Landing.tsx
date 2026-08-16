@@ -15,8 +15,10 @@ const TAG_COLOR: Record<MoveTag, string> = {
   Essay: "var(--accent)",
 };
 import { useReveal } from "../hooks/useReveal";
+import { useScrollFx } from "../hooks/useScrollFx";
 import { countdown } from "../lib/deadlines";
 import GpaStrip from "./GpaStrip";
+import CorpusField from "./CorpusField";
 import Tile from "./Tile";
 import "./landing.css";
 
@@ -415,7 +417,7 @@ function FeatureStrip() {
       <h2>Nothing here is a vibe</h2>
       <p className="sec-dek">Every number traces to a source you can check.</p>
 
-      <div className="feature ld-feature reveal">
+      <div className="feature ld-feature" data-fx>
         <div className="f-copy">
           <h3>Your GPA against real admits</h3>
           <p>
@@ -438,7 +440,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature ld-feature reveal">
+      <div className="feature ld-feature" data-fx>
         <div className="f-copy">
           <h3>Upload your actual application</h3>
           <p>
@@ -458,7 +460,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature ld-feature reveal">
+      <div className="feature ld-feature" data-fx>
         <div className="f-copy">
           <h3>An essay check with ground truth</h3>
           <p>
@@ -493,7 +495,7 @@ function SchoolIntel({ onOpenSchool }: { onOpenSchool: (name: string) => void })
   const gpaPos = (g: number) => `${Math.min(100, Math.max(0, ((g - 3.0) / 1.0) * 100))}%`;
 
   return (
-    <section className="shell ld-intel reveal" aria-labelledby="ld-intel-h">
+    <section className="shell ld-intel" data-fx aria-labelledby="ld-intel-h">
       <h2 id="ld-intel-h">Pick a school. See what we know.</h2>
       <p className="sec-dek">
         An intelligence file on every school we measure — official numbers, observed admits, feeders,
@@ -663,7 +665,7 @@ const LEVERS = [
 
 function Playbook() {
   return (
-    <section className="shell ld-play reveal" aria-labelledby="ld-play-h">
+    <section className="shell ld-play" data-fx aria-labelledby="ld-play-h">
       <h2 id="ld-play-h">What we can get you — specifically</h2>
       <p className="sec-dek">
         We catalogued 4,087 activities from 628 admitted files. This is what their lists look like,
@@ -759,12 +761,12 @@ const FINDINGS: Finding[] = [
 
 function Findings({ rows }: { rows: string }) {
   return (
-    <section className="shell ld-findings" aria-labelledby="ld-findings-h">
+    <section className="shell ld-findings" data-fx aria-labelledby="ld-findings-h">
       <h2 id="ld-findings-h">What the data says</h2>
       <p className="ld-sec-dek">Findings from {rows} recorded outcomes — some of them surprising.</p>
-      <div className="ld-findgrid">
+      <div className="ld-findgrid" data-fx-stagger>
         {FINDINGS.map((f, i) => (
-          <div key={f.title} className="reveal" style={{ transitionDelay: `${i * 90}ms`, "--d": `${i * 90}ms` } as CSSProperties}>
+          <div key={f.title} style={{ "--d": `${i * 90}ms` } as CSSProperties}>
             <div className="ld-findcard" style={{ "--fc": f.color } as CSSProperties}>
               <span className="ld-fig">
                 {f.figure}
@@ -789,6 +791,7 @@ function Findings({ rows }: { rows: string }) {
 export default function Landing({ onStart, onOpenSchool }: { onStart: () => void; onOpenSchool: (name: string) => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
   useReveal();
+  useScrollFx();
 
   // Pointer parallax: the hero's cards and glow orbs drift a few pixels
   // toward the cursor at different depths. Off under reduced motion.
@@ -857,7 +860,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         </section>
       </div>
 
-      <section className="ld-wall reveal" aria-label="Schools covered">
+      <section className="ld-wall" data-fx aria-label="Schools covered">
         <p className="strip-label">Measured against every T25</p>
         <div className="ld-marquee">
           <div className="ld-marquee-track">
@@ -887,8 +890,14 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
 
       <div className="shell"><FeatureStrip /></div>
 
-      <section className="shell ld-field reveal" aria-label="Official admit rates">
-        <h2 className="ld-field-h">The field, measured</h2>
+      <section className="shell ld-field" data-fx data-fx-track aria-label="The dataset and official admit rates">
+        <h2 className="ld-field-h">Every outcome we have, drawn</h2>
+        <p className="sec-dek">
+          {rows} recorded transfer decisions, one dot each. Then only the admits, dropped into the
+          GPA distribution they actually landed in.
+        </p>
+        <CorpusField />
+        <h2 className="ld-field-h ld-field-h2">The field, measured</h2>
         <p className="sec-dek">Official transfer admit rates across the T25 — the spread is enormous.</p>
         <RateLadder />
       </section>
@@ -906,7 +915,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         </div>
       </section>
 
-      <section className="shell faq reveal">
+      <section className="shell faq" data-fx>
         <h2>Questions people ask</h2>
         <details>
           <summary>Where does the data come from?</summary>

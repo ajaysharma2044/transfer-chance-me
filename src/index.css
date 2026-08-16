@@ -646,3 +646,61 @@ button:hover > .tile, .row-main:hover .tile { transform: scale(1.08) rotate(-2de
 .ce-addrow { display: flex; gap: 10px; }
 .ce-addrow input { flex: 1; max-width: 340px; }
 .ce-seq { color: var(--teal); }
+
+/* ── Scroll choreography ─────────────────────────────────────────────
+   Weighted, unhurried motion: long duration, deep ease-out, slight scale.
+   The curve matters more than the distance — this is the difference
+   between "an element appeared" and "an element arrived".              */
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+:root {
+  --fx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --fx-dur: 1100ms;
+}
+
+[data-fx] {
+  opacity: 0;
+  transform: translate3d(0, 34px, 0) scale(0.985);
+  transition:
+    opacity var(--fx-dur) var(--fx-ease),
+    transform var(--fx-dur) var(--fx-ease);
+  will-change: opacity, transform;
+}
+[data-fx].fx-in { opacity: 1; transform: none; }
+[data-fx]:not(.fx-in) * { pointer-events: none; }
+
+/* Children cascade: each row arrives a beat after the one above it. */
+[data-fx-stagger] > * {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity 900ms var(--fx-ease),
+    transform 900ms var(--fx-ease);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+[data-fx-stagger].fx-in > * { opacity: 1; transform: none; }
+
+/* Continuous scroll-linked motion: --p runs 0→1 across a full pass. */
+[data-fx-track] { --p: 0; }
+.fx-rise {
+  transform: translate3d(0, calc((0.5 - var(--p)) * 46px), 0);
+  will-change: transform;
+}
+.fx-settle {
+  transform: scale(calc(0.965 + min(var(--p), 0.5) * 0.07));
+  transform-origin: center top;
+  will-change: transform;
+}
+
+/* The old reveal system defers to this one where both apply. */
+[data-fx] .reveal { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-fx], [data-fx].fx-in,
+  [data-fx-stagger] > *, [data-fx-stagger].fx-in > * {
+    opacity: 1; transform: none; transition: none;
+  }
+  .fx-rise, .fx-settle { transform: none; }
+}
