@@ -35,6 +35,18 @@ const TITLE_OVERRIDES: Record<string, string> = {
   "UC Santa Cruz": "University of California, Santa Cruz",
   "UC Riverside": "University of California, Riverside",
   "UC Merced": "University of California, Merced",
+  "USC": "University of Southern California",
+  "NYU": "New York University",
+  "WashU": "Washington University in St. Louis",
+  "UVA": "University of Virginia",
+  "Georgia Tech": "Georgia Institute of Technology",
+  "UT Austin": "University of Texas at Austin",
+  "Tufts": "Tufts University",
+  "Boston College": "Boston College",
+  "Boston University": "Boston University",
+  "Caltech": "California Institute of Technology",
+  "Washington": "University of Washington",
+  "Wisconsin": "University of Wisconsin–Madison",
 };
 
 interface WikiInfo { img: string | null; page: string | null }
@@ -80,6 +92,18 @@ const ICONIC: Record<string, RegExp> = {
   "UC Santa Cruz": /mchenry library|great meadow/i,
   "UC Riverside": /bell tower|carillon/i,
   "UC Merced": /beginnings|lake yosemite/i,
+  "USC": /doheny|bovard|mudd hall/i,
+  "NYU": /washington square arch|bobst/i,
+  "WashU": /brookings hall/i,
+  "UVA": /rotunda|the lawn/i,
+  "Georgia Tech": /tech tower|tech green/i,
+  "UT Austin": /main building|ut tower|littlefield fountain/i,
+  "Tufts": /ballou hall|memorial steps/i,
+  "Boston College": /gasson/i,
+  "Boston University": /marsh chapel|marsh plaza/i,
+  "Caltech": /beckman|millikan|turtle pond/i,
+  "Washington": /suzzallo|rainier vista|drumheller/i,
+  "Wisconsin": /bascom hall|memorial union/i,
 };
 const OLD_YEAR = /\b1[5-9]\d{2}\b/; // 1500–1999 in the filename → likely archival
 

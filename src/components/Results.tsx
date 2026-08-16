@@ -161,8 +161,11 @@ export default function Results({ profile, onRevise, onOpenSchool }: { profile: 
           files across 1,217 structured profiles, while trophy ECs alone don't rescue a GPA.
         </p>
         <p>
-          These are estimates for orientation, not decisions. Self-reported outcomes over-represent acceptances,
-          which is why baselines stay anchored to official rates; small samples are flagged.
+          These are estimates for orientation, not decisions. Self-reported outcomes over-represent
+          acceptances — people post wins, not rejections — so baselines stay anchored to official rates,
+          small samples are flagged, and the lanes where reporting bias runs hottest are discounted on
+          top of it: CS/engineering success stories are heavily over-reported relative to how rare those
+          seats actually are, and your range reflects the scarcity, not the forum highlight reel.
         </p>
       </footer>
 

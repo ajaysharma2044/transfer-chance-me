@@ -136,7 +136,7 @@ function CountUp({ value, duration = 1300 }: { value: number; duration?: number 
   return <span ref={ref} className="num">{shown.toLocaleString()}</span>;
 }
 
-const AUTHORITY_SCHOOLS = ["Cornell", "Duke", "Chicago", "Stanford"];
+const AUTHORITY_SCHOOLS = ["Cornell", "Columbia", "UPenn", "Brown", "Duke", "Stanford"];
 
 /** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
 const TICKER = [
@@ -433,7 +433,7 @@ function SchoolIntel({ onOpenSchool }: { onOpenSchool: (name: string) => void })
           {s.nAdmits > 0 ? (
             <span><b>{s.nAdmits}</b> observed admits · <b>{s.nGpa}</b> GPA points · <b>{s.trend.length}</b> cycles tracked in our study</span>
           ) : (
-            <span>Official UC systemwide admit data · CC pipeline school</span>
+            <span>Official published transfer data · {s.cycle || "latest cycle"}</span>
           )}
           <span className="ld-dossier-srcs">Sources: Common Data Set · UC admit data · 8,910-outcome study</span>
         </footer>
@@ -652,11 +652,10 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           </div>
           <div className="ld-authority">
             <span className="ld-authority-tiles" aria-hidden="true">
-              {AUTHORITY_SCHOOLS.map((n) => <Tile key={n} name={n} size={22} />)}
+              {AUTHORITY_SCHOOLS.map((n) => <Tile key={n} name={n} size={30} />)}
             </span>
-            <span>Made by students who transferred into multiple Ivies</span>
-            <span className="ld-authority-sep" aria-hidden="true">·</span>
-            <span><b>{rows}</b> real applications analyzed</span>
+            <span className="ld-authority-claim">Made by students who transferred into multiple Ivies</span>
+            <span className="ld-authority-sub"><b>{rows}</b> real applications analyzed</span>
           </div>
           <HeroStage />
         </section>
@@ -725,9 +724,11 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <details>
           <summary>Are these my actual chances?</summary>
           <p>
-            They're honest estimates, not decisions. Self-reported outcomes over-represent acceptances, so
-            baselines stay anchored to official rates, ranges are shown instead of fake-precise numbers, and
-            small samples are flagged where they're small.
+            They're honest estimates, not decisions. Self-reported outcomes over-represent acceptances —
+            people post wins, not rejections — so baselines stay anchored to official rates, ranges are
+            shown instead of fake-precise numbers, and small samples are flagged. Lanes where the bias
+            runs hottest get discounted hardest: CS transfer success stories are far more visible online
+            than CS transfer seats actually exist, and the engine scores the scarcity, not the stories.
           </p>
         </details>
         <details>

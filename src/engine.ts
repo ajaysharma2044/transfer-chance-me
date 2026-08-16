@@ -7,6 +7,7 @@
 
 import model from "./data/model.json";
 import ucData from "./data/uc_data.json";
+import extraSchools from "./data/extra_schools.json";
 
 export interface Counsel {
   typical: string;
@@ -88,6 +89,42 @@ for (const [name, c] of Object.entries(UC_JSON.campuses)) {
     },
   });
 }
+// ── Additional measured schools from their own Common Data Sets ──
+// Same shape as the UC append: official rate + hand-checked counsel; no
+// study GPA percentiles, so the engine estimates position from selectivity.
+interface ExtraSchool {
+  name: string; rate: number; applicants: number | null; admitted: number | null;
+  cycle: string; typical: string; levers: string[]; watchouts: string[];
+  feeders?: string; programs?: string[];
+}
+const EXTRA = extraSchools as unknown as ExtraSchool[];
+for (const e of EXTRA) {
+  if (MODEL.schools.some((s) => s.name === e.name)) continue;
+  MODEL.schools.push({
+    id: e.name.toLowerCase().replace(/\s+/g, "-"),
+    name: e.name,
+    rate: e.rate,
+    applicants: e.applicants,
+    admitted: e.admitted,
+    cycle: e.cycle,
+    n: 0, nAdmits: 0, nGpa: 0,
+    gpa: { p10: null, p25: null, p50: null, p75: null, p90: null },
+    hist: [],
+    majors: [],
+    feeder: e.feeders ?? "",
+    coadmit: [],
+    trend: [],
+    counsel: {
+      typical: e.typical,
+      floor: null,
+      levers: e.levers,
+      watchouts: e.watchouts,
+      feeders: e.feeders ?? "",
+      programs: e.programs ?? [],
+    },
+  });
+}
+
 MODEL.meta.schools = MODEL.schools.length;
 
 export type Institution = "cc" | "public4" | "private4";
@@ -304,12 +341,18 @@ export function estimate(profile: Profile, s: School): Estimate {
   }
 
   // ── Major lane ──
+  // CS is discounted hard on top of what reported outcomes show: successful
+  // CS transfers over-report themselves, and observed CS admits are rare in
+  // the corpus relative to CS applicants — the lane is scarcer than it looks.
   if (profile.major === "cs" || profile.major === "engineering") {
     if (UC.has(s.name)) {
       mult *= 0.35;
       drivers.push({ dir: "down", text: "CS/engineering at the UCs runs several times more selective than the campus-wide transfer rate" });
+    } else if (s.rate < 15) {
+      mult *= profile.major === "cs" ? 0.55 : 0.65;
+      drivers.push({ dir: "down", text: "CS/engineering transfer seats at this tier are genuinely rare — reported success stories overstate the lane, so we discount it" });
     } else {
-      mult *= 0.8;
+      mult *= 0.75;
       drivers.push({ dir: "down", text: "CS/engineering is the most impacted transfer lane nearly everywhere" });
     }
   } else if (profile.major === "business" && BUSINESS_GAUNTLET.has(s.name)) {

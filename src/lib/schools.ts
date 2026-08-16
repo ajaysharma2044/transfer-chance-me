@@ -40,6 +40,18 @@ export const MARKS: Record<string, SchoolMark> = {
   "UC Santa Cruz":   { color: "#003C6C", mono: "SC",  word: "UCSC",            domain: "ucsc.edu" },
   "UC Riverside":    { color: "#003DA5", mono: "R",   word: "UC Riverside",    domain: "ucr.edu" },
   "UC Merced":       { color: "#005487", mono: "M",   word: "UC Merced",       domain: "ucmerced.edu" },
+  "USC":             { color: "#990000", mono: "SC",  word: "USC",             domain: "usc.edu" },
+  "NYU":             { color: "#57068C", mono: "NYU", word: "NYU",             domain: "nyu.edu" },
+  "WashU":           { color: "#A51417", mono: "WU",  word: "WashU",           domain: "wustl.edu" },
+  "UVA":             { color: "#232D4B", mono: "V",   word: "UVA",             domain: "virginia.edu" },
+  "Georgia Tech":    { color: "#003057", mono: "GT",  word: "Georgia Tech",    domain: "gatech.edu" },
+  "UT Austin":       { color: "#BF5700", mono: "UT",  word: "UT Austin",       domain: "utexas.edu" },
+  "Tufts":           { color: "#3E8EDE", mono: "T",   word: "Tufts",           domain: "tufts.edu" },
+  "Boston College":  { color: "#8A100B", mono: "BC",  word: "Boston College",  domain: "bc.edu" },
+  "Boston University": { color: "#CC0000", mono: "BU", word: "BU",             domain: "bu.edu" },
+  "Caltech":         { color: "#FF6C0C", mono: "CT",  word: "Caltech",         domain: "caltech.edu" },
+  "Washington":      { color: "#4B2E83", mono: "UW",  word: "UW Seattle",      domain: "washington.edu" },
+  "Wisconsin":       { color: "#C5050C", mono: "W",   word: "Wisconsin",       domain: "wisc.edu" },
 };
 
 export function logoUrl(name: string, size = 64): string {

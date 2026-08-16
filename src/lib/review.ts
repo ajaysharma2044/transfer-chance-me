@@ -78,6 +78,7 @@ Key findings from 8,910 recorded transfer outcomes (2011-2026), 4,243 admits:
 - The #1 differentiator admits credit: a school-specific "why transfer" essay naming programs, professors, courses. Complaint-shaped essays (framing the move as escape from a bad school) fail; fit-and-resources framing wins.
 - Feeder fit matters: UCs run on California community colleges (92% of UCLA admits); elite privates take both strong 4-year students and CC students with institutional credentials.
 - High-school record is nearly irrelevant (corr with college GPA 0.016); 16% of admits are "redemption" cases.
+- Reporting bias is real and you must correct for it: the corpus over-represents acceptances (people post wins), and nowhere more than CS/engineering — visible CS success stories vastly outnumber actual CS transfer seats. Never let a CS applicant believe the lane is as open as forums make it look; be explicit about scarcity and about backup-major/school strategy.
 `;
 
 function buildPrompt(input: ReviewInput): string {
