@@ -136,11 +136,15 @@ function CountUp({ value, duration = 1300 }: { value: number; duration?: number 
   return <span ref={ref} className="num">{shown.toLocaleString()}</span>;
 }
 
-/** Wordmarks, not favicons — tiny seal images read as mush. Columbia's light
- *  blue is darkened for text contrast on white. */
-const AUTHORITY_SCHOOLS: { n: string; c?: string }[] = [
-  { n: "Cornell" }, { n: "Columbia", c: "#1D4F91" }, { n: "UPenn" },
-  { n: "Brown" }, { n: "Duke" }, { n: "Stanford" },
+/** Official university lockups (Wikimedia Commons, openly hosted brand SVGs)
+ *  at hand-tuned heights so the row reads as one line. */
+const LOCKUPS: { n: string; src: string; h: number }[] = [
+  { n: "Cornell University", src: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cornell_University_logo.svg", h: 30 },
+  { n: "Columbia University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Columbia_University_1754_updated.svg", h: 22 },
+  { n: "University of Pennsylvania", src: "https://upload.wikimedia.org/wikipedia/commons/9/92/University_of_Pennsylvania_wordmark.svg", h: 34 },
+  { n: "Brown University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Brown_University_logo.svg", h: 25 },
+  { n: "Duke University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Duke_University_logo.svg", h: 26 },
+  { n: "Stanford University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Stanford_wordmark_%282012%29.svg", h: 24 },
 ];
 
 /** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
@@ -657,10 +661,18 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           </div>
           <div className="ld-authority">
             <span className="ld-authority-claim">Made by students who transferred into multiple Ivies</span>
-            <span className="ld-authority-schools">
-              {AUTHORITY_SCHOOLS.map((s) => (
-                <b key={s.n} style={{ color: s.c ?? markOf(s.n).color }}>{markOf(s.n).word}</b>
+            <span className="ld-lockups">
+              {LOCKUPS.map((l) => (
+                <img
+                  key={l.n}
+                  src={l.src}
+                  alt={l.n}
+                  style={{ height: l.h }}
+                  loading="lazy"
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
               ))}
+              <span className="ld-lockup-more">+ many more</span>
             </span>
             <span className="ld-authority-sub"><b>{rows}</b> real applications analyzed</span>
           </div>
