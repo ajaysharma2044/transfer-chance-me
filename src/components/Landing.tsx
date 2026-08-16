@@ -203,42 +203,90 @@ function DemoOdds({ e, active, delay }: { e: Estimate; active: boolean; delay: n
 
 type FocusKind = "upload" | "field" | "act" | null;
 
-/** The physical keyboard, by row. Numbers are relative key widths, so the
- *  deck stays correct at any scale instead of being hand-placed pixels. */
-const KEY_ROWS: number[][] = [
-  [1.35, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.35],          // esc + function row
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.9],              // ` 1-0 - = delete
-  [1.45, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.45],          // tab qwerty \
-  [1.7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.2],               // caps asdf return
-  [2.2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.7],                  // shift zxcv shift
+/** The physical keyboard: the real US layout, each key its relative width and
+ *  its legend. Widths are relative so the deck stays correct at any scale
+ *  instead of being hand-placed pixels. */
+interface Key { w: number; l?: string; sm?: boolean }
+const k = (l: string, w = 1, sm = false): Key => ({ w, l, sm });
+
+const KEY_ROWS: Key[][] = [
+  [k("esc", 1.45, true), ...["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"]
+    .map((f) => k(f, 1, true)), k("", 1.1)],
+  [k("`"), ...["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"].map((d) => k(d)),
+    k("–"), k("="), k("delete", 1.9, true)],
+  [k("tab", 1.5, true), ...["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].map((c) => k(c)),
+    k("["), k("]"), k("\\", 1.1)],
+  [k("caps", 1.75, true), ...["A", "S", "D", "F", "G", "H", "J", "K", "L"].map((c) => k(c)),
+    k(";"), k("'"), k("return", 2.05, true)],
+  [k("shift", 2.25, true), ...["Z", "X", "C", "V", "B", "N", "M"].map((c) => k(c)),
+    k(","), k("."), k("/"), k("shift", 2.55, true)],
 ];
 /** Bottom row: fn ctrl opt cmd space cmd opt, then the arrow cluster. */
-const KEY_BOTTOM = [1, 1, 1, 1.3, 5.6, 1.3, 1];
+const KEY_BOTTOM: Key[] = [
+  k("fn", 1, true), k("ctrl", 1, true), k("opt", 1, true), k("cmd", 1.3, true),
+  k("", 5.6), k("cmd", 1.3, true), k("opt", 1, true),
+];
+
+/** A struck key: which one, and where it sits so the hands can reach it. */
+interface Strike {
+  key: string;        // "<row>:<index>"
+  x: number;          // 0–1 across the keyboard
+  row: number;
+  hand: "l" | "r";
+  finger: number;     // 0–3, outside-in on the left, inside-out on the right
+  thumb: boolean;     // the space bar
+}
+
+/** Where a key sits across the board, as a fraction — derived from the same
+ *  relative widths the keys are laid out with, so the hands land on the key
+ *  the CSS actually drew rather than a guessed pixel. */
+function keyCentre(row: number, idx: number): number {
+  const keys = row === 5 ? [...KEY_BOTTOM, k("", 1), k("", 1), k("", 1)] : KEY_ROWS[row];
+  const total = keys.reduce((a, b) => a + b.w, 0);
+  const before = keys.slice(0, idx).reduce((a, b) => a + b.w, 0);
+  return (before + keys[idx].w / 2) / total;
+}
+
+/** Where a character actually lives on the board, so the hand reaches for the
+ *  key it is really typing rather than an arbitrary one. */
+const CHAR_KEY = (() => {
+  const m = new Map<string, { row: number; idx: number }>();
+  KEY_ROWS.forEach((row, r) => {
+    row.forEach((key, i) => {
+      if (key.l && key.l.length === 1 && !key.sm) m.set(key.l.toLowerCase(), { row: r, idx: i });
+    });
+  });
+  return m;
+})();
 
 /** Rows the typing animation actually strikes — the letter rows and the
- *  space bar, never the function row. `hit` is "<row>:<key>" or null. */
-function MacKeyboard({ hit }: { hit: string | null }) {
+ *  space bar, never the function row. */
+function MacKeyboard({ hit }: { hit: Strike | null }) {
   return (
     <div className="ld-kb" aria-hidden="true">
       <div className="ld-kb-keys">
         {KEY_ROWS.map((row, r) => (
           <div className={`ld-kb-row${r === 0 ? " ld-kb-fn" : ""}`} key={r}>
-            {row.map((w, i) => (
+            {row.map((key, i) => (
               <span
-                className={`ld-kb-key${hit === `${r}:${i}` ? " down" : ""}`}
-                style={{ flexGrow: w }}
+                className={`ld-kb-key${hit?.key === `${r}:${i}` ? " down" : ""}${key.sm ? " sm" : ""}`}
+                style={{ flexGrow: key.w }}
                 key={i}
-              />
+              >
+                {key.l}
+              </span>
             ))}
           </div>
         ))}
         <div className="ld-kb-row">
-          {KEY_BOTTOM.map((w, i) => (
+          {KEY_BOTTOM.map((key, i) => (
             <span
-              className={`ld-kb-key${hit === `5:${i}` ? " down" : ""}`}
-              style={{ flexGrow: w }}
+              className={`ld-kb-key${hit?.key === `5:${i}` ? " down" : ""}${key.sm ? " sm" : ""}`}
+              style={{ flexGrow: key.w }}
               key={i}
-            />
+            >
+              {key.l}
+            </span>
           ))}
           {/* Arrows: full-height left/right, stacked half-height up/down. */}
           <span className="ld-kb-key" style={{ flexGrow: 1 }} />
@@ -250,6 +298,75 @@ function MacKeyboard({ hit }: { hit: string | null }) {
         </div>
       </div>
       <div className="ld-kb-pad" />
+    </div>
+  );
+}
+
+/** A hand seen from above, resting on the deck. Drawn once and mirrored for
+ *  the left, with each finger its own element so a single one can tap. The
+ *  hands sit inside the rotated deck, so they take its perspective for free
+ *  instead of needing their own fake one.
+ *
+ *  Finger order is outside-in: 0 pinky, 1 ring, 2 middle, 3 index. */
+/** Drawn as a RIGHT hand, palm down, fingers pointing away — so the thumb
+ *  falls on the inside, next to the space bar, and the left hand is this
+ *  same drawing mirrored. Fingers are stroked paths with round caps: real
+ *  fingers are near-uniform width with a domed tip, which is exactly what a
+ *  round-capped stroke gives, and it curves far better than a rectangle.
+ *
+ *  `id` is the finger's name; `fi` is its index outside-in (0 = pinky). */
+const FINGERS = [
+  { id: "index", fi: 3, d: "M50 104 C 46 74, 43 46, 42 22", w: 13.5 },
+  { id: "middle", fi: 2, d: "M69 104 C 68 70, 67 36, 67 10", w: 14 },
+  { id: "ring", fi: 1, d: "M88 104 C 90 72, 92 42, 93 18", w: 13.5 },
+  { id: "pinky", fi: 0, d: "M105 106 C 110 84, 113 60, 115 40", w: 11.5 },
+];
+
+function Hand({ side, hit }: { side: "l" | "r"; hit: Strike | null }) {
+  const active = hit !== null && hit.hand === side;
+  // The hand drifts toward the key it is reaching for and leans up the board
+  // for the higher rows; the finger does the rest. Without the drift the
+  // fingers would have to stretch impossibly across the deck.
+  const reach = active ? (hit.x - (side === "l" ? 0.28 : 0.72)) * 54 : 0;
+  const rowLift = active ? (hit.row - 3.5) * 6 : 0;
+  return (
+    <span
+      className={`ld-hand ld-hand-${side}`}
+      style={{ transform: `translate(${reach}px, ${rowLift}px)` }}
+    >
+      <svg viewBox="0 0 130 168" width="130" height="168" aria-hidden="true">
+        {/* Draw order is the whole trick: fingers and thumb first, then the
+            palm over their bases, so they emerge from under the hand instead
+            of reading as separate sausages lying on top of it. */}
+        {FINGERS.map((f) => (
+          <path
+            className={`ld-hand-finger${active && !hit.thumb && hit.finger === f.fi ? " tap" : ""}`}
+            key={f.id}
+            d={f.d}
+            style={{ strokeWidth: f.w }}
+          />
+        ))}
+        <path
+          className={`ld-hand-thumb${active && hit.thumb ? " tap" : ""}`}
+          d="M52 116 C 40 124, 30 132, 22 138"
+        />
+        {/* wrist and forearm, running off the front edge of the deck */}
+        <path className="ld-hand-arm" d="M52 128 h40 l12 44 H44 Z" />
+        {/* back of the hand: wide across the knuckles, tapering to the wrist */}
+        <path
+          className="ld-hand-palm"
+          d="M46 100 C 44 90, 50 86, 60 86 h46 c8 0 10 6 10 14 v26\n             c0 16-10 26-27 26 h-12 c-16 0-24-10-26-24 Z"
+        />
+      </svg>
+    </span>
+  );
+}
+
+function TypingHands({ hit }: { hit: Strike | null }) {
+  return (
+    <div className="ld-hands" aria-hidden="true">
+      <Hand side="l" hit={hit} />
+      <Hand side="r" hit={hit} />
     </div>
   );
 }
@@ -320,7 +437,7 @@ function HeroDemo() {
   const [cursorOn, setCursorOn] = useState(false);
   const [pulse, setPulse] = useState(0);
   // Screen 3: how far the corpus sweep has run, then what it resolved to.
-  const [keyHit, setKeyHit] = useState<string | null>(null); // key struck right now
+  const [keyHit, setKeyHit] = useState<Strike | null>(null); // key struck right now
   const [swept, setSwept] = useState(0);        // files compared so far
   const [matchIdx, setMatchIdx] = useState(0);  // matched files revealed
   const [sigIdx, setSigIdx] = useState(0);      // target signatures revealed
@@ -383,12 +500,22 @@ function HeroDemo() {
     // Each character struck lights a key on the deck. Letters land on the
     // three letter rows, a space on the space bar — so the hands read right
     // even though we aren't mapping real key positions.
-    const strike = (ch: string) => {
-      if (ch === " ") return "5:4";
-      const rows = [2, 3, 4];
-      const r = rows[ch.charCodeAt(0) % rows.length];
-      const len = KEY_ROWS[r].length;
-      return `${r}:${1 + (ch.charCodeAt(0) * 7) % (len - 2)}`;
+    const strike = (ch: string): Strike => {
+      if (ch === " ") {
+        return { key: "5:4", x: keyCentre(5, 4), row: 5, hand: "r", finger: 3, thumb: true };
+      }
+      // The real key for this character, so the hand reaches where the
+      // letter actually is. Punctuation falls back to a letter row.
+      const at = CHAR_KEY.get(ch.toLowerCase());
+      const r = at ? at.row : [2, 3, 4][ch.charCodeAt(0) % 3];
+      const i = at ? at.idx : 1 + (ch.charCodeAt(0) * 7) % (KEY_ROWS[r].length - 2);
+      const x = keyCentre(r, i);
+      // Touch-typing fingering: the board splits down the middle, and each
+      // hand covers its half outside-in.
+      const hand: "l" | "r" = x < 0.5 ? "l" : "r";
+      const within = hand === "l" ? x / 0.5 : (x - 0.5) / 0.5;
+      const finger = Math.min(3, Math.max(0, Math.floor(within * 4)));
+      return { key: `${r}:${i}`, x, row: r, hand, finger, thumb: false };
     };
 
     const type = async (text: string) => {
@@ -762,8 +889,11 @@ function HeroDemo() {
                       </p>
                       {s.ccShare != null && (
                         <p className="ld-sig-line">
-                          <b className="num">{Math.round(s.ccShare * 100)}%</b> came from a community college,
-                          like you
+                          {/* The denominator is NOT n — institution was only
+                              recorded for some of them. Printing this share
+                              against n would overstate what we counted. */}
+                          <b className="num">{Math.round(s.ccShare * 100)}%</b> from a community college, of the{" "}
+                          <span className="num">{s.ccKnown}</span> whose school was recorded
                         </p>
                       )}
                     </div>
@@ -775,14 +905,18 @@ function HeroDemo() {
                   <i>3.20</i><i>3.60</i><i>4.00</i>
                 </p>
                 <p className={`ld-match-honest${sigIdx >= sigs.length ? " on" : ""}`}>
-                  {DEMO_THIN_TARGETS.length > 0 ? (
+                  {DEMO_THIN_TARGETS.length > 0 && (
                     <>
                       {DEMO_THIN_TARGETS.join(" and ")}: too few observed admits to characterize — you get the
-                      official rate there, not a number we made up.
+                      official rate there, not a number we made up.{" "}
                     </>
-                  ) : (
-                    <>Every figure here is counted from recorded outcomes, never estimated.</>
                   )}
+                  {/* This screen counts 856, the page headline counts 8,910.
+                      Both are true and a reader who spots the gap deserves
+                      the reason rather than a reason to distrust one. */}
+                  Matching runs on the <span className="num">{CORPUS_META.people}</span> files out of{" "}
+                  <span className="num">{Number(MODEL.meta.rows).toLocaleString()}</span> that recorded a GPA, a
+                  major and an outcome — enough to compare yours against.
                 </p>
               </div>
             </div>
@@ -830,6 +964,7 @@ function HeroDemo() {
       <div className="ld-mac-deck" aria-hidden="true">
         <span className="ld-mac-hinge" />
         <MacKeyboard hit={keyHit} />
+        <TypingHands hit={keyHit} />
         <span className="ld-mac-slot" />
       </div>
     </div>
@@ -924,6 +1059,7 @@ const LOCKUPS: { n: string; src: string }[] = [
   { n: "Duke University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Duke_University_logo.svg" },
   { n: "Columbia University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Columbia_University_1754_updated.svg" },
   { n: "Brown University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Brown_University_logo.svg" },
+  { n: "University of California, Berkeley", src: "https://upload.wikimedia.org/wikipedia/commons/8/82/University_of_California%2C_Berkeley_logo.svg" },
 ];
 
 /** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
