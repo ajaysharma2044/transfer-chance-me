@@ -391,8 +391,81 @@ textarea:focus { border-color: var(--ink); outline: none; }
 .method h3 { font-size: 13px; font-weight: 600; color: var(--ink-2); margin-bottom: 10px; }
 .method p + p { margin-top: 8px; }
 
+/* ── School search ── */
+.school-search { position: relative; max-width: 440px; }
+.school-search input { width: 100%; }
+.school-hits {
+  position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; right: 0;
+  list-style: none; background: var(--bg);
+  border: 1px solid var(--line-strong); border-radius: 10px;
+  box-shadow: 0 12px 34px rgba(20, 24, 63, 0.12);
+  overflow: hidden;
+}
+.school-hits button {
+  display: flex; flex-direction: column; gap: 1px; width: 100%; text-align: left;
+  padding: 10px 14px; font-size: 14px;
+}
+.school-hits button:hover { background: var(--bg-soft); }
+.school-hits .hit-meta { font-size: 12px; color: var(--ink-3); }
+.school-picked { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.chip-school {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-color: var(--accent); color: var(--ink); font-weight: 550;
+}
+.chip-school button { color: var(--ink-3); font-size: 15px; line-height: 1; }
+.chip-school button:hover { color: var(--bad); }
+.picked-kind { font-size: 13px; color: var(--ink-3); }
+
+.tile-img { border-radius: 6px; object-fit: contain; background: var(--bg-soft); padding: 2px; border: 1px solid var(--line); }
+.wordwall-item { display: inline-flex; align-items: center; gap: 7px; }
+
+.import.dragging { border-color: var(--accent); background: #f4f1fd; }
+.import-result.ok p { margin-bottom: 2px; }
+
+/* ── Motion ── */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 600ms ease, transform 600ms ease; }
+.reveal.in { opacity: 1; transform: none; }
+.curve-line { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1400ms ease forwards; }
+.curve-fill { opacity: 0; animation: fillin 800ms ease forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes fillin { to { opacity: 0.07; } }
+.hero .badge, .hero h1, .hero .dek, .hero .cta-row { animation: rise 600ms ease backwards; }
+.hero h1 { animation-delay: 80ms; }
+.hero .dek { animation-delay: 160ms; }
+.hero .cta-row { animation-delay: 240ms; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.row { animation: settle 460ms ease backwards; }
+@keyframes settle { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.btn { transition: opacity 140ms ease, transform 140ms ease, box-shadow 140ms ease; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(20, 24, 63, 0.18); }
+
+/* ── Print report ── */
+.report { display: none; }
+
+@media print {
+  body > #root > *:not(main), main > .results > *:not(.report) { display: none !important; }
+  .topbar, .masthead { display: none !important; }
+  .report { display: block; color: #000; font-size: 12px; }
+  .report h2 { font-size: 15px; margin: 18px 0 8px; border-bottom: 1px solid #999; padding-bottom: 4px; }
+  .report h3 { font-size: 12.5px; margin: 10px 0 4px; }
+  .r-head { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+  .r-sub { font-size: 10.5px; color: #555; font-weight: 400; }
+  .r-kv td { padding: 2px 14px 2px 0; vertical-align: top; }
+  .r-kv td:first-child { color: #555; }
+  .r-table { border-collapse: collapse; width: 100%; }
+  .r-table th, .r-table td { text-align: left; padding: 3px 10px 3px 0; border-bottom: 1px solid #ddd; }
+  .r-table th { font-size: 10.5px; color: #555; }
+  .r-school { break-inside: avoid; margin-bottom: 8px; }
+  .r-typ { color: #333; }
+  .report ul { margin: 2px 0 6px 16px; }
+  .r-foot { margin-top: 16px; font-size: 10px; color: #666; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  .curve-line { stroke-dasharray: none; }
+  .curve-fill { opacity: 0.07; }
 }
 
 /* ── Responsive ── */

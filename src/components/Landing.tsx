@@ -1,6 +1,8 @@
 import { MODEL } from "../engine";
 import { markOf } from "../lib/schools";
+import { useReveal } from "../hooks/useReveal";
 import GpaStrip from "./GpaStrip";
+import Tile from "./Tile";
 
 // Marketing page in the minimal-SaaS format: centered hero with a real data
 // visual, school strip, alternating feature sections with product visuals,
@@ -51,10 +53,10 @@ function DistCurves() {
             </g>
           );
         })}
-        {paths.map((p) => (
+        {paths.map((p, i) => (
           <g key={p.name}>
-            <path d={`${p.d} L ${W - PAD} ${H - 24} L ${PAD} ${H - 24} Z`} fill={p.color} opacity="0.07" />
-            <path d={p.d} fill="none" stroke={p.color} strokeWidth="2.5" strokeLinecap="round" />
+            <path className="curve-fill" style={{ animationDelay: `${400 + i * 180}ms` }} d={`${p.d} L ${W - PAD} ${H - 24} L ${PAD} ${H - 24} Z`} fill={p.color} />
+            <path className="curve-line" style={{ animationDelay: `${i * 180}ms` }} pathLength={1} d={p.d} fill="none" stroke={p.color} strokeWidth="2.5" strokeLinecap="round" />
           </g>
         ))}
       </svg>
@@ -75,7 +77,7 @@ function FeatureStrip() {
       <h2>Nothing here is a vibe</h2>
       <p className="sec-dek">Every number traces to a source you can check.</p>
 
-      <div className="feature">
+      <div className="feature reveal">
         <div className="f-copy">
           <h3>Your GPA against real admits</h3>
           <p>
@@ -86,7 +88,7 @@ function FeatureStrip() {
         <div className="f-visual">
           <div className="mock">
             <div className="mock-row">
-              <span className="tile" style={{ background: markOf("Cornell").color }}>C</span>
+              <Tile name="Cornell" />
               <div>
                 <b>Cornell</b>
                 <span className="mock-sub">{cornell.rate.toFixed(1)}% official transfer admit rate</span>
@@ -98,7 +100,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature">
+      <div className="feature reveal">
         <div className="f-copy">
           <h3>Upload your actual application</h3>
           <p>
@@ -118,7 +120,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature">
+      <div className="feature reveal">
         <div className="f-copy">
           <h3>An essay check with ground truth</h3>
           <p>
@@ -142,6 +144,7 @@ function FeatureStrip() {
 
 export default function Landing({ onStart }: { onStart: () => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
+  useReveal();
   return (
     <main>
       <section className="shell hero">
@@ -158,11 +161,14 @@ export default function Landing({ onStart }: { onStart: () => void }) {
         <DistCurves />
       </section>
 
-      <section className="shell schoolstrip" aria-label="Schools covered">
+      <section className="shell schoolstrip reveal" aria-label="Schools covered">
         <p className="strip-label">Measured against every T25</p>
         <div className="wordwall">
           {MODEL.schools.map((s) => (
-            <span key={s.id} style={{ color: markOf(s.name).color }}>{markOf(s.name).word}</span>
+            <span key={s.id} className="wordwall-item" style={{ color: markOf(s.name).color }}>
+              <Tile name={s.name} size={20} />
+              {markOf(s.name).word}
+            </span>
           ))}
         </div>
       </section>

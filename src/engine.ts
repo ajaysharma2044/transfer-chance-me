@@ -46,6 +46,8 @@ export type EcLevel = "minimal" | "campus" | "national";
 
 export interface Profile {
   gpa: number;
+  /** The applicant's current school, picked from the IPEDS directory */
+  schoolName: string | null;
   institution: Institution;
   caResident: boolean;
   igetc: boolean;
@@ -62,10 +64,15 @@ export interface Profile {
   /** Schools the essay names specifically (derived from essayText) */
   essayNamed: string[];
   essayVerdict: "specific" | "general" | "complaint" | null;
+  /** Course codes read off uploaded transcripts */
+  courses: string[];
+  /** Names of documents analyzed */
+  docs: string[];
 }
 
 export const DEFAULT_PROFILE: Profile = {
   gpa: 3.8,
+  schoolName: null,
   institution: "cc",
   caResident: false,
   igetc: false,
@@ -80,6 +87,8 @@ export const DEFAULT_PROFILE: Profile = {
   essayText: "",
   essayNamed: [],
   essayVerdict: null,
+  courses: [],
+  docs: [],
 };
 
 export interface Driver {

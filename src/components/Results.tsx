@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { estimateAll, fmtPct, MODEL } from "../engine";
 import type { Estimate, Profile, Tier } from "../engine";
 import GpaStrip from "./GpaStrip";
-import { markOf } from "../lib/schools";
+import Tile from "./Tile";
+import Report from "./Report";
 
 const TIER_CLASS: Record<Tier, string> = {
   Likely: "tier-likely",
@@ -58,6 +59,7 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
           ))}
         </div>
         <div className="results-actions">
+          <button type="button" className="btn btn-sm" onClick={() => window.print()}>Download report</button>
           <button type="button" className="btn-quiet" onClick={onRevise}>← Edit my profile</button>
         </div>
       </header>
@@ -70,8 +72,8 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
       </div>
 
       <ol style={{ listStyle: "none" }}>
-        {ests.map((e) => (
-          <li className="row" key={e.school.id}>
+        {ests.map((e, i) => (
+          <li className="row" key={e.school.id} style={{ animationDelay: `${Math.min(i * 40, 600)}ms` }}>
             <button
               type="button"
               className="row-main"
@@ -79,9 +81,7 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
               onClick={() => setOpen(open === e.school.id ? null : e.school.id)}
             >
               <span className="school">
-                <span className="tile" style={{ background: markOf(e.school.name).color }} aria-hidden="true">
-                  {markOf(e.school.name).mono}
-                </span>
+                <Tile name={e.school.name} />
                 <span>
                   <span className="nm">{e.school.name}</span>
                   <div className="meta">
@@ -159,6 +159,8 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
           which is why baselines stay anchored to official rates; small samples are flagged.
         </p>
       </footer>
+
+      <Report profile={profile} ests={ests} date={new Date().toLocaleDateString()} />
     </div>
   );
 }

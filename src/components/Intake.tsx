@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Profile } from "../engine";
 import ImportPanel from "./ImportPanel";
 import EssayPanel from "./EssayPanel";
+import SchoolSearch from "./SchoolSearch";
 
 const STEPS = ["Academics", "Direction", "Your story"];
 
@@ -62,6 +63,12 @@ export default function Intake({ profile, onChange, onDone }: Props) {
           <ImportPanel profile={profile} onChange={onChange} />
 
           <div className="field">
+            <span className="flabel">Your current school</span>
+            <SchoolSearch profile={profile} onChange={onChange} />
+            <p className="hint">Every US degree-granting college and community college is in here.</p>
+          </div>
+
+          <div className="field">
             <label htmlFor="gpa">Cumulative college GPA</label>
             <div className="gpa-row">
               <span className="gpa-big">{profile.gpa.toFixed(2)}</span>
@@ -76,25 +83,29 @@ export default function Intake({ profile, onChange, onDone }: Props) {
             </p>
           </div>
 
-          <div className="field">
-            <span className="flabel">Where you're transferring from</span>
-            <Choices
-              label="Current institution"
-              value={profile.institution}
-              onPick={(v) => set("institution", v)}
-              options={[
-                { v: "cc", l: "Community college" },
-                { v: "public4", l: "4-year public", sub: "flagship, SUNY, UC…" },
-                { v: "private4", l: "4-year private", sub: "NYU, Emory, LACs…" },
-              ]}
-            />
-          </div>
+          {!profile.schoolName && (
+            <div className="field">
+              <span className="flabel">Or just pick the type</span>
+              <Choices
+                label="Current institution"
+                value={profile.institution}
+                onPick={(v) => set("institution", v)}
+                options={[
+                  { v: "cc", l: "Community college" },
+                  { v: "public4", l: "4-year public", sub: "flagship, SUNY, UC…" },
+                  { v: "private4", l: "4-year private", sub: "NYU, Emory, LACs…" },
+                ]}
+              />
+            </div>
+          )}
 
-          {profile.institution === "cc" && (
+          {profile.institution === "cc" && (!profile.schoolName || profile.caResident) && (
             <div className="field">
               <span className="flabel">California pathway</span>
               <div className="choices">
-                <Toggle on={profile.caResident} l="California CC" sub="in-state applicant" onPick={() => set("caResident", !profile.caResident)} />
+                {!profile.schoolName && (
+                  <Toggle on={profile.caResident} l="California CC" sub="in-state applicant" onPick={() => set("caResident", !profile.caResident)} />
+                )}
                 {profile.caResident && (
                   <Toggle on={profile.igetc} l="IGETC on track" sub="full GE certification" onPick={() => set("igetc", !profile.igetc)} />
                 )}
