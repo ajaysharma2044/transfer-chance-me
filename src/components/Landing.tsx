@@ -3,17 +3,7 @@ import type { CSSProperties } from "react";
 import { DEFAULT_PROFILE, estimateAll, MODEL, TAG_CAMPUSES } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import { buildPlan } from "../lib/actionplan";
-import type { MoveTag } from "../lib/actionplan";
 import { markOf } from "../lib/schools";
-
-/** Brand colour per action-plan lane. */
-const TAG_COLOR: Record<MoveTag, string> = {
-  Extracurricular: "var(--teal)",
-  Credential: "var(--accent)",
-  Coursework: "var(--blue)",
-  Timeline: "var(--coral)",
-  Essay: "var(--accent)",
-};
 import { useReveal } from "../hooks/useReveal";
 import { useScrollFx } from "../hooks/useScrollFx";
 import { countdown } from "../lib/deadlines";
@@ -70,25 +60,60 @@ const DEMO_ROWS = (() => {
   }
   return out.length >= 3 ? out : DEMO_EST.slice(0, 4);
 })();
-// Profile-first: the essay lane is covered elsewhere on the page.
-const DEMO_MOVES = DEMO_PLAN.moves.filter((m) => m.tag !== "Essay" && !m.done).slice(0, 4);
 const DEMO_TAG_WEEKS = DEMO_PLAN.windows.find((w) => w.school === "UC TAG")?.weeks ?? 6;
+/** The activities lane on its own — not the whole stacked plan. Every
+ *  Extracurricular move pulls the same engine lever, so its computed lift is
+ *  what fixing this lane is actually worth. */
+const DEMO_EC_LIFT =
+  DEMO_PLAN.moves.find((m) => m.tag === "Extracurricular" && m.liftPp > 0)?.liftPp ?? 0;
 
 const DEMO_FIELDS = [
   { label: "College GPA", value: "3.71", hint: "upward" },
-  { label: "Now at", value: "De Anza College", hint: "California CC" },
+  { label: "Now at", value: "De Anza College", hint: "Cupertino, CA" },
   { label: "Standing", value: "Junior · 48 credits", hint: "transfer-ready" },
-  { label: "Major", value: "Economics", hint: "major prep partial" },
-  { label: "Activities", value: "Part-time job, no campus roles", hint: "thin" },
+  { label: "Major", value: "Economics", hint: "prep partial" },
 ];
 
-/** The research readout — what the engine actually checks, and what it finds. */
+/** Their activities, exactly as a student would type them — vague, undersold,
+ *  and missing the things they never thought counted. */
+const DEMO_ACTS = [
+  { raw: "Part-time job at a coffee shop", verdict: "18 hrs/wk, unlisted hours", tone: "warn" },
+  { raw: "Member of the econ club", verdict: "member, no role", tone: "warn" },
+  { raw: "Volunteered sometimes", verdict: "no span, no number", tone: "bad" },
+];
+
+/** What the engine goes and looks up about THEIR school and region. */
 const DEMO_SCANS = [
-  { run: "Matching your GPA band across 8,910 recorded outcomes", found: "214 comparable files" },
-  { run: "Scanning 4,087 catalogued admit activities for your pattern", found: "your mix is the thinnest of 3" },
-  { run: "Reading De Anza → UC transfer history", found: "a top-5 feeder for your targets" },
-  { run: "Checking TAG eligibility against 6 UC contracts", found: `3.71 clears 4 campuses` },
-  { run: "Cross-referencing 43 Common Data Sets for your major", found: "econ runs open at 3 targets" },
+  { run: "Reading your 3 activities against 4,087 catalogued admit activities", found: "all 3 undersold" },
+  { run: "De Anza College — campus orgs, honors, PTK chapter", found: "honors + PTK both open to you" },
+  { run: "Checking the campus learning center for tutor openings", found: "hires every term" },
+  { run: "Scanning your region for major-relevant roles", found: "econ research + civic internships nearby" },
+  { run: "Matching against admits from California community colleges", found: "214 comparable files" },
+];
+
+/** Per-activity upgrade: the same activity, made legible to a reader. */
+const DEMO_UPGRADES = [
+  {
+    tag: "Your job",
+    before: "Part-time job at a coffee shop",
+    after: "Shift lead, 18 hrs/wk for 14 months while enrolled full-time — trained 4 new hires, closed nightly registers.",
+    why: "Paid work is 13% of admit activities. Hours read as substance.",
+    c: "var(--blue)",
+  },
+  {
+    tag: "Your club",
+    before: "Member of the econ club",
+    after: "Treasurer, Economics Society — elected this term, manage a $2,400 budget across 6 events.",
+    why: "Leadership is 11% of admit activities, and officer seats sit unfilled.",
+    c: "var(--teal)",
+  },
+  {
+    tag: "Your volunteering",
+    before: "Volunteered sometimes",
+    after: "Food bank volunteer, 4 hrs/wk for 22 months — coordinate Saturday intake for ~60 families.",
+    why: "Same work. A span and a number make it countable.",
+    c: "var(--accent)",
+  },
 ];
 
 function useCountUp(target: number, active: boolean, dur = 900) {
@@ -135,9 +160,10 @@ function DemoOdds({ e, active, delay }: { e: Estimate; active: boolean; delay: n
 }
 
 function HeroDemo() {
-  // 0 reading profile · 1 researching · 2 odds · 3 action plan
+  // 0 profile+activities · 1 analysing each activity · 2 researching school/area · 3 upgrades
   const [step, setStep] = useState(0);
   const [typed, setTyped] = useState(0);
+  const [judged, setJudged] = useState(0);
   const [scan, setScan] = useState(0);
   const reduced =
     typeof window !== "undefined" &&
@@ -145,18 +171,19 @@ function HeroDemo() {
 
   useEffect(() => {
     if (reduced) {
-      setStep(3); setTyped(DEMO_FIELDS.length); setScan(DEMO_SCANS.length);
+      setStep(3); setTyped(DEMO_FIELDS.length); setJudged(DEMO_ACTS.length); setScan(DEMO_SCANS.length);
       return;
     }
     let t: number[] = [];
     const run = () => {
-      setStep(0); setTyped(0); setScan(0);
-      DEMO_FIELDS.forEach((_, i) => t.push(window.setTimeout(() => setTyped(i + 1), 300 + i * 340)));
-      t.push(window.setTimeout(() => setStep(1), 2100));
-      DEMO_SCANS.forEach((_, i) => t.push(window.setTimeout(() => setScan(i + 1), 2400 + i * 520)));
-      t.push(window.setTimeout(() => setStep(2), 5200));
-      t.push(window.setTimeout(() => setStep(3), 7000));
-      t.push(window.setTimeout(run, 17000));
+      setStep(0); setTyped(0); setJudged(0); setScan(0);
+      DEMO_FIELDS.forEach((_, i) => t.push(window.setTimeout(() => setTyped(i + 1), 260 + i * 300)));
+      t.push(window.setTimeout(() => setStep(1), 1700));
+      DEMO_ACTS.forEach((_, i) => t.push(window.setTimeout(() => setJudged(i + 1), 2000 + i * 480)));
+      t.push(window.setTimeout(() => setStep(2), 3600));
+      DEMO_SCANS.forEach((_, i) => t.push(window.setTimeout(() => setScan(i + 1), 3800 + i * 480)));
+      t.push(window.setTimeout(() => setStep(3), 6400));
+      t.push(window.setTimeout(run, 17500));
     };
     run();
     return () => { t.forEach(clearTimeout); t = []; };
@@ -164,7 +191,7 @@ function HeroDemo() {
 
   return (
     <div className="ld-demo" aria-hidden="true">
-      {/* 1 — the profile */}
+      {/* 1 — the file, as they'd actually enter it */}
       <div className={`ld-demo-panel ld-demo-in${step === 0 ? " scanning" : ""}`}>
         <p className="mock-label">Your profile</p>
         {DEMO_FIELDS.map((f, i) => (
@@ -174,63 +201,74 @@ function HeroDemo() {
               {f.value}
               {i === typed - 1 && step === 0 && <i className="ld-caret" />}
             </span>
-            <span className={`ld-demo-fhint${f.hint === "thin" || f.hint === "major prep partial" ? " warn" : ""}`}>{f.hint}</span>
+            <span className="ld-demo-fhint">{f.hint}</span>
+          </div>
+        ))}
+        <p className="ld-demo-sub">Your activities, as you'd type them</p>
+        {DEMO_ACTS.map((a, i) => (
+          <div className={`ld-demo-act${step >= 1 && i < judged ? " judged" : ""}${typed >= DEMO_FIELDS.length ? " on" : ""}`} key={a.raw}>
+            <span className="ld-demo-actraw">{a.raw}</span>
+            {step >= 1 && i < judged && (
+              <span className={`ld-demo-actv ld-demo-${a.tone}`}>{a.verdict}</span>
+            )}
           </div>
         ))}
       </div>
 
-      {/* 2 — the research readout */}
+      {/* 2 — reading each activity against the corpus */}
       <div className={`ld-demo-panel ld-demo-scan${step >= 1 ? " on" : ""}`}>
         <p className="mock-label">
           Researching your file
-          {step === 1 && <span className="ld-demo-live">live</span>}
+          {(step === 1 || step === 2) && <span className="ld-demo-live">live</span>}
         </p>
-        {DEMO_SCANS.map((s, i) => (
-          <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan && step === 1 ? " active" : ""}`} key={s.run}>
+        {DEMO_SCANS.map((sc, i) => (
+          <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan && step === 2 ? " active" : ""}`} key={sc.run}>
             <span className="ld-demo-scanicon">
-              {i < scan ? "✓" : i === scan && step === 1 ? <span className="ld-demo-spin" /> : "·"}
+              {i < scan ? "✓" : i === scan && step === 2 ? <span className="ld-demo-spin" /> : "·"}
             </span>
             <span className="ld-demo-scantext">
-              {s.run}
-              {i < scan && <b>{s.found}</b>}
+              {sc.run}
+              {i < scan && <b>{sc.found}</b>}
             </span>
           </div>
         ))}
         <div className={`ld-demo-scanfoot${scan >= DEMO_SCANS.length ? " on" : ""}`}>
-          <b className="num">{DEMO_EST.length}</b> schools scored · <b className="num">{DEMO_PLAN.moves.length}</b> moves found for this file
+          Every activity you listed can be rewritten from what you already do
         </div>
       </div>
 
-      {/* 3 — the odds */}
-      <div className={`ld-demo-panel ld-demo-out${step >= 2 ? " on" : ""}`}>
-        <p className="mock-label">Your chances</p>
-        {DEMO_ROWS.map((e, i) => (
-          <DemoOdds key={e.school.id} e={e} active={step >= 2} delay={i * 160} />
+      {/* 3 — each activity, upgraded */}
+      <div className={`ld-demo-panel ld-demo-fix${step >= 3 ? " on" : ""}`}>
+        <p className="mock-label">
+          How to upgrade each one
+          <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>
+        </p>
+        {DEMO_UPGRADES.map((u, i) => (
+          <div
+            className={`ld-demo-up${step >= 3 ? " on" : ""}`}
+            key={u.tag}
+            style={{ transitionDelay: `${i * 160}ms`, "--fx": u.c } as CSSProperties}
+          >
+            <span className="ld-demo-uptag">{u.tag}</span>
+            <p className="ld-demo-before">{u.before}</p>
+            <p className="ld-demo-after">{u.after}</p>
+            <p className="ld-demo-upwhy">{u.why}</p>
+          </div>
         ))}
       </div>
 
-      {/* 4 — the plan */}
-      <div className={`ld-demo-panel ld-demo-fix${step >= 3 ? " on" : ""}`}>
-        <p className="mock-label">
-          Your plan
-          <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>
-        </p>
-        {DEMO_MOVES.map((m, i) => (
-          <div
-            className={`ld-demo-fixrow${step >= 3 ? " on" : ""}`}
-            key={m.id}
-            style={{ transitionDelay: `${i * 130}ms`, "--fx": TAG_COLOR[m.tag] ?? "var(--accent)" } as CSSProperties}
-          >
-            <span className="ld-demo-fixtag">
-              {m.tag}<i>{m.minWeeks} wks</i>
-              {m.liftPp >= 0.1 && <b className="ld-demo-lift">+{m.liftPp.toFixed(1)} pts</b>}
-            </span>
-            <p className="ld-demo-fixtitle">{m.title}</p>
-            <p className="ld-demo-fixstep">{m.steps[0]}</p>
-          </div>
+      {/* 4 — what it does to the odds */}
+      <div className={`ld-demo-panel ld-demo-out${step >= 3 ? " on" : ""}`}>
+        <p className="mock-label">Your chances</p>
+        {DEMO_ROWS.map((e, i) => (
+          <DemoOdds key={e.school.id} e={e} active={step >= 3} delay={i * 150} />
         ))}
         <div className={`ld-demo-stack${step >= 3 ? " on" : ""}`}>
-          Do all four → <b className="num">+{DEMO_PLAN.stackedPp.toFixed(1)} points</b> across your list
+          {DEMO_EC_LIFT >= 0.1 ? (
+            <>Fixing the activities lane alone → <b className="num">+{DEMO_EC_LIFT.toFixed(1)} pts</b> across your list</>
+          ) : (
+            <>Same work, made legible — the whole plan is worth <b className="num">+{DEMO_PLAN.stackedPp.toFixed(1)} pts</b></>
+          )}
         </div>
       </div>
     </div>
