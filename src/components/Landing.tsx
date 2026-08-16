@@ -291,22 +291,28 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         </section>
       </div>
 
-      <section className="shell ld-wall reveal" aria-label="Schools covered">
+      <section className="ld-wall reveal" aria-label="Schools covered">
         <p className="strip-label">Measured against every T25</p>
-        <div className="ld-wallgrid">
-          {MODEL.schools.map((s, i) => (
-            <span key={s.id} className="ld-wall-item reveal" style={{ transitionDelay: `${i * 22}ms` }}>
-              <button
-                type="button"
-                className="ld-wall-btn"
-                style={{ "--sc": markOf(s.name).color } as CSSProperties}
-                onClick={() => onOpenSchool(s.name)}
-              >
-                <Tile name={s.name} size={20} />
-                {markOf(s.name).word}
-              </button>
-            </span>
-          ))}
+        <div className="ld-marquee">
+          <div className="ld-marquee-track">
+            {[0, 1].map((dup) => (
+              <div className="ld-wallgrid" key={dup} aria-hidden={dup === 1 || undefined}>
+                {MODEL.schools.map((s) => (
+                  <button
+                    key={`${dup}-${s.id}`}
+                    type="button"
+                    className="ld-wall-btn"
+                    tabIndex={dup === 1 ? -1 : undefined}
+                    style={{ "--sc": markOf(s.name).color } as CSSProperties}
+                    onClick={() => onOpenSchool(s.name)}
+                  >
+                    <Tile name={s.name} size={20} />
+                    {markOf(s.name).word}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
         <p className="ld-wall-hint">Pick a school to see its transfer data — admit rate, GPA range, feeders, trend.</p>
       </section>

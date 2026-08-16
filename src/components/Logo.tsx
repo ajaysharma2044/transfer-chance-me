@@ -13,7 +13,7 @@ export function LogoMark({ size = 30 }: { size?: number }) {
       <path d="M39 12.5 A19 19 0 1 0 39 35.5" stroke="url(#tcm-c)" strokeWidth="8" strokeLinecap="round" />
       <path d="M17 33 L33 17" stroke="#14b8a0" strokeWidth="6.5" strokeLinecap="round" />
       <path d="M23.5 13.5 h11 v11 z" fill="#14b8a0" />
-      <path d="M40 2.5 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 z" fill="#ee6352" />
+      <path className="logo-spark" d="M40 2.5 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6 z" fill="#ee6352" />
     </svg>
   );
 }

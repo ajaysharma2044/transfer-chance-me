@@ -27,14 +27,14 @@ export default function GpaStrip({ school, gpa }: { school: School; gpa: number 
           <line x1={x(p10)} y1="22" x2={x(p90)} y2="22" stroke="var(--line-strong)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
         )}
         {p25 != null && p75 != null && (
-          <line x1={x(p25)} y1="22" x2={x(p75)} y2="22" stroke="var(--ink-3)" strokeWidth="4" vectorEffect="non-scaling-stroke" />
+          <line className="strip-draw" pathLength={1} x1={x(p25)} y1="22" x2={x(p75)} y2="22" stroke="#a99ee8" strokeWidth="4" vectorEffect="non-scaling-stroke" />
         )}
         <line x1={x(p50)} y1="16" x2={x(p50)} y2="28" stroke="var(--ink)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-        <line x1={ux} y1="8" x2={ux} y2="30" stroke="var(--accent)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <line className="strip-marker" x1={ux} y1="8" x2={ux} y2="30" stroke="var(--teal)" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
       </svg>
       <div style={{ position: "relative", height: 12, marginTop: -4 }}>
         <span style={lab(x(p50), "var(--ink-3)")}>{p50.toFixed(2)}</span>
-        <span style={{ ...lab(ux, "var(--accent)"), top: -38 }}>
+        <span style={{ ...lab(ux, "var(--teal)"), top: -38, fontWeight: 600 }}>
           {below ? "‹" : ""}{gpa.toFixed(2)}
         </span>
       </div>
