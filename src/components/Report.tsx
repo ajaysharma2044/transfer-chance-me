@@ -23,10 +23,12 @@ export default function Report({ profile, ests, date }: { profile: Profile; ests
         <h2>Profile</h2>
         <table className="r-kv">
           <tbody>
-            <tr><td>College GPA</td><td>{profile.gpa.toFixed(2)}</td></tr>
+            <tr><td>College GPA</td><td>{profile.gpa.toFixed(2)}{profile.gpaTrend !== "flat" ? ` (${profile.gpaTrend})` : ""}</td></tr>
             <tr><td>Current school</td><td>{profile.schoolName ?? KIND_LABEL[profile.institution]}{profile.caResident ? " (California)" : ""}</td></tr>
             <tr><td>Entering as</td><td>{profile.standing}</td></tr>
-            <tr><td>Intended major</td><td>{profile.major}</td></tr>
+            <tr><td>Intended major</td><td>{profile.majorDetail || profile.major}</td></tr>
+            {profile.transferReason && <tr><td>Transfer reason</td><td>{profile.transferReason}</td></tr>}
+            {profile.courses.length > 0 && <tr><td>Coursework</td><td>{profile.courses.slice(0, 24).join(", ")}{profile.courses.length > 24 ? "…" : ""}</td></tr>}
             {profile.sat != null && <tr><td>SAT</td><td>{profile.sat}</td></tr>}
             <tr><td>Credentials</td><td>{[profile.ptk && "Phi Theta Kappa", profile.honors && "Honors program", profile.igetc && "IGETC"].filter(Boolean).join(", ") || "—"}</td></tr>
             <tr><td>Path</td><td>{profile.hook}</td></tr>

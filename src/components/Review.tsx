@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { MODEL } from "../engine";
 import type { Profile } from "../engine";
 import { analyzeEssay } from "../lib/essay";
-import { getApiKey, loadLastReview, runReview, setApiKey } from "../lib/review";
+import { getApiKey, loadLastReview, proxyMode, runReview, setApiKey } from "../lib/review";
 import type { ReviewResult } from "../lib/review";
 import Tile from "./Tile";
 import "./review.css";
@@ -90,7 +90,7 @@ export default function Review({ profile, onChange }: Props) {
         </p>
       </header>
 
-      {!key && (
+      {!key && !proxyMode && (
         <section className="rv-keycard">
           <h2>One-time setup: your AI key</h2>
           <ol>
@@ -173,10 +173,10 @@ export default function Review({ profile, onChange }: Props) {
 
           {error && <p className="rv-error" role="alert">{error}</p>}
 
-          <button type="button" className="btn rv-run" onClick={go} disabled={busy || !key}>
+          <button type="button" className="btn rv-run" onClick={go} disabled={busy || (!key && !proxyMode)}>
             {busy ? "Reviewing — this takes about a minute…" : "Run deep review"}
           </button>
-          {key && (
+          {key && !proxyMode && (
             <button type="button" className="btn-quiet rv-keyclear" onClick={() => { setApiKey(""); setKeyState(""); }}>
               Remove saved API key
             </button>

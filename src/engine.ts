@@ -64,10 +64,19 @@ export interface Profile {
   /** Schools the essay names specifically (derived from essayText) */
   essayNamed: string[];
   essayVerdict: "specific" | "general" | "complaint" | null;
-  /** Course codes read off uploaded transcripts */
+  /** Course codes read off uploaded transcripts or added by hand */
   courses: string[];
   /** Names of documents analyzed */
   docs: string[];
+  /** Specific program/major in their own words, e.g. "Applied Economics (Dyson)" */
+  majorDetail: string;
+  /** Why they're transferring, in their own words */
+  transferReason: string;
+  /** Direction of the college GPA over time */
+  gpaTrend: "upward" | "flat" | "downward";
+  /** Hours/week working while enrolled (context for review) */
+  workHours: number | null;
+  firstGen: boolean;
 }
 
 export const DEFAULT_PROFILE: Profile = {
@@ -89,6 +98,11 @@ export const DEFAULT_PROFILE: Profile = {
   essayVerdict: null,
   courses: [],
   docs: [],
+  majorDetail: "",
+  transferReason: "",
+  gpaTrend: "flat",
+  workHours: null,
+  firstGen: false,
 };
 
 export interface Driver {
@@ -146,6 +160,13 @@ export function estimate(profile: Profile, s: School): Estimate {
   const floor = s.counsel?.floor;
   if (floor != null && profile.gpa < floor) {
     drivers.push({ dir: "down", text: `Below the ~${floor.toFixed(1)} practical floor that shows up in this school's admits` });
+  }
+  if (profile.gpaTrend === "upward") {
+    mult *= 1.08;
+    drivers.push({ dir: "up", text: "An upward GPA trajectory — admits' files repeatedly credit the climb, not just the number" });
+  } else if (profile.gpaTrend === "downward") {
+    mult *= 0.9;
+    drivers.push({ dir: "down", text: "A downward GPA trend invites scrutiny — recent-term grades carry the most weight" });
   }
 
   // ── Feeder fit & standing ──

@@ -528,3 +528,11 @@ button:hover > .tile, .row-main:hover .tile { transform: scale(1.08) rotate(-2de
   .strip { grid-area: strip; }
   .row-detail { grid-template-columns: 1fr; gap: 24px; }
 }
+
+/* Courses editor */
+.ce-chips { margin-bottom: 12px; }
+.ce-chip button { color: var(--ink-3); font-size: 14px; line-height: 1; margin-left: 2px; }
+.ce-chip button:hover { color: var(--bad); }
+.ce-addrow { display: flex; gap: 10px; }
+.ce-addrow input { flex: 1; max-width: 340px; }
+.ce-seq { color: var(--teal); }

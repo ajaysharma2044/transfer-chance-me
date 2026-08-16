@@ -12,6 +12,10 @@ interface Props {
   onChange: (p: Profile) => void;
 }
 
+// Cap uploads at 20 MB per file — plenty for any transcript or Common App
+// PDF, and keeps a giant file from locking up the parser tab.
+const MAX_FILE_BYTES = 20 * 1024 * 1024;
+
 export default function ImportPanel({ profile, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<"idle" | "busy" | "done" | "empty" | "error">("idle");
@@ -25,6 +29,10 @@ export default function ImportPanel({ profile, onChange }: Props) {
       let next = { ...profile };
       const allFound: string[] = [];
       for (const file of Array.from(files).slice(0, 6)) {
+        if (file.size > MAX_FILE_BYTES) {
+          allFound.push(`${file.name}: skipped — over 20 MB`);
+          continue;
+        }
         const text = await fileToText(file);
         const { fields, found, courses } = extractProfile(text);
         // document values fill the profile; courses and docs accumulate

@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files — never commit real keys (.env.example stays tracked)
+.env*
+!.env.example

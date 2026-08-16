@@ -3,6 +3,7 @@ import type { Profile } from "../engine";
 import ImportPanel from "./ImportPanel";
 import EssayPanel from "./EssayPanel";
 import SchoolSearch from "./SchoolSearch";
+import CoursesEditor from "./CoursesEditor";
 
 const STEPS = ["Academics", "Direction", "Your story"];
 
@@ -82,6 +83,23 @@ export default function Intake({ profile, onChange, onDone }: Props) {
               Admitted transfers at the T25 cluster between 3.82 (big UCs) and 3.95–4.0 (elite privates).
             </p>
           </div>
+
+          <div className="field">
+            <span className="flabel">How has it moved?</span>
+            <Choices
+              label="GPA trend"
+              value={profile.gpaTrend}
+              onPick={(v) => set("gpaTrend", v)}
+              options={[
+                { v: "upward", l: "Climbing", sub: "each term stronger" },
+                { v: "flat", l: "Steady" },
+                { v: "downward", l: "Slipping", sub: "recent terms weaker" },
+              ]}
+            />
+            <p className="hint">Readers weight the trajectory — 16% of elite admits are comeback stories.</p>
+          </div>
+
+          <CoursesEditor profile={profile} onChange={onChange} />
 
           {!profile.schoolName && (
             <div className="field">
@@ -165,6 +183,30 @@ export default function Intake({ profile, onChange, onDone }: Props) {
           </div>
 
           <div className="field">
+            <label htmlFor="majordetail">The specific program, in your words <span style={{ fontWeight: 400, color: "var(--ink-3)" }}>(optional)</span></label>
+            <input
+              id="majordetail" type="text" style={{ width: "100%", maxWidth: 420 }}
+              placeholder='e.g. "Applied Economics at Dyson" or "Cognitive Science"'
+              value={profile.majorDetail}
+              onChange={(e) => set("majorDetail", e.target.value)}
+            />
+            <p className="hint">Naming the exact program sharpens both your chances read and the deep review.</p>
+          </div>
+
+          <div className="field">
+            <label htmlFor="reason">Why are you transferring?</label>
+            <textarea
+              id="reason" rows={3}
+              placeholder="One or two honest sentences — the real reason, not the polished one. We'll help you shape the polished one."
+              value={profile.transferReason}
+              onChange={(e) => set("transferReason", e.target.value)}
+            />
+            <p className="hint">
+              The framing decides essays: fit-and-resources reasons win; escape reasons lose. We'll tell you which yours is.
+            </p>
+          </div>
+
+          <div className="field">
             <label htmlFor="sat">SAT, if you have one worth sending</label>
             <input
               id="sat" type="number" inputMode="numeric" min={400} max={1600} step={10}
@@ -218,6 +260,27 @@ export default function Intake({ profile, onChange, onDone }: Props) {
             />
             <p className="hint">
               Princeton, Yale, and Columbia run dedicated veteran and comeback pipelines.
+            </p>
+          </div>
+
+          <div className="field">
+            <span className="flabel">Context that belongs in your file</span>
+            <div className="choices">
+              <Toggle on={profile.firstGen} l="First-generation" sub="first in family to finish college" onPick={() => set("firstGen", !profile.firstGen)} />
+            </div>
+            <div style={{ marginTop: 14 }}>
+              <label htmlFor="workhours" style={{ display: "block", fontSize: 13.5, fontWeight: 550, marginBottom: 8 }}>
+                Hours you work per week <span style={{ fontWeight: 400, color: "var(--ink-3)" }}>(optional)</span>
+              </label>
+              <input
+                id="workhours" type="number" inputMode="numeric" min={0} max={80}
+                placeholder="0"
+                value={profile.workHours ?? ""}
+                onChange={(e) => set("workHours", e.target.value ? Math.min(80, Math.max(0, +e.target.value)) : null)}
+              />
+            </div>
+            <p className="hint">
+              Work while enrolled is context readers respect — a 3.8 on 25 hours a week reads differently than a 3.8 on zero.
             </p>
           </div>
 

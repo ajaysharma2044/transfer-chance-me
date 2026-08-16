@@ -8,6 +8,13 @@ import type { Profile } from "../engine";
 const KEY_STORE = "tcm.apikey.v1";
 const RESULT_STORE = "tcm.review.v1";
 
+// Proxy mode: when VITE_REVIEW_ENDPOINT is set at build time (e.g.
+// "/api/review"), the prompt is POSTed there and the server holds the
+// Anthropic key. When unset, the original browser-key path is used.
+export const REVIEW_ENDPOINT: string =
+  (import.meta.env.VITE_REVIEW_ENDPOINT as string | undefined) ?? "";
+export const proxyMode = REVIEW_ENDPOINT.length > 0;
+
 export function getApiKey(): string {
   try { return localStorage.getItem(KEY_STORE) ?? ""; } catch { return ""; }
 }
@@ -83,12 +90,13 @@ ${DATASET_FINDINGS}
 ${schoolContext(input.targets)}
 
 # Applicant profile
-- College GPA: ${p.gpa.toFixed(2)}
+- College GPA: ${p.gpa.toFixed(2)} (trend: ${p.gpaTrend})
 - Current school: ${p.schoolName ?? p.institution}${p.caResident ? " (California)" : ""}
-- Entering as: ${p.standing}; intended major: ${p.major}
-- Credentials: ${[p.ptk && "Phi Theta Kappa", p.honors && "honors program", p.igetc && "IGETC"].filter(Boolean).join(", ") || "none listed"}
-- Path: ${p.hook}${p.sat ? `; SAT ${p.sat}` : ""}
-${p.courses.length ? `- Courses on transcript: ${p.courses.slice(0, 40).join(", ")}` : ""}
+- Entering as: ${p.standing}; intended major: ${p.major}${p.majorDetail ? ` — specifically: ${p.majorDetail}` : ""}
+- Credentials: ${[p.ptk && "Phi Theta Kappa", p.honors && "honors program", p.igetc && "IGETC", p.firstGen && "first-generation"].filter(Boolean).join(", ") || "none listed"}
+- Path: ${p.hook}${p.sat ? `; SAT ${p.sat}` : ""}${p.workHours ? `; works ${p.workHours} hrs/week while enrolled` : ""}
+${p.transferReason ? `- Their stated reason for transferring (raw, unpolished): "${p.transferReason}" — assess whether this reason, as framed, helps or hurts, and how to frame it.` : ""}
+${p.courses.length ? `- Courses taken: ${p.courses.slice(0, 40).join(", ")} — assess major-prep completeness for their intended major and each target.` : ""}
 
 # Materials
 ${input.whyTransfer ? `## "Why transfer" essay\n${input.whyTransfer}` : "## \"Why transfer\" essay\n(not provided)"}
@@ -112,22 +120,32 @@ Quotes must be verbatim from the applicant's materials. Be direct about problems
 }
 
 export async function runReview(input: ReviewInput): Promise<ReviewResult> {
-  const key = getApiKey();
-  if (!key) throw new Error("No API key set.");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": key,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-direct-browser-access": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-5",
-      max_tokens: 6000,
-      messages: [{ role: "user", content: buildPrompt(input) }],
-    }),
-  });
+  let res: Response;
+  if (proxyMode) {
+    // Server-side proxy: no key ever touches the browser.
+    res = await fetch(REVIEW_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prompt: buildPrompt(input) }),
+    });
+  } else {
+    const key = getApiKey();
+    if (!key) throw new Error("No API key set.");
+    res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-5",
+        max_tokens: 6000,
+        messages: [{ role: "user", content: buildPrompt(input) }],
+      }),
+    });
+  }
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     if (res.status === 401) throw new Error("That API key was rejected. Check it in the key settings below.");
