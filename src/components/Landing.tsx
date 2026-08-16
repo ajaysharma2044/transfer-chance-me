@@ -1,12 +1,16 @@
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { MODEL } from "../engine";
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
 import GpaStrip from "./GpaStrip";
 import Tile from "./Tile";
+import "./landing.css";
 
 // Marketing page in the minimal-SaaS format: centered hero with a real data
-// visual, school strip, alternating feature sections with product visuals,
-// numbers band, FAQ, closing CTA. All visuals are ours, drawn from the dataset.
+// visual, authority strip, clickable school wall, alternating feature sections
+// with product visuals, findings from the study, numbers band, FAQ, closing
+// CTA. All visuals are ours, drawn from the dataset.
 
 const CURVE_SCHOOLS: { name: string; color: string }[] = [
   { name: "UCLA", color: "#2478e5" },
@@ -70,6 +74,48 @@ function DistCurves() {
   );
 }
 
+/** Animated count-up that starts when the number scrolls into view.
+ *  Skips straight to the final value under prefers-reduced-motion. */
+function CountUp({ value, duration = 1300 }: { value: number; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [shown, setShown] = useState(0);
+  const started = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || !("IntersectionObserver" in window)) {
+      setShown(value);
+      return;
+    }
+    let raf = 0;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting) || started.current) return;
+        started.current = true;
+        io.disconnect();
+        const t0 = performance.now();
+        const tick = (t: number) => {
+          const p = Math.min(1, (t - t0) / duration);
+          const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+          setShown(Math.round(value * eased));
+          if (p < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { threshold: 0.5 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [value, duration]);
+  return <span ref={ref} className="num">{shown.toLocaleString()}</span>;
+}
+
+const AUTHORITY_SCHOOLS = ["Cornell", "Duke", "Chicago", "Stanford"];
+
 function FeatureStrip() {
   const cornell = MODEL.schools.find((s) => s.name === "Cornell")!;
   return (
@@ -77,7 +123,7 @@ function FeatureStrip() {
       <h2>Nothing here is a vibe</h2>
       <p className="sec-dek">Every number traces to a source you can check.</p>
 
-      <div className="feature reveal">
+      <div className="feature ld-feature reveal">
         <div className="f-copy">
           <h3>Your GPA against real admits</h3>
           <p>
@@ -86,7 +132,7 @@ function FeatureStrip() {
           </p>
         </div>
         <div className="f-visual">
-          <div className="mock">
+          <div className="mock ld-mock">
             <div className="mock-row">
               <Tile name="Cornell" />
               <div>
@@ -100,7 +146,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature reveal">
+      <div className="feature ld-feature reveal">
         <div className="f-copy">
           <h3>Upload your actual application</h3>
           <p>
@@ -109,7 +155,7 @@ function FeatureStrip() {
           </p>
         </div>
         <div className="f-visual">
-          <div className="mock">
+          <div className="mock ld-mock">
             <p className="mock-label">Found in transcript.pdf</p>
             <div className="chipset">
               {["GPA 3.87", "52 credits → junior", "California CC", "Phi Theta Kappa", "IGETC", "Major: computer science"].map((c) => (
@@ -120,7 +166,7 @@ function FeatureStrip() {
         </div>
       </div>
 
-      <div className="feature reveal">
+      <div className="feature ld-feature reveal">
         <div className="f-copy">
           <h3>An essay check with ground truth</h3>
           <p>
@@ -130,7 +176,7 @@ function FeatureStrip() {
           </p>
         </div>
         <div className="f-visual">
-          <div className="mock">
+          <div className="mock ld-mock">
             <p className="mock-label">Essay check</p>
             <p className="mock-line">412 words · school-specific for <b>Cornell, UCLA</b> · 2 professors named</p>
             <p className="mock-note ok">Schools you name get the specificity credit in your chances.</p>
@@ -142,46 +188,139 @@ function FeatureStrip() {
   );
 }
 
+interface Finding {
+  figure: string;
+  unit?: string;
+  color: string;
+  title: string;
+  body: string;
+  tiles?: string[];
+}
+
+const FINDINGS: Finding[] = [
+  {
+    figure: "±0",
+    unit: "edge",
+    color: "var(--accent)",
+    title: "Extracurriculars don't move the needle",
+    body: "Across 1,217 structured applicant profiles, extracurricular strength showed no admit advantage once college GPA is held constant.",
+  },
+  {
+    figure: "92%",
+    color: "var(--blue)",
+    title: "UCLA runs on the CC pipeline",
+    body: "92% of UCLA's admitted transfers come from California community colleges. Where you're applying from matters.",
+  },
+  {
+    figure: "3.95–4.0",
+    color: "var(--teal)",
+    title: "Elite privates cluster at the top",
+    body: "Admitted transfers at elite private universities cluster in the 3.95–4.0 college-GPA band.",
+  },
+  {
+    figure: "5",
+    unit: "schools",
+    color: "var(--coral)",
+    title: "Where transfer beats freshman",
+    body: "Cornell, Northwestern, UChicago, Vanderbilt, and Michigan all admit transfers at a higher rate than freshmen.",
+    tiles: ["Cornell", "Northwestern", "Chicago", "Vanderbilt", "Michigan"],
+  },
+];
+
+function Findings({ rows }: { rows: string }) {
+  return (
+    <section className="shell ld-findings" aria-labelledby="ld-findings-h">
+      <h2 id="ld-findings-h">What the data says</h2>
+      <p className="ld-sec-dek">Findings from {rows} recorded outcomes — some of them surprising.</p>
+      <div className="ld-findgrid">
+        {FINDINGS.map((f, i) => (
+          <div key={f.title} className="reveal" style={{ transitionDelay: `${i * 90}ms` }}>
+            <div className="ld-findcard" style={{ "--fc": f.color } as CSSProperties}>
+              <span className="ld-fig">
+                {f.figure}
+                {f.unit && <small>{f.unit}</small>}
+              </span>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+              {f.tiles && (
+                <div className="ld-findtiles" aria-hidden="true">
+                  {f.tiles.map((t) => <Tile key={t} name={t} size={22} />)}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="ld-findfoot">Every finding above comes from the study behind this tool, not from folklore.</p>
+    </section>
+  );
+}
+
 export default function Landing({ onStart, onOpenSchool }: { onStart: () => void; onOpenSchool: (name: string) => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
-  void onOpenSchool;
   useReveal();
   return (
     <main>
-      <section className="shell hero">
-        <span className="badge">Built on {rows} real transfer outcomes · 2011–2026</span>
-        <h1>Your real chances of transferring into the T25</h1>
-        <p className="dek">
-          We weigh your GPA, school, and story against official admit rates and the admitted-student
-          data behind every top-25 university — not forum guesses.
-        </p>
-        <div className="cta-row">
-          <button type="button" className="btn" onClick={onStart}>Check my chances</button>
-          <p className="aside">Free · takes 2 minutes · nothing leaves your browser</p>
+      <div className="ld-herowrap">
+        <div className="ld-orbs" aria-hidden="true">
+          <span className="ld-orb ld-orb-a" />
+          <span className="ld-orb ld-orb-b" />
+          <span className="ld-orb ld-orb-c" />
+          <span className="ld-orb ld-orb-d" />
         </div>
-        <DistCurves />
-      </section>
+        <section className="shell hero">
+          <span className="badge">Built on {rows} real transfer outcomes · 2011–2026</span>
+          <h1>Your real chances of transferring into the T25</h1>
+          <p className="dek">
+            We weigh your GPA, school, and story against official admit rates and the admitted-student
+            data behind every top-25 university — not forum guesses.
+          </p>
+          <div className="cta-row">
+            <button type="button" className="btn" onClick={onStart}>Check my chances</button>
+            <p className="aside">Free · takes 2 minutes · nothing leaves your browser</p>
+          </div>
+          <div className="ld-authority">
+            <span className="ld-authority-tiles" aria-hidden="true">
+              {AUTHORITY_SCHOOLS.map((n) => <Tile key={n} name={n} size={22} />)}
+            </span>
+            <span>Built by transfer students at Ivy League schools, Duke, UChicago &amp; Stanford</span>
+            <span className="ld-authority-sep" aria-hidden="true">·</span>
+            <span><b>{rows}</b> real applications analyzed</span>
+          </div>
+          <DistCurves />
+        </section>
+      </div>
 
-      <section className="shell schoolstrip reveal" aria-label="Schools covered">
+      <section className="shell ld-wall reveal" aria-label="Schools covered">
         <p className="strip-label">Measured against every T25</p>
-        <div className="wordwall">
-          {MODEL.schools.map((s) => (
-            <span key={s.id} className="wordwall-item" style={{ color: markOf(s.name).color }}>
-              <Tile name={s.name} size={20} />
-              {markOf(s.name).word}
+        <div className="ld-wallgrid">
+          {MODEL.schools.map((s, i) => (
+            <span key={s.id} className="ld-wall-item reveal" style={{ transitionDelay: `${i * 22}ms` }}>
+              <button
+                type="button"
+                className="ld-wall-btn"
+                style={{ "--sc": markOf(s.name).color } as CSSProperties}
+                onClick={() => onOpenSchool(s.name)}
+              >
+                <Tile name={s.name} size={20} />
+                {markOf(s.name).word}
+              </button>
             </span>
           ))}
         </div>
+        <p className="ld-wall-hint">Pick a school to see its transfer data — admit rate, GPA range, feeders, trend.</p>
       </section>
 
       <div className="shell"><FeatureStrip /></div>
 
+      <Findings rows={rows} />
+
       <section className="numbers">
         <div className="shell factline">
-          <span><b>{rows}</b> recorded outcomes</span>
-          <span><b>{Number(MODEL.meta.admits).toLocaleString()}</b> observed admits</span>
-          <span><b>{String(MODEL.meta.schools)}</b> top-25 universities</span>
-          <span><b>15</b> application cycles</span>
+          <span><b><CountUp value={Number(MODEL.meta.rows)} /></b> recorded outcomes</span>
+          <span><b><CountUp value={Number(MODEL.meta.admits)} /></b> observed admits</span>
+          <span><b><CountUp value={Number(MODEL.meta.schools)} duration={900} /></b> top-25 universities</span>
+          <span><b><CountUp value={15} duration={900} /></b> application cycles</span>
         </div>
       </section>
 

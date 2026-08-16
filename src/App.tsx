@@ -42,7 +42,10 @@ function loadProfile(): Profile {
 export default function App() {
   const [view, setView] = useState<View>({ kind: "landing" });
   const [profile, setProfile] = useState<Profile>(loadProfile);
-  const [session, setSessionState] = useState<Session | null>(getSession);
+  const [session, setSessionState] = useState<Session | null>(() => {
+    const s = getSession();
+    return s?.email ? s : null;
+  });
 
   useEffect(() => {
     localStorage.setItem(STORE, JSON.stringify(profile));

@@ -4,7 +4,22 @@ import type { Profile } from "../engine";
 // Typeahead over the IPEDS directory (public/schools.json, lazy-loaded).
 // Picking a school auto-sets institution type and the California-CC pathway.
 
-type Row = [string, string, "cc" | "public4" | "private4"];
+type Row = [string, string, "cc" | "public4" | "private4", string];
+
+function Favicon({ domain, size = 22 }: { domain: string; size?: number }) {
+  const [failed, setFailed] = useState(false);
+  if (!domain || failed) return <span className="hit-dot" style={{ width: size, height: size }} aria-hidden="true" />;
+  return (
+    <img
+      className="hit-logo"
+      style={{ width: size, height: size }}
+      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+      alt=""
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 let cache: Row[] | null = null;
 async function loadSchools(): Promise<Row[]> {
@@ -44,7 +59,11 @@ export default function SchoolSearch({ profile, onChange }: { profile: Profile; 
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  function pick([name, state, kind]: Row) {
+  const [pickedDomain, setPickedDomain] = useState<string>(() => {
+    try { return localStorage.getItem("tcm.schooldomain.v1") ?? ""; } catch { return ""; }
+  });
+
+  function pick([name, state, kind, domain]: Row) {
     onChange({
       ...profile,
       schoolName: name,
@@ -52,6 +71,8 @@ export default function SchoolSearch({ profile, onChange }: { profile: Profile; 
       caResident: kind === "cc" && state === "CA",
       igetc: kind === "cc" && state === "CA" ? profile.igetc : false,
     });
+    setPickedDomain(domain);
+    try { localStorage.setItem("tcm.schooldomain.v1", domain); } catch { /* ok */ }
     setQ("");
     setOpen(false);
   }
@@ -60,6 +81,7 @@ export default function SchoolSearch({ profile, onChange }: { profile: Profile; 
     return (
       <div className="school-picked">
         <span className="chip chip-school">
+          <Favicon domain={pickedDomain} size={18} />
           {profile.schoolName}
           <button
             type="button"
@@ -89,8 +111,11 @@ export default function SchoolSearch({ profile, onChange }: { profile: Profile; 
           {hits.map((r) => (
             <li key={`${r[0]}|${r[1]}`}>
               <button type="button" onClick={() => pick(r)}>
-                <span>{r[0]}</span>
-                <span className="hit-meta">{r[1]} · {KIND_LABEL[r[2]]}</span>
+                <Favicon domain={r[3]} />
+                <span className="hit-text">
+                  <span>{r[0]}</span>
+                  <span className="hit-meta">{r[1]} · {KIND_LABEL[r[2]]}</span>
+                </span>
               </button>
             </li>
           ))}

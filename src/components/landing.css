@@ -1,0 +1,153 @@
+/* ── Landing-only styles (ld- prefix). Base tokens/classes live in index.css ── */
+
+/* ── Hero decoration: soft brand-color orbs, clipped to the hero band ── */
+.ld-herowrap { position: relative; overflow: hidden; }
+.ld-herowrap > .hero { position: relative; z-index: 1; }
+.ld-orbs { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.ld-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+  animation: ld-drift 10s ease-in-out infinite alternate;
+}
+.ld-orb-a { width: 380px; height: 380px; background: rgba(108, 75, 224, 0.13); top: -80px; left: -120px; }
+.ld-orb-b { width: 320px; height: 320px; background: rgba(36, 120, 229, 0.11); top: 140px; right: -100px; animation-duration: 13s; animation-delay: -4s; }
+.ld-orb-c { width: 280px; height: 280px; background: rgba(20, 184, 160, 0.11); bottom: -60px; left: 34%; animation-duration: 11s; animation-delay: -7s; }
+.ld-orb-d { width: 180px; height: 180px; background: rgba(238, 99, 82, 0.10); top: 40px; left: 58%; animation-duration: 14s; animation-delay: -2s; }
+@keyframes ld-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(18px, -26px, 0); }
+}
+
+/* ── Authority strip (hero-adjacent) ── */
+.ld-authority {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  animation: ld-rise 600ms ease 320ms backwards;
+}
+.ld-authority b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ld-authority .ld-authority-sep { color: var(--line-strong); }
+.ld-authority-tiles { display: inline-flex; align-items: center; }
+.ld-authority-tiles > * { box-shadow: 0 0 0 2px var(--bg); border-radius: 6px; }
+.ld-authority-tiles > *:not(:first-child) { margin-left: -6px; }
+@keyframes ld-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── School wall: every T25 is a button into its school page ── */
+.ld-wall { padding: 56px 0 8px; text-align: center; }
+.ld-wallgrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 10px;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.ld-wall-item { display: inline-flex; }
+.ld-wall-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--sc, var(--ink));
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.ld-wall-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: 0 8px 20px rgba(20, 24, 63, 0.10);
+}
+.ld-wall-hint { margin-top: 16px; font-size: 12.5px; color: var(--ink-3); }
+
+/* ── Feature mock panels: gentle hover lift ── */
+.ld-mock { transition: transform 180ms ease, box-shadow 180ms ease; }
+.ld-mock:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(20, 24, 63, 0.11); }
+
+/* ── "What the data says" findings ── */
+.ld-findings { padding: 72px 0 8px; }
+.ld-findings h2 {
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.ld-findings .ld-sec-dek { text-align: center; color: var(--ink-2); margin-top: 8px; }
+.ld-findgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+.ld-findcard {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  padding: 24px 20px 20px;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.ld-findcard::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--fc, var(--accent));
+  opacity: 0.85;
+}
+.ld-findcard:hover {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 14px 36px rgba(20, 24, 63, 0.10);
+}
+.ld-fig {
+  display: block;
+  font-size: 32px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--fc, var(--accent));
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ld-fig small { font-size: 15px; font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+.ld-findcard h3 { font-size: 14.5px; font-weight: 650; letter-spacing: -0.01em; margin-top: 10px; color: var(--ink); }
+.ld-findcard p { font-size: 13px; color: var(--ink-2); margin-top: 6px; line-height: 1.55; }
+.ld-findtiles { display: flex; gap: 6px; margin-top: 12px; }
+.ld-findfoot { text-align: center; margin-top: 20px; font-size: 12.5px; color: var(--ink-3); }
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .ld-findgrid { grid-template-columns: 1fr 1fr; }
+  .ld-feature { grid-template-columns: 1fr; gap: 22px; }
+  .ld-feature:nth-child(odd) .f-copy { order: 0; }
+  .ld-orb { filter: blur(56px); }
+}
+@media (max-width: 560px) {
+  .ld-findgrid { grid-template-columns: 1fr; }
+  .ld-wallgrid { gap: 8px; }
+  .ld-wall-btn { font-size: 13px; padding: 6px 12px 6px 8px; }
+}
+
+/* ── Reduced motion: everything visible, nothing drifting ── */
+@media (prefers-reduced-motion: reduce) {
+  .ld-orb { animation: none; }
+  .ld-authority { animation: none; }
+  .ld-wall-btn:hover, .ld-findcard:hover, .ld-mock:hover { transform: none; }
+}

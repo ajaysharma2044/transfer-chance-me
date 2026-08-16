@@ -3,7 +3,7 @@
 
 Source: IPEDS HD2023 (US Dept of Education, public domain).
 Usage: python3 scripts/build_schools_db.py /path/to/HD2023.csv
-Output: [name, state, kind] per school; kind: cc | public4 | private4.
+Output: [name, state, kind, domain] per school; kind: cc | public4 | private4.
 """
 import csv, json, sys, os
 
@@ -40,13 +40,17 @@ with open(src, encoding="latin-1") as f:
             kind = "cc"
         else:
             kind = "public4" if sector == 1 else "private4"
-        rows.append([name, state, kind])
+        # normalize website to bare domain for favicon lookup
+        web = (r.get("WEBADDR") or "").strip().lower()
+        web = web.removeprefix("https://").removeprefix("http://").removeprefix("www.")
+        domain = web.split("/")[0] if "." in web else ""
+        rows.append([name, state, kind, domain])
 
 rows.sort(key=lambda x: x[0].lower())
 os.makedirs(os.path.dirname(out), exist_ok=True)
 with open(out, "w") as f:
     json.dump(rows, f, separators=(",", ":"))
 kinds = {}
-for _, _, k in rows:
+for _, _, k, _d in rows:
     kinds[k] = kinds.get(k, 0) + 1
 print(f"wrote {out}: {len(rows)} institutions {kinds}")
