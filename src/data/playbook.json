@@ -1,230 +1,438 @@
 [
   {
-    "id": "campus-officer-seat",
-    "title": "Take an officer seat in a club that is electing this month",
+    "id": "file-uc-tag-by-sep-30",
+    "title": "File your one UC TAG before September 30",
+    "tag": "Timeline",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "3-4 hrs total: one counselor appointment plus an online form",
+    "steps": [
+      "Open UC's TAG matrix and find your campus floor: Davis 3.2, Irvine 3.4, Merced 2.8, Riverside 2.7, Santa Barbara 3.4, Santa Cruz 3.0 — and check whether your major sits higher, like Davis engineering 3.5.",
+      "Check your campus's GPA lock date: Davis, Merced, Riverside and Santa Cruz count through summer; Irvine and Santa Barbara count fall grades.",
+      "Book a counselor this week to confirm your UC-transferable unit count clears the TAG minimum and to sign your fall-spring course plan.",
+      "File one TAG only, at uctap.universityofcalifornia.edu, before September 30, and save the confirmation number.",
+      "Still submit the regular UC application by November 30 — the TAG voids without it."
+    ],
+    "why": "TAG is the only contractual admission guarantee anywhere in this dataset, and 92-97% of admitted transfers at those six campuses come from California community colleges.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "UC Davis TAG filed September 2026, counselor-signed course plan attached, confirmation number on file; regular UC application submitted November 2026.",
+    "realism": "Six weeks of runway and the work is one appointment plus a form. There is no late round and no second campus. The guarantee covers the campus, not always an impacted major, and it voids if you fall below the threshold, miss a required course, or never file the November application. This is the only item in the playbook that is a guarantee — the calculator already reads you as TAG-eligible if you are a CA community college junior above the floor; filing is what converts that into an actual offer."
+  },
+  {
+    "id": "close-major-prep-gaps-on-assist",
+    "title": "Close every major-prep gap on ASSIST before the add deadline",
+    "tag": "Coursework",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "4 hrs this week, then 1 hr/month",
+    "steps": [
+      "On assist.org set your college as sending and each target UC as receiving, open your exact major's agreement, and print it.",
+      "Mark every lower-division requirement done, in progress, or unscheduled, then take that sheet to a counselor for a signed fall-spring plan.",
+      "For a required course that is full, waitlist it, attend the first two meetings, and email the instructor asking for an add code.",
+      "If it stays closed, cross-enroll through cvc.edu's Online Course Exchange or take a late-start section that still posts a fall grade.",
+      "Re-check ASSIST in January; articulations get revised, and a counselor can amend a TAG course plan when a course drops off."
+    ],
+    "why": "UCLA's admit counsel in this dataset says to finish every major-prep course with no gaps, and admits to impacted UC majors show up at 3.9-plus with zero prep gaps.",
+    "lever": "courses",
+    "leverValue": "major-prep courses complete",
+    "proof": "Every articulated major-prep course marked completed or in progress against my major's ASSIST agreement, with the last prerequisite taken through CVC cross-enrollment.",
+    "realism": "ASSIST is free and public and the audit takes one afternoon; add codes and cross-enrollment are routine mechanics, not favors. But both close fast — most add deadlines land two to three weeks into the term, so this is a first-week move or it is nothing. Prep courses register in your course list rather than as a separate boost in the number; what they actually protect is TAG validity and your standing in an impacted major, where a single missing prerequisite is disqualifying on its own."
+  },
+  {
+    "id": "draft-uc-piqs-before-nov-30",
+    "title": "Draft four UC PIQs now; the Nov 30 wall does not move",
+    "tag": "Essay",
+    "horizon": "sprint",
+    "minWeeks": 4,
+    "effort": "3-4 hrs/week for a month",
+    "steps": [
+      "Open the UC application, live since Aug 1, pick prompt six plus three others, and put the four prompt numbers on your calendar.",
+      "Answer prompt six as evidence, not ambition: the articulated courses you finished, the grades, one project inside a course, and the upper-division sequence you are aiming at.",
+      "Check ASSIST first so every course claim in the PIQ is literally true on your transcript, then name two upper-division courses from your target department's catalog.",
+      "Delete every sentence criticizing your current college, and skip the why-us paragraph — there is no per-campus essay, and the same four PIQs go to every campus.",
+      "Draft all four by mid-October, leave them alone a full week, have a professor in your major and a counselor read them, and submit by Nov 25."
+    ],
+    "why": "A school-specific, program-naming transfer case is the single differentiator admits credit most, and both Berkeley's and UCLA's counsel say admits credit rewritten PIQs above everything else in their file.",
+    "lever": "essay",
+    "leverValue": "named",
+    "proof": "Prompt six names the four articulated prep courses I completed, the econometrics project from ECON 15, and the two upper-division courses I intend to take there — submitted November 25.",
+    "realism": "Fifteen weeks remain to Nov 30, so four weeks of drafting plus a rest week has real slack, and this needs reading and rewriting rather than new accomplishments. The constraint is hard: UC grants no extensions and no per-campus rewrite, so this file cannot be patched later the way a February private supplement can. And be clear-eyed about the ceiling — a sharper essay moves a file already inside a campus's admit range; it does not lift a GPA sitting below it."
+  },
+  {
+    "id": "fit-dossier-and-core-essay",
+    "title": "Build a fit dossier per school, then swap your last 150 words",
+    "tag": "Essay",
+    "horizon": "semester",
+    "minWeeks": 8,
+    "effort": "3-4 hrs/week for two months",
+    "steps": [
+      "For each target, open the department catalog and copy three upper-division course numbers and titles your current college's catalog does not offer, then pick two professors whose current work touches something you have already done.",
+      "Name the sub-unit you actually apply into — Dyson, Goizueta, SFS, Wharton, Kenan-Flagler, HOD at Peabody, Whiting — not just the university; budget ninety minutes per school, two schools a week.",
+      "Write one 600-word core — what you study, the work you have actually done, what you want next — that travels to every school.",
+      "Swap the closing 150 words per school to that school's dossier paragraph, after confirming the professor still teaches there and the course still runs; keep one spreadsheet row per school with course one, course two, professor, and sub-college.",
+      "The day before each submit, search the file for every other school's name and for world-class, vibrant, and prestigious, and confirm or delete every hit."
+    ],
+    "why": "A why-transfer essay naming specific programs, courses, and faculty is the differentiator admits credit most, and per-school counsel warns outright that a generic version sinks otherwise strong files.",
+    "lever": "essay",
+    "leverValue": "named",
+    "proof": "Eight applications, one 600-word spine, eight distinct closing blocks — the Cornell version names two AEM courses by number, the professor whose housing-market work extends the rent regression from my econ final, and Dyson by name.",
+    "realism": "Course catalogs and faculty directories are public and free, and ninety minutes per school is honest timing — this needs no access or connections you lack, only the hours. Writing eight full essays from scratch is not real in one semester; one core plus eight short blocks is. Four schools done properly beats twelve written from memory, and none of it substitutes for anything on the GPA side."
+  },
+  {
+    "id": "cut-complaint-sentences-from-essay",
+    "title": "Cut every sentence that complains about your current school",
+    "tag": "Essay",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "2 hrs, one sitting plus a day away from the draft",
+    "steps": [
+      "Highlight every sentence whose subject is your current school and whose verb is a complaint — stuck, lacks, boring, waste, settle, regret.",
+      "Replace the grievance with a claim about a course, not a place: \"My catalog ends at intermediate micro; the applied sequence starts where it stops.\"",
+      "Make the first sentence something you personally did, with a verb you performed, rather than something that went wrong to you.",
+      "Read the first hundred words aloud; if none of it is work you actually did, rewrite the paragraph before adding any school specifics."
+    ],
+    "why": "Complaint-shaped essays fail throughout the corpus — admits frame the move as fit and resources rather than escape, and the app's own essay reader scores escape framing down directly.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "The opening line reads \"Last spring I rebuilt my stats final into a county-level rent model,\" and no sentence in the file can be quoted back at you as a grievance.",
+    "realism": "One sitting plus a day away from the draft, and it requires no new experience — it reframes the ones you already have. It does not raise your essay to the named level on its own; what it does is remove the penalty the reader applies to escape framing, which is the cheapest correction in the whole playbook. The only real cost is cutting a paragraph you are attached to."
+  },
+  {
+    "id": "join-phi-theta-kappa",
+    "title": "Join Phi Theta Kappa before this fall's induction closes",
+    "tag": "Credential",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "~3 hrs total, one-time fee typically $60-100",
+    "steps": [
+      "Search your college email and portal for a Phi Theta Kappa invitation, and check the two gates on your chapter's page: usually 12+ completed degree-applicable units and a 3.5 cumulative GPA.",
+      "If you clear both and no invitation arrived, email the chapter adviser through honors or student life and ask to be checked against this term's induction list.",
+      "Pay the membership fee — ask directly about a fee waiver, which most chapters have and rarely advertise — and save the dated confirmation.",
+      "Ask the adviser for this year's chapter deadlines for the All-USA / Coca-Cola Academic Team and the member scholarship directory, and file two applications.",
+      "List it under Awards and Honors with your induction term and chapter name, not the bare words \"PTK member.\""
+    ],
+    "why": "Phi Theta Kappa is the most-cited organization in the entire admit file — 56 entries across 48 of 628 admit records — and ADMIT_SIGNATURES names it the top credential among community-college-origin admits.",
+    "lever": "ptk",
+    "leverValue": "true",
+    "proof": "Phi Theta Kappa Honor Society, Alpha Gamma chapter — inducted Fall 2026; applied to the All-USA Academic Team and two PTK-member transfer scholarships.",
+    "realism": "This is an eligibility check plus a form and a fee, not a semester of work, and it is one of the few moves that finishes before the September 30 TAG deadline. Two limits: below a 3.5 or under 12 units you are not eligible this term and should not list it, and the credential is read by private and out-of-state schools looking at a community-college file — UC review does not credit outside honor societies. No honor society offsets a GPA below a school's admit range."
+  },
+  {
+    "id": "lock-remaining-igetc-courses",
+    "title": "Lock the last IGETC courses into fall and spring",
+    "tag": "Coursework",
+    "horizon": "sprint",
+    "minWeeks": 3,
+    "effort": "2 hrs of planning, then normal coursework",
+    "steps": [
+      "Pull your IGETC worksheet from counseling and mark Areas 1 through 5, plus UC's Area 6A language requirement, as complete or open.",
+      "Schedule the remaining areas across fall and spring; UC accepts partial IGETC certification with no more than two courses outstanding.",
+      "If you are in STEM, ask counseling whether IGETC for STEM applies, which defers two general-education courses so major prep is not crowded out.",
+      "Request IGETC certification from your records office once spring grades post — UC will not honor completion without that certification.",
+      "Never drop a major-prep course to fit an IGETC course; at impacted UC majors, prep wins every time."
+    ],
+    "why": "UC admit counsel treats IGETC completion as the standard admitted pathway, and 86-97% of UC transfer admits come from community colleges running exactly this general-education track.",
+    "lever": "igetc",
+    "leverValue": "true",
+    "proof": "IGETC in progress, one Area 3B course scheduled for spring, certification request filed with my college's records office after spring grades post.",
+    "realism": "Two terms is enough for most students carrying three or four open areas, and the application reports IGETC in progress, which is exactly what admits report. This only moves the number for California community college applicants applying to UC — it is not a credential elsewhere. If you are a CS or engineering applicant with six areas left, IGETC is the wrong fight this cycle: finish major prep and certify partial instead."
+  },
+  {
+    "id": "surface-uncounted-campus-activities",
+    "title": "Add the campus activities you never thought counted",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "90 min plus two emails",
+    "steps": [
+      "List every place you show up on campus in a normal week: club meetings, a study group you run, lab hours, the tutoring center, honors seminars, note-taking.",
+      "Check your student portal for program enrollments you forgot — honors, MESA, TRIO, EOPS, Puente, Umoja, or a learning-community cohort.",
+      "Email your club adviser one line: \"Can you confirm my membership dates and any role I held?\" You need dates confirmed, not a recommendation letter.",
+      "Add each as its own entry with the organization's full official name, your real weekly commitment, and the exact semester range.",
+      "Do not invent a title — \"member, 3 semesters, attended weekly\" is a legitimate entry that appears throughout admit files."
+    ],
+    "why": "63.5% of admit records carry at least one campus-anchored activity, and campus_local is 50% of all admit activities against 9% national — the recurring pattern is presence on your own campus, not prestige.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "\"Member, Engineering Club, Santa Monica College — weekly meetings, Fall 2024-present; helped run the spring project showcase.\" \"Peer note-taker, Disability Services Office — 2 courses per semester, 3 semesters.\"",
+    "realism": "Only use this if the involvement is genuinely already happening — you are recording it, not starting it. Advisers answer a two-line date-confirmation email within days, well inside the Sep 30 TAG window. This raises your activity level to campus because campus is what you already are, not because you added anything. If you truly have nothing campus-based, leave the level where it is; padding is visible to a reader who does this all day."
+  },
+  {
+    "id": "apply-to-honors-program",
+    "title": "Apply to your honors program before the fall deadline",
+    "tag": "Credential",
+    "horizon": "sprint",
+    "minWeeks": 3,
+    "effort": "3-4 hrs for the application, then honors sections",
+    "steps": [
+      "Find your college's honors program page and note the fall deadline — usually inside the first three weeks of term — plus the GPA and English-composition prerequisites.",
+      "Assemble what it asks for: transcript, short statement, and usually one faculty recommendation you request this week, not next.",
+      "Enroll in one or two honors sections of courses you already need, so honors adds rigor without adding units.",
+      "Ask the coordinator whether your program is UCLA TAP-certified and exactly how many honors units TAP certification takes at your college.",
+      "If your campus deadline passed, email the coordinator about conditional, mid-year, or spring admission and get that answer in writing."
+    ],
+    "why": "Honors membership appears in 76 of 628 admit records, the most repeated institutional line in the admit activity file after Phi Theta Kappa, and UCLA's admit counsel names TAP certification outright.",
+    "lever": "honors",
+    "leverValue": "true",
+    "proof": "College Honors Program — admitted Fall 2026; enrolled in honors sections of English 1A and Economics 1, on track for TAP certification through the honors office.",
+    "realism": "The application is a form-and-deadline event you can finish in a week, but it only counts once the acceptance is in hand and rolling decisions take another week or two. What you cannot finish by November is an honors certificate or a full TAP sequence — most colleges require four or five honors courses — so write \"admitted, in progress,\" never \"completed.\" TAP earns priority consideration at UCLA, not admission."
+  },
+  {
+    "id": "take-campus-officer-seat",
+    "title": "Take an unfilled officer or committee seat on campus",
     "tag": "Extracurricular",
     "horizon": "sprint",
     "minWeeks": 3,
-    "effort": "2-3 hrs/week",
+    "effort": "3-4 hrs/week",
     "steps": [
-      "Pull your college's club roster and list every org tied to your major that meets weekly.",
-      "Email the current president: say you want an officer role this term and name what you would run.",
-      "Take the unglamorous open seat — treasurer, secretary, events — they go unfilled and still count.",
-      "Log the start date and your hours from week one so the activity has a verifiable span."
+      "Pull the student-life office's active club roster this week; most campuses hold officer elections in weeks two through four of fall term.",
+      "Email two club advisers the exact ask: are any officer or Inter-Club Council rep seats unfilled, and can I commit through spring?",
+      "Ask the student government adviser too — appointed budget, curriculum, and equity committee seats sit vacant all year because almost nobody applies.",
+      "Attend the first two meetings, introduce yourself during public comment, and put your name in that same week while they remember you.",
+      "Get the adviser to confirm your appointment date in writing, so the line has a verifiable start."
     ],
-    "why": "Club leadership is 11% of everything admitted transfers list, and campus-anchored roles recur throughout admit files.",
+    "why": "Club leadership is 11% of admit activities and student government another 3%, while campus_local scope covers half of everything admits list — ordinary seats in ordinary campus bodies recur far more than trophy titles.",
     "lever": "ecLevel",
     "leverValue": "campus",
-    "proof": "Treasurer, Economics Society — elected Sep 2026, 3 hrs/week, manage a $2,400 event budget across 6 events.",
-    "realism": "Most campus orgs fill officer vacancies in the first three weeks of term and are actively short of volunteers."
+    "proof": "Business Club — Treasurer, Sep 2026-present, 4 hrs/week: manage the club budget and ran the fall recruitment table.",
+    "realism": "Uncontested seats are real — treasurer, secretary, and ICC rep routinely go unfilled at community colleges — so three weeks is enough to be seated, and a seat held since September is honest to list in November. Do not inflate it into president or founder. The engine reads campus involvement as one level, so a second seat does not raise the number; if you already hold one, take another only for the file, not for the percentage."
   },
   {
-    "id": "tutor-center",
-    "title": "Get hired at the campus tutoring or writing center",
+    "id": "get-hired-tutoring-center",
+    "title": "Get hired at the campus tutoring center this term",
     "tag": "Extracurricular",
     "horizon": "sprint",
     "minWeeks": 4,
-    "effort": "4-6 hrs/week",
+    "effort": "4-6 hrs/week, usually paid",
     "steps": [
-      "Ask the learning center which subjects they are short of tutors in this term.",
-      "Request a recommendation from the professor whose course you scored highest in.",
-      "Apply for the paid position, not the volunteer one — paid work reads as substance.",
-      "Track students seen and hours weekly so you can state a number on the application."
+      "Find the learning center's fall hiring page — most centers rehire every term and are still short-staffed by week three — and apply for the specific courses you already passed with an A.",
+      "Ask a professor who gave you that A whether they will sign a tutor recommendation for their course this term.",
+      "If hiring is closed or work-study only, ask about embedded tutoring, supplemental instruction, or the volunteer peer-tutor list instead.",
+      "Keep your own log from day one — date, course, students seen, hours — because the center's system will not export what you need in November.",
+      "By week eight ask the director about lead-tutor or SI work, and ask for written confirmation of your hours, courses, and students served."
     ],
-    "why": "Tutoring and teaching roles are 6% of admit activities and pair the academic core with campus service.",
+    "why": "Tutoring and teaching is about 6% of admit activities and the word tutor appears in 60 of 628 admit records, one of the most repeated campus-anchored lines in the corpus.",
     "lever": "ecLevel",
     "leverValue": "campus",
-    "proof": "Peer tutor, Math Learning Center — 6 hrs/week, ~14 students/term in calculus and statistics.",
-    "realism": "Learning centers hire every term and prioritize students who did well in the courses they will tutor."
+    "proof": "Campus Learning Center — Math Tutor, Sep 2026-present, 6 hrs/week: drop-in tutoring for Calculus I and Statistics; in CRLA Level 1 training.",
+    "realism": "Centers hire on a rolling basis every term and the paperwork is one form plus one faculty signature, so four weeks is the normal timeline — and it is paid, which means it survives the \"I have to work\" constraint most transfer applicants are actually under. One honest limit: CRLA Level 1 certification takes roughly 10 training hours plus about 25 logged tutoring hours, so by November you write \"in training,\" not \"certified,\" and lead tutor is upside rather than the plan."
   },
   {
-    "id": "faculty-research-ask",
-    "title": "Ask a professor to join their project as an assistant",
-    "tag": "Extracurricular",
-    "horizon": "sprint",
-    "minWeeks": 5,
-    "effort": "3-5 hrs/week",
-    "steps": [
-      "Pick the professor whose class you did best in and whose subject matches your intended major.",
-      "Go to office hours with one specific ask: can you help with data, sourcing, or lab setup this term.",
-      "Offer a fixed weekly commitment and put it in writing so both of you can point to a start date.",
-      "Keep a one-line log of what you produced each week — that becomes your description."
-    ],
-    "why": "Faculty research appears in 7% of admit activity lists and is the strongest 'already doing the work' signal in the corpus.",
-    "lever": "ecLevel",
-    "leverValue": "campus",
-    "proof": "Research assistant to Prof. Nakamura, Applied Economics — coded and cleaned 3 survey datasets, 4 hrs/week.",
-    "realism": "Faculty at community colleges and regional publics are rarely asked and often say yes to a specific, bounded offer."
-  },
-  {
-    "id": "ptk-join",
-    "title": "Join Phi Theta Kappa if your GPA qualifies",
-    "tag": "Credential",
+    "id": "protect-fall-grades-and-file-tau",
+    "title": "Protect fall grades and file the January academic update",
+    "tag": "Timeline",
     "horizon": "sprint",
     "minWeeks": 2,
-    "effort": "one application",
+    "effort": "1 hr now, 2 hrs in January",
     "steps": [
-      "Check your college's PTK chapter page for the GPA cutoff — usually 3.5 with 12+ credits.",
-      "Submit the membership form and one-time fee before this term's induction date.",
-      "Sign up for one chapter service project so you can describe participation, not just a line item.",
-      "Add the induction date to your activities list."
+      "Put your college's drop-without-W and withdrawal deadlines on one calendar beside September 30 TAG, November 30 UC, and January 31 TAU.",
+      "Decide about a struggling class by the withdrawal deadline, not during finals: a W is survivable, a D in major prep can void TAG.",
+      "Between January 1 and 31, reopen your UC application and report fall grades and every spring course in the Transfer Academic Update.",
+      "Report it exactly as the transcript reads — UC verifies the update against final transcripts, and mismatches trigger rescission after an offer.",
+      "If a fall grade drops you under your TAG threshold, email that campus's TAG office in January instead of waiting for the decision."
     ],
-    "why": "PTK is part of the institutional stack that recurs across community-college admit files, and every admissions reader recognizes it in one line.",
-    "lever": "ptk",
-    "leverValue": "true",
-    "proof": "Phi Theta Kappa Honor Society — inducted Fall 2026; chapter service project (campus food pantry drive).",
-    "realism": "It is a form, a fee, and a GPA check — the only real deadline is your chapter's induction date."
-  },
-  {
-    "id": "honors-program",
-    "title": "Enroll in your college's honors program for the term",
-    "tag": "Credential",
-    "horizon": "sprint",
-    "minWeeks": 3,
-    "effort": "application + honors sections",
-    "steps": [
-      "Find the honors program's rolling application and this term's cutoff date.",
-      "Swap one already-planned course for its honors section so you add rigor, not workload.",
-      "Ask whether the program has a transfer-agreement list — several feed named partner universities.",
-      "Note your entry term; even one honors semester is listable."
-    ],
-    "why": "Honors-program membership is a documented part of the institutional stack in admit files and signals rigor a GPA alone cannot.",
-    "lever": "honors",
-    "leverValue": "true",
-    "proof": "Honors Program, Fall 2026 — honors sections of Microeconomics and Composition.",
-    "realism": "Most honors programs admit on a rolling basis and let you convert an existing enrollment to the honors section early in the term."
-  },
-  {
-    "id": "igetc-finish",
-    "title": "Close the last gaps in IGETC before you file",
-    "tag": "Coursework",
-    "horizon": "semester",
-    "minWeeks": 8,
-    "effort": "1-2 courses",
-    "steps": [
-      "Run your transcript against the IGETC worksheet with a counselor and list exactly what is missing.",
-      "Check ASSIST.org for which of your remaining courses articulate to your target campus and major.",
-      "Register for the missing areas this term; if a section is full, join the waitlist and petition in week one.",
-      "Confirm certification timing with your counselor so it is reportable on the application."
-    ],
-    "why": "IGETC completion is the UC breadth pattern, and finishing it is one of the few coursework moves the engine scores directly.",
-    "lever": "igetc",
-    "leverValue": "true",
-    "proof": "IGETC — complete, certified by the counseling office prior to transfer.",
-    "realism": "Most students are one or two areas short; a single term usually closes it if you register before sections fill."
-  },
-  {
-    "id": "essay-name-programs",
-    "title": "Rewrite the essay to name programs, courses, and a professor",
-    "tag": "Essay",
-    "horizon": "sprint",
-    "minWeeks": 2,
-    "effort": "6-8 hrs",
-    "steps": [
-      "For each target, open the department's course catalog and pull two courses you could not take where you are.",
-      "Find one professor whose actual research matches what you want to study and read one abstract.",
-      "Replace every sentence about what your current school lacks with what their program specifically offers.",
-      "Keep one core essay and swap only the named-specifics paragraph per school."
-    ],
-    "why": "A school-specific 'why transfer' essay naming programs and professors is the single differentiator admits credit most; complaint-shaped essays fail.",
-    "lever": "essay",
-    "leverValue": "named",
-    "proof": "Opening names the Dyson Applied Economics track, two upper-division courses, and the professor whose lab you would join.",
-    "realism": "This is a rewrite of material you already have — the research per school takes about an hour."
-  },
-  {
-    "id": "surface-your-job",
-    "title": "Put your paid job on the application, with hours",
-    "tag": "Extracurricular",
-    "horizon": "sprint",
-    "minWeeks": 1,
-    "effort": "30 minutes",
-    "steps": [
-      "List every paid role you have held while enrolled, including the ones you dismissed as unrelated.",
-      "For each, write the hours per week and the span in months.",
-      "Name one responsibility that involved judgment, money, or other people.",
-      "Move it above your high-school entries."
-    ],
-    "why": "Paid work is 13% of admit activities — the second most common category — and reads as substance and maturity, never as a gap.",
+    "why": "UC Berkeley's admit counsel in this dataset warns plainly that a late D, NP, or W risks rescind, and the transcript keeps counting for five months after you hit submit.",
     "lever": "none",
     "leverValue": "",
-    "proof": "Shift lead, campus bookstore — 18 hrs/week while enrolled full-time; trained 4 new hires, closed nightly registers.",
-    "realism": "This is documentation, not commitment: the work already happened."
+    "proof": "Transfer Academic Update filed in January with fall grades and the spring schedule reported, and no D, F, or NP in any articulated major-prep course.",
+    "realism": "This is calendar discipline rather than extra work, and it moves no percentage — it protects the offer you may already be on track for. The only real cost is making the hard call about a failing class in October, while the withdrawal window is still open, instead of hoping it turns around by December."
   },
   {
-    "id": "quantify-activities",
-    "title": "Put a number on every activity description you have",
-    "tag": "Extracurricular",
-    "horizon": "sprint",
-    "minWeeks": 1,
-    "effort": "1 hour",
-    "steps": [
-      "For each activity, add hours per week and the months you have done it.",
-      "Add one outcome with a number: people reached, dollars handled, sessions run, items produced.",
-      "Cut adjectives — 'passionate', 'dedicated' — and replace them with the count.",
-      "Reorder so campus-anchored activities appear first."
-    ],
-    "why": "Admit descriptions are specific and campus-anchored — 50% of their listed activities are campus-level and carry concrete outputs.",
-    "lever": "none",
-    "leverValue": "",
-    "proof": "Before: 'Volunteered at a food bank.' After: 'Food bank volunteer, 22 months, 4 hrs/week — coordinated Saturday intake for ~60 families.'",
-    "realism": "Pure rewriting of what you already did; no new commitment at all."
-  },
-  {
-    "id": "tag-file",
-    "title": "File your UC TAG before September 30",
+    "id": "backplan-application-calendar",
+    "title": "Back-plan your essays from Sep 30, Nov 30, and Feb 1",
     "tag": "Timeline",
     "horizon": "sprint",
     "minWeeks": 1,
-    "effort": "one form + counselor check",
+    "effort": "2 hrs, one evening",
     "steps": [
-      "Confirm your campus GPA floor: Davis 3.2, Irvine 3.4, Santa Barbara 3.4, Santa Cruz 3.0, Riverside 2.7, Merced 2.8.",
-      "Verify your major prep on ASSIST.org for that campus — TAG requires the coursework pattern, not just the GPA.",
-      "Submit the TAG application in the UC Transfer Admission Planner by September 30. There is no late round.",
-      "Then file the UC application itself during the Aug 1 - Nov 30 window."
+      "Write three dates on one page: TAG Sep 1-30 if you attend a California community college, UC Nov 30, privates Feb 1 to Mar 15.",
+      "Know what TAG covers — a real guarantee at six UCs: Davis, Irvine, Merced, Riverside, Santa Barbara, Santa Cruz, and not at Berkeley or UCLA.",
+      "Work backwards: dossiers done mid-September, core essay drafted early October, UC set locked mid-November, private supplements across December and January.",
+      "Book one named two-hour block per week — \"Cornell supplement,\" never \"essays\" — and assume fall midterms take two weeks you have not budgeted.",
+      "File TAG in the first week of September, not the last; it is a course plan, not an essay, so it should not eat drafting weeks."
     ],
-    "why": "TAG is a genuine contractual guarantee of admission at six UC campuses — not improved odds, a signed agreement.",
+    "why": "Transfer admission is GPA-dominated, so the essay is the largest remaining lever fully inside your control this fall — but only if it is written before the deadline crunch rather than during it.",
     "lever": "none",
     "leverValue": "",
-    "proof": "TAG agreement on file with UC Davis for Fall 2027 entry.",
-    "realism": "It is one form, but the September 30 date is absolute — the single most expensive deadline a California transfer can miss."
+    "proof": "By Nov 30 the UC application is submitted with four finished PIQs, and going into February the private supplements are already drafted rather than being started.",
+    "realism": "Building the calendar takes one evening and changes no input the calculator reads. The honest part is the slack: the corpus does contain admits who wrote essays in three or four hours, but it over-represents acceptances, and a rushed essay is the opposite of the school-specific pattern that actually separates admits. Do not plan around the outliers."
   },
   {
-    "id": "measurable-project",
-    "title": "Run one project inside your club and finish it",
+    "id": "professor-defined-task-and-evaluator",
+    "title": "Ask three professors for a defined task you finish by December",
+    "tag": "Extracurricular",
+    "horizon": "semester",
+    "minWeeks": 16,
+    "effort": "4-6 hrs/week",
+    "steps": [
+      "In weeks one and two, go to office hours for three professors whose courses you aced and ask what unfinished work you could take on — faculty are reachable before grading buries them.",
+      "Ask for something with edges: a dataset to clean, a literature table, lab prep or course materials, an honors contract — not \"research experience.\"",
+      "Pin the deliverable and a due date in an email by week four so you both have the same written definition of done.",
+      "Do not offer to grade classmates' work; many campuses cannot allow that under FERPA unless the department formally hires you into the role.",
+      "Finish the deliverable in December, then ask separately for the Common App academic evaluation — UC transfer takes no letters, but your February privates require one."
+    ],
+    "why": "Research is about 7% of admit activities and appears in 22.1% of admit records versus 22.8% of denied ones, so the word itself moves nothing — the payoff is a professor who can describe your actual work and the unglamorous versions the files are full of: lab assistant, embedded TA, materials for a professor's project.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Research Assistant, Psychology Department — cleaned and coded 1,200 survey responses on community-college persistence over 12 weeks; wrote the coding guide for the next assistant.",
+    "realism": "A defined 12-week task needs no lab and no funding, but the full arc — ask in September, deliverable finished in December, recommendation secured for February deadlines — is a semester, not a sprint. Expect roughly one yes out of three asks; the honors contract is the fallback almost any professor can grant. Community colleges rarely have paid TA lines, so ask for the informal versions that genuinely exist."
+  },
+  {
+    "id": "claim-student-government-seat",
+    "title": "Claim a vacant senate seat or shared-governance slot",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 6,
+    "effort": "2-3 hrs/week",
+    "steps": [
+      "Email the student government adviser in week one and ask which senator seats and college committees are unfilled — fall vacancies are appointed, not elected.",
+      "Ask specifically for a shared-governance seat: curriculum, budget, library, and hiring committees each take a student representative and routinely go empty.",
+      "By week four pick one issue you can actually move — printing costs, food pantry hours, transfer center staffing, a course never offered.",
+      "Attend every meeting, keep your own minutes, and look up the district headcount your body represents; it is public, and it belongs in the description."
+    ],
+    "why": "Student government appears in 9.4% of admit records versus 2.9% of denied ones — one of only three categories with a real positive gap — though the corpus over-reports acceptances and GPA still dominates the outcome.",
+    "lever": "ecLevel",
+    "leverValue": "campus",
+    "proof": "Senator, Associated Students — appointed Sep 2026, one of three student members of the Curriculum Committee, voting on course proposals for a 12,000-student district.",
+    "realism": "Appointment windows close in the first three weeks and the seats regularly go unfilled, which makes this the lowest-competition leadership title on any campus at two to three hours a week. Six weeks gets you appointed, seated, and into minutes you can point to. The stronger version — one motion, vote, or policy change you can name and date — takes the full term, so write what has actually happened by the deadline you are facing."
+  },
+  {
+    "id": "professor-reads-the-draft",
+    "title": "Ask one professor in your major to read your draft",
+    "tag": "Essay",
+    "horizon": "sprint",
+    "minWeeks": 3,
+    "effort": "2 hrs/week",
+    "steps": [
+      "Email one professor in your intended major: \"I am applying to transfer in economics — would you read 650 words for academic accuracy?\"",
+      "Ask a bounded question, not \"is it good\": which sentence here would be true of any school, and which claim would you not believe?",
+      "Go to office hours in the first three weeks of the term and give them a specific return date about two weeks out.",
+      "Weeks later, ask separately whether they would write your recommendation — do not bundle that request into the same email as the read.",
+      "Add a second reader with no reason to be kind: a transfer center counselor, or someone who already transferred where you are applying."
+    ],
+    "why": "Penn's admit pattern is named outright as a cohesive why-transfer essay plus two close professor recommendations, and admits across several schools credit essays and professor recs above their activities.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "Two people who know the field have signed off on the academic claims, and one of them is writing a recommendation about the same work the essay describes.",
+    "realism": "A professor will read one 650-word draft; they will not read five, and they will not do it in late October when everyone else is asking. One person, early in the term, bounded question, dated. Three weeks covers their turnaround plus your revision. This does not change what the calculator reads — it changes whether the named-essay claim survives contact with someone in the field."
+  },
+  {
+    "id": "run-one-countable-club-project",
+    "title": "Run one club project with a sign-in sheet and a headcount",
     "tag": "Extracurricular",
     "horizon": "semester",
     "minWeeks": 10,
     "effort": "3-4 hrs/week",
     "steps": [
-      "Propose one bounded project to your org: a workshop series, a tutoring night, a campus drive.",
-      "Set a target you can count — attendance, dollars, students served — and write it down in week one.",
-      "Recruit two people so it survives your schedule and you can honestly say you led a team.",
-      "Close it out with the final number before applications are due."
+      "Ask the student life office in week one which chartered clubs are missing a required officer — chapters lose charter without a full board — and email that adviser and president the same day.",
+      "By week three propose one narrow project with a sign-in sheet: a workshop series, a drive, a panel, with a headcount target.",
+      "Run it weeks four through nine, take attendance at every session, and photograph the sign-in sheets so the number survives to November.",
+      "In week ten write the line as role, project, and number, and ask the adviser to confirm your appointment date and the totals in writing."
     ],
-    "why": "What separates admit activity descriptions is a measurable output attached to a campus-anchored role, not the prestige of the organization.",
+    "why": "Leadership in admit files is almost entirely campus-scoped — 249 of 274 leadership entries are campus_local and only three are national — and only about one in ten admit activity entries records any outcome at all, so a countable project is rare on its own.",
     "lever": "ecLevel",
     "leverValue": "campus",
-    "proof": "Founded and ran a weekly transfer-prep workshop — 7 sessions, 41 attendees, 3 volunteers trained.",
-    "realism": "A single semester is enough for one project with a real number if you scope it small and start in week one."
+    "proof": "Vice President, Business Club — built a six-week resume workshop series with the career center; 43 students attended across six sessions, fall 2026.",
+    "realism": "Officer seats sit empty every fall because most members will not do the work, and an adviser can appoint you in days with no election cycle. Leadership by itself does not separate admits from denials in the record — 28% versus 31% — so the countable project is the entire point. If you already hold a campus seat, this does not raise your activity level again; it gives the line something a reader can verify."
   },
   {
-    "id": "student-government",
-    "title": "Run for a student government seat this term",
+    "id": "weekly-study-cohort-with-roster",
+    "title": "Start one weekly study cohort with a room and a roster",
     "tag": "Extracurricular",
     "horizon": "semester",
-    "minWeeks": 8,
-    "effort": "3-5 hrs/week",
+    "minWeeks": 12,
+    "effort": "2-3 hrs/week",
     "steps": [
-      "Check the student senate calendar — many seats go uncontested or sit vacant mid-year.",
-      "File for a vacant seat or an appointed committee position if elections have passed.",
-      "Pick one issue with a documented outcome you can point to by application time.",
-      "Record meetings attended and anything you voted on or authored."
+      "In week one ask the professor of your hardest major course for two minutes to announce a weekly study group, and for a room booking.",
+      "In week two pass a sign-up sheet with names and emails — that roster is the whole difference between a program and \"studied with friends.\"",
+      "Hold it the same hour every week without exception, even when three people show; your claim is sessions held times heads counted.",
+      "By week six hand one session to another student to lead, which turns you from an organizer into something with structure to describe.",
+      "By week twelve email the department chair your attendance totals and ask, in writing, whether it continues in spring under your name."
     ],
-    "why": "Student government appears in 3% of admit activity lists and is unambiguously campus-anchored institutional involvement.",
+    "why": "Founder is the second most common named leadership role among admits, 21 of 274 entries behind president at 60, and outcomes appear in under 10% of admit activity entries — a roster of real attendance is unusual on its own.",
     "lever": "ecLevel",
     "leverValue": "campus",
-    "proof": "Senator, Associated Students — authored the resolution that extended library hours through finals week.",
-    "realism": "Vacant and uncontested seats are common; appointment is often faster than a full election cycle."
+    "proof": "Founder, Organic Chemistry Study Cohort — 12 weekly sessions, 19 students on the roster, 11 average attendance; trained two peer leaders to run sessions.",
+    "realism": "A room, a fixed hour, and a sign-in sheet is the entire infrastructure, which makes this the only founding move that is genuinely real work inside one semester — no incorporation, no website, no nonprofit. It reads as campus involvement, the same level a club seat reads as, so pick it because you want the thing to exist and because the roster is a number nobody else has."
+  },
+  {
+    "id": "quantify-tutoring-into-named-record",
+    "title": "Pull your logged tutoring hours and name the venue exactly",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "1 hr plus one email",
+    "steps": [
+      "Email your tutoring center coordinator: \"Can you tell me my total logged hours and roughly how many student sessions I've run?\"",
+      "Name the venue exactly — Learning Center, Writing Center, MESA, Supplemental Instruction, embedded tutor — instead of writing just \"tutor.\"",
+      "List the specific courses you cover; \"Calculus I-II and organic chemistry\" reads differently from \"math and science\" to a reviewer.",
+      "Use only the title the college actually gave you — do not write TA or instructor unless that is your assigned job title.",
+      "For private tutoring, count it yourself: number of students, subjects, hours per week, and how many months you have been doing it."
+    ],
+    "why": "tutoring_teaching is about 6% of admit activities but appears in 60 of 628 admit records, and the admit-file versions name the venue — tutoring center, MESA, writing center, SI leader.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "BEFORE: \"Tutor.\" AFTER: \"Math Tutor, College Learning Center, Fullerton College — 10 hrs/wk, 4 semesters; Precalculus and Calculus I-II, ~350 student sessions logged; trained 2 incoming tutors in Fall 2025.\"",
+    "realism": "The hours are already in the center's logging system; you are requesting a number, not creating one. Budget two weeks because coordinator turnaround is the bottleneck, which still clears Sep 30 TAG filing and Nov 30 comfortably. If the center cannot produce a total, estimate conservatively from your shift schedule and label it an estimate. This sharpens a line you already have — it does not raise your activity level or the number."
+  },
+  {
+    "id": "fill-awards-and-honors-section",
+    "title": "Fill the awards section: Dean's List, scholarships, honors",
+    "tag": "Credential",
+    "horizon": "sprint",
+    "minWeeks": 2,
+    "effort": "1 hr plus one email",
+    "steps": [
+      "Open your unofficial transcript and portal and write down every term you made Dean's List or President's List, by exact name and term; request a dated verification letter from the registrar.",
+      "Search your student email for congratulations, award, scholarship, and selected — most students find two or three they never listed.",
+      "Email financial aid: \"Can you send a list of every scholarship I've received here, with amounts and years?\"",
+      "Check discipline honor societies your GPA already clears — Alpha Gamma Sigma, Psi Beta, Sigma Kappa Delta — since fall induction is rolling.",
+      "List each award separately with the granting body, dollar amount, year, and the selectivity if the award letter states it; include small department awards."
+    ],
+    "why": "Dean's List appears in 33 of 628 admit records and small societies like Alpha Gamma Sigma and Psi Beta in roughly 15 more, while scholarships and competition awards together make up about 15% of admit activities — these are lines applicants routinely leave off their own applications.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "\"Dean's List — Fall 2024, Spring 2025, Fall 2025, Spring 2026 (4 of 4 semesters; 3.5+ GPA at 12+ units required).\" \"Ruth Alvarez Memorial Transfer Scholarship, De Anza College Foundation — $500, 2025; 1 of 12 awarded from 140 applicants, per the award letter.\"",
+    "realism": "Every item here already happened and already sits on a transcript or in an inbox; you are retrieving records, not earning them, and the financial aid reply is the only external dependency. Be clear about what it does: your percentage will not move — it makes the written file match work you already did. If you cannot name the term or the year, leave it off."
+  },
+  {
+    "id": "rewrite-activity-lines-role-scale-outcome",
+    "title": "Rewrite every activity line as role, scale, and outcome",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "4 hrs, one sitting, then 15 min/week",
+    "steps": [
+      "Open your transcript, work schedule, and calendar; for each activity write down start month, end month, and average hours per week.",
+      "Rewrite each line in one fixed form: your role, the organization's full official name, hours per week, date span, then one countable result.",
+      "Replace every vague verb — helped, participated, was involved — with what you actually did: trained, scheduled, tracked, tutored, closed, budgeted.",
+      "Fit the real limit — 150 characters per description on the Common App, 350 on the UC application — then cut adjectives, never facts.",
+      "Start a Friday fifteen-minute log now so November's numbers exist; the one thing you cannot do later is reconstruct counts you never wrote down."
+    ],
+    "why": "Across the 2,579 catalogued admit activities, 90.5% state no outcome and 78.4% name no organization, so the vague version is the default and a specific line stands out on its own.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "BEFORE: \"Worked part time at a restaurant.\" AFTER: \"Server, Olive Tree Kitchen — 22 hrs/wk for 18 months while carrying 14+ units; trained 3 new servers; closing shift lead since Jan 2026.\" College entries move to slots 1-3 and high-school NHS is deleted outright.",
+    "realism": "Nothing new to join and nobody's permission needed — roughly 20 minutes per activity over lines you already have. Be honest with yourself about what it does: it changes how your file reads, not what is in it. It will not move a computed percentage by itself, and it will not substitute for GPA, which dominates transfer review."
+  },
+  {
+    "id": "list-the-job-with-hours",
+    "title": "List the job you left off, with hours and responsibility",
+    "tag": "Extracurricular",
+    "horizon": "sprint",
+    "minWeeks": 1,
+    "effort": "45 min",
+    "steps": [
+      "Pull your last twelve pay stubs or the hours summary in your employer's scheduling app to get a real average hours-per-week number.",
+      "Write the line using your job title exactly as it appears on the schedule, the employer's name, hours per week, and start date.",
+      "Add one responsibility a manager would confirm: opening or closing, training new hires, cash handling, inventory, scheduling, or key holder.",
+      "Enter that same figure in the work-hours field, and note your concurrent unit load in Additional Information on the Common App or Additional Comments on the UC application."
+    ],
+    "why": "job_work is 13% of admit activities and appears in 36.6% of admit records — paid work is a normal, counted part of admit files, not a hole to hide.",
+    "lever": "none",
+    "leverValue": "",
+    "proof": "BEFORE: (omitted, or \"part-time job\"). AFTER: \"Pharmacy Technician, CVS #4412 — 28 hrs/wk since March 2025; fill ~150 prescriptions per shift, trained 2 new technicians; scheduled around a 15-unit course load.\"",
+    "realism": "The hours already exist on your pay stubs, so this is a 45-minute retrieval, not a commitment. A reviewer reads a 28-hour week as real context for your course load — but be straight with yourself: it explains a GPA, it does not replace one, and at single-digit-admit-rate schools it will not carry a file sitting below their median."
   }
 ]

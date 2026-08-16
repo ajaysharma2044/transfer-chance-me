@@ -225,10 +225,20 @@ export function buildPlan(profile: Profile, ests?: Estimate[]): Plan {
     };
   });
 
-  // Rank: real lift first, then feasible-and-urgent, then everything else.
+  // A hard date beats a soft improvement. A move that expires inside the next
+  // ten weeks — filing TAG, an application window — outranks anything that can
+  // still be done later, even when the engine scores it at zero.
+  const urgency = (m: PlannedMove): number => {
+    if (m.done) return 0;
+    if (m.tag !== "Timeline") return 0;
+    return m.weeksLeft <= 10 ? 2 : m.weeksLeft <= 16 ? 1 : 0;
+  };
+
   planned.sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
     if (a.feasible !== b.feasible) return a.feasible ? -1 : 1;
+    const ua = urgency(a), ub = urgency(b);
+    if (ua !== ub) return ub - ua;
     if (Math.abs(b.liftPp - a.liftPp) > 0.05) return b.liftPp - a.liftPp;
     return a.minWeeks - b.minWeeks;
   });
