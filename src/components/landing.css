@@ -242,3 +242,36 @@
 .ld-purple { color: var(--accent); }
 .ld-btn-xl { font-size: 17px; padding: 16px 36px; box-shadow: 0 10px 30px rgba(108, 75, 224, 0.35); }
 .ld-btn-xl:hover { box-shadow: 0 14px 38px rgba(108, 75, 224, 0.45); }
+
+/* Dramatic hero: odds ticker + orbiting logos */
+.hero { position: relative; }
+.ld-ticker {
+  display: flex; align-items: center; justify-content: center; gap: 18px;
+  margin: 26px auto 6px; padding: 12px 22px;
+  max-width: 420px; border-radius: 16px;
+  background: var(--bg); border: 1px solid var(--line);
+  box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 18px 44px rgba(20,24,63,0.1);
+}
+.ld-ticker-school { display: flex; align-items: center; gap: 11px; animation: ld-tick-in 480ms cubic-bezier(0.22,1.2,0.36,1); }
+.ld-ticker-school > span { text-align: left; }
+.ld-ticker-school b { display: block; font-size: 15px; font-weight: 650; }
+.ld-ticker-school i { display: block; font-style: normal; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.ld-ticker-num { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; margin-left: auto; transition: color 400ms ease; }
+@keyframes ld-tick-in { from { opacity: 0; transform: translateY(10px) scale(0.94); } to { opacity: 1; transform: none; } }
+
+.ld-orbit { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.hero > *:not(.ld-orbit) { position: relative; z-index: 1; }
+.ld-orbit-item {
+  position: absolute; opacity: 0.55;
+  animation-name: ld-drift; animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite; animation-direction: alternate;
+}
+@keyframes ld-drift {
+  from { transform: translateY(-14px) rotate(-4deg); }
+  to { transform: translateY(14px) rotate(5deg); }
+}
+@media (max-width: 760px) { .ld-orbit { display: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .ld-orbit-item { animation: none; }
+  .ld-ticker-school { animation: none; }
+}

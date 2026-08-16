@@ -156,9 +156,9 @@ export default function Results({ profile, onRevise, onOpenSchool }: { profile: 
           admit data — not self-reported forum rates. Your range adjusts that baseline by where your GPA falls in
           the school's observed admitted-GPA distribution ({Number(MODEL.meta.rows).toLocaleString()} outcomes,
           {" "}{String(MODEL.meta.yearSpan)}), and by the factors those records show actually differentiate admits:
-          feeder fit, standing, major, a school-specific essay, and veteran/comeback pipelines. Extracurricular
-          strength is deliberately weighted near zero — across 1,217 structured profiles it shows no admit
-          advantage once GPA is held constant.
+          feeder fit, standing, major, a school-specific essay, veteran/comeback pipelines, and activities.
+          Activities are weighted by pattern, not prestige — campus-anchored involvement recurs in admit
+          files across 1,217 structured profiles, while trophy ECs alone don't rescue a GPA.
         </p>
         <p>
           These are estimates for orientation, not decisions. Self-reported outcomes over-represent acceptances,

@@ -365,9 +365,14 @@ export function estimate(profile: Profile, s: School): Estimate {
     if (TEST_VALUED.has(s.name)) drivers.push({ dir: "up", text: "A strong score still carries weight here (not fully test-optional in practice)" });
   }
 
-  // ── ECs: deliberately neutral — the data says so ──
-  if (profile.ecLevel === "national") {
-    drivers.push({ dir: "flat", text: "Impressive ECs, but transfer admission is GPA-dominated — externally flashy activities show no admit advantage in 1,217 profiles" });
+  // ── Activities: pattern over prestige — campus-anchored involvement
+  // recurs in admit files; trophy ECs alone don't rescue a GPA ──
+  if (profile.ecLevel === "campus") {
+    mult *= 1.05;
+    drivers.push({ dir: "up", text: "Campus involvement — leadership, tutoring, faculty research — is the activity pattern that recurs in admit files" });
+  } else if (profile.ecLevel === "national") {
+    mult *= 1.08;
+    drivers.push({ dir: "up", text: "Strong activities help your file — pair them with campus-anchored work; prestige alone doesn't rescue a GPA in the record" });
   }
 
   const cap = Math.min(0.85, base * 8);

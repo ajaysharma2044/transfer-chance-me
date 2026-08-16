@@ -74,7 +74,7 @@ function schoolContext(targets: string[]): string {
 const DATASET_FINDINGS = `
 Key findings from 8,910 recorded transfer outcomes (2011-2026), 4,243 admits:
 - Transfer admission is GPA-dominated. Admitted-GPA clusters: big UCs ~3.82 median, elite privates 3.95-4.0.
-- Extracurricular strength shows NO admit advantage once GPA is held constant (1,217 structured profiles). Institutional-stack activities (PTK, honors program, TA, student gov, campus research help) skew ADMIT; flashy external ones (competitions, startups, publications) skew REJECT in the data - likely because they substitute for, rather than complement, the academic core.
+- Activities matter, and PATTERN beats PRESTIGE (1,217 structured profiles): campus-anchored, institutional-stack activities (PTK, honors program, TA-ships, student government, faculty research) recur throughout admit files, while flashy external activities (competitions, startups, publications) alone do not rescue a GPA and skew toward rejected files when they substitute for the academic core. Grade activity descriptions on specificity, ownership, and campus-anchoring; rewrite weak ones toward that pattern.
 - The #1 differentiator admits credit: a school-specific "why transfer" essay naming programs, professors, courses. Complaint-shaped essays (framing the move as escape from a bad school) fail; fit-and-resources framing wins.
 - Feeder fit matters: UCs run on California community colleges (92% of UCLA admits); elite privates take both strong 4-year students and CC students with institutional credentials.
 - High-school record is nearly irrelevant (corr with college GPA 0.016); 16% of admits are "redemption" cases.

@@ -1,0 +1,61 @@
+/* Campus photo banner */
+.campus { position: relative; width: 100%; overflow: hidden; background: var(--bg-soft); }
+.campus img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.campus-fallback { width: 100%; height: 100%; }
+.campus figcaption {
+  position: absolute; right: 10px; bottom: 8px;
+  font-size: 11px; padding: 3px 9px; border-radius: 999px;
+  background: rgba(20, 24, 63, 0.55); backdrop-filter: blur(4px);
+}
+.campus figcaption a { color: #fff; text-decoration: none; opacity: 0.9; }
+
+/* College profile page */
+.cp { padding-bottom: 100px; }
+.cp-loading { padding: 80px 0; color: var(--ink-3); }
+.cp-head { display: flex; align-items: center; gap: 16px; margin: 26px 0 20px; }
+.cp-head h1 { font-size: clamp(24px, 3.5vw, 34px); font-weight: 650; letter-spacing: -0.02em; }
+.cp-sub { color: var(--ink-2); font-size: 14.5px; margin-top: 2px; }
+.cp-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 30px; }
+.cp-stat {
+  border: 1px solid var(--line); border-radius: 14px; background: var(--bg);
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 8px 24px rgba(20, 24, 63, 0.05);
+  padding: 16px 18px;
+}
+.cp-stat b { display: block; font-size: 22px; font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+.cp-stat span { font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+.cp-stat a { color: var(--accent); }
+.cp-tag { border-color: rgba(20, 184, 160, 0.5); }
+.cp-tag b { color: var(--teal); }
+.cp-cta { border-top: 1px solid var(--line); padding-top: 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.cp-cta p { color: var(--ink-2); font-size: 14.5px; max-width: 52ch; }
+.cp-cta em { font-style: normal; color: var(--accent); font-weight: 600; }
+
+/* Schools index */
+.cx { padding: 40px 0 120px; }
+.cx-head { max-width: 640px; margin-bottom: 32px; }
+.cx-head h1 { font-size: clamp(26px, 4vw, 36px); font-weight: 650; letter-spacing: -0.02em; }
+.cx-dek { color: var(--ink-2); margin: 10px 0 20px; }
+.cx-search { width: 100%; max-width: 520px; font-size: 16px; padding: 13px 16px; }
+.cx-results { list-style: none; max-width: 640px; }
+.cx-row {
+  display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left;
+  padding: 12px 14px; border-radius: 10px;
+}
+.cx-row:hover { background: var(--bg-soft); }
+.cx-name { font-weight: 550; font-size: 15px; }
+.cx-meta { font-size: 12.5px; color: var(--ink-3); }
+.cx-none { color: var(--ink-3); padding: 16px 14px; }
+.cx-sec { font-size: 14px; font-weight: 650; color: var(--ink-2); margin-bottom: 14px; }
+.cx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.cx-card {
+  display: flex; align-items: center; gap: 11px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--bg);
+  padding: 12px 14px; text-decoration: none;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.cx-card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(20, 24, 63, 0.1); }
+.cx-card-name { font-weight: 550; font-size: 13.5px; flex: 1; }
+.cx-card-rate { font-size: 12.5px; color: var(--accent); font-weight: 650; }
+
+/* School page photo banner reuse */
+.sp-banner { margin: 0 0 8px; border-radius: 16px; overflow: hidden; }

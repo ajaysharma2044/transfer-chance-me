@@ -12,6 +12,8 @@ import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
 import Portal from "./components/Portal";
 import Review from "./components/Review";
+import CollegePage from "./components/CollegePage";
+import SchoolsIndex from "./components/SchoolsIndex";
 import { LogoMark, Wordmark } from "./components/Logo";
 
 // URL routing (hash-based, static-host friendly):
@@ -28,6 +30,8 @@ type View =
   | { kind: "auth" }
   | { kind: "portal" }
   | { kind: "review" }
+  | { kind: "browse" }
+  | { kind: "college"; idx: number }
   | { kind: "school"; name: string };
 
 const STORE = "tcm.profile.v1";
@@ -40,6 +44,11 @@ function viewFromHash(): View {
   if (h === "login") return { kind: "auth" };
   if (h === "portal") return { kind: "portal" };
   if (h === "review") return { kind: "review" };
+  if (h === "browse") return { kind: "browse" };
+  if (h.startsWith("college/")) {
+    const idx = Number(h.slice("college/".length));
+    if (Number.isInteger(idx) && idx >= 0) return { kind: "college", idx };
+  }
   if (h.startsWith("schools/")) {
     const id = h.slice("schools/".length);
     const s = MODEL.schools.find((x) => x.id === id);
@@ -120,6 +129,7 @@ export default function App() {
             <Wordmark />
           </a>
           <nav className="mastnav">
+            <a className="btn-quiet" href="#/browse">Schools</a>
             <a className="btn-quiet" href="#/review">Deep review</a>
             <a className="btn-quiet" href="#/pricing">Pricing</a>
             {session ? (
@@ -150,6 +160,8 @@ export default function App() {
       {view.kind === "review" && (
         <main><Review profile={profile} onChange={setProfile} /></main>
       )}
+      {view.kind === "browse" && <main><SchoolsIndex go={nav} /></main>}
+      {view.kind === "college" && <main><CollegePage idx={view.idx} go={nav} /></main>}
       {view.kind === "school" && (
         <main>
           <SchoolPage

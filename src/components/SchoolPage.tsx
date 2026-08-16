@@ -2,8 +2,11 @@ import { MODEL } from "../engine";
 import type { School } from "../engine";
 import { useReveal } from "../hooks/useReveal";
 import { countdown } from "../lib/deadlines";
+import { markOf } from "../lib/schools";
 import Tile from "./Tile";
+import CampusPhoto from "./CampusPhoto";
 import "./schoolpage.css";
+import "./college.css";
 
 // Per-college profile page: official numbers, the observed admitted-GPA
 // distribution, the admit-rate trend, and the school's counsel playbook.
@@ -156,6 +159,10 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
     <div className="shell sp">
       <div className="sp-back">
         <button type="button" className="btn-quiet" onClick={onBack}>← All schools</button>
+      </div>
+
+      <div className="sp-banner">
+        <CampusPhoto name={s.name} color={markOf(s.name).color} height={230} />
       </div>
 
       <header className="sp-head">

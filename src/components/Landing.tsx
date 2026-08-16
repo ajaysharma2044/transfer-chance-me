@@ -138,6 +138,88 @@ function CountUp({ value, duration = 1300 }: { value: number; duration?: number 
 
 const AUTHORITY_SCHOOLS = ["Cornell", "Duke", "Chicago", "Stanford"];
 
+/** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
+const TICKER = [
+  "Harvard", "UC Riverside", "Stanford", "Michigan", "Yale", "UC Davis",
+  "Columbia", "UNC", "Cornell", "UC Berkeley", "UPenn", "UCLA",
+];
+
+function OddsTicker() {
+  const [i, setI] = useState(0);
+  const [disp, setDisp] = useState(() => MODEL.schools.find((s) => s.name === TICKER[0])!.rate);
+  const raf = useRef(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setI((x) => (x + 1) % TICKER.length), 2600);
+    return () => clearInterval(t);
+  }, []);
+
+  useEffect(() => {
+    const target = MODEL.schools.find((s) => s.name === TICKER[i])!.rate;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisp(target);
+      return;
+    }
+    const from = disp;
+    const t0 = performance.now();
+    const dur = 700;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisp(from + (target - from) * eased);
+      if (p < 1) raf.current = requestAnimationFrame(tick);
+    };
+    raf.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i]);
+
+  const name = TICKER[i];
+  const rate = MODEL.schools.find((s) => s.name === name)!.rate;
+  const color = rate < 5 ? "var(--coral)" : rate < 15 ? "var(--accent)" : rate < 40 ? "var(--blue)" : "var(--teal)";
+
+  return (
+    <div className="ld-ticker" aria-hidden="true">
+      <span className="ld-ticker-school" key={i}>
+        <Tile name={name} size={34} />
+        <span>
+          <b>{markOf(name).word}</b>
+          <i>transfer admit rate</i>
+        </span>
+      </span>
+      <span className="ld-ticker-num num" style={{ color }}>{disp.toFixed(1)}%</span>
+    </div>
+  );
+}
+
+/** School logos drifting behind the hero. */
+const ORBIT: { n: string; top: string; left: string; s: number; d: number }[] = [
+  { n: "Harvard", top: "12%", left: "6%", s: 34, d: 11 },
+  { n: "Stanford", top: "30%", left: "12%", s: 26, d: 14 },
+  { n: "UCLA", top: "62%", left: "7%", s: 30, d: 12 },
+  { n: "Cornell", top: "16%", left: "90%", s: 30, d: 13 },
+  { n: "Michigan", top: "40%", left: "94%", s: 26, d: 10 },
+  { n: "UC Berkeley", top: "66%", left: "89%", s: 34, d: 15 },
+  { n: "Yale", top: "82%", left: "16%", s: 24, d: 12 },
+  { n: "Columbia", top: "84%", left: "82%", s: 24, d: 11 },
+];
+
+function OrbitLogos() {
+  return (
+    <div className="ld-orbit" aria-hidden="true">
+      {ORBIT.map((o, idx) => (
+        <span
+          key={o.n}
+          className="ld-orbit-item"
+          style={{ top: o.top, left: o.left, animationDuration: `${o.d}s`, animationDelay: `${idx * -1.7}s` }}
+        >
+          <Tile name={o.n} size={o.s} />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function FeatureStrip() {
   const cornell = MODEL.schools.find((s) => s.name === "Cornell")!;
   return (
@@ -221,11 +303,10 @@ interface Finding {
 
 const FINDINGS: Finding[] = [
   {
-    figure: "±0",
-    unit: "edge",
+    figure: "50%",
     color: "var(--accent)",
-    title: "Extracurriculars don't move the needle",
-    body: "Across 1,217 structured applicant profiles, extracurricular strength showed no admit advantage once college GPA is held constant.",
+    title: "Admits build their activities on campus",
+    body: "Half of admits' listed activities live on their own campus — leadership, tutoring, faculty research. Trophy ECs alone don't rescue a GPA in 1,217 structured profiles.",
   },
   {
     figure: "92%",
@@ -291,6 +372,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           <span className="ld-orb ld-orb-d" />
         </div>
         <section className="shell hero">
+          <OrbitLogos />
           <span className="badge">{rows} real transfer applications analyzed · 2011–2026</span>
           <h1>Where would you <em className="ld-grad">actually</em> get in?</h1>
           <p className="dek">
@@ -299,6 +381,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             spot. Your real odds at every top school — from {rows} real applications and official
             data, not forum guesses.
           </p>
+          <OddsTicker />
           <div className="cta-row">
             <button type="button" className="btn ld-btn-xl" onClick={onStart}>Check my chances — free</button>
             <p className="aside">2 minutes · no signup needed · nothing leaves your browser</p>
@@ -307,7 +390,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             <span className="ld-authority-tiles" aria-hidden="true">
               {AUTHORITY_SCHOOLS.map((n) => <Tile key={n} name={n} size={22} />)}
             </span>
-            <span>Built by transfer students at Ivy League schools, Duke, UChicago &amp; Stanford</span>
+            <span>Made by students who transferred into multiple Ivies</span>
             <span className="ld-authority-sep" aria-hidden="true">·</span>
             <span><b>{rows}</b> real applications analyzed</span>
           </div>
@@ -387,11 +470,12 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           </p>
         </details>
         <details>
-          <summary>Why do extracurriculars barely move my number?</summary>
+          <summary>How much do extracurriculars count?</summary>
           <p>
-            Because the data says so: across 1,217 structured applicant profiles, extracurricular strength
-            shows no admit advantage once GPA is held constant. Transfer admission is GPA-dominated — we'd
-            rather tell you the truth than flatter your résumé.
+            They matter — and pattern beats prestige. In 1,217 structured profiles, campus-anchored
+            activities (leadership, tutoring, PTK, faculty research) recur throughout admit files, while
+            trophy ECs alone don't rescue a GPA. The deep review grades your actual activity
+            descriptions and shows you how admits frame theirs.
           </p>
         </details>
       </section>

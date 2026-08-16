@@ -315,8 +315,8 @@ export default function Intake({ profile, onChange, onDone }: Props) {
               ]}
             />
             <p className="hint">
-              Honest note: across 1,217 profiles, EC strength shows no admit advantage once GPA is
-              held constant. We weigh it accordingly.
+              Activities count — and pattern beats prestige: campus leadership, PTK, TA-ships, and
+              faculty research recur in admit files. The deep review grades your actual descriptions.
             </p>
           </div>
 
