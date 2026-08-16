@@ -136,15 +136,16 @@ function CountUp({ value, duration = 1300 }: { value: number; duration?: number 
   return <span ref={ref} className="num">{shown.toLocaleString()}</span>;
 }
 
-/** Official university lockups (Wikimedia Commons, openly hosted brand SVGs)
- *  at hand-tuned heights so the row reads as one line. */
-const LOCKUPS: { n: string; src: string; h: number }[] = [
-  { n: "Cornell University", src: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cornell_University_logo.svg", h: 30 },
-  { n: "Columbia University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Columbia_University_1754_updated.svg", h: 22 },
-  { n: "University of Pennsylvania", src: "https://upload.wikimedia.org/wikipedia/commons/9/92/University_of_Pennsylvania_wordmark.svg", h: 34 },
-  { n: "Brown University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Brown_University_logo.svg", h: 25 },
-  { n: "Duke University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Duke_University_logo.svg", h: 26 },
-  { n: "Stanford University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Stanford_wordmark_%282012%29.svg", h: 24 },
+/** Official university lockups (Wikimedia Commons, openly hosted brand SVGs).
+ *  Order is deliberate; each renders in an identical box (object-fit) so
+ *  every logo occupies the same footprint. */
+const LOCKUPS: { n: string; src: string }[] = [
+  { n: "Stanford University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Stanford_wordmark_%282012%29.svg" },
+  { n: "University of Pennsylvania", src: "https://upload.wikimedia.org/wikipedia/commons/9/92/University_of_Pennsylvania_wordmark.svg" },
+  { n: "Cornell University", src: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cornell_University_logo.svg" },
+  { n: "Duke University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Duke_University_logo.svg" },
+  { n: "Columbia University", src: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Columbia_University_1754_updated.svg" },
+  { n: "Brown University", src: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Brown_University_logo.svg" },
 ];
 
 /** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
@@ -447,7 +448,7 @@ function SchoolIntel({ onOpenSchool }: { onOpenSchool: (name: string) => void })
           <span className="ld-dossier-srcs">Sources: Common Data Set · UC admit data · 8,910-outcome study</span>
         </footer>
       </article>
-      <p className="ld-findfoot">All 31 measured schools above — plus directory profiles for 4,025 more in <a href="#/browse">Browse</a>.</p>
+      <p className="ld-findfoot">All {MODEL.schools.length} measured schools above — plus directory profiles for 4,025 more in <a href="#/browse">Browse</a>.</p>
     </section>
   );
 }
@@ -667,7 +668,6 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
                   key={l.n}
                   src={l.src}
                   alt={l.n}
-                  style={{ height: l.h }}
                   loading="lazy"
                   onError={(e) => { e.currentTarget.style.display = "none"; }}
                 />

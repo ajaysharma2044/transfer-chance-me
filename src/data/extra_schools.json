@@ -1,1 +1,188 @@
-[]
+[
+  {
+    "name": "USC",
+    "applicants": 10827, "admitted": 2929, "rate": 27.1,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "USC wants a year of rigorous full-time coursework with strong grades — admitted-transfer GPAs cluster near 3.8 — and it is genuinely California-CC-friendly: 63% of admits come from 2-year colleges, led by Santa Monica College and Pasadena City College.",
+    "levers": [
+      "Apply by Feb 15 for automatic merit-scholarship consideration, and treat spring admission as a real second door",
+      "Denied as a freshman? The invitation-based Trojan Transfer Plan is a guided one-year path back — or mirror it: USC's Writing 130 equivalent plus articulated GE at a California CC"
+    ],
+    "watchouts": [
+      "Portfolio/audition majors close Dec 1, ten weeks before everyone else",
+      "Decisions can slide to mid-July if spring grades are requested; housing is not guaranteed"
+    ],
+    "feeders": "63% of admits from 2-year colleges — Santa Monica College and Pasadena City College lead",
+    "programs": ["Trojan Transfer Plan", "CC articulation", "Spring entry"]
+  },
+  {
+    "name": "NYU",
+    "applicants": 10681, "admitted": 4128, "rate": 38.6,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "NYU requires 24+ completed credits and reviews by intended school with program-dependent prerequisites. Fall 2025 ran unusually transfer-friendly — 38.6% vs ~9% for first-years — so treat the rate as a good year, not a promise; 3.5+ with the right prereqs is the standard profile.",
+    "levers": [
+      "School choice is the biggest lever: CAS, Steinhardt, SPS, and Gallatin admit far above Stern/Tisch",
+      "Spring and summer entry are both open, giving three cycles per year"
+    ],
+    "watchouts": [
+      "Stern, Tisch, and Tandon add prerequisites/portfolios and run far below the headline rate",
+      "NYU does not meet full need for transfers — aid runs notoriously thin"
+    ],
+    "programs": ["Spring entry", "Summer entry"]
+  },
+  {
+    "name": "WashU",
+    "applicants": 1603, "admitted": 244, "rate": 15.2,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "A small, selective intake — 244 admits, 84 enrolled — reviewed by academic division. Successful applicants show near-A records aligned to a specific division; community college applicants are explicitly welcomed, and a 3.5+ is the stated bar.",
+    "levers": [
+      "Apply into the division your coursework matches — a coherent prerequisite story beats a generic strong GPA",
+      "Spring entry (Oct 15 deadline) is a second, smaller window most applicants ignore"
+    ],
+    "watchouts": [
+      "Tiny capacity: ~240 admits and ~84 seats actually filled",
+      "Max 60 credits transfer from a two-year college, C-or-better only"
+    ],
+    "programs": ["Spring entry"]
+  },
+  {
+    "name": "UVA",
+    "applicants": 4877, "admitted": 1323, "rate": 27.1,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "Successful transfers carry a B-or-better record, 24+ transferable credits, and the school-specific course list done. Virginia community college (VCCS) students are the major feeder via the Guaranteed Admission Agreements and enter as third-years.",
+    "levers": [
+      "GAA: a 3.4 GPA, transfer associate degree, 45+ transferable credits, and C+ in every course guarantees Arts & Sciences admission (Engineering GAA: 3.2 with B+ math/science)",
+      "Outside the GAA, finish your target school's transfer course list before March 1 — course completion is an essential review component"
+    ],
+    "watchouts": [
+      "GAA excludes McIntire Commerce and doesn't guarantee a major; AP/dual-enrollment credit doesn't count toward the 45-credit GAA minimum",
+      "Bachelor's-degree holders are ineligible almost everywhere"
+    ],
+    "feeders": "Virginia community colleges (VCCS) via the Guaranteed Admission Agreements",
+    "programs": ["VCCS GAA (guaranteed admission)", "Spring entry (A&S, limited)"]
+  },
+  {
+    "name": "Georgia Tech",
+    "applicants": 3939, "admitted": 789, "rate": 20.0,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "Transfers need 30+ semester hours, two English comps, and the major-specific math/lab-science chart, with GPA floors of 3.3 (Computing/Engineering) and 3.0 elsewhere — but floors are eligibility, not admission: real admits run well above and skew toward pathway invitees and Georgia residents.",
+    "levers": [
+      "Pathway programs are the widest door: Arts & Sciences, Conditional, First-Generation, Talent Initiative, and Veterans pathways give denied first-years a defined route after a year elsewhere",
+      "Regents' Engineering Pathway (REPP) and Dual Degree Engineering start you at a partner Georgia school and finish in the College of Engineering"
+    ],
+    "watchouts": [
+      "Unaffiliated out-of-state applicants face much steeper odds than the 20% headline",
+      "Meeting the 3.3/3.0 floor only makes you eligible — competitive Computing admits run substantially higher"
+    ],
+    "feeders": "Georgia pathway partners and in-state colleges",
+    "programs": ["Transfer pathways", "REPP", "Dual Degree Engineering"]
+  },
+  {
+    "name": "UT Austin",
+    "applicants": 12168, "admitted": 2672, "rate": 22.0,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "Transfers need 24+ transferable hours; review is holistic by major with no university-wide GPA floor. Liberal Arts and less-impacted majors are considerably friendlier, while McCombs, Cockrell, and CS admit far below the ~22% overall rate.",
+    "levers": [
+      "CAP: spend freshman year at a partner UT System campus, earn 30 hours with a 3.2 and a math past college algebra — Liberal Arts admission is guaranteed",
+      "Front-load your target major's exact prerequisites before March 1 — in-major rigor drives review more than total hours"
+    ],
+    "watchouts": [
+      "CS is effectively closed to external transfers — 6 of 1,037 external applicants admitted for Fall 2024",
+      "Architecture and Nursing aren't reachable via CAP"
+    ],
+    "feeders": "UT System campuses via CAP; Texas community colleges",
+    "programs": ["CAP (guaranteed Liberal Arts)", "Major-specific prereq charts"]
+  },
+  {
+    "name": "Tufts",
+    "applicants": 1631, "admitted": 178, "rate": 10.9,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "A small class (178 admits, 53 enrolled) reviewed like first-years: near-A records in a liberal-arts-shaped program with prerequisites matched to Arts & Sciences or Engineering. CC applicants compete, but need a complete, rigorous course pattern.",
+    "levers": [
+      "Align coursework precisely to the target school — Engineering wants the calculus/physics sequence done",
+      "A full year of strong full-time work plus first-year-quality essays matters more than credit quantity"
+    ],
+    "watchouts": [
+      "Transfer admission is need-aware and aid is limited",
+      "Fall entry only — miss March 15 and you wait a full year"
+    ],
+    "programs": []
+  },
+  {
+    "name": "Boston College",
+    "applicants": 1480, "admitted": 410, "rate": 27.7,
+    "cycle": "2024-2025 CDS (Fall 2024 entering)",
+    "typical": "BC admits roughly a quarter of transfer applicants — typically strong B+/A- records in traditional liberal-arts coursework, many from Jesuit/Catholic and other four-year colleges; 9+ credits required to apply as a transfer.",
+    "levers": [
+      "Spring entry (Nov 1) is a real second window with a smaller pool",
+      "Mirror BC's core — philosophy/theology-friendly coursework signals Morrissey fit better than a purely preprofessional transcript"
+    ],
+    "watchouts": [
+      "Connell Nursing and Carroll (business) take very few transfers — most seats are Morrissey Arts & Sciences",
+      "Housing is not guaranteed for transfer students"
+    ],
+    "programs": ["Spring entry"]
+  },
+  {
+    "name": "Boston University",
+    "applicants": 6761, "admitted": 2416, "rate": 35.7,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "One of the largest transfer operations in the country — 2,416 admits, 840 enrolled. You need 12+ credits and must declare a specific school/major; accepted transfers average around a 3.7-3.8, and CC students with strong records transfer in regularly.",
+    "levers": [
+      "Volume is the lever: a 35.7% transfer rate is roughly 3x BU's first-year rate",
+      "Spring entry (Nov 1) plus up to 68 accepted credits keeps most applicants on schedule"
+    ],
+    "watchouts": [
+      "College-specific prerequisites gate Questrom, ENG, and Sargent",
+      "Transfer merit aid is scarce and packages run weaker than first-year offers"
+    ],
+    "programs": ["Spring entry"]
+  },
+  {
+    "name": "Caltech",
+    "applicants": 178, "admitted": 11, "rate": 6.2,
+    "cycle": "2024-2025 CDS (Fall 2024 entering)",
+    "typical": "A literal handful: 11 of 178 admitted, 10 enrolled — some years fewer. Admits enter as sophomores or juniors after Caltech's five transfer entrance exams (calc, linear algebra, mechanics, E&M/statistical physics, special relativity) with coursework mirroring the core.",
+    "levers": [
+      "Train specifically for the five entrance exams — they are the gate; straight-A transcripts don't substitute",
+      "Shape your schedule to Caltech's core (math through linear algebra, calc-based physics through special relativity) before applying"
+    ],
+    "watchouts": [
+      "Single-digit admits most years — treat it as a lottery layered on a solid plan, never the plan",
+      "No senior-year entry, no bachelor's holders, and credit standing is assessed only after admission"
+    ],
+    "programs": ["Transfer entrance exams"]
+  },
+  {
+    "name": "Washington",
+    "applicants": 5830, "admitted": 2469, "rate": 42.3,
+    "cycle": "2025-2026 CDS (Fall 2025 entering)",
+    "typical": "Built for Washington community-college transfers: the CTC-to-UW pipeline supplies most admits (72% of admitted transfers), admitted middle-50% college GPA 3.24-3.86, and up to 90 quarter credits transfer from two-year schools. A completed DTA associate degree is the classic profile.",
+    "levers": [
+      "Finish a Washington DTA associate degree — junior standing plus UW general education satisfied; the strongest single credential in review",
+      "Apply into your major's prerequisites — several majors admit transfers direct-to-major while pre-major admission strands you"
+    ],
+    "watchouts": [
+      "Capacity-constrained majors — CS above all — are effectively closed unless admitted straight into the major",
+      "Out-of-state and non-CTC applicants face materially steeper odds than the 42% headline"
+    ],
+    "feeders": "72% of admitted transfers from Washington community colleges (CTC system)",
+    "programs": ["DTA associate degree", "Direct-to-major admission", "All four quarters"]
+  },
+  {
+    "name": "Wisconsin",
+    "applicants": 4516, "admitted": 2507, "rate": 55.5,
+    "cycle": "2024-2025 CDS (Fall 2024 entering)",
+    "typical": "The friendliest big name on this list — a 55.5% transfer admit rate. You need 24+ transferable semester hours post-high-school (AP/IB excluded) and a GPA competitive for your intended major; Wisconsin two-year and UW System students transfer in heavily with formal guaranteed routes.",
+    "levers": [
+      "GTAP: start at any Universities of Wisconsin campus, hit a 3.0 with 54 transferable credits and the core requirements — Madison admission is guaranteed",
+      "From a two-year school, use a transfer contract: declare intent before 30 credits, keep a 3.0, finish 54-60 credits in three years — guaranteed admission"
+    ],
+    "watchouts": [
+      "Business and engineering run separate competitive admission — first-choice applicants must name a second-choice major outside those schools",
+      "The guaranteed pathways have procedural traps: declare intent early and finish on schedule"
+    ],
+    "feeders": "UW System campuses and Wisconsin two-year colleges",
+    "programs": ["GTAP (guaranteed admission)", "Transfer contracts"]
+  }
+]

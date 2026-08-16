@@ -39,6 +39,45 @@ function reading(profile: Profile, ests: Estimate[]): React.ReactNode {
   );
 }
 
+/** Shown instead of Results when there's no account yet: a real, blurred
+ *  preview of their computed chances behind a create-account wall. */
+export function ResultsGate({ profile, onSignup }: { profile: Profile; onSignup: () => void }) {
+  const ests = useMemo(() => estimateAll(profile), [profile]);
+  const likely = ests.filter((e) => e.p >= 0.45).length;
+  return (
+    <div className="shell gate">
+      <h2>Your chances are ready.</h2>
+      <p className="gate-dek">
+        We scored you at <b>{ests.length} schools</b>
+        {likely > 0 && <> — including <b>{likely}</b> where you're likely or guaranteed</>}.
+        Create a free account to open the report.
+      </p>
+      <div className="gate-stage">
+        <div className="gate-preview" aria-hidden="true">
+          {ests.slice(0, 5).map((e) => (
+            <div className="gate-row" key={e.school.id}>
+              <Tile name={e.school.name} size={26} />
+              <span className="gate-name">{e.school.name}</span>
+              <span className="gate-blur num">{fmtPct(e.lo)}–{fmtPct(e.hi)}%</span>
+              <span className="gate-blur gate-tier">{e.tier}</span>
+            </div>
+          ))}
+        </div>
+        <div className="gate-card">
+          <h3>See your full report — free</h3>
+          <ul>
+            <li>School-by-school odds with the exact drivers</li>
+            <li>Saved to your portal with deadlines &amp; tracker</li>
+            <li>Everything stays in your browser</li>
+          </ul>
+          <button type="button" className="btn" onClick={onSignup}>Create free account</button>
+          <p className="gate-alt">Already have one? <button type="button" className="linklike" onClick={onSignup}>Log in</button></p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Results({ profile, onRevise, onOpenSchool }: { profile: Profile; onRevise: () => void; onOpenSchool: (name: string) => void }) {
   const ests = useMemo(() => estimateAll(profile), [profile]);
   const [open, setOpen] = useState<string | null>(null);

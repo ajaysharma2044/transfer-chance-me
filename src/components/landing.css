@@ -35,7 +35,10 @@
   display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
   gap: 18px 38px; max-width: 860px;
 }
-.ld-lockups img { width: auto; transition: transform 160ms ease, opacity 160ms ease; opacity: 0.92; }
+.ld-lockups img {
+  width: 132px; height: 34px; object-fit: contain;
+  transition: transform 160ms ease, opacity 160ms ease; opacity: 0.92;
+}
 .ld-lockups img:hover { transform: scale(1.05); opacity: 1; }
 .ld-lockup-more { font-size: 14.5px; font-weight: 600; color: var(--accent); white-space: nowrap; }
 .ld-authority-sub { font-size: 12px; color: var(--ink-3); }
@@ -300,8 +303,9 @@
   .ld-ticker-school { animation: none; }
 }
 
-/* Marquee pills: never shrink, never wrap — kills the overlap collisions */
-.ld-marquee .ld-wallgrid { width: max-content; flex-wrap: nowrap; }
+/* Marquee pills: never shrink, never wrap, never cap — the base .ld-wallgrid
+   max-width would stack the duplicated grid over this one's overflow */
+.ld-marquee .ld-wallgrid { width: max-content; max-width: none; flex-wrap: nowrap; }
 .ld-marquee .ld-wall-btn { flex: 0 0 auto; white-space: nowrap; }
 
 /* ── Motion layer ─────────────────────────────────────────────── */

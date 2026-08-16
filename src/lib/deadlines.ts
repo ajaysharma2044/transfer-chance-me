@@ -36,6 +36,18 @@ export const DEADLINES: Record<string, Deadline> = {
   "Notre Dame":  { month: 3, day: 15 },
   "Vanderbilt":  { month: 3, day: 15 },
   "MIT":         { month: 3, day: 15 },
+  "USC":         { month: 2, day: 15, note: "Dec 1 for portfolio/audition majors; spring entry offered" },
+  "NYU":         { month: 3, day: 1, note: "Spring entry closes Oct 1; requirements vary by NYU school" },
+  "WashU":       { month: 3, day: 1, note: "Spring entry closes Oct 15" },
+  "UVA":         { month: 3, day: 1, note: "VCCS GAA students: intent + course list per agreement" },
+  "Georgia Tech": { month: 3, day: 2, note: "Spring transfer closes Oct 31 (priority Sep 15)" },
+  "UT Austin":   { month: 3, day: 1, note: "Major prerequisites must be done before applying" },
+  "Tufts":       { month: 3, day: 15, note: "Fall entry only — no spring transfer round" },
+  "Boston College": { month: 3, day: 15, note: "Spring entry closes Nov 1" },
+  "Boston University": { month: 3, day: 15, note: "Spring entry closes Nov 1" },
+  "Caltech":     { month: 2, day: 15, note: "Entrance exams are part of the process" },
+  "Washington":  { month: 2, day: 15, note: "Autumn quarter; UW admits transfers all four quarters" },
+  "Wisconsin":   { month: 3, day: 1, note: "Feb 1 priority gets a decision by end of March" },
 };
 
 const MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
