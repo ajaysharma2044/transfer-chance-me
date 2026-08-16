@@ -8,6 +8,7 @@ import type { PanelResult } from "../lib/panel";
 import type { ReviewResult } from "../lib/review";
 import Tile from "./Tile";
 import "./review.css";
+import { pushDoc } from "../lib/sync";
 
 // Deep application review: paste everything, pick targets, get a graded
 // report with quote-level feedback. Runs on the user's own Claude API key,
@@ -79,6 +80,15 @@ export default function Review({ profile, onChange }: Props) {
     setBusy(true);
     setStage({});
     setPanel(null);
+    // Save what they wrote to their account, so the work survives this
+    // session and this device. Best-effort: a sync failure must never stop
+    // the review they actually asked for.
+    void Promise.all([
+      pushDoc("essay", profile.essayText),
+      pushDoc("statement", docs.statement),
+      pushDoc("activities", profile.activitiesText),
+      pushDoc("awards", profile.awardsText),
+    ]).catch(() => { /* offline or signed out — keep going */ });
     try {
       const r = await runPanel(
         {

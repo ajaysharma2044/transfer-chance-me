@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import type { Profile } from "../engine";
 import { fileToText } from "../lib/pdf";
 import { extractProfile } from "../lib/extract";
+import { pushDoc } from "../lib/sync";
 
 // The upload center: drop any mix of documents — transcript, Common App PDF,
 // activities list — and everything readable is folded into the profile.
@@ -34,6 +35,9 @@ export default function ImportPanel({ profile, onChange }: Props) {
           continue;
         }
         const text = await fileToText(file);
+        // Saved to the account so the record survives this device. Signed
+        // out, this is a no-op and the file stays in the browser.
+        void pushDoc("transcript", text, file.name).catch(() => { /* best-effort */ });
         const { fields, found, courses } = extractProfile(text);
         // document values fill the profile; courses and docs accumulate
         next = { ...next, ...definite(fields, next) };

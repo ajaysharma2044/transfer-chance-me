@@ -1180,7 +1180,8 @@ function FeatureStrip() {
           <h3>Upload your actual application</h3>
           <p>
             Drop in a transcript or Common App PDF and we read the GPA, credits, courses, and credentials
-            straight from the document. Parsed on your device — your file never leaves the browser.
+            straight from the document. Signed in, your file is saved to your account so it follows you
+            to another device; signed out, it never leaves this browser.
           </p>
         </div>
         <div className="f-visual">
@@ -1574,7 +1575,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           <OddsTicker />
           <div className="cta-row">
             <button type="button" className="btn ld-btn-xl" onClick={onStart}>Check my chances — free</button>
-            <p className="aside">2 minutes · free account to see your report · nothing leaves your browser</p>
+            <p className="aside">2 minutes · free account to see your report · your work saves to your account</p>
           </div>
           <div className="ld-authority">
             <span className="ld-authority-claim">Made by students who transferred into multiple Ivies</span>
@@ -1674,8 +1675,10 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <details>
           <summary>Is my transcript or essay stored anywhere?</summary>
           <p>
-            No. Uploads and essays are parsed in your browser and never sent to a server. Your profile is
-            saved only in your own browser's storage.
+            It depends on whether you're signed in. Signed out, everything is parsed in your browser and
+            stays in that browser's storage. Signed in, your profile, school list, essays and the text read
+            off your transcript are saved to your account so your work follows you between devices — stored
+            against your login, readable only by you, and deletable by you at any time.
           </p>
         </details>
         <details>

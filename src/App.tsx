@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { DEFAULT_PROFILE, MODEL } from "./engine";
 import type { Profile } from "./engine";
 import { analyzeEssay } from "./lib/essay";
-import { getSession, setSession } from "./lib/auth";
+import { getSession, initAuth, logOut, setSession } from "./lib/auth";
+import { pullProfile, pushProfile, syncReady } from "./lib/sync";
 import type { Session } from "./lib/auth";
 import Intake from "./components/Intake";
 import Results, { ResultsGate } from "./components/Results";
@@ -88,6 +89,40 @@ export default function App() {
     localStorage.setItem(STORE, JSON.stringify(profile));
   }, [profile]);
 
+  // Track the real backend session (Supabase) once at boot. Without a
+  // backend this is a no-op and localStorage stays the source of truth.
+  useEffect(() => initAuth((s) => setSessionState(s)), []);
+
+  // On sign-in, adopt the account's saved profile so a user's work follows
+  // them to a new device. A local profile that is still untouched must not
+  // overwrite the stored one, so the pull wins unless the user has edited.
+  useEffect(() => {
+    if (!session) return;
+    let live = true;
+    (async () => {
+      try {
+        if (!(await syncReady())) return;
+        const cloud = await pullProfile();
+        if (!live) return;
+        if (cloud.profile) setProfile(cloud.profile);
+        else await pushProfile(profile);
+      } catch { /* sync is best-effort; never block the app on it */ }
+    })();
+    return () => { live = false; };
+    // Deliberately keyed on identity only: this is an adopt-on-login step,
+    // not a subscription to every profile keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.email]);
+
+  // Push edits up, debounced, so a refresh or another device sees them.
+  useEffect(() => {
+    if (!session) return;
+    const t = window.setTimeout(() => {
+      pushProfile(profile).catch(() => { /* offline is not an error here */ });
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [profile, session]);
+
   useEffect(() => {
     const onHash = () => {
       setView(viewFromHash());
@@ -122,6 +157,7 @@ export default function App() {
   }
 
   function logout() {
+    logOut().catch(() => { /* clearing locally is enough to log out here */ });
     setSession(null);
     setSessionState(null);
     nav("");

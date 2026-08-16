@@ -353,3 +353,17 @@
 .au-google { display: flex; justify-content: center; margin-bottom: 4px; min-height: 44px; }
 .au-divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: var(--ink-3); font-size: 12.5px; }
 .au-divider::before, .au-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+/* Google, via Supabase OAuth — a redirect the server verifies, not a
+   browser-only token. Styled to Google's own button conventions. */
+.au-gbtn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 11px 16px;
+  border: 1px solid var(--line-strong); border-radius: 10px;
+  background: var(--bg); color: var(--ink);
+  font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em;
+  transition: background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.au-gbtn:hover { background: var(--bg-soft); border-color: var(--ink-3); }
+.au-gbtn:active { box-shadow: inset 0 1px 3px rgba(20, 24, 63, 0.10); }
+.au-gbtn svg { flex: 0 0 auto; }
