@@ -136,7 +136,12 @@ function CountUp({ value, duration = 1300 }: { value: number; duration?: number 
   return <span ref={ref} className="num">{shown.toLocaleString()}</span>;
 }
 
-const AUTHORITY_SCHOOLS = ["Cornell", "Columbia", "UPenn", "Brown", "Duke", "Stanford"];
+/** Wordmarks, not favicons — tiny seal images read as mush. Columbia's light
+ *  blue is darkened for text contrast on white. */
+const AUTHORITY_SCHOOLS: { n: string; c?: string }[] = [
+  { n: "Cornell" }, { n: "Columbia", c: "#1D4F91" }, { n: "UPenn" },
+  { n: "Brown" }, { n: "Duke" }, { n: "Stanford" },
+];
 
 /** Dramatic hero ticker: cycles school → animated admit rate, color-coded. */
 const TICKER = [
@@ -651,10 +656,12 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             <p className="aside">2 minutes · no signup needed · nothing leaves your browser</p>
           </div>
           <div className="ld-authority">
-            <span className="ld-authority-tiles" aria-hidden="true">
-              {AUTHORITY_SCHOOLS.map((n) => <Tile key={n} name={n} size={30} />)}
-            </span>
             <span className="ld-authority-claim">Made by students who transferred into multiple Ivies</span>
+            <span className="ld-authority-schools">
+              {AUTHORITY_SCHOOLS.map((s) => (
+                <b key={s.n} style={{ color: s.c ?? markOf(s.n).color }}>{markOf(s.n).word}</b>
+              ))}
+            </span>
             <span className="ld-authority-sub"><b>{rows}</b> real applications analyzed</span>
           </div>
           <HeroStage />
