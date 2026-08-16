@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { Profile } from "../engine";
+import ImportPanel from "./ImportPanel";
+import EssayPanel from "./EssayPanel";
 
 const STEPS = ["Academics", "Direction", "Your story"];
 
@@ -56,6 +58,8 @@ export default function Intake({ profile, onChange, onDone }: Props) {
             Transfer admission is GPA-dominated. In 8,910 recorded outcomes, college GPA is the
             variable that decides the file.
           </p>
+
+          <ImportPanel profile={profile} onChange={onChange} />
 
           <div className="field">
             <label htmlFor="gpa">Cumulative college GPA</label>
@@ -206,19 +210,23 @@ export default function Intake({ profile, onChange, onDone }: Props) {
             </p>
           </div>
 
-          <div className="field">
-            <span className="flabel">Your "why transfer" essay</span>
-            <Choices
-              label="Essay"
-              value={profile.essay}
-              onPick={(v) => set("essay", v)}
-              options={[
-                { v: "named", l: "Names programs & professors", sub: "school-specific case" },
-                { v: "general", l: "General fit story" },
-                { v: "draft", l: "Not written yet" },
-              ]}
-            />
-          </div>
+          <EssayPanel profile={profile} onChange={onChange} />
+
+          {!profile.essayText && (
+            <div className="field">
+              <span className="flabel">Or just tell us where it stands</span>
+              <Choices
+                label="Essay"
+                value={profile.essay}
+                onPick={(v) => set("essay", v)}
+                options={[
+                  { v: "named", l: "Names programs & professors", sub: "school-specific case" },
+                  { v: "general", l: "General fit story" },
+                  { v: "draft", l: "Not written yet" },
+                ]}
+              />
+            </div>
+          )}
 
           <div className="field">
             <span className="flabel">Extracurriculars</span>

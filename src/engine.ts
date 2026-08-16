@@ -57,6 +57,11 @@ export interface Profile {
   essay: Essay;
   ecLevel: EcLevel;
   sat: number | null;
+  /** Pasted "why transfer" essay; analyzed locally when present */
+  essayText: string;
+  /** Schools the essay names specifically (derived from essayText) */
+  essayNamed: string[];
+  essayVerdict: "specific" | "general" | "complaint" | null;
 }
 
 export const DEFAULT_PROFILE: Profile = {
@@ -72,6 +77,9 @@ export const DEFAULT_PROFILE: Profile = {
   essay: "general",
   ecLevel: "campus",
   sat: null,
+  essayText: "",
+  essayNamed: [],
+  essayVerdict: null,
 };
 
 export interface Driver {
@@ -181,10 +189,15 @@ export function estimate(profile: Profile, s: School): Estimate {
 
   // ── Major lane ──
   if (profile.major === "cs" || profile.major === "engineering") {
-    mult *= 0.8;
-    drivers.push({ dir: "down", text: "CS/engineering is the most impacted transfer lane nearly everywhere" });
+    if (UC.has(s.name)) {
+      mult *= 0.35;
+      drivers.push({ dir: "down", text: "CS/engineering at the UCs runs several times more selective than the campus-wide transfer rate" });
+    } else {
+      mult *= 0.8;
+      drivers.push({ dir: "down", text: "CS/engineering is the most impacted transfer lane nearly everywhere" });
+    }
   } else if (profile.major === "business" && BUSINESS_GAUNTLET.has(s.name)) {
-    mult *= 0.75;
+    mult *= UC.has(s.name) ? 0.4 : 0.75;
     drivers.push({ dir: "down", text: "Direct-to-business (Wharton/Dyson/Ross/Haas-type) is this school's hardest transfer door" });
   } else if ((profile.major === "humanities" || profile.major === "social") && PUBLICS.has(s.name)) {
     mult *= 1.1;
@@ -204,7 +217,25 @@ export function estimate(profile: Profile, s: School): Estimate {
   }
 
   // ── Essay ──
-  if (profile.essay === "named") {
+  if (profile.essayText) {
+    // Analyzed from the actual pasted essay
+    if (profile.essayVerdict === "complaint") {
+      mult *= 0.85;
+      drivers.push({ dir: "down", text: "Your essay reads complaint-shaped — admits frame the move as fit-and-resources, not escape" });
+    }
+    if (profile.essayNamed.includes(s.name)) {
+      mult *= 1.3;
+      drivers.push({ dir: "up", text: "Your essay names this school's programs — the school-specific case admits credit most" });
+    } else {
+      const progs = (s.counsel?.programs ?? []).filter((p) => !["PTK", "IGETC", "TAG", "Honors"].includes(p)).slice(0, 3);
+      drivers.push({
+        dir: "flat",
+        text: progs.length
+          ? `Your essay doesn't name ${s.name} specifics — admits here name ${progs.join(", ")}`
+          : `Your essay doesn't name ${s.name} specifics — a version naming its programs would score higher`,
+      });
+    }
+  } else if (profile.essay === "named") {
     mult *= 1.3;
     drivers.push({ dir: "up", text: "A program-specific 'why transfer' essay is the #1 differentiator admits credit" });
   } else if (profile.essay === "draft") {

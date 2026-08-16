@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { estimateAll, fmtPct, MODEL } from "../engine";
 import type { Estimate, Profile, Tier } from "../engine";
 import GpaStrip from "./GpaStrip";
+import { markOf } from "../lib/schools";
 
 const TIER_CLASS: Record<Tier, string> = {
   Likely: "tier-likely",
@@ -15,8 +16,11 @@ const TIER_CLASS: Record<Tier, string> = {
 function reading(profile: Profile, ests: Estimate[]): React.ReactNode {
   const best = ests[0];
   const targets = ests.filter((e) => e.p >= 0.12);
-  const lever =
-    profile.essay === "draft"
+  const lever = profile.essayText
+    ? profile.essayNamed.length > 0
+      ? `Your essay is school-specific for ${profile.essayNamed.join(", ")} — versions naming other targets' programs would lift them too.`
+      : "Your essay isn't school-specific yet — naming a target's programs and professors is the factor admits credit most."
+    : profile.essay === "draft"
       ? "Your biggest open lever is the essay you haven't written — a school-specific 'why transfer' is the factor admits credit most."
       : profile.essay === "general"
       ? "Your biggest open lever: make the essay school-specific. Naming programs and professors is the differentiator admits credit most."
@@ -75,10 +79,15 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
               onClick={() => setOpen(open === e.school.id ? null : e.school.id)}
             >
               <span className="school">
-                <span className="nm">{e.school.name}</span>
-                <div className="meta">
-                  {e.school.nAdmits} observed admits{e.thin ? " · small GPA sample" : ""}
-                </div>
+                <span className="tile" style={{ background: markOf(e.school.name).color }} aria-hidden="true">
+                  {markOf(e.school.name).mono}
+                </span>
+                <span>
+                  <span className="nm">{e.school.name}</span>
+                  <div className="meta">
+                    {e.school.nAdmits} observed admits{e.thin ? " · small GPA sample" : ""}
+                  </div>
+                </span>
               </span>
               <span className="base">
                 {e.school.rate.toFixed(1)}%
