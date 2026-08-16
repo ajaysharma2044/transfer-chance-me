@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build src/data/model.json for Chancery from the transfer-outcomes dataset.
+"""Build src/data/model.json for Transfer Chance Me from the transfer-outcomes dataset.
 
 Reads from the sibling research repo (../data/processed). Re-run whenever the
 dataset or school_advice.json changes:  python3 scripts/build_model.py

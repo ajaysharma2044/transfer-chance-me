@@ -1,4 +1,4 @@
-// Chancery chance engine.
+// Transfer Chance Me — chance engine.
 // Anchored on each school's official transfer admit rate (Common Data Set / UC
 // admit data), then adjusted by where the applicant sits in that school's
 // *observed admitted-GPA distribution* and by the levers the dataset shows

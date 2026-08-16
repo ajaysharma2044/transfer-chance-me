@@ -1,8 +1,8 @@
-# Chancery
+# Transfer Chance Me
 
 Your real chances of transferring into the T25 — estimated from **8,910 recorded transfer outcomes** (2011–2026) and every school's official Common Data Set.
 
-Enter your GPA, current school, major, and story; Chancery positions you against each top-25 university's observed admitted-GPA distribution and official transfer admit rate, and explains every factor it weighed. Everything runs client-side — nothing leaves the browser.
+Enter your GPA, current school, major, and story; it positions you against each top-25 university's observed admitted-GPA distribution and official transfer admit rate, and explains every factor it weighed. Everything runs client-side — nothing leaves the browser.
 
 ## How the numbers are made
 

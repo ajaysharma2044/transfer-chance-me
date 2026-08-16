@@ -6,7 +6,7 @@ import Results from "./components/Results";
 
 type Phase = "landing" | "intake" | "results";
 
-const STORE = "chancery.profile.v1";
+const STORE = "tcm.profile.v1";
 
 function loadProfile(): Profile {
   try {
@@ -34,8 +34,8 @@ export default function App() {
     <>
       <div className="shell">
         <header className="masthead">
-          <button type="button" className="wordmark" onClick={() => setPhase("landing")} aria-label="Chancery home">
-            Chancery
+          <button type="button" className="wordmark" onClick={() => setPhase("landing")} aria-label="Transfer Chance Me home">
+            Transfer Chance Me
           </button>
           <span className="cite">Transfer chances, from real outcomes</span>
         </header>
@@ -46,7 +46,7 @@ export default function App() {
           <span className="badge">{rows} real transfer outcomes · 2011–2026</span>
           <h1>Your real chances of transferring into the T25</h1>
           <p className="dek">
-            Chancery weighs your GPA, school, and story against official admit rates and the
+            We weigh your GPA, school, and story against official admit rates and the
             admitted-student data behind every top-25 university — not forum guesses.
           </p>
           <div className="cta-row">
