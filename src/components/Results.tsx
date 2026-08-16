@@ -38,7 +38,7 @@ function reading(profile: Profile, ests: Estimate[]): React.ReactNode {
   );
 }
 
-export default function Results({ profile, onRevise }: { profile: Profile; onRevise: () => void }) {
+export default function Results({ profile, onRevise, onOpenSchool }: { profile: Profile; onRevise: () => void; onOpenSchool: (name: string) => void }) {
   const ests = useMemo(() => estimateAll(profile), [profile]);
   const [open, setOpen] = useState<string | null>(null);
 
@@ -116,6 +116,11 @@ export default function Results({ profile, onRevise }: { profile: Profile; onRev
                   )}
                 </div>
                 <div>
+                  <p style={{ marginBottom: 16 }}>
+                    <button type="button" className="btn-quiet" onClick={() => onOpenSchool(e.school.name)}>
+                      Full {e.school.name} transfer profile →
+                    </button>
+                  </p>
                   <h4>How we scored you</h4>
                   <div className="drivers">
                     {e.drivers.map((d) => (

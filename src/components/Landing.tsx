@@ -142,8 +142,9 @@ function FeatureStrip() {
   );
 }
 
-export default function Landing({ onStart }: { onStart: () => void }) {
+export default function Landing({ onStart, onOpenSchool }: { onStart: () => void; onOpenSchool: (name: string) => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
+  void onOpenSchool;
   useReveal();
   return (
     <main>

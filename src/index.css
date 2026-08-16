@@ -57,6 +57,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .wordmark { display: flex; align-items: center; gap: 10px; }
 .brandword { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
 .btn-sm { padding: 9px 18px; font-size: 13.5px; }
+.mastnav { display: flex; align-items: center; gap: 18px; }
+.mastnav .who { font-size: 13.5px; color: var(--ink-2); }
 
 /* ── Landing ── */
 .hero { padding: 96px 0 72px; text-align: center; }
