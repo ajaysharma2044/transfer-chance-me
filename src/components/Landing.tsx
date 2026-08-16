@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { MODEL } from "../engine";
+import { MODEL, TAG_CAMPUSES } from "../engine";
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
 import { countdown } from "../lib/deadlines";
@@ -293,6 +293,245 @@ function FeatureStrip() {
   );
 }
 
+/** Interactive per-school intelligence file: pick any measured school and the
+ *  dossier updates with everything we hold on it. */
+function SchoolIntel({ onOpenSchool }: { onOpenSchool: (name: string) => void }) {
+  const [sel, setSel] = useState("Cornell");
+  const s = MODEL.schools.find((x) => x.name === sel)!;
+  const cd = countdown(s.name);
+  const tagMin = TAG_CAMPUSES[s.name];
+  const clean = (v: string) => v.replace(/\s*\(\d+\)\s*/g, " ").trim();
+  const rateColor =
+    s.rate < 5 ? "var(--coral)" : s.rate < 15 ? "var(--accent)" : s.rate < 40 ? "var(--blue)" : "var(--teal)";
+  const gpaPos = (g: number) => `${Math.min(100, Math.max(0, ((g - 3.0) / 1.0) * 100))}%`;
+
+  return (
+    <section className="shell ld-intel reveal" aria-labelledby="ld-intel-h">
+      <h2 id="ld-intel-h">Pick a school. See what we know.</h2>
+      <p className="sec-dek">
+        An intelligence file on every school we measure — official numbers, observed admits, feeders,
+        deadlines, and what actually moves a file there.
+      </p>
+      <div className="ld-intel-tabs" role="tablist" aria-label="Choose a school">
+        {MODEL.schools.map((x) => (
+          <button
+            key={x.id}
+            type="button"
+            role="tab"
+            aria-selected={x.name === sel}
+            aria-label={x.name}
+            title={x.name}
+            className={`ld-intel-tab${x.name === sel ? " on" : ""}`}
+            style={{ "--sc": markOf(x.name).color } as CSSProperties}
+            onClick={() => setSel(x.name)}
+          >
+            <Tile name={x.name} size={24} />
+          </button>
+        ))}
+      </div>
+
+      <article className="ld-dossier" key={s.id} aria-live="polite">
+        <header className="ld-dossier-head">
+          <Tile name={s.name} size={40} />
+          <div>
+            <h3>{s.name}</h3>
+            <p>{s.cycle || "latest Common Data Set"}</p>
+          </div>
+          <button type="button" className="btn btn-sm" onClick={() => onOpenSchool(s.name)}>
+            Full profile →
+          </button>
+        </header>
+
+        <div className="ld-dossier-stats">
+          <div className="ld-dstat">
+            <i>Transfer admit rate</i>
+            <b className="num" style={{ color: rateColor }}>{s.rate.toFixed(1)}%</b>
+            <span>official, not forum lore</span>
+          </div>
+          <div className="ld-dstat">
+            <i>Last cycle</i>
+            <b className="num">{s.applicants ? s.applicants.toLocaleString() : "—"}</b>
+            <span>applied · {s.admitted ? s.admitted.toLocaleString() : "—"} admitted</span>
+          </div>
+          <div className="ld-dstat ld-dstat-gpa">
+            <i>Admitted GPA</i>
+            {s.gpa.p50 != null ? (
+              <>
+                <div className="ld-gpabar" aria-hidden="true">
+                  <span
+                    className="ld-gpaband"
+                    style={{ left: gpaPos(s.gpa.p25!), width: `calc(${gpaPos(s.gpa.p75!)} - ${gpaPos(s.gpa.p25!)})` }}
+                  />
+                  <span className="ld-gpatick" style={{ left: gpaPos(s.gpa.p50) }} />
+                </div>
+                <span>
+                  <b className="num">{s.gpa.p25!.toFixed(2)}</b> – median <b className="num">{s.gpa.p50.toFixed(2)}</b> –{" "}
+                  <b className="num">{s.gpa.p75!.toFixed(2)}</b> · n={s.nGpa}
+                </span>
+              </>
+            ) : (
+              <>
+                <b>Not published</b>
+                <span>UC stopped releasing it — we estimate from selectivity</span>
+              </>
+            )}
+          </div>
+          <div className="ld-dstat">
+            <i>Deadline</i>
+            <b className="num" style={{ color: "var(--accent)" }}>{cd ? cd.days : "—"}</b>
+            <span>{cd ? `days · ${cd.label}` : "see school page"}{tagMin ? ` · TAG by Sep 30 (${tagMin.toFixed(1)}+)` : ""}</span>
+          </div>
+        </div>
+
+        <div className="ld-dossier-body">
+          <div>
+            {s.counsel?.typical && (
+              <>
+                <h4>Who actually gets in</h4>
+                <p>{s.counsel.typical}</p>
+              </>
+            )}
+            {s.counsel?.levers?.length ? (
+              <>
+                <h4>What moves a file here</h4>
+                <ul>
+                  {s.counsel.levers.slice(0, 2).map((l) => <li key={l}>{l}</li>)}
+                </ul>
+              </>
+            ) : null}
+          </div>
+          <div>
+            {s.majors.length > 0 && (
+              <>
+                <h4>Common admit majors</h4>
+                <div className="chipset">
+                  {s.majors.slice(0, 4).map((m) => <span className="chip" key={m}>{clean(m)}</span>)}
+                </div>
+              </>
+            )}
+            {s.counsel?.feeders && (
+              <>
+                <h4>Feeders</h4>
+                <p>{s.counsel.feeders}</p>
+              </>
+            )}
+            {s.coadmit.length > 0 && (
+              <>
+                <h4>Cross-admits also got into</h4>
+                <div className="ld-coadmit">
+                  {s.coadmit.slice(0, 5).map((c) => {
+                    const n = clean(c);
+                    return <Tile key={n} name={n} size={24} />;
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <footer className="ld-dossier-foot">
+          {s.nAdmits > 0 ? (
+            <span><b>{s.nAdmits}</b> observed admits · <b>{s.nGpa}</b> GPA points · <b>{s.trend.length}</b> cycles tracked in our study</span>
+          ) : (
+            <span>Official UC systemwide admit data · CC pipeline school</span>
+          )}
+          <span className="ld-dossier-srcs">Sources: Common Data Set · UC admit data · 8,910-outcome study</span>
+        </footer>
+      </article>
+      <p className="ld-findfoot">All 31 measured schools above — plus directory profiles for 4,025 more in <a href="#/browse">Browse</a>.</p>
+    </section>
+  );
+}
+
+/** What admits actually list, from the activity inventory — and the moves
+ *  you can copy, with the lifts the engine actually scores. */
+const ADMIT_ACTIVITIES = [
+  { label: "Campus club membership", pct: 16 },
+  { label: "Real job / paid work", pct: 13 },
+  { label: "Club leadership — officer, founder", pct: 11 },
+  { label: "Volunteering", pct: 8 },
+  { label: "Competitions & awards", pct: 8 },
+  { label: "Internships", pct: 8 },
+  { label: "Faculty research", pct: 7 },
+  { label: "Scholarships — PTK, Jack Kent Cooke", pct: 6 },
+  { label: "Tutoring / TA-ing", pct: 6 },
+  { label: "Student government", pct: 3 },
+];
+
+const MOVES = [
+  { t: "Take a leadership seat on campus", d: "Officer, president, or founder of a campus org — leadership is 11% of everything admits list, and it's open to anyone who shows up.", c: "var(--teal)" },
+  { t: "Keep your job on the application", d: "Paid work is 13% of admit activities. Hours worked read as substance and maturity — never as a gap.", c: "var(--blue)" },
+  { t: "Get into the institutional stack", d: "PTK, honors program, Dean's List — credentials every admissions reader recognizes in one line.", c: "var(--accent)" },
+  { t: "TA, tutor, or join a lab", d: "Faculty-adjacent roles are the strongest \"already doing the work\" signal in admit files.", c: "var(--coral)" },
+];
+
+const LEVERS = [
+  { t: "File TAG by Sep 30", lift: "guarantee", d: "Six UCs sign a contract at 2.7–3.4+ GPA. Not odds — a guarantee." },
+  { t: "Apply to UCs from a California CC", lift: "×1.5", d: "The pipeline the UC system is built on." },
+  { t: "Name the program in your essay", lift: "×1.3", d: "The #1 differentiator admits credit." },
+  { t: "Finish IGETC", lift: "×1.15", d: "The UC breadth pattern, done." },
+  { t: "Join Phi Theta Kappa", lift: "×1.12", d: "One application. Every reader knows it." },
+  { t: "Show an upward GPA trend", lift: "×1.08", d: "Redemption arcs are 16% of admits." },
+];
+
+function Playbook() {
+  return (
+    <section className="shell ld-play reveal" aria-labelledby="ld-play-h">
+      <h2 id="ld-play-h">What we can get you — specifically</h2>
+      <p className="sec-dek">
+        We catalogued 4,087 activities from 628 admitted files. This is what their lists look like,
+        the moves you can copy, and the exact lifts we score.
+      </p>
+
+      <div className="ld-play-grid">
+        <div className="ld-play-card">
+          <p className="mock-label">What 628 admits actually listed</p>
+          <div className="ld-acts">
+            {ADMIT_ACTIVITIES.map((a, i) => (
+              <div className="ld-act" key={a.label}>
+                <span className="ld-act-label">{a.label}</span>
+                <span className="ld-act-track">
+                  <span className="ld-act-bar" style={{ width: `${(a.pct / 16) * 100}%`, transitionDelay: `${i * 60}ms` }} />
+                </span>
+                <span className="ld-act-pct num">{a.pct}%</span>
+              </div>
+            ))}
+          </div>
+          <p className="ld-act-note">
+            <b className="ld-teal">50%</b> of admit activities live on their own campus — only{" "}
+            <b className="ld-coral">9%</b> are national-level. Pattern beats prestige.
+          </p>
+        </div>
+
+        <div className="ld-play-moves">
+          <p className="mock-label">Moves you can start this semester</p>
+          {MOVES.map((m) => (
+            <div className="ld-move" key={m.t} style={{ "--mc": m.c } as CSSProperties}>
+              <h3>{m.t}</h3>
+              <p>{m.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="ld-levers">
+        {LEVERS.map((l, i) => (
+          <div className={`ld-lever${i === 0 ? " ld-lever-big" : ""}`} key={l.t}>
+            <span className="ld-lever-lift num">{l.lift}</span>
+            <h3>{l.t}</h3>
+            <p>{l.d}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="ld-play-honest">
+        And what we can't: nothing on this page rescues a below-median GPA at the single-digit schools.
+        When a door is shut we say so — and show you the ones standing open.
+      </p>
+    </section>
+  );
+}
+
 interface Finding {
   figure: string;
   unit?: string;
@@ -304,10 +543,10 @@ interface Finding {
 
 const FINDINGS: Finding[] = [
   {
-    figure: "50%",
+    figure: "16%",
     color: "var(--accent)",
-    title: "Admits build their activities on campus",
-    body: "Half of admits' listed activities live on their own campus — leadership, tutoring, faculty research. Trophy ECs alone don't rescue a GPA in 1,217 structured profiles.",
+    title: "of admits are redemption cases",
+    body: "High-school record barely predicts college GPA (correlation 0.016). Transfer is scored on what you did after — a weak start at 17 doesn't follow you.",
   },
   {
     figure: "92%",
@@ -449,6 +688,8 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <p className="ld-wall-hint">Pick a school to see its transfer data — admit rate, GPA range, feeders, trend.</p>
       </section>
 
+      <SchoolIntel onOpenSchool={onOpenSchool} />
+
       <div className="shell"><FeatureStrip /></div>
 
       <section className="shell ld-field reveal" aria-label="Official admit rates">
@@ -456,6 +697,8 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         <p className="sec-dek">Official transfer admit rates across the T25 — the spread is enormous.</p>
         <RateLadder />
       </section>
+
+      <Playbook />
 
       <Findings rows={rows} />
 

@@ -372,10 +372,148 @@
 .faq details[open] p { animation: ld-faq 280ms ease; }
 @keyframes ld-faq { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
+/* ── School intelligence explorer ─────────────────────────────── */
+.ld-intel { padding: 72px 0 8px; }
+.ld-intel h2 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 650; letter-spacing: -0.02em; text-align: center; }
+.ld-intel .sec-dek { text-align: center; }
+.ld-intel-tabs {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  margin: 28px auto 0; max-width: 720px;
+}
+.ld-intel-tab {
+  padding: 5px; border-radius: 11px; border: 1px solid var(--line);
+  background: var(--bg); line-height: 0;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.ld-intel-tab:hover { transform: translateY(-2px); border-color: var(--line-strong); }
+.ld-intel-tab.on {
+  border-color: var(--sc, var(--accent));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc, var(--accent)) 22%, transparent), 0 6px 16px rgba(20, 24, 63, 0.10);
+  transform: translateY(-2px);
+}
+.ld-dossier {
+  margin: 26px auto 0; max-width: 880px;
+  border: 1px solid var(--line); border-radius: 18px; background: var(--bg);
+  box-shadow: 0 2px 4px rgba(20, 24, 63, 0.04), 0 22px 60px rgba(20, 24, 63, 0.09);
+  overflow: hidden; text-align: left;
+  animation: ld-tick-in 420ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+.ld-dossier-head {
+  display: flex; align-items: center; gap: 14px; padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(120deg, #f8f7fd, #f5f9fe 60%, #f2fbf9);
+}
+.ld-dossier-head h3 { font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+.ld-dossier-head p { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.ld-dossier-head .btn { margin-left: auto; }
+.ld-dossier-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+.ld-dstat { padding: 18px 20px; border-left: 1px solid var(--line); animation: ld-rise 460ms ease backwards; }
+.ld-dstat:first-child { border-left: none; }
+.ld-dstat:nth-child(2) { animation-delay: 70ms; }
+.ld-dstat:nth-child(3) { animation-delay: 140ms; }
+.ld-dstat:nth-child(4) { animation-delay: 210ms; }
+.ld-dstat i {
+  display: block; font-style: normal; font-size: 10.5px; font-weight: 650;
+  text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-3);
+}
+.ld-dstat b { display: block; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-top: 6px; color: var(--ink); }
+.ld-dstat span { display: block; font-size: 11.5px; color: var(--ink-2); margin-top: 3px; }
+.ld-gpabar { position: relative; height: 10px; border-radius: 5px; background: var(--bg-soft); margin: 12px 0 8px; }
+.ld-gpaband { position: absolute; top: 0; bottom: 0; border-radius: 5px; background: linear-gradient(90deg, var(--blue), var(--accent)); opacity: 0.8; }
+.ld-gpatick { position: absolute; top: -3px; bottom: -3px; width: 3px; border-radius: 2px; background: var(--teal); }
+.ld-dstat-gpa b { display: inline; font-size: 12.5px; }
+.ld-dossier-body {
+  display: grid; grid-template-columns: 1.15fr 1fr; gap: 8px 36px; padding: 20px 24px;
+}
+.ld-dossier-body h4 {
+  font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-3); margin: 14px 0 6px;
+}
+.ld-dossier-body h4:first-child { margin-top: 0; }
+.ld-dossier-body p { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.ld-dossier-body ul { list-style: none; }
+.ld-dossier-body li { font-size: 13.5px; color: var(--ink-2); padding: 3px 0 3px 18px; position: relative; }
+.ld-dossier-body li::before { content: "+"; position: absolute; left: 0; color: var(--teal); font-weight: 700; }
+.ld-coadmit { display: flex; gap: 7px; }
+.ld-dossier-foot {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding: 14px 24px; border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-3); background: var(--bg-soft);
+}
+.ld-dossier-foot b { color: var(--ink); font-weight: 650; }
+.ld-intel .ld-findfoot a { color: var(--blue); font-weight: 550; }
+
+/* ── The playbook: admit activities + moves + levers ───────────── */
+.ld-play { padding: 72px 0 8px; }
+.ld-play h2 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 650; letter-spacing: -0.02em; text-align: center; }
+.ld-play .sec-dek { text-align: center; max-width: 62ch; margin-left: auto; margin-right: auto; }
+.ld-play-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-top: 36px; }
+.ld-play-card, .ld-play-moves {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg); padding: 22px 24px;
+  box-shadow: 0 2px 4px rgba(20, 24, 63, 0.04), 0 14px 40px rgba(20, 24, 63, 0.07);
+}
+.ld-acts { margin-top: 14px; display: flex; flex-direction: column; gap: 9px; }
+.ld-act { display: grid; grid-template-columns: 200px 1fr 40px; gap: 12px; align-items: center; }
+.ld-act-label { font-size: 12.5px; font-weight: 550; color: var(--ink); }
+.ld-act-track { height: 10px; border-radius: 5px; background: var(--bg-soft); overflow: hidden; }
+.ld-act-bar {
+  display: block; height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, var(--teal), var(--blue) 70%, var(--accent));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 800ms cubic-bezier(0.25, 1, 0.35, 1);
+}
+.reveal.in .ld-act-bar { transform: scaleX(1); }
+.ld-act-pct { text-align: right; font-size: 12.5px; font-weight: 650; color: var(--ink-2); }
+.ld-act-note { margin-top: 16px; font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 14px; }
+.ld-act-note b { font-weight: 700; }
+.ld-play-moves { display: flex; flex-direction: column; gap: 4px; }
+.ld-move { padding: 11px 0 11px 16px; border-left: 3px solid var(--mc, var(--accent)); margin-top: 10px; }
+.ld-move h3 { font-size: 14px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+.ld-move p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin-top: 4px; }
+.ld-levers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.ld-lever {
+  position: relative; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--bg); padding: 18px 18px 16px;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.ld-lever:hover { transform: translateY(-3px); border-color: var(--line-strong); box-shadow: 0 12px 30px rgba(20, 24, 63, 0.09); }
+.ld-lever-lift {
+  display: inline-block; font-size: 13px; font-weight: 750; letter-spacing: -0.01em;
+  color: var(--accent); background: #f6f4fd; border-radius: 8px; padding: 3px 9px;
+}
+.ld-lever-big .ld-lever-lift { color: #fff; background: linear-gradient(120deg, var(--teal), var(--blue)); text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.05em; }
+.ld-lever h3 { font-size: 14.5px; font-weight: 650; margin-top: 10px; letter-spacing: -0.01em; }
+.ld-lever p { font-size: 12.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.5; }
+.ld-lever-big { border-color: color-mix(in srgb, var(--teal) 45%, var(--line)); }
+.ld-play-honest {
+  margin-top: 22px; text-align: center; font-size: 13px; color: var(--ink-2);
+  max-width: 64ch; margin-left: auto; margin-right: auto;
+}
+
+@media (max-width: 860px) {
+  .ld-dossier-stats { grid-template-columns: 1fr 1fr; }
+  .ld-dstat:nth-child(3) { border-left: none; }
+  .ld-dstat { border-top: 1px solid var(--line); }
+  .ld-dstat:nth-child(-n+2) { border-top: none; }
+  .ld-dossier-body { grid-template-columns: 1fr; }
+  .ld-play-grid { grid-template-columns: 1fr; }
+  .ld-levers { grid-template-columns: 1fr 1fr; }
+  .ld-act { grid-template-columns: 132px 1fr 36px; }
+}
+@media (max-width: 560px) {
+  .ld-levers { grid-template-columns: 1fr; }
+  .ld-dossier-head { flex-wrap: wrap; }
+}
+
 /* Reduced motion: everything present, nothing moving */
 @media (prefers-reduced-motion: reduce) {
   .ld-h1 .ld-w, .ld-grad, .ld-ticker-bar, .numbers, .closing::before { animation: none; }
-  .ld-ladder-bar, .reveal.in .ld-ladder-bar { transform: scaleX(1); transition: none; }
+  .ld-ladder-bar, .reveal.in .ld-ladder-bar,
+  .ld-act-bar, .reveal.in .ld-act-bar { transform: scaleX(1); transition: none; }
+  .ld-dossier, .ld-dstat { animation: none; }
   .reveal .ld-fig { opacity: 1; animation: none; }
   .ld-feature.reveal .f-copy, .ld-feature.reveal .f-visual { opacity: 1; transform: none; }
   .ld-stage-card, .ld-orb { translate: none; transition: none; }
