@@ -704,3 +704,5 @@ html { scroll-behavior: smooth; }
   }
   .fx-rise, .fx-settle { transform: none; }
 }
+
+.results-reader { margin: 26px 0 30px; }

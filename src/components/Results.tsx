@@ -5,6 +5,7 @@ import GpaStrip from "./GpaStrip";
 import Tile from "./Tile";
 import Report from "./Report";
 import ActionPlan from "./ActionPlan";
+import ReaderView from "./ReaderView";
 
 const TIER_CLASS: Record<Tier, string> = {
   "TAG guarantee": "tier-tag",
@@ -104,6 +105,10 @@ export default function Results({ profile, onRevise, onOpenSchool }: { profile: 
           <button type="button" className="btn-quiet" onClick={onRevise}>← Edit my profile</button>
         </div>
       </header>
+
+      <div className="results-reader">
+        <ReaderView profile={profile} ests={ests} />
+      </div>
 
       <div className="ledger-head" aria-hidden="true">
         <span>School</span>

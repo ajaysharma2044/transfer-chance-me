@@ -6,6 +6,7 @@ import { analyzeEssay } from "../lib/essay";
 import Tile from "./Tile";
 import Report from "./Report";
 import ActionPlan from "./ActionPlan";
+import ReaderView from "./ReaderView";
 import CourseGaps from "./CourseGaps";
 import { buildPlan } from "../lib/actionplan";
 import { countdown } from "../lib/deadlines";
@@ -115,6 +116,10 @@ export default function Portal({ session, profile, go }: Props) {
           <span>moves open on your file</span>
         </div>
       </div>
+
+      <section className="po-planwrap">
+        <ReaderView profile={profile} ests={ests} />
+      </section>
 
       <section className="po-planwrap">
         <ActionPlan profile={profile} ests={ests} />
