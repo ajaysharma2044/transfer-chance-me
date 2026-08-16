@@ -90,6 +90,24 @@
     "programs": []
   },
   {
+    "name": "Baruch",
+    "applicants": 7244,
+    "admitted": 3687,
+    "rate": 50.9,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "Verified from CDS Section D2, Fall 2024: 7,244 degree-seeking transfer applicants, 3,687 admitted (50.9%), 1,641 enrolled. Baruch's published floor is a 2.70 cumulative college GPA (CDS D7); if you have fewer than 24 college credits, the CDS adds that you also need an 85+ high school average, so your high school record comes back into play. The realistic admit is a CUNY community college student carrying 30+ credits at roughly a 3.0 or better with the pre-business quantitative sequence underway. The number that matters most is not the 50.9%: Baruch is business-dominated, and being admitted to the college is not the same as being admitted to a Zicklin School of Business major, which is a separate GPA-gated step taken after you arrive. Confirm the current Zicklin major requirements directly with the school before you count on a specific major.",
+    "levers": [
+      "Finish the CUNY A.A./A.S. and run every course through CUNY Transfer Explorer (T-Rex) before you register for it. CUNY Pathways guarantees the 30-credit general education core transfers intact across CUNY, so gen ed is the solved part — your leverage is entirely in whether the pre-business courses map, not the gen ed.",
+      "Clear the pre-business quantitative sequence at the community college with high grades: calculus, statistics, and both principles of accounting. Because Zicklin major entry is GPA-gated after admission, arriving with that sequence finished and strong is what converts a 2.70-floor application into a competitive one and keeps you on track to declare."
+    ],
+    "watchouts": [
+      "The 2.70 CDS minimum is a floor for consideration, not the bar for business. Admission to Baruch does not carry admission to your intended Zicklin major, and the overall 50.9% rate conceals how much tighter the popular business majors are.",
+      "CUNY's associate-degree guarantee gets you admission to a CUNY senior college, not to Baruch specifically. Baruch is the system's most selective transfer destination, so do not read the CUNY-wide guarantee as a Baruch guarantee. Separately, CDS D16 requires at least 31 credits completed at Baruch for the bachelor's, which caps how much you can front-load elsewhere."
+    ],
+    "feeders": "CUNY community colleges dominate: BMCC (nearest and the largest CUNY community college), Queensborough, Kingsborough, LaGuardia, Bronx CC, and Hostos. Baruch also draws from Nassau CC and other SUNY two-year colleges, and from within-CUNY lateral transfers out",
+    "programs": []
+  },
+  {
     "name": "Baylor",
     "applicants": 1678,
     "admitted": 1514,
@@ -200,6 +218,42 @@
     "programs": []
   },
   {
+    "name": "CSU Channel Islands",
+    "applicants": 31346,
+    "admitted": 25846,
+    "rate": 82.5,
+    "cycle": "2018-19 through 2022-23 (5-year total, CCC transfers only — NOT a CDS D2 single-year line)",
+    "typical": "About 4 in 5 California community college transfer applicants get in. Admitted CCC transfers sat at 2.7–3.5 GPA (25th–75th percentile) over the five years. IMPORTANT SOURCING NOTE: CSUCI does not publish a Common Data Set — its Institutional Research office puts out dashboards and a fact sheet, not a CDS — so there is no D2 line to cite for any single year. The 31,346 / 25,846 figures are five-year totals from Table B.2 of California State Auditor Report 2023-123 (Sept 2024), which counts California community college transfers only, not out-of-state or non-CCC transfers. Practically, this is a non-impacted campus: 60 transferable semester units, a 2.0+ transferable GPA, and the Golden Four (written comm, oral comm, critical thinking, college math) each with C- or better gets you admitted in most majors. Nursing is the real exception and is far more selective than the campus number suggests.",
+    "levers": [
+      "Complete an ADT (Associate Degree for Transfer) in a major CSUCI offers — Business, Psychology, Sociology, Communication, Biology. The ADT is a statutory guarantee of CSU admission with junior standing in a similar major, and CSU adds 0.1 to your GPA in local ranking. At a non-impacted campus like CSUCI that converts a likely admit into a locked one.",
+      "Treat Nursing as a separate school, not a major choice. It is fall-entry only (no spring admits), carries its own science prerequisites and screening, and the Fall 2027 application opens August 1. If nursing is the goal, file a second, non-impacted CSUCI major as a fallback in the same cycle."
+    ],
+    "watchouts": [
+      "The 82% rate is a campus average and does not describe Nursing, which is the one genuinely competitive door at CSUCI.",
+      "Fall closes and does not reliably reopen — CSUCI has been taking late fall applications only case-by-case. Spring is the dependable second bite: Spring 2027 closes October 30, 2026 for non-impacted majors."
+    ],
+    "feeders": "Ventura County Community College District is the core pipeline — Moorpark College, Ventura College, and Oxnard College — plus Santa Barbara City College, College of the Canyons, Allan Hancock College, Antelope Valley College, and the Los Angeles-area colleges ",
+    "programs": []
+  },
+  {
+    "name": "CSU Monterey Bay",
+    "applicants": 23574,
+    "admitted": 20889,
+    "rate": 88.6,
+    "cycle": "2018-19 through 2022-23 (5-year total, CCC transfers only — NOT a CDS D2 single-year line)",
+    "typical": "Close to 9 in 10 California community college transfer applicants are admitted. Admitted CCC transfers ran 2.8–3.5 GPA (25th–75th percentile) across the five years. IMPORTANT SOURCING NOTE: CSUMB does not publish a Common Data Set — its Institutional Analysis & Research office publishes dashboards, fast facts, and a data-request form instead — so no D2 line exists to cite. The 23,574 / 20,889 figures are five-year totals from Table B.2 of California State Auditor Report 2023-123 (Sept 2024) and count California community college transfers only. CSUMB's own stated bar: 60 semester (90 quarter) transferable units, overall college GPA of at least 2.00, good standing at your last college, and all four Golden Four courses with C- or better. Meeting that in a non-impacted major is effectively the whole decision. Impacted programs, Nursing above all, are ranked separately and are much tighter.",
+    "levers": [
+      "File the ADT for your major. CSUMB uses the ADT curriculum in place of its own major-specific degree requirements and applies the CSU 0.1 cumulative GPA increase when ranking applicants — so the ADT both removes a requirements checklist and moves you up the ranking in one step.",
+      "Apply in October, not in spring. CSUMB opens Fall on October 1 and admits on a rolling basis through a July 1 final deadline. An October file gets a decision months earlier, which is what actually protects your housing assignment and your Cal Grant/financial aid timing — a July admit is technically on time and practically too late for both."
+    ],
+    "watchouts": [
+      "The July 1 rolling deadline applies to non-impacted majors. Impacted programs close November 30 and will not take a late file — do not read 'rolling' as 'no deadline.'",
+      "88.6% is the CCC-transfer rate. Out-of-state and non-CCC transfers get no ADT protection, no Lampitt-style associate-degree shield, and are read purely on their own transcripts and unit evaluation."
+    ],
+    "feeders": "Hartnell College (Salinas) and Monterey Peninsula College are the anchor feeders, with Cabrillo College (Aptos/Santa Cruz), Gavilan College (Gilroy), Cuesta College (San Luis Obispo), Allan Hancock College, and the San Jose-area colleges (San Jose City, Evergr",
+    "programs": []
+  },
+  {
     "name": "CSU Northridge",
     "applicants": 13924,
     "admitted": 10027,
@@ -215,6 +269,42 @@
       "At 60+ semester units you must declare a real major and can no longer apply as 'Undecided.' A late switch into Cinema/TV or Music also means an earlier deadline (Jan 31 and Jan 15) and can cost a full cycle."
     ],
     "feeders": "Draws primarily from the Los Angeles and San Fernando Valley community college network — Los Angeles Valley College, Pierce College, LA Mission College, Glendale Community College, Santa Monica College, College of the Canyons, and Moorpark College. Regional dr",
+    "programs": []
+  },
+  {
+    "name": "Cal Poly Humboldt",
+    "applicants": 4845,
+    "admitted": 4168,
+    "rate": 86,
+    "cycle": "Fall 2024 (CDS 2024-2025)",
+    "typical": "Almost everyone CSU-eligible. 4,845 transfer applicants, 4,168 admits, 848 enrolled. Per CDS-D5 the file is a college transcript plus a statement of good standing — no essay, no interview, no test scores — so the decision is 60 transferable semester units, a 2.0 college GPA (CDS-D701), and the golden four. Humboldt carries no campus impaction in the 2026-27 CSU matrix, and CDS-D401 says a transfer applicant does not need a minimum credit count to apply as a transfer.",
+    "levers": [
+      "Humboldt's CDS lists an April 30 fall closing date against a Nov 30 priority date. If you missed the Cal State Apply window, the campus is non-impacted and still reading files months later — email admissions rather than writing off the year.",
+      "Bring the ADT. Guaranteed CSU admission with junior standing in a similar major, and at a campus admitting 86% of transfers it also protects you from the credit-loss problem that eats the other lever."
+    ],
+    "watchouts": [
+      "86% admitted is not 86% enrolled — only 848 of 4,168 admits actually showed up (about 20% yield). Getting in is the easy part; housing, cost, and the drive to Arcata are what decide whether it works.",
+      "CDS-D13 caps transferable credit from a two-year college at 70 semester units. Units past that don't shorten the degree, and RN-to-BSN has carried impaction while the rest of campus has not."
+    ],
+    "feeders": "College of the Redwoods next door, plus Shasta, Santa Rosa Junior College, and Sacramento- and Bay-Area colleges; the CDS doesn't publish a feeder list, so this is the practical pattern, not a sourced ranking.",
+    "programs": []
+  },
+  {
+    "name": "Cal Poly Pomona",
+    "applicants": 12677,
+    "admitted": 9053,
+    "rate": 71.4,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "Fall 2025: 9,053 of 12,677 transfer applicants admitted, 71.4% (CDS 2025-2026, D2). CDS D7 sets the floor at a 2.00 college GPA, but that floor is not the real bar. CPP evaluates transfers under a multifactor admission model and admits by major, and its published guidance gives priority consideration to applicants at a 3.0 with all supplemental major courses complete. The typical admit is a California community college student with 60+ transferable units, the Golden Four done, and either an ADT or a near-complete major prep sequence. The campus number misleads in both directions: non-impacted majors run well above 71%, while CPP's impacted transfer majors run far below it. Note the trend, too. The prior cycle (Fall 2024, CDS 2024-2025) was 10,218 of 12,937 = 79.0%, so the rate tightened about eight points in one year as CPP's PolyTransfer push drew more applicants.",
+    "levers": [
+      "Finish an ADT in a major that matches your CPP target. California's Associate Degree for Transfer guarantees CSU admission with junior standing into a similar major, and at CPP it also carries weight at the impacted-major screen, which is where the decision actually happens.",
+      "Land in the local admission area and clear the supplemental courses. CPP grants local preference to applicants who earned most transferable units or an ADT at a local community college, extends it to all veterans, and gives added consideration to Chaffey and Rio Hondo students. Pair that with a 3.0 and every major-specific supplemental course finished at C or better for priority consideration."
+    ],
+    "watchouts": [
+      "The 71.4% campus rate is not your rate. CPP screens by major and maintains a separate transfer impacted-majors list; engineering, computer science, and business run far tighter, and in a given cycle several impacted majors do not open to transfer applicants at all. Check cpp.edu/admissions/transfer/impacted-majors.shtml before you build your term plan.",
+      "Unit and grade caps bite. CDS D13 caps transfer credit from a two-year institution at 70 semester units, and D12 sets C as the lowest grade that transfers at all, so a D in a Golden Four or major-prep course counts for nothing toward the 60-unit junior standing requirement."
+    ],
+    "feeders": "Mt. San Antonio College is the dominant feeder. Chaffey and Rio Hondo are named by CPP itself for added consideration. Also strong: Citrus, Pasadena City, Fullerton, Riverside City, East Los Angeles, Cerritos, and Santa Ana.",
     "programs": []
   },
   {
@@ -236,6 +326,24 @@
     "programs": []
   },
   {
+    "name": "Cal State Dominguez Hills",
+    "applicants": 8594,
+    "admitted": 7591,
+    "rate": 88.3,
+    "cycle": "Fall 2022 entering class (CDS 2022-2023, the newest CSUDH publishes)",
+    "typical": "D2 shows 8,594 transfer applicants, 7,591 admitted, 1,919 enrolled. The admitted student is an upper-division transfer out of the South Bay or Harbor-area community colleges with 60 transferable semester units (CDS D4 sets 60 as the floor), the Golden Four done, and roughly a 2.0 GPA, which is the D7 minimum. CDS D5 marks college transcripts as the only required item; essay, interview, and test scores are all not required. Caveat on freshness: CSUDH has not posted a CDS since 2022-2023, so these are Fall 2022 counts, and the internal page footers still carry the prior year's 2021-2022 template header.",
+    "levers": [
+      "Finish an ADT (AA-T/AS-T) in a similar major. CSUDH is one of the campuses where the ADT guarantee does the most work, and it caps you at 60 more units to the bachelor's so credit loss stays near zero.",
+      "Use the extra terms. CDS D3 shows CSUDH admits transfers in Fall, Spring, and Summer, and D9 checks Fall as rolling admission. That is three entry points a year, which is unusual in the CSU and the single most useful scheduling lever here."
+    ],
+    "watchouts": [
+      "Nursing is the impacted exception. The 88.3% campus rate says nothing about it, and impacted programs at CSUDH apply supplementary criteria on top of the CSU minimums.",
+      "The numbers are four years stale (Fall 2022). CSUDH stopped publishing CDS after 2022-2023, so verify current-year behavior with the campus rather than assuming the rate held."
+    ],
+    "feeders": "El Camino College, Long Beach City College, Compton College, Los Angeles Harbor College, Cerritos College, Los Angeles Southwest College",
+    "programs": []
+  },
+  {
     "name": "Cal State Fullerton",
     "applicants": 22217,
     "admitted": 17127,
@@ -254,6 +362,24 @@
     "programs": []
   },
   {
+    "name": "Cal State LA",
+    "applicants": 12742,
+    "admitted": 11038,
+    "rate": 86.6,
+    "cycle": "Fall 2025 entering class (CDS 2025-2026)",
+    "typical": "D2 shows 12,742 transfer applicants, 11,038 admitted, 2,139 enrolled. The admitted student is an upper-division transfer from an LA-area community college with 60 transferable semester units, the Golden Four cleared with C- or better, and a GPA at or a little above the 2.00 minimum the CDS lists in D7. At an 87% rate the campus gate is nearly open; the real gate is the major. CDS D3 shows Cal State LA takes transfers for Fall and Spring, and D4 sets a 30-semester-unit floor to apply as a transfer at all.",
+    "levers": [
+      "Finish an ADT (AA-T/AS-T) in a major Cal State LA treats as similar. That is a statutory CSU guarantee of admission with junior standing, plus local-area priority if you are coming from the campus service area (East LA, LA City, Rio Hondo).",
+      "Clear all four Golden Four courses with C- or better and hit 60 transferable semester units before the spring term you apply. Cal State LA also admits for Spring per CDS D3, so a missed Golden Four course in fall is a one-term delay, not a one-year one."
+    ],
+    "watchouts": [
+      "The 86.6% is campus-wide, not per major. Impacted programs, Nursing above all, screen far harder than the headline and use supplementary criteria. Ask about your specific major before treating this as a safety.",
+      "Cal State LA left CDS D9 blank, so there is no published closing date to point to. Treat the systemwide Nov 30 close as real and do not plan around an extension being announced."
+    ],
+    "feeders": "East Los Angeles College, Pasadena City College, Los Angeles City College, Rio Hondo College, Mt. San Antonio College, Glendale Community College",
+    "programs": []
+  },
+  {
     "name": "Cal State Long Beach",
     "applicants": 26777,
     "admitted": 14106,
@@ -269,6 +395,24 @@
       "Major-Specific Degree Requirements are pass/fail gatekeepers published per college and per cycle. One missing prep course can remove a 3.8 GPA applicant from the pool, and the Fall 2026 MSDR lists differ from Fall 2025."
     ],
     "feeders": "Predominantly Southern California community colleges. Long Beach City College is the formal partner through the Long Beach College Promise, which is the structured LBCC-to-CSULB pipeline; the surrounding Los Angeles and Orange County colleges supply most of the remaining volume. Local preference, though, is keyed to high school of graduation rather than which community college you attended.",
+    "programs": []
+  },
+  {
+    "name": "Cal State San Bernardino",
+    "applicants": 7011,
+    "admitted": 5973,
+    "rate": 85.2,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "Verified from CDS Section D2, Fall 2024: 7,011 transfer applicants, 5,973 admitted, 2,108 enrolled — an 85.2% transfer admit rate, and 2024-25 is the newest edition CSUSB has posted. This is an access-mission campus and the numbers say so. CSUSB is not impacted at the campus level, so the gate is eligibility, not competition: 60 transferable semester units, a 2.0 minimum college GPA (stated verbatim in CDS item D7), and the CSU Golden Four — oral communication, written communication, critical thinking, and college-level math — completed with C- or better. The CDS also confirms high school transcript, college transcripts, and a statement of good standing from prior institutions are required, with no essay, no interview, and no test scores. Practically: an upper-division transfer from an Inland Empire community college who clears the Golden Four with roughly a 2.5+ is admitted. Students denied here are almost always denied on a missing Golden Four course or a units shortfall, not on GPA.",
+    "levers": [
+      "Finish an ADT (Associate Degree for Transfer) in a similar major. California law makes this a guaranteed CSU admission with junior standing and a 60-unit cap to the bachelor's degree — CSUSB is a primary ADT destination for the Inland Empire, and the guarantee converts an 85% campus into a locked one.",
+      "Use both campuses. CSUSB runs a full Palm Desert Campus in the Coachella Valley with its own capacity; when a San Bernardino program is full or the commute is the real obstacle, applying to the Palm Desert location is a distinct entry point rather than a lesser one. CSUSB also gives admission priority to its local Inland Empire service area (San Bernardino and Riverside counties)."
+    ],
+    "watchouts": [
+      "The Golden Four is the actual denial reason. All four courses must be complete with C- or better by the spring term before fall entry — a 3.4 GPA with one course outstanding loses to a 2.4 with all four done. Verify each course maps on ASSIST.org for the CSUSB catalog year you are applying under.",
+      "Nursing is a separate, competitive screen with its own application, prerequisites, and deadline — the 85.2% campus-wide rate does not apply to it. Confirm current requirements directly with the CSUSB School of Nursing before assuming the campus odds."
+    ],
+    "feeders": "San Bernardino Valley College, Crafton Hills, Chaffey, Riverside City College, Norco, Moreno Valley, Mt. San Jacinto, Victor Valley, and College of the Desert (the main pipeline into the Palm Desert Campus).",
     "programs": []
   },
   {
@@ -324,6 +468,42 @@
       "CWRU requires 60 credits completed in residence for the bachelor's (CDS D16) and transfers only C-or-better coursework (CDS D12), so a completed associate degree will not reliably clear half the degree in every major, particularly in engineering and nursing sequences."
     ],
     "feeders": "Not disclosed by CWRU — the CDS does not break out sending institutions. Structurally the pipeline is Northeast Ohio community colleges, four-year transfers into STEM and pre-health programs, and 3/2 engineering partner liberal-arts colleges, but specific feeder campuses are not published and should not be represented as verified.",
+    "programs": []
+  },
+  {
+    "name": "Chico State",
+    "applicants": 8280,
+    "admitted": 6289,
+    "rate": 76.0,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "Fall 2025: 6,289 of 8,280 transfer applicants admitted, 76.0% (CDS 2025-2026, D2). Chico publishes no fixed transfer GPA. CDS D7 says only that the cutoff \"will be determined by the applicant pool,\" and D11 states admission is on a space-available basis. In practice Chico admits most upper-division transfers who clear the CSU baseline: 60 transferable semester units and a C or better in all four Golden Four areas, which CDS D17 names explicitly as an admission requirement rather than just a graduation one. An ADT holder from a Northern California feeder college is effectively in. The clear exception is Nursing, which is impacted and screens on its own far tighter criteria with priority given to Chico's own service area and Cal Poly Humboldt's.",
+    "levers": [
+      "Clear the Golden Four with a C or better in every one: English composition, transferable math above intermediate algebra, oral communication, and critical thinking. Chico's CDS D17 names these as an admission requirement, so a single C-minus here is a rejection at a campus that otherwise admits three out of four applicants.",
+      "Earn 30 or more transferable units inside Chico's local admission area: Butte College, Shasta, Yuba, Feather River, Lassen, College of the Siskiyous, or Sierra College's Tahoe-Truckee and Nevada County campuses only. That local status is the preference that decides Nursing and any space-available cutoff. Stack an ADT on top, which guarantees CSU admission with junior standing in a similar major."
+    ],
+    "watchouts": [
+      "There is no published GPA floor to plan against. The CDS says the bar is set by the applicant pool and admission is space-available, so a 76% rate can tighten without notice in a strong year or a budget-constrained one.",
+      "Nursing is impacted and runs an entirely separate, much tighter screen, with priority to applicants from Chico's and Cal Poly Humboldt's service areas. Out-of-service-area nursing applicants face a rate near zero. The campus number tells you nothing about that program."
+    ],
+    "feeders": "Butte College by a wide margin, then Shasta, Yuba, Feather River, Lassen, College of the Siskiyous, and Sierra's Tahoe-Truckee and Nevada County campuses. These seven are the colleges Chico names as its local admission area. Sacramento-area colleges (American ",
+    "programs": []
+  },
+  {
+    "name": "City College (CUNY)",
+    "applicants": 7855,
+    "admitted": 3626,
+    "rate": 46.2,
+    "cycle": "Fall 2024 (CDS 2024-25)",
+    "typical": "Verified from CCNY's own Common Data Set 2024-25, Section D2 (Fall 2024): 7,855 degree-seeking transfer applicants, 3,626 admitted, 938 enrolled — a 46.2% transfer admit rate. Note the low yield (26%), typical of a commuter campus where students hold multiple CUNY offers. CCNY's published transfer floor in the same CDS is a 2.5 college GPA and 2.5 high school GPA, with no minimum credit count required to apply as a transfer, and transfer admission is NOT open admission. The realistic admit is a CUNY community college student with 30+ credits clearing 2.5. But the college-wide 46% is genuinely misleading, because CCNY states its own program gates in the CDS: the Grove School of Engineering requires two semesters of calculus with C or better, one semester of calculus-based physics with C or better, and a 2.7+ GPA; Architecture is 'very competitive based on GPA and Creative Challenge'; the BFA in Electronic Design and Multimedia requires a portfolio and the BFA in Music requires an audition. So: liberal arts and sciences are genuinely accessible around 2.5, while engineering, architecture, and the BFAs are the real gate. Separately, CUNY guarantees that a student who earns an associate degree at a CUNY community college is admitted to A CUNY baccalaureate program — that guarantee is to the system, not specifically to City College or to your chosen major, and CUNY Pathways guarantees the general-education core transfers across CUNY.",
+    "levers": [
+      "Clear the Grove School of Engineering gate as a literal checklist, because CCNY publishes it in its own CDS: two semesters of calculus with C or better, one semester of calculus-based physics with C or better, and a 2.7+ GPA. Finish that exact sequence at your community college before you apply — engineering transfers are judged against it, not against the 2.5 college minimum.",
+      "For Architecture and the BFAs, the portfolio IS the application. Architecture requires the Creative Challenge on top of a competitive GPA, the BFA in Electronic Design and Multimedia requires a portfolio, and the BFA in Music requires an audition. Start these three to four months before the Feb 1 priority date — a strong GPA alone will not carry any of them."
+    ],
+    "watchouts": [
+      "The 46% college-wide rate hides program-level gates. A 2.5 GPA clears CCNY's stated college minimum and still leaves you nowhere near competitive for engineering (2.7 plus the calculus/physics sequence) or architecture. Chance yourself against your major, not against the headline rate.",
+      "CCNY accepts up to 90 credits from a two-year college — generous — but you must complete at least 32 credits at CCNY and 60% of your major there, and the lowest transferable grade is a D. In sequenced majors like engineering, that 60%-of-major residency rule, not the credit cap, is what quietly adds semesters."
+    ],
+    "feeders": "BMCC, Bronx CC, Hostos CC, and LaGuardia CC are the core pipelines given CCNY's Harlem location, plus Queensborough CC; there is also heavy internal transfer among CUNY senior colleges. International applicants, regardless of credits, must take placement tests",
     "programs": []
   },
   {
@@ -471,6 +651,24 @@
     "programs": []
   },
   {
+    "name": "George Mason",
+    "applicants": 5185,
+    "admitted": 4304,
+    "rate": 83,
+    "cycle": "Fall 2025 (2025-26 CDS)",
+    "typical": "Mason took 4,304 of 5,185 fall 2025 transfer applicants and enrolled 2,959 — one of the largest transfer intakes in Virginia, and roughly half of Mason's incoming undergraduates. The published bar in the CDS is a 2.5 cumulative GPA, 24 earned semester credits, an ENGH 101-equivalent composition course, and a college-level math. Clear those four with a VCCS associate degree and university-level admission is close to routine. Almost nobody is turned away at the university gate; they are turned away at the major.",
+    "levers": [
+      "Clear the four stated gates before you apply, not after: 2.5+ cumulative GPA, 24 earned semester credits, an ENGH 101-equivalent English composition, and a college-level math. Under 24 credits and Mason pulls your high school transcript and reads you closer to a first-year applicant, which is a materially worse read.",
+      "Apply to the major you have actually prepped for. Mason publishes the additional bars: engineering wants Calc I and Calc II with A or B grades (Systems & Industrial accepts C); CS and Applied CS want one programming course and one math course at A or B, with a 2.75 GPA floor starting Fall 2027; IT requires 2.85 plus pre-calculus or higher at C+; BFA Art requires 2.85; Dance, Music, Theater require auditions; Film and Video and Game Design require portfolios or writing samples. If you are transferring from NOVA, Mason's ADVANCE co-enrollment partnership maps these prerequisites course-by-course — confirm current terms with a Mason ADVANCE success coach rather than assuming."
+    ],
+    "watchouts": [
+      "The 83% campus rate is misleading and Mason says so in its own CDS: admission to Mason as a transfer student does not guarantee admission into your intended major. Engineering, CS, IT, nursing, and the arts are the real gate.",
+      "March 1 for fall is a priority date, not a closing date. Mason reviews on a rolling basis and takes late applications on a space-available basis — meaning the selective majors and the aid fill first, and a June application to CS is a very different application than a February one."
+    ],
+    "feeders": "Overwhelmingly Northern Virginia Community College, which feeds Mason at a scale no other pipeline matches and runs the ADVANCE co-enrollment partnership with mapped degree pathways and shared advising. Beyond NOVA: Germanna, Tidewater, Brightpoint, and other ",
+    "programs": []
+  },
+  {
     "name": "Georgia",
     "applicants": 3780,
     "admitted": 2452,
@@ -601,6 +799,24 @@
     "programs": []
   },
   {
+    "name": "James Madison",
+    "applicants": 1769,
+    "admitted": 1346,
+    "rate": 76.1,
+    "cycle": "Fall 2025 (2025-26 CDS)",
+    "typical": "JMU admitted 1,346 of 1,769 fall 2025 transfer applicants and enrolled 808 — a far smaller and more self-selected pool than Mason's. The CDS lists a 3.0 minimum college GPA, and admissions describes 3.0 cumulative as the competitive bar, with completed college coursework across four core areas: English, mathematics, social science, and lab science. JMU requires 24 credits minimum; below that you must apply as an entering first-year student, high school transcript and all. The admitted student is typically a VCCS student with a full year-plus of transferable coursework and a 3.0-plus.",
+    "levers": [
+      "Hit 24+ post-high-school credits with all four core areas actually completed — English, math, social science, lab science. JMU names those four explicitly, and it is the difference between a transfer read and a first-year read: at fewer than 24 credits the CDS says you must apply as an entering first-year student, which is a much tougher pool.",
+      "Run the Guaranteed Admission Agreement route. JMU maintains GAAs with Virginia Community College System colleges: complete the transfer-oriented associate degree under the agreement at the named GPA and admission is guaranteed rather than competitive. JMU keeps the current terms on its own GAA page (jmu.edu/admissions/transfer, GAA section) — confirm the exact GPA threshold, the qualifying degree types, and which majors are carved out before you commit to a degree plan, because the carve-outs are where students get surprised."
+    ],
+    "watchouts": [
+      "The GPA bar is a full half-point above Mason's — 3.0 at JMU versus 2.5 — so a 2.7 that works fine at Mason is not competitive here, and the 76% rate reflects a pool that already filtered itself.",
+      "Admission to JMU does not grant admission to the major. JMU publishes separate Admission and Progression Standards for certain programs (nursing, business, and education-type majors among them), with their own GPA and prerequisite gates applied after you arrive. Check the standards for your intended major before you build a two-year course plan around it."
+    ],
+    "feeders": "VCCS colleges, led by the ones in JMU's Shenandoah Valley footprint — Blue Ridge Community College and Piedmont Virginia Community College — plus heavy volume from Northern Virginia Community College, Germanna, Virginia Western, and Tidewater, mirroring JMU's ",
+    "programs": []
+  },
+  {
     "name": "Kansas",
     "applicants": 2337,
     "admitted": 1973,
@@ -724,6 +940,42 @@
       "Carlson and Nursing have a hard February 1 fall deadline with no space-available extension, while CLA stays open to July 1 and CSE/CBS to June 1 — the single 'UMN deadline' does not exist."
     ],
     "feeders": "Minnesota State two-year colleges are the dominant pipeline, especially the Twin Cities metro ones — Normandale, Century, Minneapolis College, North Hennepin, Anoka-Ramsey — with MnTC completion as the standard entry ticket. Secondary streams are lateral trans",
+    "programs": []
+  },
+  {
+    "name": "Mizzou",
+    "applicants": 2743,
+    "admitted": 1864,
+    "rate": 68,
+    "cycle": "Fall 2023 (CDS 2023-24 — newest posted CDS is behind a SharePoint login)",
+    "typical": "About two of every three transfer applicants get in, so the university itself is not the hard gate. The published floor is a 2.5 GPA on completed college-level credits plus a transferable math OR English composition course passed with at least a C-. At 24+ transferable hours your high school record drops out of the review entirely; below 24 hours you are also held to freshman admission standards. The real competition is the program: Trulaske (business), the School of Journalism, Sinclair Nursing and Engineering each run their own capacity-limited admission with higher GPA and prerequisite bars on top of the university's.",
+    "levers": [
+      "Finish CORE 42, Missouri's statewide 42-credit general education block. Completed at any Missouri public college it transfers to Mizzou as a block, satisfies gen ed in full, and stops the course-by-course re-evaluation that costs transfers a semester.",
+      "Work the major's separate bar from day one using Mizzou's Transfer Course Equivalency site and the Major-Specific Transfer Admission Guide. Being admitted to Mizzou does not admit you to Journalism, Nursing, Engineering or Trulaske — each publishes its own GPA and prereq list, and matching it is what actually decides your outcome."
+    ],
+    "watchouts": [
+      "Under 24 transferable credits, Mizzou reviews your high school transcript and applies freshman standards — the 2.5 transfer floor does not protect you.",
+      "Nursing and Journalism are capacity-limited with their own applications and earlier internal deadlines; missing the program cycle costs a year even after the university admits you."
+    ],
+    "feeders": "Moberly Area CC, St. Charles CC, St. Louis CC, Metropolitan CC (Kansas City), Ozarks Technical CC, State Fair CC; plus lateral transfers from Missouri State and Columbia College.",
+    "programs": []
+  },
+  {
+    "name": "Montclair State",
+    "applicants": 3640,
+    "admitted": 2959,
+    "rate": 81.3,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "Verified from CDS D2 (Fall 2025): 3,640 transfer applicants, 2,959 admitted, 1,403 enrolled — an 81.3% transfer admit rate. Montclair is unusually explicit about who gets in, and the campus rate hides the structure. D7 lists 2.8 as the minimum college GPA, but D11 clarifies the working rule: 2.5 for most majors, with a named set of programs holding at 3.0. So the typical admit is a New Jersey community college student around a 2.5-3.0 heading into a non-gated major, and they are admitted at a high rate. The applicant to a gated major is running a completely different admissions process at the same school. Montclair states plainly in D11 that an associate degree from any NJ community college enters as a junior — the Lampitt Law guarantee, written into their own CDS.",
+    "levers": [
+      "Complete the NJ associate degree before matriculating — at Montclair this is worth three separate things at once. D11 grants junior standing to any NJ community college associate degree (Lampitt Law). For Accounting and Business Administration, the CDS states the bar drops from a 3.0 to a 2.8 for students who have completed, or will complete, the associate degree before matriculating. And D12 sets the lowest transferable grade at C 'unless it is part of an earned Associate Degree' — meaning sub-C grades travel only inside a finished degree.",
+      "Bank credits aggressively before arriving. D13 and D14 both allow up to 96 transferred credits, among the most generous caps anywhere, while D16 requires only 30 credits in residence. A student who maximizes the associate degree and articulated coursework can arrive needing little more than the residency minimum, which is the single largest cost lever available here."
+    ],
+    "watchouts": [
+      "The major is the gate, not the campus. D8 and D11 name the exceptions explicitly: Computer Science 3.0, Data Sciences 3.0, Business Administration (all concentrations) 3.0, Accounting 3.0 (both business programs drop to 2.8 with the associate degree), Jurisprudence 3.0 plus 24 completed college credits, and Biology, Molecular Biology, and Marine Biology and Coastal Science at 2.5. An 81.3% overall rate tells a 2.7 CS applicant almost nothing useful.",
+      "If you transfer fewer than 30 credits, D11 requires high school transcripts, which pulls your secondary record back into a file you probably assumed was decided on college work alone."
+    ],
+    "feeders": "County College of Morris, Bergen Community College, Passaic County Community College, Essex County College, Hudson County Community College, Union College of Union County, and Raritan Valley Community College are the core North Jersey pipeline. Bloomfield Coll",
     "programs": []
   },
   {
@@ -945,6 +1197,24 @@
     "programs": []
   },
   {
+    "name": "Queens College (CUNY)",
+    "applicants": 7479,
+    "admitted": 3232,
+    "rate": 43.2,
+    "cycle": "Fall 2016 (CDS 2017-18 — newest QC publishes publicly)",
+    "typical": "IMPORTANT STALENESS CAVEAT: the only Common Data Set Queens College publishes publicly is 2017-18, whose Section D2 reports Fall 2016 — 7,479 transfer applicants, 3,232 admitted, 2,502 enrolled, a 43.2% admit rate. That is a decade-old figure and should be used as a rough anchor only, not as a current number. QC's Office of Institutional Effectiveness posts a College Profile, Tableau dashboards, and the CUNY Student Data Book, but no newer CDS; nothing more recent was verifiable, so no newer rate is asserted here. Note the very high yield in that year (2,502 enrolled of 3,232 admitted, 77%), which is characteristic of a commuter campus students choose deliberately. What IS current and verifiable is QC's published transfer GPA ladder: under 30 college credits requires a 2.75 and you must also meet first-time freshman requirements; 30+ credits requires 2.50 calculated across all colleges attended; an earned associate or bachelor's degree requires only 2.00 from that degree program. Every transfer applicant must also be 'University Skills Proficient.' The typical admit is a CUNY or Nassau CC student with 30+ credits clearing roughly 2.5. From the 2017-18 CDS: college transcripts are required of all applicants, high school transcripts only of some, and no essay, interview, or standardized test scores are required — this is a numbers-and-credits review, not a holistic one. CUNY also guarantees that a student earning an associate degree at a CUNY community college is admitted to A CUNY baccalaureate program; that guarantee runs to the system, not specifically to Queens College or to your intended major.",
+    "levers": [
+      "Time your application around QC's published GPA ladder, because the bar physically drops as you accumulate credits: 2.75 under 30 credits (plus freshman requirements), 2.50 at 30+ credits, and 2.00 once you hold an associate or bachelor's degree. Waiting one term to cross 30 credits — or to actually finish the associate degree — can move a borderline applicant from below the line to comfortably above it, and finishing the degree is the single biggest drop.",
+      "Run every planned course through CUNY Transfer Explorer (T-Rex) before you register, not after. QC caps two-year transfer credit at 75 and requires 45 credits completed at QC to earn the bachelor's, so credits banked past that ceiling are wasted tuition. CUNY Pathways guarantees the general-education core moves across CUNY, but it does not guarantee major-specific courses articulate — those you must verify course by course."
+    ],
+    "watchouts": [
+      "The 43.2% rate is from Fall 2016 and is the newest Queens College publishes; there is no current public CDS. Treat it as a directional anchor and confirm present-day selectivity with QC admissions before relying on it for a real decision.",
+      "Every transfer applicant must be 'University Skills Proficient' in reading, writing, and math. An unresolved CUNY proficiency flag will stop an otherwise qualified application, and it is far easier and cheaper to clear at your community college before you leave than after you apply."
+    ],
+    "feeders": "Queensborough CC and LaGuardia CC above all, given QC's Flushing location, plus Kingsborough CC, BMCC, and Nassau CC from Long Island; substantial internal transfer among CUNY colleges. Application is free for current CUNY students and $70 otherwise.",
+    "programs": []
+  },
+  {
     "name": "RPI",
     "applicants": 347,
     "admitted": 222,
@@ -981,6 +1251,24 @@
     "programs": []
   },
   {
+    "name": "Rowan",
+    "applicants": 4380,
+    "admitted": 3506,
+    "rate": 80,
+    "cycle": "Fall 2025 (CDS 2025-2026)",
+    "typical": "Verified from CDS D2 (Fall 2025): 4,380 transfer applicants, 3,506 admitted, 1,887 enrolled — an 80.0% transfer admit rate. Rowan's published floor is low: D7 sets the minimum college GPA at 2.0, and D4 requires only 12 completed credits to be read as a transfer rather than a first-year applicant. The student who actually gets in is a New Jersey county college student with 24-60 credits and roughly a 2.5-3.0, and most of them are admitted. The real gate is not the university — it is the individual program. Rowan's CDS lists no major-specific transfer GPA minimums (D8 is blank), so the selectivity that exists in engineering and nursing is enforced through seat capacity and course sequencing at the department level, not through a published number. Treat the 80% as an accurate read on the campus and an unreliable read on those two programs.",
+    "levers": [
+      "Use the Rowan College pipeline, not the open application. Rowan College of South Jersey and Rowan College at Burlington County feed Rowan through 3+1 (three years at community college tuition, final year at Rowan) and Rowan Choice (live on the Rowan campus while enrolled at RCSJ). These are dual-admission structures with a guaranteed continuation path — a materially different posture than applying cold.",
+      "Finish the New Jersey associate degree before you transfer. The Lampitt Law protects the AA/AS from any NJ county college, and Rowan's own credit policy is unusually generous on top of it: D13 allows up to 90 credits from a two-year institution and D12 sets the lowest transferable grade at D-. With only 30 credits required in residence (D16), a completed associate degree can carry a very large block of coursework, including weak grades, straight into junior standing."
+    ],
+    "watchouts": [
+      "Engineering and nursing are the impacted programs. The 80.0% campus rate does not describe them — they are capacity-limited and sequence-dependent (calculus and physics for engineering, clinical placements for nursing). Confirm seat availability and required sequence with the department before treating admission as likely.",
+      "The 2.0 GPA in D7 is a floor for consideration, not a competitive target, and it does not apply to the impacted majors. Separately, if you transfer with fewer than 12 credits, D4 forces you back into the first-year applicant pool, where the high school transcript is read."
+    ],
+    "feeders": "Rowan College of South Jersey (Gloucester and Cumberland campuses) and Rowan College at Burlington County are the dominant pipelines, both operating formal 3+1 and dual-admission agreements with Rowan. Camden County College, Atlantic Cape Community College, an",
+    "programs": []
+  },
+  {
     "name": "Rutgers",
     "applicants": 7214,
     "admitted": 4153,
@@ -999,6 +1287,24 @@
     "programs": []
   },
   {
+    "name": "SF State",
+    "applicants": 15752,
+    "admitted": 12522,
+    "rate": 79.5,
+    "cycle": "Fall 2020 (CDS 2020-2021)",
+    "typical": "CDS D2 for Fall 2020: 12,522 admitted out of 15,752 transfer applicants, a 79.5% rate, with 3,016 enrolling. The bar is the CSU upper-division transfer floor and little more — D4 requires 60 semester units to apply as a transfer rather than a freshman, and D7 lists a 2.0 minimum college GPA. Outside Nursing, a community college student who finishes 60 transferable units, clears the Golden Four, and holds a 2.0+ is close to an automatic admit; an ADT holder in a similar major is guaranteed. Important caveat on the cycle: SF State's public CDS archive stops at 2020-2021, so Fall 2020 is the newest D2 anyone can actually check. Enrollment at SF State has shifted substantially since, so read 79.5% as a signal about how this campus behaves, not as this year's rate.",
+    "levers": [
+      "Bring an ADT (AA-T/AS-T). Beyond the statutory guarantee of junior standing, SF State adds +0.10 to the GPA it uses for competitive ranking for ADT holders in a related program — a real thumb on the scale, not just a label.",
+      "Claim Bay Area local-area priority. Living in Alameda, Marin, Contra Costa, San Francisco, San Mateo, or Santa Clara county adds another +0.10 to your ranking GPA. Stacked with an ADT that is +0.20, which is the difference-maker in the one place ranking matters."
+    ],
+    "watchouts": [
+      "The 79.5% is Fall 2020, the newest CDS SF State posts publicly. Do not quote it as a current-cycle rate — verify with SF State IR (institutionalresearch@sfsu.edu) before you rely on it.",
+      "Nursing (BSN and ADN-BSN) is the campus's one impacted program and requires a separate supplemental application on top of Cal State Apply. The near-open-door campus rate tells you nothing about it."
+    ],
+    "feeders": "City College of San Francisco is the dominant feeder by a wide margin, followed by the San Mateo County colleges — Skyline, College of San Mateo, Cañada — plus Chabot, Diablo Valley, Berkeley City, and Santa Rosa Junior College. The six-county local-priority f",
+    "programs": []
+  },
+  {
     "name": "SMU",
     "applicants": 1542,
     "admitted": 1190,
@@ -1014,6 +1320,42 @@
       "Residency and credit caps: SMU transfers a maximum of 48 credit hours from a two-year institution (D13), and if you were last enrolled full-time at a two-year college you must complete at least 60 credit hours in residence at SMU (D17). A finished 60-hour associate degree does not buy you a two-year finish."
     ],
     "feeders": "SMU publishes no ranked feeder list. The documented pipeline runs through Dallas College (the former DCCCD campuses) under a signed articulation and reverse-transfer agreement, plus other North Texas two-year colleges such as Collin College and Tarrant County ",
+    "programs": []
+  },
+  {
+    "name": "SUNY Albany",
+    "applicants": 2972,
+    "admitted": 1770,
+    "rate": 59.6,
+    "cycle": "Fall 2022 (CDS 2022-23) — UAlbany's 2023-24, 2024-25 and 2025-26 CDS post Section D only as a SharePoint spreadsheet tha",
+    "typical": "CDS D2 for Fall 2022: 2,972 degree-seeking transfer applicants, 1,770 admitted (59.6%), 861 enrolled. So roughly three in five transfer applicants get in, and about half of those admits show up — this is a genuinely transfer-driven campus, not a boutique transfer program. Who gets in: UAlbany publishes program-level minimums rather than a single bar, and that is the real filter. Most majors take a 2.5 college GPA; Accounting, Business Administration, the Education programs and Digital Forensics screen at 3.0; Financial Market Regulation at 3.2. A SUNY community college student holding an A.A./A.S. and applying into a non-screened major is close to a lock, because the SUNY Transfer Guarantee already promises A.A./A.S. graduates a seat at a SUNY bachelor's campus. The applicant who gets denied is usually the one 0.1-0.3 below a screened major's posted number, or the one who applied in late spring to a rolling pool. Important caveat for honesty: UAlbany does not report admitted-transfer GPA distributions in the CDS, so there is no verifiable 'average admitted GPA' to quote — the published program minimums are the only sourced GPA figures here.",
+    "levers": [
+      "Clear your specific major's posted GPA bar exactly, not the college's. UAlbany lists 2.5 for most programs but 3.0 for Accounting, Business Administration, Education and Digital Forensics, and 3.2 for Financial Market Regulation. If you are at 2.9 for Business, one more graded semester at the community college is worth more than any essay rewrite — or apply into an unscreened major and change after you enroll.",
+      "Finish the SUNY A.A./A.S. before you transfer and follow the SUNY Transfer Path for your major. The SUNY Transfer Guarantee gives A.A./A.S. graduates of SUNY community colleges guaranteed admission to a SUNY four-year campus, and SUNY Seamless Transfer policy is what protects junior standing and prevents credit loss — a completed, Path-aligned degree does far more than 60 loose credits."
+    ],
+    "watchouts": [
+      "'Rolling' is not 'open.' UAlbany reviews complete transfer applications on a rolling basis and states that late applicants are considered on a space-available basis, so a May 1 submission is a materially weaker application than a February one even with identical grades.",
+      "The SUNY guarantee is to a SUNY campus, not to UAlbany and not to a competitive major. Social Welfare closes March 15 — six weeks before the general deadline — second bachelor's closes April 1, and FAFSA priority is December 1. Missing those internal dates is the quiet way strong applicants lose the seat."
+    ],
+    "feeders": "Overwhelmingly SUNY two-years. The Capital Region colleges sit closest and send the most: Hudson Valley CC, Schenectady County CC, Columbia-Greene CC and SUNY Adirondack. Downstate SUNY community colleges — Westchester, Rockland, Dutchess, SUNY Orange, Nassau ",
+    "programs": []
+  },
+  {
+    "name": "SUNY Geneseo",
+    "applicants": 766,
+    "admitted": 533,
+    "rate": 69.6,
+    "cycle": "Fall 2022 (CDS 2022-23) — Geneseo's Fall 2025 CDS posts Section D only as a SharePoint spreadsheet that would not open, ",
+    "typical": "CDS D2 for Fall 2022: 766 degree-seeking transfer applicants, 533 admitted (69.6%), 176 enrolled. Read those numbers together — the admit rate is friendly, but the enrolled cohort is tiny. Geneseo is a small residential liberal-arts college, so transfer volume is a fraction of what a comprehensive like Albany moves. Who gets in: Geneseo posts a 2.50 minimum college GPA for consideration, and per CDS D4 you need at least 12 completed credits or you are read as a first-year applicant instead. The strongest transfer profile is a western New York SUNY community college student finishing an A.A./A.S. with a 3.0-plus, coming through a named Community College Degree Pathway or Phi Theta Kappa Guaranteed Transfer. Program bars sit above the college floor: the School of Education requires 2.75 plus written disposition prompts, and Geneseo says the strongest EOP transfer candidates carry a 3.0 or higher. Caveat: Geneseo does not publish admitted-transfer GPA data in the CDS, so the posted program minimums are the only sourced GPA figures — there is no verifiable 'average admit' number to give you.",
+    "levers": [
+      "Transfer in with the associate degree finished, especially for business. Geneseo's School of Business grants automatic acceptance into the major to applicants arriving with an A.S. or A.A.S.; everyone else is screened at 2.50. For that major the completed degree effectively is the admission decision, so finishing the A.S. rather than transferring at 45 credits changes your outcome, not just your credit count.",
+      "Enter through a named route instead of applying cold. Geneseo publishes Community College Degree Pathways with partner colleges and honors Phi Theta Kappa Guaranteed Transfer; layered on top, the SUNY Transfer Guarantee gives SUNY community college A.A./A.S. graduates a guaranteed SUNY bachelor's seat and SUNY Seamless Transfer protects junior standing. Pick the pathway that matches your college and major and follow its course list exactly."
+    ],
+    "watchouts": [
+      "Small college, small transfer class. Only 176 of 533 admits enrolled in Fall 2022, so seats, housing and specific-course availability — not the 69.6% admit rate — are what actually constrain you. Apply early and get the housing question answered before you commit.",
+      "2.50 is a floor for consideration, not a target. Education screens at 2.75 with disposition prompts, EOP's strongest candidates are 3.0-plus, and under CDS D4 fewer than 12 completed credits pushes you into the first-year pool where your high school record comes back into play. Geneseo also caps transferred credit at 60 hours from a two-year and 90 from a four-year, with C- the lowest grade accepted."
+    ],
+    "feeders": "Western New York SUNY two-years dominate, led by Monroe CC in nearby Rochester, plus Genesee CC, Finger Lakes CC, Erie CC and Onondaga CC, with some flow from Jamestown and Niagara County. Geneseo names Community College Degree Pathways partners on its transfe",
     "programs": []
   },
   {
@@ -1089,6 +1431,24 @@
     "programs": []
   },
   {
+    "name": "Sonoma State",
+    "applicants": 4236,
+    "admitted": 2506,
+    "rate": 59.2,
+    "cycle": "Fall 2018 CDS — the newest SSU has published",
+    "typical": "CSU-eligible upper-division transfers: 60+ transferable semester units, 2.0 GPA in all transferable work (2.4 for non-residents, per CDS-D8), and the 'golden four' (oral communication, written communication, critical thinking, college math) done with a C- or better. SSU is non-impacted campus-wide for 2026-27 — the only real gate is pre-nursing / pre-licensure BSN, which is impacted. The 59.2% is 4,236 applicants / 2,506 admits from the Fall 2018 CDS; SSU has published no CDS since, and the campus has shrunk sharply since then, so today's door is wider than that number reads.",
+    "levers": [
+      "Sonoma takes lower-division transfers (fewer than 60 units) — most CSUs won't. If you're at 30-45 units and stuck, you can apply now instead of waiting a year for junior standing.",
+      "File an ADT in a similar major: guaranteed CSU admission with junior standing, priority for the matching SSU bachelor's, and only 60 more units to the degree. At a non-impacted campus that turns the application into a formality."
+    ],
+    "watchouts": [
+      "The 59.2% rate is Fall 2018 — SSU's last published CDS. Treat it as a historical ceiling on difficulty, not today's bar; do not quote it as a current admit rate.",
+      "Confirm your intended major still exists. SSU consolidated and discontinued programs in its 2025 budget restructuring, and an ADT only guarantees a seat in a program the campus still offers."
+    ],
+    "feeders": "Santa Rosa Junior College above all others, then Napa Valley, College of Marin, Solano, and Contra Costa / Diablo Valley; not enumerated in the CDS, so treat as the practical North Bay pattern rather than a published list.",
+    "programs": []
+  },
+  {
     "name": "South Carolina",
     "applicants": 3206,
     "admitted": 2120,
@@ -1158,6 +1518,24 @@
       "Credit rules: maximum 84 transferable credits from either two-year or four-year institutions, minimum grade of C to transfer, and at least 36 credits must be completed at Stony Brook for the bachelor's degree."
     ],
     "feeders": "Suffolk County Community College and Nassau Community College are the dominant pipelines, followed by CUNY community colleges (BMCC, Queensborough, Kingsborough, LaGuardia) and other SUNY two-years; also steady lateral transfer from Farmingdale State and nearb",
+    "programs": []
+  },
+  {
+    "name": "Syracuse",
+    "applicants": 1732,
+    "admitted": 752,
+    "rate": 43.4,
+    "cycle": "Fall 2023 (CDS 2023-2024 — the newest Syracuse has published publicly)",
+    "typical": "CDS Section D2, Fall 2023: 1,732 transfer applicants, 752 admitted, 43.4%. Worth sitting with: that is statistically identical to the first-year rate in the same CDS (19,990 admitted of 46,357 applicants, 43.1%). Transferring into Syracuse is neither a back door nor a penalty — it is the same bar, applied to your college record instead of your high school one. Syracuse does not publish a transfer GPA, so we are not quoting one. What the CDS does pin down: 12+ college credits to be read as a transfer at all, a college transcript and one academic recommendation required of every applicant, and a high school transcript required of some (the under-30-credit group). Syracuse is private, so none of New York's public transfer guarantees apply — there is no SUNY-style seamless-transfer promise and no articulation guarantee to lean on. Admission is to a specific school or college, and that choice moves your odds far more than the 43% headline does.",
+    "levers": [
+      "Cross 30 credits before you apply. Under 30 credits, Syracuse pulls your high school transcript into the review — the CDS lists it as required of some transfer applicants, and the 30-credit line is where that switches off. Above 30, your college transcript carries the file on its own, which is the whole point of transferring if high school did not go well.",
+      "Pick the school, not the university. Syracuse admits into Newhouse, Whitman, Architecture, VPA, Engineering, the iSchool, Falk, or Arts & Sciences/Maxwell — each with its own bar and, for Architecture and VPA, its own portfolio. The 43% is an average across all of them. Newhouse and Architecture are the impacted doors; Arts & Sciences and Falk are not. Choosing a realistic school is the single highest-leverage decision in the application."
+    ],
+    "watchouts": [
+      "The credit caps bite after you are admitted: 60 credits maximum from a two-year school, 90 from a four-year, and nothing below a C transfers at all (CDS D12-D14). A rough semester can survive the admission read and still cost you the credit, which turns a junior-standing transfer into a sophomore one.",
+      "Fall transfer runs on a July 1 closing date, and the CDS does not check the rolling-admission box for transfers. So unlike many privates, there is no consequence-free late window — the deadline is a real deadline, and filing in late June leaves you at the back of the line for housing and transfer aid."
+    ],
+    "feeders": "Onondaga Community College sits in Syracuse itself and is the most natural pipeline, alongside the larger SUNY two-year campuses — Monroe, Nassau, Suffolk, Broome. Because Syracuse's applicant pool is heavily out-of-state (29,821 of 46,357 first-year applicant",
     "programs": []
   },
   {
@@ -1401,6 +1779,24 @@
       "The current fall deadline is March 15, earlier than the June 1 fall closing date printed in the 2024-25 CDS — check the live admission page, not the CDS, when planning timing. Also: Villanova accepts a maximum of about 60 transfer credits, requires at least half of all major courses and the final 30 credits to be taken at Villanova, evaluates credit only after you are admitted, and states that need-based institutional grant aid for transfer students is limited."
     ],
     "feeders": "Concentrated in the Philadelphia region and the Mid-Atlantic corridor into New Jersey and New York. Two distinct streams: suburban Philadelphia community colleges (Montgomery County, Delaware County, Bucks County) and — more heavily than at a typical transfer-friendly school — students moving laterally from other four-year institutions, especially Catholic and mid-Atlantic privates. The requirements tilt toward that second group: a full year of coursework, a 3.0, and a course-catalog packet with full descriptions for every class favor applicants whose curriculum already maps onto Villanova's.",
+    "programs": []
+  },
+  {
+    "name": "Virginia Tech",
+    "applicants": 3824,
+    "admitted": 1921,
+    "rate": 50.2,
+    "cycle": "Fall 2025 (CDS 2025-26)",
+    "typical": "Almost exactly half of transfer applicants are admitted, and 1,176 enrolled — VT is a genuinely transfer-heavy flagship. The modal admit is a VCCS student finishing a transferable associate degree (AS or AA&S) with a 3.0+ GPA who has already cleared the target major's gateway sequence. Virginia's Guaranteed Admission Agreement (GAA) is the concrete guarantee: a transferable associate degree from a Virginia community college at the named cumulative GPA guarantees admission to Virginia Tech. Critically, that guarantee is to the university, not to your major — admission is decided major by major, and Engineering and Computer Science are the choke points.",
+    "levers": [
+      "Get the Virginia GAA on file with your VCCS advisor early — it must be initiated while you are still enrolled at the community college, generally before you pass 45 credits. Finishing the transferable associate degree at the stated GPA converts admission from a judgment call into a guarantee.",
+      "Clear the major's gateway courses, not just credit count. Use Transfer Virginia's equivalency tool with VT's per-major transfer guides to finish the exact sequence (calculus I/II, chemistry, English 1105/1106 equivalents for engineering; the Pamplin business core for business). VT reads prerequisite completion in the intended major far more heavily than total hours."
+    ],
+    "watchouts": [
+      "The GAA does not guarantee Engineering or Computer Science. These are restricted, enrollment-limited majors with higher GPA bars and are frequently closed to outside transfers — plan a realistic first major and a documented internal-transfer path.",
+      "March 1 is a hard fall deadline with no rolling review and no late window, and you generally need 30+ transferable credits; under that you are evaluated against first-year applicant standards instead."
+    ],
+    "feeders": "Northern Virginia CC (NOVA) by a wide margin, Virginia Western CC, Tidewater CC, Blue Ridge CC, Brightpoint (formerly John Tyler) CC, Germanna CC; plus lateral transfers from George Mason and Radford.",
     "programs": []
   },
   {
