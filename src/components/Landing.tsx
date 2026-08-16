@@ -109,6 +109,18 @@ const DEMO_PATTERNS = [
   { stat: "50%", label: "of admit activities are campus-anchored — the lane your file is thinnest in" },
 ];
 
+/** A stylized sample of the corpus scanning past, then resolving into the
+ *  subset that matches this profile — a small illustrative sample, not a
+ *  1:1 render of the dataset (CorpusField does that, further down the page). */
+const SCAN_COLS = 16;
+const SCAN_ROWS = 6;
+const SCAN_TOTAL = SCAN_COLS * SCAN_ROWS;
+const SCAN_MATCHED = Array.from({ length: SCAN_TOTAL }, (_, i) => {
+  const h = ((i + 1) * 2654435761) >>> 0;
+  return (h % 100) < 20;
+});
+const SCAN_MATCH_COUNT = SCAN_MATCHED.filter(Boolean).length;
+
 /** Per-activity upgrade: the same activity, made legible to a reader. */
 const DEMO_UPGRADES = [
   {
@@ -426,6 +438,23 @@ function HeroDemo() {
 
         {screen === 1 && (
           <div className="ld-mac-panel ld-demo-scan" key="s1">
+            <div className="ld-scanhead">
+              <span className="ld-scanhead-label">
+                {scan >= DEMO_SCANS.length ? "Pattern match" : "Sampling the corpus for a match"}
+              </span>
+              {scan >= DEMO_SCANS.length && (
+                <span className="ld-scanhead-count num">{SCAN_MATCH_COUNT}/{SCAN_TOTAL} sampled files</span>
+              )}
+            </div>
+            <div className={`ld-scangrid${scan >= DEMO_SCANS.length ? " matched" : ""}`} aria-hidden="true">
+              {SCAN_MATCHED.map((m, i) => (
+                <span
+                  className={`ld-scandot${m ? " ld-scandot-match" : ""}`}
+                  key={i}
+                  style={{ animationDelay: `${i * 4}ms` }}
+                />
+              ))}
+            </div>
             {DEMO_SCANS.map((sc, i) => (
               <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan ? " active" : ""}`} key={sc.run}>
                 <span className="ld-demo-scanicon">
