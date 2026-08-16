@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { DEFAULT_PROFILE, estimateAll, MODEL, TAG_CAMPUSES } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import { buildPlan } from "../lib/actionplan";
+import { admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW } from "../lib/similar";
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
 import { useScrollFx } from "../hooks/useScrollFx";
 import { countdown } from "../lib/deadlines";
 import GpaStrip from "./GpaStrip";
 import CorpusField from "./CorpusField";
+import CampusPhoto from "./CampusPhoto";
 import Tile from "./Tile";
 import "./landing.css";
 
@@ -109,17 +111,25 @@ const DEMO_PATTERNS = [
   { stat: "50%", label: "of admit activities are campus-anchored — the lane your file is thinnest in" },
 ];
 
-/** A stylized sample of the corpus scanning past, then resolving into the
- *  subset that matches this profile — a small illustrative sample, not a
- *  1:1 render of the dataset (CorpusField does that, further down the page). */
-const SCAN_COLS = 16;
-const SCAN_ROWS = 6;
-const SCAN_TOTAL = SCAN_COLS * SCAN_ROWS;
-const SCAN_MATCHED = Array.from({ length: SCAN_TOTAL }, (_, i) => {
-  const h = ((i + 1) * 2654435761) >>> 0;
-  return (h % 100) < 20;
-});
-const SCAN_MATCH_COUNT = SCAN_MATCHED.filter(Boolean).length;
+/** The schools this run is actually being measured against. */
+const DEMO_TARGETS = DEMO_ROWS.map((e) => e.school.name);
+/** Real recorded applicants whose file reads closest to this one — with the
+ *  schools that took them AND the ones that didn't. Nothing here is written:
+ *  every row is a person in the corpus, matched at runtime by the same
+ *  function the product runs for a real user. */
+const DEMO_MATCHES = findSimilar(DEMO_PROFILE, DEMO_TARGETS, 3);
+/** The narrowing, counted: every file scanned → the ones inside the match
+ *  window → the three nearest. The arithmetic on screen has to hold. */
+const DEMO_ELIGIBLE = countEligible(DEMO_PROFILE);
+/** What the admitted files at those targets actually look like. Targets with
+ *  too few observed admits return nothing rather than a number that would
+ *  read as authoritative. */
+const DEMO_SIGS = admitSignatures(DEMO_TARGETS, 2);
+/** Targets the corpus cannot speak to. Naming them is the point: a school we
+ *  have no observed admits for gets its official rate and nothing invented. */
+const DEMO_THIN_TARGETS = DEMO_TARGETS
+  .filter((t) => !DEMO_SIGS.some((s) => s.school === t))
+  .map((t) => markOf(t).word);
 
 /** Per-activity upgrade: the same activity, made legible to a reader. */
 const DEMO_UPGRADES = [
@@ -176,7 +186,9 @@ function DemoOdds({ e, active, delay }: { e: Estimate; active: boolean; delay: n
   const cls = e.p >= 0.45 ? "ok" : e.p >= 0.12 ? "mid" : "low";
   return (
     <div className={`ld-demo-row${armed ? " on" : ""}`}>
-      <Tile name={e.school.name} size={22} />
+      <span className="ld-demo-rphoto">
+        <CampusPhoto name={e.school.name} color={markOf(e.school.name).color} height={30} />
+      </span>
       <span className="ld-demo-rname">{e.school.name}</span>
       <span className="ld-demo-metre" aria-hidden="true">
         <span className={`ld-demo-metre-fill ld-${cls}`} style={{ width: armed ? `${Math.min(100, e.hi * 100)}%` : "0%" }} />
@@ -191,13 +203,108 @@ function DemoOdds({ e, active, delay }: { e: Estimate; active: boolean; delay: n
 
 type FocusKind = "upload" | "field" | "act" | null;
 
+/** The physical keyboard, by row. Numbers are relative key widths, so the
+ *  deck stays correct at any scale instead of being hand-placed pixels. */
+const KEY_ROWS: number[][] = [
+  [1.35, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.35],          // esc + function row
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.9],              // ` 1-0 - = delete
+  [1.45, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.45],          // tab qwerty \
+  [1.7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.2],               // caps asdf return
+  [2.2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.7],                  // shift zxcv shift
+];
+/** Bottom row: fn ctrl opt cmd space cmd opt, then the arrow cluster. */
+const KEY_BOTTOM = [1, 1, 1, 1.3, 5.6, 1.3, 1];
+
+/** Rows the typing animation actually strikes — the letter rows and the
+ *  space bar, never the function row. `hit` is "<row>:<key>" or null. */
+function MacKeyboard({ hit }: { hit: string | null }) {
+  return (
+    <div className="ld-kb" aria-hidden="true">
+      <div className="ld-kb-keys">
+        {KEY_ROWS.map((row, r) => (
+          <div className={`ld-kb-row${r === 0 ? " ld-kb-fn" : ""}`} key={r}>
+            {row.map((w, i) => (
+              <span
+                className={`ld-kb-key${hit === `${r}:${i}` ? " down" : ""}`}
+                style={{ flexGrow: w }}
+                key={i}
+              />
+            ))}
+          </div>
+        ))}
+        <div className="ld-kb-row">
+          {KEY_BOTTOM.map((w, i) => (
+            <span
+              className={`ld-kb-key${hit === `5:${i}` ? " down" : ""}`}
+              style={{ flexGrow: w }}
+              key={i}
+            />
+          ))}
+          {/* Arrows: full-height left/right, stacked half-height up/down. */}
+          <span className="ld-kb-key" style={{ flexGrow: 1 }} />
+          <span className="ld-kb-arrows">
+            <span className="ld-kb-key ld-kb-half" />
+            <span className="ld-kb-key ld-kb-half" />
+          </span>
+          <span className="ld-kb-key" style={{ flexGrow: 1 }} />
+        </div>
+      </div>
+      <div className="ld-kb-pad" />
+    </div>
+  );
+}
+
+/** The desktop this app is running on: the menu bar and the Dock. Icons are
+ *  plain coloured tiles, not copies of anyone's app marks. */
+const DOCK = [
+  "var(--blue)", "var(--teal)", "var(--accent)", "#f0a63c",
+  "var(--coral)", "#59b36b", "#7a6ff0", "#4aa8d8",
+];
+
+function MacOsBar() {
+  return (
+    <div className="ld-os-bar" aria-hidden="true">
+      <span className="ld-os-apple" />
+      <b>Transfer Chance Me</b>
+      {["File", "Edit", "View", "Window", "Help"].map((m) => (
+        <span key={m}>{m}</span>
+      ))}
+      <span className="ld-os-right">
+        <i className="ld-os-wifi" />
+        <i className="ld-os-batt" />
+        <span className="ld-os-clock num">Sun 6:59 PM</span>
+      </span>
+    </div>
+  );
+}
+
+function MacOsDock() {
+  return (
+    <div className="ld-os-dock" aria-hidden="true">
+      <span className="ld-os-dockbar">
+        {DOCK.map((c, i) => (
+          <i className={`ld-os-app${i === 0 ? " on" : ""}`} style={{ background: c }} key={i} />
+        ))}
+        <i className="ld-os-sep" />
+        <i className="ld-os-app ld-os-trash" />
+      </span>
+    </div>
+  );
+}
+
 /** A simulated pointer: moves to a target element, clicks it, then the
  *  caller types into it. Positions are measured against the panel so the
  *  motion is pixel-accurate at any width, not guessed. */
-const SCREEN_TITLES = ["Your profile", "Researching your file", "Specific feedback", "Your chances"];
+const SCREEN_TITLES = [
+  "Your profile",
+  "Researching your file",
+  "Files like yours",
+  "Specific feedback",
+  "Your chances",
+];
 
 function HeroDemo() {
-  // 0 your profile · 1 researching · 2 specific feedback · 3 your chances — one at a time
+  // 0 profile · 1 researching · 2 matched files · 3 feedback · 4 chances
   const [screen, setScreen] = useState(0);
   const [fieldIdx, setFieldIdx] = useState(0);   // fields fully filled (extracted or typed)
   const [actIdx, setActIdx] = useState(0);       // activities fully typed
@@ -212,6 +319,11 @@ function HeroDemo() {
   const [cursor, setCursor] = useState({ x: -30, y: -30 });
   const [cursorOn, setCursorOn] = useState(false);
   const [pulse, setPulse] = useState(0);
+  // Screen 3: how far the corpus sweep has run, then what it resolved to.
+  const [keyHit, setKeyHit] = useState<string | null>(null); // key struck right now
+  const [swept, setSwept] = useState(0);        // files compared so far
+  const [matchIdx, setMatchIdx] = useState(0);  // matched files revealed
+  const [sigIdx, setSigIdx] = useState(0);      // target signatures revealed
 
   const panelRef = useRef<HTMLDivElement>(null);
   const uploadRef = useRef<HTMLDivElement>(null);
@@ -223,11 +335,29 @@ function HeroDemo() {
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // On a phone the match screen stacks into one column, so it shows fewer
+  // files. The counts on screen are driven off these same arrays, so the
+  // "n nearest returned" readout stays true at every width.
+  const [narrow, setNarrow] = useState(
+    typeof window !== "undefined" && window.matchMedia("(max-width: 700px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 700px)");
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  // Memoised: these feed the sequencer's dependency list, and a fresh array
+  // each render would restart the animation on every frame.
+  const matches = useMemo(() => (narrow ? DEMO_MATCHES.slice(0, 2) : DEMO_MATCHES), [narrow]);
+  const sigs = useMemo(() => (narrow ? DEMO_SIGS.slice(0, 1) : DEMO_SIGS), [narrow]);
+
   useEffect(() => {
     if (reduced) {
-      setScreen(3); setFieldIdx(DEMO_FIELDS.length); setActIdx(DEMO_ACTS.length);
+      setScreen(4); setFieldIdx(DEMO_FIELDS.length); setActIdx(DEMO_ACTS.length);
       setJudged(DEMO_ACTS.length); setScan(DEMO_SCANS.length); setCursorOn(false);
-      setUploadDone(true); setReading(false);
+      setUploadDone(true); setReading(false); setKeyHit(null);
+      setSwept(CORPUS_META.people); setMatchIdx(matches.length); setSigIdx(sigs.length);
       return;
     }
 
@@ -250,19 +380,33 @@ function HeroDemo() {
       await wait(110);
     };
 
+    // Each character struck lights a key on the deck. Letters land on the
+    // three letter rows, a space on the space bar — so the hands read right
+    // even though we aren't mapping real key positions.
+    const strike = (ch: string) => {
+      if (ch === " ") return "5:4";
+      const rows = [2, 3, 4];
+      const r = rows[ch.charCodeAt(0) % rows.length];
+      const len = KEY_ROWS[r].length;
+      return `${r}:${1 + (ch.charCodeAt(0) * 7) % (len - 2)}`;
+    };
+
     const type = async (text: string) => {
       setActiveText("");
       for (let n = 1; n <= text.length; n++) {
         if (cancelled) return;
         setActiveText(text.slice(0, n));
+        setKeyHit(strike(text[n - 1]));
         await wait(13 + Math.random() * 12);
       }
+      setKeyHit(null);
       await wait(120);
     };
 
     const run = async () => {
       setScreen(0); setFieldIdx(0); setActIdx(0); setJudged(0); setScan(0);
       setReading(false); setUploadDone(false);
+      setSwept(0); setMatchIdx(0); setSigIdx(0); setKeyHit(null);
       setFocus({ kind: null, idx: -1, phase: "moving" });
       setActiveText("");
       await wait(280);
@@ -334,11 +478,41 @@ function HeroDemo() {
       }
 
       if (cancelled) return;
-      await wait(900);
+      await wait(700);
+
+      // The corpus sweep: every recorded file compared, then the nearest ones
+      // and the admitted bands at the targets resolve out of it.
       setScreen(2);
+      const SWEEP_MS = 1150;
+      const t0 = performance.now();
+      await new Promise<void>((res) => {
+        const tick = () => {
+          if (cancelled) { res(); return; }
+          const k = Math.min(1, (performance.now() - t0) / SWEEP_MS);
+          setSwept(Math.round(CORPUS_META.people * (1 - Math.pow(1 - k, 3))));
+          if (k < 1) requestAnimationFrame(tick); else res();
+        };
+        requestAnimationFrame(tick);
+      });
+      if (cancelled) return;
+      for (let i = 0; i < matches.length; i++) {
+        if (cancelled) return;
+        setMatchIdx(i + 1);
+        await wait(240);
+      }
+      await wait(260);
+      for (let i = 0; i < sigs.length; i++) {
+        if (cancelled) return;
+        setSigIdx(i + 1);
+        await wait(300);
+      }
       await wait(2600);
+
       if (cancelled) return;
       setScreen(3);
+      await wait(2600);
+      if (cancelled) return;
+      setScreen(4);
       await wait(3400);
       if (cancelled) return;
       run();
@@ -346,7 +520,7 @@ function HeroDemo() {
 
     run();
     return () => { cancelled = true; timers.forEach(clearTimeout); };
-  }, [reduced]);
+  }, [reduced, matches, sigs]);
 
   const isField = (i: number) => focus.kind === "field" && focus.idx === i;
   const isAct = (i: number) => focus.kind === "act" && focus.idx === i;
@@ -354,17 +528,24 @@ function HeroDemo() {
 
   return (
     <div className="ld-mac">
-      <div className="ld-mac-lid"><span className="ld-mac-cam" /></div>
-
-      <div className="ld-mac-screen" aria-hidden="true">
+      {/* Display assembly: aluminium shell → black bezel → glass. The notch
+          hangs into the top of the display, the way the machine really is. */}
+      <div className="ld-mac-lid">
+        <div className="ld-mac-bezel">
+          <span className="ld-mac-notch"><i className="ld-mac-cam" /></span>
+          <MacOsBar />
+          <div className="ld-mac-screen" aria-hidden="true">
         <div className="ld-mac-topline">
-          <span className="ld-mac-count num">{String(screen + 1).padStart(2, "0")} / 04</span>
+          <span className="ld-mac-count num">
+            {String(screen + 1).padStart(2, "0")} / {String(SCREEN_TITLES.length).padStart(2, "0")}
+          </span>
           <span className="ld-mac-title">{SCREEN_TITLES[screen]}</span>
           {screen === 1 && <span className="ld-demo-live">live</span>}
-          {screen === 2 && <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>}
+          {screen === 2 && <span className="ld-demo-live">querying</span>}
+          {screen === 3 && <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>}
         </div>
         <div className="ld-mac-steps">
-          {[0, 1, 2, 3].map((i) => (
+          {SCREEN_TITLES.map((_, i) => (
             <span className={`ld-mac-step${screen >= i ? " done" : ""}`} key={i}><span className="ld-mac-step-fill" /></span>
           ))}
         </div>
@@ -438,23 +619,6 @@ function HeroDemo() {
 
         {screen === 1 && (
           <div className="ld-mac-panel ld-demo-scan" key="s1">
-            <div className="ld-scanhead">
-              <span className="ld-scanhead-label">
-                {scan >= DEMO_SCANS.length ? "Pattern match" : "Sampling the corpus for a match"}
-              </span>
-              {scan >= DEMO_SCANS.length && (
-                <span className="ld-scanhead-count num">{SCAN_MATCH_COUNT}/{SCAN_TOTAL} sampled files</span>
-              )}
-            </div>
-            <div className={`ld-scangrid${scan >= DEMO_SCANS.length ? " matched" : ""}`} aria-hidden="true">
-              {SCAN_MATCHED.map((m, i) => (
-                <span
-                  className={`ld-scandot${m ? " ld-scandot-match" : ""}`}
-                  key={i}
-                  style={{ animationDelay: `${i * 4}ms` }}
-                />
-              ))}
-            </div>
             {DEMO_SCANS.map((sc, i) => (
               <div className={`ld-demo-scanrow${i < scan ? " done" : i === scan ? " active" : ""}`} key={sc.run}>
                 <span className="ld-demo-scanicon">
@@ -479,7 +643,154 @@ function HeroDemo() {
         )}
 
         {screen === 2 && (
-          <div className="ld-mac-panel ld-demo-fix" key="s2">
+          <div className="ld-mac-panel ld-match" key="s2">
+            <div className="ld-match-query">
+              <span className="ld-match-op">MATCH</span>
+              <span className="ld-match-where">
+                gpa <b className="num">{DEMO_PROFILE.gpa.toFixed(2)}</b> ±{MATCH_WINDOW.toFixed(2)} · major ∈{" "}
+                <b>econ / business</b> · from <b>community college</b>
+              </span>
+            </div>
+            <div className="ld-match-meter">
+              <span className="ld-match-bar" style={{ width: `${(swept / CORPUS_META.people) * 100}%` }} />
+            </div>
+            {/* The narrowing, and it has to add up: scanned → eligible → returned. */}
+            <div className="ld-match-funnel num">
+              <span><b>{swept.toLocaleString()}</b> files scanned</span>
+              <i>▸</i>
+              <span className={swept >= CORPUS_META.people ? "on" : ""}>
+                <b>{swept >= CORPUS_META.people ? DEMO_ELIGIBLE : 0}</b> inside the window
+              </span>
+              <i>▸</i>
+              <span className={matchIdx > 0 ? "on" : ""}>
+                <b>{matchIdx}</b> nearest returned
+              </span>
+              <span className="ld-match-decisions">
+                {CORPUS_META.records.toLocaleString()} recorded decisions
+              </span>
+            </div>
+
+            <div className="ld-match-cols">
+              <div className="ld-match-col">
+                <p className="ld-match-h">Closest real files to yours</p>
+                {/* A header over streaming rows is what makes this read as a
+                    table being filled rather than a list of cards. */}
+                <div className="ld-match-cols-head num">
+                  <span>#</span><span>GPA</span><span>FILE</span><span>Δ vs you</span>
+                </div>
+                {matches.map((m, i) => {
+                  const d = m.gpa - DEMO_PROFILE.gpa;
+                  return (
+                  <div className={`ld-match-card${i < matchIdx ? " on" : ""}`} key={`${m.gpa}-${m.major}-${m.year}`}>
+                    <div className="ld-match-top">
+                      <span className="ld-match-idx num">{String(i + 1).padStart(2, "0")}</span>
+                      <b className="ld-match-gpa num">{m.gpa.toFixed(2)}</b>
+                      <span className="ld-match-meta">
+                        {m.major}
+                        {m.institutionLabel ? ` · ${m.institutionLabel}` : ""} · {m.year}
+                      </span>
+                      {/* Signed from your side, and coloured when you're behind. */}
+                      <span className={`ld-match-delta num${d > 0 ? " ld-match-behind" : ""}`}>
+                        {d > 0 ? "+" : d < 0 ? "−" : "±"}{Math.abs(d).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="ld-match-ledger">
+                      <span className="ld-match-tag ld-match-in">IN</span>
+                      <span className="ld-match-schools">
+                        {/* Capped on a phone so the ledger cannot wrap the
+                            panel past the screen — the remainder is counted,
+                            never silently dropped. */}
+                        {m.admits.slice(0, narrow ? 3 : m.admits.length).map((s) => (
+                          <span className="ld-match-school" key={s}>
+                            <Tile name={s} size={15} /> {markOf(s).word}
+                          </span>
+                        ))}
+                        {narrow && m.admits.length > 3 && (
+                          <span className="ld-match-school ld-match-more num">
+                            +{m.admits.length - 3} more
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    {m.denies.length > 0 && (
+                      <div className="ld-match-ledger">
+                        <span className="ld-match-tag ld-match-out">OUT</span>
+                        <span className="ld-match-schools ld-match-denied">
+                          {m.denies.map((s) => (
+                            <span className="ld-match-school" key={s}>
+                              <Tile name={s} size={15} /> {markOf(s).word}
+                            </span>
+                          ))}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  );
+                })}
+              </div>
+
+              <div className="ld-match-col">
+                <p className="ld-match-h">What admitted files hold at your targets</p>
+                {sigs.map((s, i) => {
+                  const pos = (g: number) => `${Math.min(100, Math.max(0, ((g - 3.2) / 0.8) * 100))}%`;
+                  return (
+                    <div className={`ld-sig${i < sigIdx ? " on" : ""}`} key={s.school}>
+                      <div className="ld-sig-top">
+                        <span className="ld-sig-photo">
+                          <CampusPhoto name={s.school} color={markOf(s.school).color} height={26} />
+                        </span>
+                        <Tile name={s.school} size={16} />
+                        <b>{markOf(s.school).word}</b>
+                        <span className="ld-sig-n num">n={s.n} admits observed</span>
+                      </div>
+                      <div className="ld-sig-band" aria-hidden="true">
+                        <span
+                          className="ld-sig-range"
+                          style={{ left: pos(s.gpaP25), width: `calc(${pos(s.gpaP75)} - ${pos(s.gpaP25)})` }}
+                        />
+                        <span className="ld-sig-med" style={{ left: pos(s.gpaMedian) }} />
+                        <span className="ld-sig-you" style={{ left: pos(DEMO_PROFILE.gpa) }} />
+                      </div>
+                      <p className="ld-sig-line">
+                        <span className="num">{s.gpaP25.toFixed(2)}</span>–
+                        <span className="num">{s.gpaP75.toFixed(2)}</span>, median{" "}
+                        <b className="num">{s.gpaMedian.toFixed(2)}</b> · you{" "}
+                        <b className="num ld-sig-mine">{DEMO_PROFILE.gpa.toFixed(2)}</b>
+                      </p>
+                      <p className="ld-sig-line">
+                        Most-listed majors: <b>{s.topMajors.slice(0, 2).join(", ")}</b>
+                      </p>
+                      {s.ccShare != null && (
+                        <p className="ld-sig-line">
+                          <b className="num">{Math.round(s.ccShare * 100)}%</b> came from a community college,
+                          like you
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+                {/* One fixed scale for both bands — per-card autoscaling would
+                    make two different pictures look comparable when they aren't. */}
+                <p className="ld-sig-axis num" aria-hidden="true">
+                  <i>3.20</i><i>3.60</i><i>4.00</i>
+                </p>
+                <p className={`ld-match-honest${sigIdx >= sigs.length ? " on" : ""}`}>
+                  {DEMO_THIN_TARGETS.length > 0 ? (
+                    <>
+                      {DEMO_THIN_TARGETS.join(" and ")}: too few observed admits to characterize — you get the
+                      official rate there, not a number we made up.
+                    </>
+                  ) : (
+                    <>Every figure here is counted from recorded outcomes, never estimated.</>
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {screen === 3 && (
+          <div className="ld-mac-panel ld-demo-fix" key="s3">
             {DEMO_UPGRADES.map((u, i) => (
               <div
                 className="ld-demo-up on"
@@ -495,8 +806,8 @@ function HeroDemo() {
           </div>
         )}
 
-        {screen === 3 && (
-          <div className="ld-mac-panel ld-demo-out" key="s3">
+        {screen === 4 && (
+          <div className="ld-mac-panel ld-demo-out" key="s4">
             {DEMO_ROWS.map((e, i) => (
               <DemoOdds key={e.school.id} e={e} active delay={i * 150} />
             ))}
@@ -509,9 +820,18 @@ function HeroDemo() {
             </div>
           </div>
         )}
+          </div>
+          <MacOsDock />
+        </div>
       </div>
 
-      <div className="ld-mac-base"><span className="ld-mac-notch" /></div>
+      {/* The deck, laid back in perspective so the keys recede the way they
+          do on a real machine sitting in front of you. */}
+      <div className="ld-mac-deck" aria-hidden="true">
+        <span className="ld-mac-hinge" />
+        <MacKeyboard hit={keyHit} />
+        <span className="ld-mac-slot" />
+      </div>
     </div>
   );
 }

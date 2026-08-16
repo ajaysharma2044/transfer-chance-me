@@ -386,42 +386,169 @@
 @keyframes ld-faq { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
 /* ── Hero demo: one screen at a time, staged inside a MacBook ───────── */
+/* The machine. Four parts, in the order the real object has them: aluminium
+   lid → black bezel (with the camera notch cut into the display) → glass →
+   body deck → front lip with its finger slot. The greys are literal metal,
+   not brand colour: this is a depicted object, and the UI lives inside it. */
 .ld-mac {
   margin: 52px auto 8px;
-  max-width: 660px;
+  max-width: 680px;
   text-align: left;
 }
 .ld-mac-lid {
   position: relative;
-  background: linear-gradient(180deg, #303036, #1b1b1f);
-  border-radius: 20px 20px 0 0;
-  padding: 13px 13px 0;
-  box-shadow: 0 34px 70px -24px rgba(20, 24, 63, 0.38), 0 12px 28px rgba(20, 24, 63, 0.14);
+  /* The visible aluminium rim around the display, plus a lit top edge. */
+  padding: 9px 9px 10px;
+  border-radius: 15px 15px 5px 5px;
+  background: linear-gradient(175deg, #d9dade 0%, #bdbec5 42%, #a9aab2 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 0 0 1px rgba(20, 24, 63, 0.10),
+    0 30px 60px -26px rgba(20, 24, 63, 0.42);
+}
+.ld-mac-bezel {
+  position: relative;
+  border-radius: 8px 8px 3px 3px;
+  background: #131317;
+  padding: 12px 5px 5px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+/* Cut into the top of the display, not sitting above it. */
+.ld-mac-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  width: 108px; height: 12px;
+  background: #131317;
+  border-radius: 0 0 6px 6px;
 }
 .ld-mac-cam {
-  position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #050506; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+  width: 4px; height: 4px; border-radius: 50%;
+  background: #2a2f3a;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 .ld-mac-screen {
   position: relative; overflow: hidden;
   background: var(--bg);
-  border-radius: 7px 7px 0 0;
-  min-height: 430px;
-  padding: 16px 20px 20px;
+  border-radius: 4px;
+  /* Fixed, not min-height: the screens differ in length, and letting content
+     size the display makes the whole machine grow and snap between steps. */
+  height: 524px;
+  padding: 16px 20px 18px;
 }
-.ld-mac-base {
+/* Glass: a single faint diagonal sheen. One is convincing; more is a mockup. */
+.ld-mac-screen::after {
+  content: ""; position: absolute; inset: 0; z-index: 9; pointer-events: none;
+  background: linear-gradient(148deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 34%);
+}
+/* ── The desktop: menu bar above the app, Dock below it ─────────────────── */
+.ld-os-bar {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 11px;
+  height: 20px; padding: 0 9px;
+  border-radius: 4px 4px 0 0;
+  background: rgba(246, 246, 249, 0.94);
+  border-bottom: 1px solid rgba(20, 24, 63, 0.07);
+  font-size: 9.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden;
+}
+.ld-os-bar b { font-weight: 750; color: var(--ink); }
+.ld-os-apple {
+  width: 9px; height: 10px; flex: 0 0 9px; background: var(--ink);
+  /* Apple-ish silhouette, drawn not copied — it reads as the menu anchor. */
+  clip-path: polygon(52% 0, 62% 8%, 55% 16%, 74% 22%, 88% 42%, 74% 62%, 80% 84%,
+                     60% 100%, 40% 100%, 20% 84%, 12% 52%, 22% 26%, 44% 20%, 40% 8%);
+}
+.ld-os-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.ld-os-wifi, .ld-os-batt { display: block; background: var(--ink-2); }
+.ld-os-wifi {
+  width: 11px; height: 8px;
+  clip-path: polygon(50% 100%, 0 34%, 12% 22%, 50% 58%, 88% 22%, 100% 34%);
+}
+.ld-os-batt { width: 15px; height: 8px; border-radius: 2px; background: none; box-shadow: inset 0 0 0 1px var(--ink-3); position: relative; }
+.ld-os-batt::before {
+  content: ""; position: absolute; left: 1.5px; top: 1.5px; bottom: 1.5px; width: 8px;
+  border-radius: 1px; background: var(--ink-2);
+}
+.ld-os-clock { font-size: 9px; font-weight: 650; color: var(--ink-2); }
+
+.ld-os-dock {
+  position: relative; z-index: 2;
+  display: flex; justify-content: center;
+  padding: 5px 0 6px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(180deg, rgba(240, 241, 247, 0) 0%, rgba(236, 237, 245, 0.9) 60%);
+}
+.ld-os-dockbar {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 7px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 2px 10px rgba(20, 24, 63, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.ld-os-app {
+  position: relative; display: block;
+  width: 22px; height: 22px; border-radius: 6px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(20, 24, 63, 0.16);
+}
+.ld-os-app.on::after {
+  content: ""; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+  width: 3px; height: 3px; border-radius: 50%; background: var(--ink-3);
+}
+.ld-os-sep { width: 1px; height: 20px; background: rgba(20, 24, 63, 0.12); margin: 0 2px; }
+.ld-os-trash {
+  background: linear-gradient(180deg, #e9eaf0, #d3d4de);
+  box-shadow: inset 0 0 0 1px rgba(20, 24, 63, 0.10);
+}
+
+/* ── The deck, in perspective, with the keyboard and trackpad ───────────── */
+.ld-mac-deck {
   position: relative;
-  height: 13px;
-  background: linear-gradient(180deg, #dcdce1, #b8b8c0);
-  border-radius: 0 0 11px 11px;
-  box-shadow: 0 8px 16px rgba(20, 24, 63, 0.16);
+  height: 118px;
+  transform: perspective(760px) rotateX(58deg);
+  transform-origin: top center;
+  /* rotateX foreshortens the deck to ~cos(58°) of its height, but layout
+     still reserves the full box — reclaim the difference or the machine
+     floats above a gap. */
+  margin-bottom: -54px;
+  background: linear-gradient(180deg, #c8c9cf 0%, #b4b5bd 45%, #a2a3ac 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 26px 34px -14px rgba(20, 24, 63, 0.34);
+  border-radius: 0 0 6px 6px;
 }
-.ld-mac-notch {
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 92px; height: 6px;
-  background: linear-gradient(180deg, #c9c9d1, #adadb6);
-  border-radius: 0 0 9px 9px;
+/* The dark seam where the display meets the deck. */
+.ld-mac-hinge {
+  position: absolute; top: 0; left: 7%; right: 7%; height: 3px;
+  background: linear-gradient(180deg, rgba(20, 24, 63, 0.38), rgba(20, 24, 63, 0));
+}
+.ld-kb { padding: 9px 7% 0; }
+.ld-kb-keys { display: flex; flex-direction: column; gap: 2.5px; }
+.ld-kb-row { display: flex; gap: 2.5px; height: 13px; }
+.ld-kb-row.ld-kb-fn { height: 8px; }
+.ld-kb-key {
+  flex: 1 1 0; min-width: 0; border-radius: 2.5px;
+  background: linear-gradient(180deg, #3a3b42, #26272c);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.14), 0 1px 1px rgba(0, 0, 0, 0.22);
+  transition: background 90ms ease, box-shadow 90ms ease, transform 90ms ease;
+}
+/* Struck: the key drops into the deck and catches the backlight. */
+.ld-kb-key.down {
+  background: linear-gradient(180deg, #8e97cc, #5a67a0);
+  transform: translateY(0.5px) scale(0.96);
+  box-shadow:
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.45),
+    0 0 7px 1px rgba(120, 140, 240, 0.75);
+}
+.ld-kb-arrows { display: flex; flex-direction: column; gap: 1.5px; flex-grow: 1; }
+.ld-kb-half { flex: 1 1 0; }
+.ld-kb-pad {
+  width: 34%; height: 34px; margin: 8px auto 0;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #bcbdc4, #c8c9d0);
+  box-shadow: inset 0 0 0 1px rgba(20, 24, 63, 0.13);
+}
+/* The finger slot cut into the front edge of the deck. */
+.ld-mac-slot {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 15%; height: 5px;
+  background: linear-gradient(180deg, #90919b, #a9aab3);
+  border-radius: 6px 6px 0 0;
 }
 
 /* Technical readout above the active screen: which of 4, and progress */
@@ -536,8 +663,8 @@
 }
 
 .ld-demo-field {
-  display: grid; grid-template-columns: 1fr auto; gap: 2px 8px;
-  padding: 7px 0; border-top: 1px solid var(--line);
+  display: grid; grid-template-columns: 1fr auto; gap: 1px 8px;
+  padding: 5px 0; border-top: 1px solid var(--line);
   opacity: 0; transform: translateY(8px);
   transition: opacity 300ms ease, transform 300ms cubic-bezier(0.22, 1.3, 0.36, 1);
 }
@@ -557,34 +684,143 @@
   animation: ld-pulse 1.2s ease-in-out infinite;
 }
 @keyframes ld-pulse { 50% { opacity: 0.45; } }
-/* Deep-data visual: a sample of the corpus scans past, then resolves into
-   the subset that matches this profile — "going through profiles" made
-   visible, ahead of the matching claim landing as text below it. */
-.ld-scanhead {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
-  margin-bottom: 6px;
+/* ── Screen 03 — the corpus sweep and what it resolves to ─────────────────
+   Every figure on this screen is counted from the outcome corpus at runtime:
+   the people, the decisions, the matched files, the admitted bands. The
+   styling is deliberately instrument-like — hairlines, tabular figures,
+   uppercase micro-labels — because the claim is measurement, not vibes. */
+.ld-match-query {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: 12px; color: var(--ink-2); line-height: 1.4;
 }
-.ld-scanhead-label {
-  font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--ink-3);
+.ld-match-op {
+  flex: 0 0 auto; font-size: 9px; font-weight: 800; letter-spacing: 0.1em;
+  color: #fff; background: var(--ink); border-radius: 4px; padding: 2.5px 5px;
 }
-.ld-scanhead-count { font-size: 10px; font-weight: 800; color: var(--teal); }
-.ld-scangrid {
-  display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px;
-  margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line);
+.ld-match-where b { color: var(--ink); font-weight: 750; }
+.ld-match-meter {
+  position: relative; margin: 9px 0 0;
+  height: 3px; border-radius: 2px; background: var(--bg-soft);
 }
-.ld-scandot {
-  aspect-ratio: 1; border-radius: 1.5px; background: var(--line-strong);
-  opacity: 0; transform: scale(0.4);
-  animation: ld-scandot-in 260ms cubic-bezier(0.22, 1.3, 0.36, 1) both;
-  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), background 420ms ease, box-shadow 420ms ease;
+.ld-match-bar {
+  position: absolute; left: 0; top: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
 }
-@keyframes ld-scandot-in { from { opacity: 0; transform: scale(0.4); } }
-.ld-scangrid.matched .ld-scandot { opacity: 0.2; transform: scale(0.75); }
-.ld-scangrid.matched .ld-scandot-match {
-  opacity: 1; transform: scale(1.1); background: var(--teal);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--teal) 20%, transparent);
+/* The retrieval, narrated in numbers that have to reconcile */
+.ld-match-funnel {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  margin: 7px 0 13px; padding-bottom: 11px;
+  border-bottom: 1px solid var(--line);
+  font-size: 9.5px; font-weight: 650; color: var(--ink-3);
 }
+.ld-match-funnel b { font-weight: 800; color: var(--ink-2); }
+.ld-match-funnel span { opacity: 0.45; transition: opacity 320ms ease; }
+.ld-match-funnel span:first-child, .ld-match-funnel span.on { opacity: 1; }
+.ld-match-funnel span.on b { color: var(--teal); }
+.ld-match-funnel i { font-style: normal; color: var(--line-strong); }
+.ld-match-decisions { margin-left: auto; }
+
+/* Column header: turns three cards into a table being filled */
+.ld-match-cols-head {
+  display: grid; grid-template-columns: 20px 40px 1fr auto; gap: 6px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--line-strong);
+  font-size: 8px; font-weight: 800; letter-spacing: 0.09em; color: var(--ink-3);
+}
+.ld-match-cols-head span:last-child { text-align: right; }
+
+/* The shared GPA scale under both bands */
+.ld-sig-axis {
+  display: flex; justify-content: space-between;
+  margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--line);
+  font-size: 8px; font-weight: 700; color: var(--ink-3); letter-spacing: 0.04em;
+}
+.ld-sig-axis i { font-style: normal; }
+.ld-match-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0 22px; }
+.ld-match-h {
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--ink-3); margin-bottom: 9px;
+}
+
+/* One real recorded applicant: their file, then where it landed */
+.ld-match-card {
+  padding: 10px 0 12px; border-top: 1px solid var(--line);
+  opacity: 0; transform: translateY(7px);
+  transition: opacity 380ms ease, transform 380ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+.ld-match-card:first-of-type { border-top: none; }
+.ld-match-card.on { opacity: 1; transform: none; }
+.ld-match-top { display: flex; align-items: baseline; gap: 6px; }
+.ld-match-idx { font-size: 8.5px; font-weight: 800; color: var(--ink-3); }
+.ld-match-gpa { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.ld-match-meta { font-size: 10.5px; color: var(--ink-3); font-weight: 600; }
+.ld-match-delta {
+  margin-left: auto; font-size: 9px; font-weight: 800; color: var(--blue);
+  background: color-mix(in srgb, var(--blue) 9%, transparent);
+  border-radius: 4px; padding: 1.5px 4px;
+}
+/* They sat above you. Saying so is the point of a measurement. */
+.ld-match-delta.ld-match-behind {
+  color: var(--coral); background: color-mix(in srgb, var(--coral) 9%, transparent);
+}
+.ld-match-ledger { display: flex; align-items: flex-start; gap: 7px; margin-top: 6px; }
+.ld-match-tag {
+  flex: 0 0 24px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em;
+  border-radius: 3px; padding: 2px 0; text-align: center; margin-top: 1px;
+}
+.ld-match-in { color: #fff; background: var(--teal); }
+.ld-match-out { color: var(--ink-3); background: var(--bg-soft); }
+.ld-match-schools { display: flex; flex-wrap: wrap; gap: 5px 9px; }
+.ld-match-school {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 650; color: var(--ink-2);
+}
+.ld-match-denied .ld-match-school { color: var(--ink-3); opacity: 0.75; }
+.ld-match-more { color: var(--ink-3); font-weight: 700; }
+
+/* What the admitted files at a target actually hold */
+.ld-sig {
+  padding: 10px 0 12px; border-top: 1px solid var(--line);
+  opacity: 0; transform: translateY(7px);
+  transition: opacity 380ms ease, transform 380ms cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+.ld-sig:first-of-type { border-top: none; }
+.ld-sig.on { opacity: 1; transform: none; }
+/* The campus itself — the school as a place, not just a wordmark. */
+.ld-sig-photo {
+  display: block; flex: 0 0 40px; width: 40px; height: 26px;
+  border-radius: 4px; overflow: hidden; background: var(--bg-soft);
+}
+.ld-sig-photo .campus { border-radius: 4px; }
+.ld-sig-photo figcaption { display: none; }
+.ld-sig-top { display: flex; align-items: center; gap: 5px; }
+.ld-sig-top b { font-size: 12.5px; font-weight: 750; color: var(--ink); }
+.ld-sig-n { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--ink-3); }
+.ld-sig-band {
+  position: relative; height: 6px; border-radius: 3px;
+  background: var(--bg-soft); margin: 9px 0 7px;
+}
+.ld-sig-range {
+  position: absolute; top: 0; height: 6px; border-radius: 3px;
+  background: color-mix(in srgb, var(--blue) 30%, transparent);
+}
+.ld-sig-med {
+  position: absolute; top: -1px; width: 2px; height: 8px; border-radius: 1px;
+  background: var(--blue);
+}
+.ld-sig-you {
+  position: absolute; top: -3px; width: 2.5px; height: 12px; border-radius: 1px;
+  background: var(--accent);
+  box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.ld-sig-line { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; }
+.ld-sig-line b { color: var(--ink-2); font-weight: 750; }
+.ld-sig-mine { color: var(--accent); }
+.ld-match-honest {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line-strong);
+  font-size: 10px; color: var(--ink-3); line-height: 1.55;
+  opacity: 0; transition: opacity 450ms ease;
+}
+.ld-match-honest.on { opacity: 1; }
 
 .ld-demo-scanrow {
   display: flex; gap: 8px; padding: 6px 0; font-size: 11.5px;
@@ -635,8 +871,14 @@
 .ld-demo-pattern span { font-size: 10.5px; color: var(--ink-2); line-height: 1.4; }
 
 /* Panel 3 — odds, each with a filling metre */
+.ld-demo-rphoto {
+  display: block; width: 46px; height: 30px; border-radius: 5px; overflow: hidden;
+  background: var(--bg-soft); align-self: center;
+}
+.ld-demo-rphoto .campus { border-radius: 5px; }
+.ld-demo-rphoto figcaption { display: none; }
 .ld-demo-row {
-  display: grid; grid-template-columns: 22px 1fr; gap: 4px 8px;
+  display: grid; grid-template-columns: 46px 1fr; gap: 4px 9px;
   padding: 9px 0; border-top: 1px solid var(--line); font-size: 12.5px;
   opacity: 0; transform: translateX(-12px);
   transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -695,17 +937,34 @@
 .ld-demo-stack b { color: var(--teal); font-weight: 800; font-size: 13px; }
 
 @media (max-width: 700px) {
-  .ld-mac { max-width: 92vw; }
-  .ld-mac-screen { min-height: 0; padding: 14px 16px 18px; }
-  .ld-mac-cols { grid-template-columns: 1fr; gap: 16px 0; }
+  .ld-mac { max-width: 94vw; }
+  /* Taller, because both columns stack; still fixed so it never resizes. */
+  .ld-mac-screen { height: 706px; padding: 14px 14px 16px; }
+  /* Stacked, the profile screen is the long one — tighten it there only. */
+  .ld-demo-field { padding: 3px 0; }
+  .ld-demo-flabel { font-size: 9px; }
+  .ld-demo-fvalue { font-size: 12.5px; }
+  .ld-demo-act { padding: 5px 0 5px 9px; }
+  .ld-match-card, .ld-sig { padding: 7px 0 8px; }
+  .ld-mac-cols { grid-template-columns: 1fr; gap: 14px 0; }
+  .ld-match-cols { grid-template-columns: 1fr; gap: 16px 0; }
+  .ld-match-funnel { font-size: 8.5px; gap: 4px; }
+  .ld-match-decisions { display: none; }
+  .ld-os-bar b ~ span { display: none; }
+  /* The deck is the first thing to go when there is no room for it. */
+  .ld-mac-deck { height: 66px; margin-bottom: -32px; }
+  .ld-kb-row { height: 9px; }
+  .ld-kb-row.ld-kb-fn { height: 6px; }
+  .ld-kb-pad { height: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ld-demo-field, .ld-demo-row, .ld-demo-fixrow, .ld-demo-out, .ld-demo-fix,
   .ld-demo-scan, .ld-demo-scanrow, .ld-demo-scanfoot, .ld-demo-stack, .ld-demo-patterns, .ld-demo-pattern,
-  .ld-mac-panel, .ld-demo-up {
+  .ld-mac-panel, .ld-demo-up, .ld-match-card, .ld-sig, .ld-match-honest {
     opacity: 1; transform: none; transition: none; animation: none;
   }
   .ld-caret, .ld-demo-spin, .ld-demo-live, .ld-demo-lift, .ld-demo-src { animation: none; }
+  .ld-kb-key { transition: none; }
   .ld-demo-metre-fill { transition: none; }
   .ld-cursor, .ld-click-ring, .ld-demo-runbtn { display: none; }
   .ld-mac-step-fill { transition: none; }
