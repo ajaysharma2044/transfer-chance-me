@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Boston University",
+    "usesCommonApp": true,
+    "cycle": "2026-2027 transfer cycle (verified against BU's live transfer page as of August 2026; BU does not version-label this requirement, and its transfer deadlines page did not resolve)",
+    "prompts": [
+      {
+        "text": "\"We want to learn more about you and your reasons for transferring, in particular what you hope to accomplish at Boston University.\"",
+        "words": "no more than 600 words",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://www.bu.edu/asir/university-data/common-data-set/",
+    "transferUrl": "https://www.bu.edu/admissions/apply/transfer/",
+    "notes": "BU publishes NO separate writing supplement for transfers - this single essay is the Common App transfer essay under BU's own instruction, and BU caps it at 600 words rather than the Common App's 650, so trim to BU's number. Two details drive the content: the phrase \"what you hope to accomplish at Boston University\" makes this a why-BU essay, not a generic why-transfer essay; and because BU requires transfers to apply directly to a specific school or college (no undeclared), the essay should name that college and its specific programs rather than praising BU generally."
+  },
+  {
+    "name": "Caltech",
+    "usesCommonApp": false,
+    "cycle": "2025-2026 transfer cycle (Fall 2026 entry) - this is the most recent version actually published on admissions.caltech.edu; the essays page still addresses \"Fall 2026 applicants\" and the deadlines page still lists February 1, 2026, so Caltech had not posted Fall 2027 prompts as of August 2026",
+    "prompts": [
+      {
+        "text": "\"If you had to choose a major today, what would you choose? Why do you think Caltech is the right place to pursue this interest?\"",
+        "words": "min 100 / max 200 words",
+        "required": true
+      },
+      {
+        "text": "\"Tell us about your experiences at your current school and why you are ready to take the next step in your academic journey?\"",
+        "words": "min 100 / max 200 words",
+        "required": true
+      },
+      {
+        "text": "\"Regardless of your STEM interest listed above, take this opportunity to nerd out and talk to us about whatever STEM rabbit hole you have found yourself falling into.\"",
+        "words": "min 50 / max 150 words",
+        "required": true
+      },
+      {
+        "text": "\"Tell us how you initially found your interest and passion for science or for a particular STEM topic, and how you have pursued or developed your interest or passion over the last few years\"",
+        "words": "min 100 / max 200 words - choose this OR the next prompt",
+        "required": false
+      },
+      {
+        "text": "\"Tell us about a STEM-related experience from the last few years and share how and why it inspired your curiosity.\"",
+        "words": "min 100 / max 200 words - choose this OR the previous prompt",
+        "required": false
+      },
+      {
+        "text": "\"How have you been a creator, inventor, or innovator in your own life?\"",
+        "words": "min 200 / max 250 words",
+        "required": true
+      },
+      {
+        "text": "\"What is an interest or hobby you do for fun, and why does it bring you joy?\"",
+        "words": "choose two of four short answers; 250 words combined (each box max 249)",
+        "required": false
+      },
+      {
+        "text": "\"If you could teach a class on any topic or concept, what would it be and why?\"",
+        "words": "choose two of four short answers; 250 words combined (each box max 249)",
+        "required": false
+      },
+      {
+        "text": "\"What is a core piece of your identity or being that shapes how you view and/or interact with the world?\"",
+        "words": "choose two of four short answers; 250 words combined (each box max 249)",
+        "required": false
+      },
+      {
+        "text": "\"What is a concept that blew your mind or baffled you when you first encountered it?\"",
+        "words": "choose two of four short answers; 250 words combined (each box max 249)",
+        "required": false
+      }
+    ],
+    "cdsUrl": null,
+    "transferUrl": "https://www.admissions.caltech.edu/apply/transfer-applicants",
+    "notes": "Correction to a common error: Caltech does NOT take the Common App or the Coalition App for transfer - its requirements page states it accepts only one application for transfer admission, its own, at apply.caltech.edu. Third-party sites claiming Coalition are stale. There is no single \"supplement\" here: the whole application is six required writing pieces, five of them explicitly STEM-framed, so the STEM content carries the file and the two short answers are the only place to show anything else. The transfer-specific prompt is #2 - it pairs \"experiences at your current school\" with \"ready to take the next step,\" so it wants evidence the current institution has been exhausted academically, not a complaint about it. Note also that essays are not the binding constraint: Caltech requires math and physics entrance exams (due February 15) plus two recommendations from college math/science/engineering faculty, and admits only for fall (\"We do not admit students for the winter or spring terms\"). cdsUrl is null: I could not locate a Common Data Set page on any caltech.edu domain - registrar.caltech.edu/records/common-data-set, caltech.edu/about/common-data-set and iro.caltech.edu subpages all returned 404, and iro.caltech.edu mentions the CDS as a data source without linking it. Rather than guess a URL, this is left unverified."
+  },
+  {
+    "name": "Washington",
+    "usesCommonApp": false,
+    "cycle": "2026-2027 transfer cycle (verified against UW's live transfer pages as of August 2026; UW does not version-label the personal statement prompt)",
+    "prompts": [
+      {
+        "text": "\"Your personal statement should be a comprehensive narrative essay outlining significant aspects of your academic and personal history, particularly those that provide context for your academic achievements and educational choices.\"",
+        "words": "suggested length 750-1,000 words",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://www.washington.edu/opb/uw-data/common-data-set/",
+    "transferUrl": "https://admit.washington.edu/apply/transfer/",
+    "notes": "UW does not use the Common App for transfer at all - applicants use UW's own online transfer application, so there is no 650-word Common App essay to reuse. The single personal statement is unusually long (750-1,000 suggested, roughly 50% longer than a Common App essay) because it is a checklist in narrative form: UW asks it to cover college performance to date and the educational path taken, any situations that significantly affected academic progress, reasons for leaving the current institution, the intended major and career goals with a plan for completing prerequisites, second-choice major goals if one is listed, and explicitly \"How will the UW help you attain your academic, career and personal goals?\" Optional additions include educational challenges or personal hardship, community service, experiential learning, and any compelling need for the Seattle campus. Structure the essay to hit every required element - a beautiful essay that skips the prerequisite plan or the reason for leaving reads as incomplete. Deadlines vary by quarter; February 15 is the common Autumn deadline."
+  },
+  {
+    "name": "Wisconsin",
+    "usesCommonApp": false,
+    "cycle": "2026-2027 transfer cycle (Spring 2027 and Fall 2027 entry; deadlines published as Oct 1 for Spring 2027, Feb 1 priority / Mar 1 regular for Fall 2027)",
+    "prompts": [
+      {
+        "text": "\"Each student is unique. Please tell us about the particular life experiences, talents, commitments, and/or interests you will bring to our campus.\"",
+        "words": "650 words maximum, 300-500 recommended (per admissions.wisc.edu/apply/essays; no limit restated on the transfer page)",
+        "required": true
+      },
+      {
+        "text": "\"Tell us why you would like to attend the University of Wisconsin-Madison. In addition, please include why you are interested in studying the major(s) you have selected.\"",
+        "words": "650 words maximum, 300-500 recommended (per admissions.wisc.edu/apply/essays; no limit restated on the transfer page)",
+        "required": true
+      }
+    ],
+    "cdsUrl": "https://data.wisc.edu/common-data-set/",
+    "transferUrl": "https://admissions.wisc.edu/apply/transfer/",
+    "notes": "Important correction to the usual assumption: UW-Madison accepts the Common App for first-year applicants but NOT for transfers - transfer applicants use the Universities of Wisconsin Application at apply.wisconsin.edu, so there is no Common App transfer essay in play and both essays below are the entire writing requirement. The first prompt is waived for applicants transferring in from another Universities of Wisconsin institution, who submit only the second. The second prompt is the one that decides files because it is two questions welded together - why Madison AND why this major - and the \"In addition\" clause means an essay that only sells the university has answered half the question. Name specific Madison courses, faculty, labs or program features tied to the declared major. Note UW-Madison's own essay page recommends 300-500 words against a 650 ceiling, so the recommended length is well short of the maximum."
+  }
+]

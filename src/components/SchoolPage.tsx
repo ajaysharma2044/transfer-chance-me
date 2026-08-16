@@ -5,6 +5,7 @@ import { countdown } from "../lib/deadlines";
 import { markOf } from "../lib/schools";
 import Tile from "./Tile";
 import CampusPhoto from "./CampusPhoto";
+import PromptsPanel from "./PromptsPanel";
 import "./schoolpage.css";
 import "./college.css";
 
@@ -304,6 +305,8 @@ export default function SchoolPage({ name, onBack, onStart, onOpenSchool }: Prop
           </div>
         </section>
       )}
+
+      <div className="reveal"><PromptsPanel school={s.name} /></div>
 
       <section className="sp-cta reveal">
         <h2>See where you stand at {s.name}</h2>
