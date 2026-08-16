@@ -417,15 +417,85 @@
 .ld-demo-out.on { box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 18px 46px rgba(20,24,63,0.10), 0 0 0 2px rgba(108,75,224,0.16); }
 .ld-demo-fix.on { box-shadow: 0 2px 4px rgba(20,24,63,0.05), 0 22px 54px rgba(20,24,63,0.13), 0 0 0 2px rgba(20,184,160,0.20); }
 
-/* Panel 1 — profile, with a scan beam while it reads */
-.ld-demo-in.scanning::after {
-  content: ""; position: absolute; left: 0; right: 0; height: 42%;
-  top: -42%;
-  background: linear-gradient(180deg, transparent, rgba(36, 120, 229, 0.13), transparent);
-  animation: ld-beam 1.9s ease-in-out infinite;
+/* Panel 1 — a simulated pointer fills the form in, live */
+.ld-demo-in { overflow: visible; }
+
+.ld-cursor {
+  position: absolute; top: 0; left: 0; z-index: 20;
+  width: 15px; height: 18px;
+  pointer-events: none;
+  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  filter: drop-shadow(0 2px 5px rgba(20, 24, 63, 0.35));
+}
+.ld-cursor svg { display: block; }
+.ld-click-ring {
+  position: absolute; left: -1px; top: -1px;
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 2px solid var(--accent);
+  animation: ld-click 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   pointer-events: none;
 }
-@keyframes ld-beam { to { top: 100%; } }
+@keyframes ld-click {
+  from { opacity: 0.9; transform: scale(0.4); }
+  to   { opacity: 0; transform: scale(2.6); }
+}
+
+/* HUD reticle on whatever the cursor is about to type into */
+.ld-demo-field, .ld-demo-act { position: relative; }
+.ld-demo-field.targeting, .ld-demo-act.targeting {
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent), 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.ld-demo-field.targeting::before, .ld-demo-field.targeting::after,
+.ld-demo-act.targeting::before, .ld-demo-act.targeting::after {
+  content: ""; position: absolute; width: 7px; height: 7px;
+  border-color: var(--accent); border-style: solid; opacity: 0.8;
+}
+.ld-demo-field.targeting::before, .ld-demo-act.targeting::before {
+  top: -3px; left: -3px; border-width: 1.5px 0 0 1.5px;
+}
+.ld-demo-field.targeting::after, .ld-demo-act.targeting::after {
+  bottom: -3px; right: -3px; border-width: 0 1.5px 1.5px 0;
+}
+
+.ld-demo-runbtn {
+  display: flex; align-items: center; gap: 7px;
+  margin-top: 12px; padding: 8px 12px; border-radius: 9px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+  color: #fff; background: linear-gradient(120deg, var(--blue), var(--accent) 85%);
+  box-shadow: 0 4px 14px rgba(108, 75, 224, 0.28);
+  width: fit-content;
+}
+.ld-demo-runicon { display: inline-block; font-size: 12px; }
+
+/* The transcript chip: click it, watch it read, watch fields fill from it */
+.ld-demo-upload {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 4px; padding: 7px 9px; border-radius: 8px;
+  border: 1px dashed var(--line-strong);
+  color: var(--ink-3); transition: border-color 250ms ease, background 250ms ease;
+}
+.ld-demo-upload svg { flex: 0 0 auto; }
+.ld-demo-upload.targeting {
+  border-style: solid; border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.ld-demo-upload.done { border-style: solid; border-color: color-mix(in srgb, var(--teal) 35%, var(--line)); background: #f2fbf9; }
+.ld-demo-uploadname { font-size: 11px; font-weight: 650; color: var(--ink); }
+.ld-demo-uploadstate {
+  margin-left: auto; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--ink-3);
+}
+.ld-demo-upload.done .ld-demo-uploadstate { color: var(--teal); }
+
+/* Tiny badge marking a value that came off the transcript, not typed */
+.ld-demo-src {
+  font-style: normal; margin-left: 6px; font-size: 8px; font-weight: 800;
+  letter-spacing: 0.04em; color: var(--ink-3); background: var(--bg-soft);
+  border-radius: 4px; padding: 1.5px 4px; vertical-align: middle;
+  animation: ld-found 380ms cubic-bezier(0.22, 1.3, 0.36, 1);
+}
+
 .ld-demo-field {
   display: grid; grid-template-columns: 1fr auto; gap: 2px 8px;
   padding: 7px 0; border-top: 1px solid var(--line);
@@ -475,6 +545,26 @@
 }
 .ld-demo-scanfoot.on { opacity: 1; }
 .ld-demo-scanfoot b { color: var(--ink); font-weight: 700; }
+
+/* Patterns this file matches — real, sourced corpus stats, not a guess */
+.ld-demo-patterns {
+  margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 450ms ease, transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-demo-patterns.on { opacity: 1; transform: none; }
+.ld-demo-patternhead {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--ink-3); margin-bottom: 7px;
+}
+.ld-demo-pattern {
+  display: flex; align-items: baseline; gap: 8px; padding: 5px 0;
+  opacity: 0; transform: translateX(-6px);
+  transition: opacity 380ms ease, transform 380ms ease;
+}
+.ld-demo-patterns.on .ld-demo-pattern { opacity: 1; transform: none; }
+.ld-demo-pattern b { flex: 0 0 auto; font-size: 13px; font-weight: 800; color: var(--teal); min-width: 30px; }
+.ld-demo-pattern span { font-size: 10.5px; color: var(--ink-2); line-height: 1.4; }
 
 /* Panel 3 — odds, each with a filling metre */
 .ld-demo-row {
@@ -545,12 +635,15 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ld-demo-field, .ld-demo-row, .ld-demo-fixrow, .ld-demo-out, .ld-demo-fix,
-  .ld-demo-scan, .ld-demo-scanrow, .ld-demo-scanfoot, .ld-demo-stack {
+  .ld-demo-scan, .ld-demo-scanrow, .ld-demo-scanfoot, .ld-demo-stack, .ld-demo-patterns, .ld-demo-pattern {
     opacity: 1; transform: none; transition: none;
   }
-  .ld-caret, .ld-demo-spin, .ld-demo-live, .ld-demo-lift, .ld-demo-in.scanning::after { animation: none; }
-  .ld-demo-in.scanning::after { display: none; }
+  .ld-caret, .ld-demo-spin, .ld-demo-live, .ld-demo-lift, .ld-demo-src { animation: none; }
   .ld-demo-metre-fill { transition: none; }
+  .ld-cursor, .ld-click-ring, .ld-demo-runbtn { display: none; }
+  .ld-demo-field.targeting, .ld-demo-act.targeting, .ld-demo-upload.targeting { box-shadow: none; }
+  .ld-demo-field.targeting::before, .ld-demo-field.targeting::after,
+  .ld-demo-act.targeting::before, .ld-demo-act.targeting::after { display: none; }
 }
 
 /* ── School intelligence explorer ─────────────────────────────── */

@@ -67,12 +67,20 @@ const DEMO_TAG_WEEKS = DEMO_PLAN.windows.find((w) => w.school === "UC TAG")?.wee
 const DEMO_EC_LIFT =
   DEMO_PLAN.moves.find((m) => m.tag === "Extracurricular" && m.liftPp > 0)?.liftPp ?? 0;
 
-const DEMO_FIELDS = [
-  { label: "College GPA", value: "3.71", hint: "upward" },
-  { label: "Now at", value: "De Anza College", hint: "Cupertino, CA" },
-  { label: "Standing", value: "Junior · 48 credits", hint: "transfer-ready" },
-  { label: "Major", value: "Economics", hint: "prep partial" },
+/** "extract" fields come off the transcript PDF, the way extract.ts really
+ *  reads one — GPA, SAT, credits→standing, institution, major, honors/PTK.
+ *  "type" fields are the ones only the student can write. Order matters:
+ *  extract fields must come first so the upload burst can reveal 0..k. */
+const DEMO_FIELDS: { label: string; value: string; hint: string; via: "extract" | "type" }[] = [
+  { label: "College GPA", value: "3.71", hint: "upward", via: "extract" },
+  { label: "SAT / ACT", value: "1310", hint: "on file", via: "extract" },
+  { label: "Now at", value: "De Anza College", hint: "Cupertino, CA", via: "extract" },
+  { label: "Standing", value: "Junior · 48 credits", hint: "transfer-ready", via: "extract" },
+  { label: "Major", value: "Economics", hint: "prep partial", via: "extract" },
+  { label: "Awards", value: "Dean's List x2, PTK inducted", hint: "institutional stack", via: "extract" },
+  { label: "Why transferring", value: "My CC doesn't offer upper-division econ", hint: "reason on file", via: "type" },
 ];
+const DEMO_EXTRACT_COUNT = DEMO_FIELDS.filter((f) => f.via === "extract").length;
 
 /** Their activities, exactly as a student would type them — vague, undersold,
  *  and missing the things they never thought counted. */
@@ -82,13 +90,23 @@ const DEMO_ACTS = [
   { raw: "Volunteered sometimes", verdict: "no span, no number", tone: "bad" },
 ];
 
-/** What the engine goes and looks up about THEIR school and region. */
+/** What the engine goes and looks up about THEIR school and region. Every
+ *  "found" is a real, sourced number from the study — not a model guessing. */
 const DEMO_SCANS = [
   { run: "Reading your 3 activities against 4,087 catalogued admit activities", found: "all 3 undersold" },
   { run: "De Anza College — campus orgs, honors, PTK chapter", found: "honors + PTK both open to you" },
-  { run: "Checking the campus learning center for tutor openings", found: "hires every term" },
+  { run: "Checking department-level odds, not just campus-wide", found: "econ runs open — CS at these UCs is 3× harder" },
   { run: "Scanning your region for major-relevant roles", found: "econ research + civic internships nearby" },
   { run: "Matching against admits from California community colleges", found: "214 comparable files" },
+];
+
+/** Not individual student records — aggregate, sourced patterns from the
+ *  study that this profile falls inside. This is the thing a GPT wrapper
+ *  cannot show you: a real number from a real corpus, not a plausible guess. */
+const DEMO_PATTERNS = [
+  { stat: "68%", label: "of admits sit at 3.90+ GPA — you're inside that band and climbing" },
+  { stat: "92%", label: "of UCLA's admitted transfers come from a CA community college, same as you" },
+  { stat: "50%", label: "of admit activities are campus-anchored — the lane your file is thinnest in" },
 ];
 
 /** Per-activity upgrade: the same activity, made legible to a reader. */
@@ -159,63 +177,228 @@ function DemoOdds({ e, active, delay }: { e: Estimate; active: boolean; delay: n
   );
 }
 
+type FocusKind = "upload" | "field" | "act" | null;
+
+/** A simulated pointer: moves to a target element, clicks it, then the
+ *  caller types into it. Positions are measured against the panel so the
+ *  motion is pixel-accurate at any width, not guessed. */
 function HeroDemo() {
-  // 0 profile+activities · 1 analysing each activity · 2 researching school/area · 3 upgrades
+  // 0 upload+profile+activities · 1 judging activities · 2 researching · 3 upgrades+chances
   const [step, setStep] = useState(0);
-  const [typed, setTyped] = useState(0);
+  const [fieldIdx, setFieldIdx] = useState(0);   // fields fully filled (extracted or typed)
+  const [actIdx, setActIdx] = useState(0);       // activities fully typed
   const [judged, setJudged] = useState(0);
   const [scan, setScan] = useState(0);
+  const [reading, setReading] = useState(false);
+  const [uploadDone, setUploadDone] = useState(false);
+  const [focus, setFocus] = useState<{ kind: FocusKind; idx: number; phase: "moving" | "clicking" | "typing" }>(
+    { kind: null, idx: -1, phase: "moving" },
+  );
+  const [activeText, setActiveText] = useState("");
+  const [cursor, setCursor] = useState({ x: -30, y: -30 });
+  const [cursorOn, setCursorOn] = useState(false);
+  const [pulse, setPulse] = useState(0);
+
+  const panelRef = useRef<HTMLDivElement>(null);
+  const uploadRef = useRef<HTMLDivElement>(null);
+  const fieldRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const actRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const scanBtnRef = useRef<HTMLDivElement>(null);
+
   const reduced =
     typeof window !== "undefined" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   useEffect(() => {
     if (reduced) {
-      setStep(3); setTyped(DEMO_FIELDS.length); setJudged(DEMO_ACTS.length); setScan(DEMO_SCANS.length);
+      setStep(3); setFieldIdx(DEMO_FIELDS.length); setActIdx(DEMO_ACTS.length);
+      setJudged(DEMO_ACTS.length); setScan(DEMO_SCANS.length); setCursorOn(false);
+      setUploadDone(true); setReading(false);
       return;
     }
-    let t: number[] = [];
-    const run = () => {
-      setStep(0); setTyped(0); setJudged(0); setScan(0);
-      DEMO_FIELDS.forEach((_, i) => t.push(window.setTimeout(() => setTyped(i + 1), 260 + i * 300)));
-      t.push(window.setTimeout(() => setStep(1), 1700));
-      DEMO_ACTS.forEach((_, i) => t.push(window.setTimeout(() => setJudged(i + 1), 2000 + i * 480)));
-      t.push(window.setTimeout(() => setStep(2), 3600));
-      DEMO_SCANS.forEach((_, i) => t.push(window.setTimeout(() => setScan(i + 1), 3800 + i * 480)));
-      t.push(window.setTimeout(() => setStep(3), 6400));
-      t.push(window.setTimeout(run, 17500));
+
+    let cancelled = false;
+    const timers: number[] = [];
+    const wait = (ms: number) => new Promise<void>((res) => { timers.push(window.setTimeout(res, ms)); });
+
+    const moveTo = async (el: HTMLDivElement | null, inset = 14) => {
+      const panel = panelRef.current;
+      if (!panel || !el) return;
+      const pr = panel.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      setCursorOn(true);
+      setCursor({ x: r.left - pr.left + inset, y: r.top - pr.top + r.height / 2 });
+      await wait(320);
     };
+
+    const click = async () => {
+      setPulse((p) => p + 1);
+      await wait(110);
+    };
+
+    const type = async (text: string) => {
+      setActiveText("");
+      for (let n = 1; n <= text.length; n++) {
+        if (cancelled) return;
+        setActiveText(text.slice(0, n));
+        await wait(13 + Math.random() * 12);
+      }
+      await wait(120);
+    };
+
+    const run = async () => {
+      setStep(0); setFieldIdx(0); setActIdx(0); setJudged(0); setScan(0);
+      setReading(false); setUploadDone(false);
+      setFocus({ kind: null, idx: -1, phase: "moving" });
+      setActiveText("");
+      await wait(280);
+
+      // Upload the transcript, watch it get read, and extract everything a
+      // real PDF actually holds — GPA, test score, credits, major, honors.
+      setFocus({ kind: "upload", idx: 0, phase: "moving" });
+      await moveTo(uploadRef.current, 12);
+      if (cancelled) return;
+      await click();
+      setReading(true);
+      await wait(420);
+      if (cancelled) return;
+      setReading(false);
+      setUploadDone(true);
+      for (let i = 0; i < DEMO_EXTRACT_COUNT; i++) {
+        if (cancelled) return;
+        setFieldIdx(i + 1);
+        await wait(100);
+      }
+      await wait(160);
+
+      // What's left is only what the student has to say themselves.
+      for (let i = DEMO_EXTRACT_COUNT; i < DEMO_FIELDS.length; i++) {
+        if (cancelled) return;
+        setFocus({ kind: "field", idx: i, phase: "moving" });
+        await moveTo(fieldRefs.current[i]);
+        if (cancelled) return;
+        await click();
+        setFocus({ kind: "field", idx: i, phase: "typing" });
+        await type(DEMO_FIELDS[i].value);
+        if (cancelled) return;
+        setFieldIdx(i + 1);
+      }
+
+      for (let i = 0; i < DEMO_ACTS.length; i++) {
+        if (cancelled) return;
+        setFocus({ kind: "act", idx: i, phase: "moving" });
+        await moveTo(actRefs.current[i], 16);
+        if (cancelled) return;
+        await click();
+        setFocus({ kind: "act", idx: i, phase: "typing" });
+        await type(DEMO_ACTS[i].raw);
+        if (cancelled) return;
+        setActIdx(i + 1);
+      }
+
+      if (cancelled) return;
+      setFocus({ kind: null, idx: -1, phase: "moving" });
+      await moveTo(scanBtnRef.current, 10);
+      if (cancelled) return;
+      await click();
+      setStep(1);
+      await wait(140);
+      for (let i = 0; i < DEMO_ACTS.length; i++) {
+        if (cancelled) return;
+        setJudged(i + 1);
+        await wait(280);
+      }
+
+      if (cancelled) return;
+      setCursorOn(false);
+      await wait(260);
+      setStep(2);
+      for (let i = 0; i < DEMO_SCANS.length; i++) {
+        if (cancelled) return;
+        setScan(i + 1);
+        await wait(300);
+      }
+
+      if (cancelled) return;
+      await wait(260);
+      setStep(3);
+      await wait(3400);
+      if (cancelled) return;
+      run();
+    };
+
     run();
-    return () => { t.forEach(clearTimeout); t = []; };
+    return () => { cancelled = true; timers.forEach(clearTimeout); };
   }, [reduced]);
+
+  const isField = (i: number) => focus.kind === "field" && focus.idx === i;
+  const isAct = (i: number) => focus.kind === "act" && focus.idx === i;
+  const isUpload = focus.kind === "upload";
 
   return (
     <div className="ld-demo" aria-hidden="true">
-      {/* 1 — the file, as they'd actually enter it */}
-      <div className={`ld-demo-panel ld-demo-in${step === 0 ? " scanning" : ""}`}>
+      {/* 1 — the file, as they'd actually enter it: upload extracts, a live cursor fills the rest */}
+      <div className="ld-demo-panel ld-demo-in" ref={panelRef}>
         <p className="mock-label">Your profile</p>
+        <div
+          className={`ld-demo-upload${uploadDone ? " done" : ""}${isUpload ? " targeting" : ""}`}
+          ref={uploadRef}
+        >
+          <svg width="11" height="13" viewBox="0 0 11 13" fill="none" aria-hidden="true">
+            <path d="M1 1h5.5L10 4.5V12H1V1Z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+            <path d="M6.3 1v3.3h3.4" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" />
+          </svg>
+          <span className="ld-demo-uploadname">transcript.pdf</span>
+          <span className="ld-demo-uploadstate">
+            {reading ? "reading…" : uploadDone ? "extracted" : ""}
+          </span>
+        </div>
         {DEMO_FIELDS.map((f, i) => (
-          <div className={`ld-demo-field${i < typed ? " on" : ""}`} key={f.label}>
+          <div
+            className={`ld-demo-field${i < fieldIdx || isField(i) ? " on" : ""}${isField(i) ? " targeting" : ""}`}
+            key={f.label}
+            ref={(el) => { fieldRefs.current[i] = el; }}
+          >
             <span className="ld-demo-flabel">{f.label}</span>
             <span className="ld-demo-fvalue">
-              {f.value}
-              {i === typed - 1 && step === 0 && <i className="ld-caret" />}
+              {i < fieldIdx ? f.value : isField(i) && focus.phase === "typing" ? activeText : ""}
+              {isField(i) && focus.phase === "typing" && <i className="ld-caret" />}
+              {i < fieldIdx && f.via === "extract" && <i className="ld-demo-src">PDF</i>}
             </span>
-            <span className="ld-demo-fhint">{f.hint}</span>
+            <span className="ld-demo-fhint">{i < fieldIdx ? f.hint : ""}</span>
           </div>
         ))}
         <p className="ld-demo-sub">Your activities, as you'd type them</p>
         {DEMO_ACTS.map((a, i) => (
-          <div className={`ld-demo-act${step >= 1 && i < judged ? " judged" : ""}${typed >= DEMO_FIELDS.length ? " on" : ""}`} key={a.raw}>
-            <span className="ld-demo-actraw">{a.raw}</span>
-            {step >= 1 && i < judged && (
+          <div
+            className={`ld-demo-act${i < judged ? " judged" : ""}${i < actIdx || isAct(i) ? " on" : ""}${isAct(i) ? " targeting" : ""}`}
+            key={a.raw}
+            ref={(el) => { actRefs.current[i] = el; }}
+          >
+            <span className="ld-demo-actraw">
+              {i < actIdx ? a.raw : isAct(i) && focus.phase === "typing" ? activeText : ""}
+              {isAct(i) && focus.phase === "typing" && <i className="ld-caret" />}
+            </span>
+            {i < judged && (
               <span className={`ld-demo-actv ld-demo-${a.tone}`}>{a.verdict}</span>
             )}
           </div>
         ))}
+        <div className="ld-demo-runbtn" ref={scanBtnRef}>
+          <span className="ld-demo-runicon">↻</span> Analyze my file
+        </div>
+
+        {cursorOn && (
+          <div className="ld-cursor" style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}>
+            <svg width="15" height="18" viewBox="0 0 15 18" fill="none">
+              <path d="M1 1L1 15.5L4.6 12.2L6.9 17L9.3 15.9L7 11.2L11.8 11.1L1 1Z" fill="var(--ink)" stroke="#fff" strokeWidth="1.1" strokeLinejoin="round" />
+            </svg>
+            <span key={pulse} className="ld-click-ring" />
+          </div>
+        )}
       </div>
 
-      {/* 2 — reading each activity against the corpus */}
+      {/* 2 — reading each activity against the corpus, then the patterns this file matches */}
       <div className={`ld-demo-panel ld-demo-scan${step >= 1 ? " on" : ""}`}>
         <p className="mock-label">
           Researching your file
@@ -232,15 +415,21 @@ function HeroDemo() {
             </span>
           </div>
         ))}
-        <div className={`ld-demo-scanfoot${scan >= DEMO_SCANS.length ? " on" : ""}`}>
-          Every activity you listed can be rewritten from what you already do
+        <div className={`ld-demo-patterns${scan >= DEMO_SCANS.length ? " on" : ""}`}>
+          <p className="ld-demo-patternhead">Real patterns this file matches — not a guess</p>
+          {DEMO_PATTERNS.map((p, i) => (
+            <div className="ld-demo-pattern" key={p.stat} style={{ transitionDelay: `${i * 110}ms` }}>
+              <b className="num">{p.stat}</b>
+              <span>{p.label}</span>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* 3 — each activity, upgraded */}
       <div className={`ld-demo-panel ld-demo-fix${step >= 3 ? " on" : ""}`}>
         <p className="mock-label">
-          How to upgrade each one
+          Specific feedback, activity by activity
           <span className="ld-demo-clock">{DEMO_TAG_WEEKS} weeks to TAG</span>
         </p>
         {DEMO_UPGRADES.map((u, i) => (
