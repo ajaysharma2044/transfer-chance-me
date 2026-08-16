@@ -385,6 +385,98 @@
 .faq details[open] p { animation: ld-faq 280ms ease; }
 @keyframes ld-faq { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 
+/* ── Hero demo: profile in → chances out → personalized fixes ──── */
+.ld-demo {
+  margin: 46px auto 8px;
+  max-width: 1020px;
+  display: grid;
+  grid-template-columns: 0.92fr 1.02fr 1.06fr;
+  gap: 16px;
+  align-items: start;
+  text-align: left;
+}
+.ld-demo-panel {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 4px rgba(20, 24, 63, 0.05), 0 18px 46px rgba(20, 24, 63, 0.10);
+  min-height: 208px;
+}
+.ld-demo-out, .ld-demo-fix { opacity: 0.35; transform: translateY(10px); transition: opacity 500ms ease, transform 500ms ease; }
+.ld-demo-out.on, .ld-demo-fix.on { opacity: 1; transform: none; }
+
+/* Panel 1 — the profile typing itself in */
+.ld-demo-field {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 8px;
+  padding: 8px 0; border-top: 1px solid var(--line);
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 320ms ease, transform 320ms ease;
+}
+.ld-demo-field:first-of-type { border-top: none; }
+.ld-demo-field.on { opacity: 1; transform: none; }
+.ld-demo-flabel { font-size: 10.5px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); grid-column: 1 / -1; }
+.ld-demo-fvalue { font-size: 14px; font-weight: 650; color: var(--ink); }
+.ld-demo-fhint { font-size: 11px; color: var(--teal); font-weight: 550; align-self: center; }
+.ld-caret { display: inline-block; width: 2px; height: 14px; background: var(--accent); margin-left: 3px; vertical-align: -2px; animation: ld-blink 900ms steps(2) infinite; }
+@keyframes ld-blink { 50% { opacity: 0; } }
+.ld-demo-scoring {
+  margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 7px;
+  min-height: 30px; opacity: 0; transition: opacity 300ms ease;
+}
+.ld-demo-scoring.on { opacity: 1; }
+.ld-demo-spin {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-top-color: var(--accent); animation: ld-spin 700ms linear infinite;
+}
+@keyframes ld-spin { to { transform: rotate(360deg); } }
+.ld-demo-check { color: var(--teal); font-weight: 800; }
+
+/* Panel 2 — chances */
+.ld-demo-row {
+  display: flex; align-items: center; gap: 9px; padding: 8px 0;
+  border-top: 1px solid var(--line); font-size: 13px;
+  opacity: 0; transform: translateX(-10px);
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-demo-row:first-of-type { border-top: none; }
+.ld-demo-row.on { opacity: 1; transform: none; }
+.ld-demo-rname { font-weight: 600; }
+.ld-demo-band { margin-left: auto; font-weight: 700; font-size: 13.5px; }
+.ld-demo-tier { font-size: 10.5px; color: var(--ink-3); width: 78px; text-align: right; }
+
+/* Panel 3 — the personalized fixes */
+.ld-demo-fixrow {
+  padding: 9px 0 9px 12px; border-left: 3px solid var(--fx, var(--accent));
+  margin-bottom: 8px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 450ms ease, transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-demo-fixrow.on { opacity: 1; transform: none; }
+.ld-demo-fixtag {
+  display: flex; align-items: baseline; gap: 7px;
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--fx, var(--accent));
+}
+.ld-demo-fixtag i { font-style: normal; font-size: 10px; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; }
+.ld-demo-fixrow p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin-top: 4px; }
+
+@media (max-width: 940px) {
+  .ld-demo { grid-template-columns: 1fr 1fr; }
+  .ld-demo-fix { grid-column: 1 / -1; }
+}
+@media (max-width: 620px) {
+  .ld-demo { grid-template-columns: 1fr; }
+  .ld-demo-panel { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-demo-field, .ld-demo-row, .ld-demo-fixrow, .ld-demo-out, .ld-demo-fix { opacity: 1; transform: none; transition: none; }
+  .ld-caret, .ld-demo-spin { animation: none; }
+  .ld-demo-scoring { opacity: 1; }
+}
+
 /* ── School intelligence explorer ─────────────────────────────── */
 .ld-intel { padding: 72px 0 8px; }
 .ld-intel h2 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 650; letter-spacing: -0.02em; text-align: center; }

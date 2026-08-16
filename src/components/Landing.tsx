@@ -19,6 +19,105 @@ const LADDER = [
   "Columbia", "UPenn", "Stanford", "Yale", "Harvard",
 ];
 
+/** The hero demo: a real applicant's stats typing in, the engine scoring
+ *  them, and the hyper-personalized fixes coming back. Loops forever. */
+const DEMO_FIELDS = [
+  { label: "College GPA", value: "3.71", hint: "upward trend" },
+  { label: "Now at", value: "De Anza College", hint: "California CC" },
+  { label: "Standing", value: "Junior · 48 credits", hint: "IGETC in progress" },
+  { label: "Major", value: "Economics", hint: "Dyson track" },
+];
+const DEMO_CHANCES = [
+  { name: "UC Davis", band: "90–99%", tier: "TAG guarantee", cls: "ok" },
+  { name: "UCLA", band: "31–58%", tier: "Strong target", cls: "ok" },
+  { name: "Cornell", band: "14–26%", tier: "Target", cls: "mid" },
+  { name: "Stanford", band: "1.9–4%", tier: "High reach", cls: "low" },
+];
+const DEMO_FIXES = [
+  { tag: "Essay", school: "Cornell", text: "You never name Dyson. Admits cite the Applied Economics track and a professor's lab — add both and this file reads as fit, not escape.", c: "var(--accent)" },
+  { tag: "Deadline", school: "UC Davis", text: "File TAG by Sep 30 and Davis stops being a maybe: 3.71 clears the 3.2 floor. That's a signed contract, not odds.", c: "var(--teal)" },
+  { tag: "Coursework", school: "UCLA", text: "Econ 1B and a second calculus course are still open in your articulation. Finishing both before spring closes your last major-prep gap.", c: "var(--blue)" },
+  { tag: "Activities", school: "All 4", text: "Your tutoring job is buried at the bottom. Campus-anchored work is 50% of admit activity lists — lead with it and name the hours.", c: "var(--coral)" },
+];
+
+function HeroDemo() {
+  const [step, setStep] = useState(0); // 0 typing · 1 scoring · 2 chances · 3 fixes
+  const [typed, setTyped] = useState(0);
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    if (reduced) { setStep(3); setTyped(DEMO_FIELDS.length); return; }
+    let t: number[] = [];
+    const run = () => {
+      setStep(0); setTyped(0);
+      DEMO_FIELDS.forEach((_, i) => t.push(window.setTimeout(() => setTyped(i + 1), 420 + i * 460)));
+      t.push(window.setTimeout(() => setStep(1), 2350));
+      t.push(window.setTimeout(() => setStep(2), 3500));
+      t.push(window.setTimeout(() => setStep(3), 5200));
+      t.push(window.setTimeout(run, 12500));
+    };
+    run();
+    return () => { t.forEach(clearTimeout); t = []; };
+  }, [reduced]);
+
+  return (
+    <div className="ld-demo" aria-hidden="true">
+      <div className="ld-demo-panel ld-demo-in">
+        <p className="mock-label">Your profile</p>
+        {DEMO_FIELDS.map((f, i) => (
+          <div className={`ld-demo-field${i < typed ? " on" : ""}`} key={f.label}>
+            <span className="ld-demo-flabel">{f.label}</span>
+            <span className="ld-demo-fvalue">
+              {f.value}
+              {i === typed - 1 && step === 0 && <i className="ld-caret" />}
+            </span>
+            <span className="ld-demo-fhint">{f.hint}</span>
+          </div>
+        ))}
+        <div className={`ld-demo-scoring${step >= 1 ? " on" : ""}`}>
+          {step === 1 ? (
+            <><span className="ld-demo-spin" />Scoring against 8,910 outcomes…</>
+          ) : step >= 2 ? (
+            <><span className="ld-demo-check">✓</span>Scored against 43 schools</>
+          ) : null}
+        </div>
+      </div>
+
+      <div className={`ld-demo-panel ld-demo-out${step >= 2 ? " on" : ""}`}>
+        <p className="mock-label">Your chances</p>
+        {DEMO_CHANCES.map((r, i) => (
+          <div
+            className={`ld-demo-row${step >= 2 ? " on" : ""}`}
+            key={r.name}
+            style={{ transitionDelay: `${i * 120}ms` }}
+          >
+            <Tile name={r.name} size={22} />
+            <span className="ld-demo-rname">{r.name}</span>
+            <span className={`ld-demo-band ld-${r.cls} num`}>{r.band}</span>
+            <span className="ld-demo-tier">{r.tier}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className={`ld-demo-panel ld-demo-fix${step >= 3 ? " on" : ""}`}>
+        <p className="mock-label">What to fix — for your file</p>
+        {DEMO_FIXES.map((f, i) => (
+          <div
+            className={`ld-demo-fixrow${step >= 3 ? " on" : ""}`}
+            key={f.tag}
+            style={{ transitionDelay: `${i * 150}ms`, "--fx": f.c } as CSSProperties}
+          >
+            <span className="ld-demo-fixtag">{f.tag}<i>{f.school}</i></span>
+            <p>{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Hero visual: a layered composite of the product itself — chances rows,
  *  an essay-review note, and a live deadline countdown. */
 function HeroStage() {
@@ -676,7 +775,7 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
             </span>
             <span className="ld-authority-sub"><b>{rows}</b> real applications analyzed</span>
           </div>
-          <HeroStage />
+          <HeroDemo />
         </section>
       </div>
 
