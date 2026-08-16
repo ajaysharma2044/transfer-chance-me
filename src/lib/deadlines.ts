@@ -7,6 +7,13 @@ export interface Deadline { month: number; day: number; note?: string }
 export const DEADLINES: Record<string, Deadline> = {
   "UC Berkeley": { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30" },
   "UCLA":        { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30" },
+  "UC Davis":    { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
+  "UC Irvine":   { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
+  "UC San Diego": { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30" },
+  "UC Santa Barbara": { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
+  "UC Santa Cruz": { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
+  "UC Riverside": { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
+  "UC Merced":   { month: 11, day: 30, note: "UC filing period Aug 1–Nov 30; TAG by Sep 30" },
   "Michigan":    { month: 2, day: 1 },
   "UNC":         { month: 2, day: 15 },
   "Carnegie Mellon": { month: 2, day: 15 },

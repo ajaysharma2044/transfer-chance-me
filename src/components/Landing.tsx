@@ -290,15 +290,17 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
           <span className="ld-orb ld-orb-d" />
         </div>
         <section className="shell hero">
-          <span className="badge">Built on {rows} real transfer outcomes · 2011–2026</span>
-          <h1>Your real chances of transferring into the T25</h1>
+          <span className="badge">{rows} real transfer applications analyzed · 2011–2026</span>
+          <h1>Where would you <em className="ld-grad">actually</em> get in?</h1>
           <p className="dek">
-            We weigh your GPA, school, and story against official admit rates and the admitted-student
-            data behind every top-25 university — not forum guesses.
+            Harvard takes <b className="ld-coral">0.7%</b> of transfers. UNC takes{" "}
+            <b className="ld-teal">37%</b>. Six UCs will <b className="ld-purple">guarantee</b> your
+            spot. Your real odds at every top school — from {rows} real applications and official
+            data, not forum guesses.
           </p>
           <div className="cta-row">
-            <button type="button" className="btn" onClick={onStart}>Check my chances</button>
-            <p className="aside">Free · takes 2 minutes · nothing leaves your browser</p>
+            <button type="button" className="btn ld-btn-xl" onClick={onStart}>Check my chances — free</button>
+            <p className="aside">2 minutes · no signup needed · nothing leaves your browser</p>
           </div>
           <div className="ld-authority">
             <span className="ld-authority-tiles" aria-hidden="true">

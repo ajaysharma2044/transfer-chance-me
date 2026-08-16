@@ -229,3 +229,16 @@
   .ld-stage { height: auto; display: flex; flex-direction: column; gap: 14px; }
   .ld-stage-card { position: static; width: 100% !important; transform: none !important; }
 }
+
+/* Hero punch-up */
+.ld-grad {
+  font-style: normal;
+  background: linear-gradient(100deg, var(--blue), var(--accent) 55%, var(--teal));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero .dek b { font-weight: 700; }
+.ld-coral { color: var(--coral); }
+.ld-teal { color: var(--teal); }
+.ld-purple { color: var(--accent); }
+.ld-btn-xl { font-size: 17px; padding: 16px 36px; box-shadow: 0 10px 30px rgba(108, 75, 224, 0.35); }
+.ld-btn-xl:hover { box-shadow: 0 14px 38px rgba(108, 75, 224, 0.45); }

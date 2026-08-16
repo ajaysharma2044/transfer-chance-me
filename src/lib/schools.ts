@@ -33,6 +33,13 @@ export const MARKS: Record<string, SchoolMark> = {
   "UPenn":           { color: "#011F5B", mono: "UP",  word: "Penn",            domain: "upenn.edu" },
   "Vanderbilt":      { color: "#866D4B", mono: "V",   word: "Vanderbilt",      domain: "vanderbilt.edu" },
   "Yale":            { color: "#00356B", mono: "Y",   word: "Yale",            domain: "yale.edu" },
+  "UC Davis":        { color: "#022851", mono: "D",   word: "UC Davis",        domain: "ucdavis.edu" },
+  "UC Irvine":       { color: "#0064A4", mono: "I",   word: "UC Irvine",       domain: "uci.edu" },
+  "UC San Diego":    { color: "#00629B", mono: "SD",  word: "UCSD",            domain: "ucsd.edu" },
+  "UC Santa Barbara": { color: "#003660", mono: "SB", word: "UCSB",            domain: "ucsb.edu" },
+  "UC Santa Cruz":   { color: "#003C6C", mono: "SC",  word: "UCSC",            domain: "ucsc.edu" },
+  "UC Riverside":    { color: "#003DA5", mono: "R",   word: "UC Riverside",    domain: "ucr.edu" },
+  "UC Merced":       { color: "#005487", mono: "M",   word: "UC Merced",       domain: "ucmerced.edu" },
 };
 
 export function logoUrl(name: string, size = 64): string {

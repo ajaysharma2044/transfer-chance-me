@@ -186,13 +186,19 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .chip-school::before { background: var(--accent); }
 
-/* school tile */
+/* school tile — one uniform chrome for every school mark */
 .tile {
   width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
-  color: #fff; font-size: 11px; font-weight: 700;
   display: inline-flex; align-items: center; justify-content: center;
-  letter-spacing: 0.02em;
 }
+.tile-sync {
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(20, 24, 63, 0.08);
+  overflow: hidden;
+}
+.tile-sync img { object-fit: contain; display: block; }
+.tile-mono { font-weight: 800; letter-spacing: 0.02em; line-height: 1; }
 
 /* ── Numbers band ── */
 .numbers {
