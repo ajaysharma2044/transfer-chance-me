@@ -63,7 +63,12 @@ export default function ImportPanel({ profile, onChange }: Props) {
     for (const [k, v] of Object.entries(fields) as [keyof Profile, never][]) {
       if (v !== undefined && v !== null) (out as Record<string, unknown>)[k] = v;
     }
-    // keep an explicitly chosen school name
+    // Never overwrite prose the student wrote themselves. The extractor now
+    // reads awards off a transcript, and without this a second upload would
+    // silently replace a carefully worded awards list with the terse version
+    // parsed out of the PDF — destroying their writing with no undo.
+    // Same reasoning as the school name below: typed beats parsed, always.
+    if (current.awardsText.trim()) delete out.awardsText;
     if (current.schoolName) delete out.schoolName;
     return out;
   }

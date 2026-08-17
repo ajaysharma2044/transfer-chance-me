@@ -1,0 +1,278 @@
+/* ── AppShell ─────────────────────────────────────────────────────────────
+   Two regions, one hairline between them. The sidebar is the page ground
+   (--bg-soft) so that white cards in the content region read as floating
+   above the shell; nothing here casts a shadow, and no colour outside the
+   brand tokens appears. Density runs on the 8px scale: 34px nav rows, 2px
+   between them, 32px of air around the canvas.                            */
+
+.as {
+  --as-side: 248px;
+  --as-top: 0px;              /* set by the host if fixed chrome sits above */
+  display: grid;
+  grid-template-columns: var(--as-side) minmax(0, 1fr);
+  align-items: start;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg-soft);
+}
+
+/* ── Skip control ── */
+/* Off-canvas until focused; the first stop for a keyboard user. */
+.as-skip {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.as-skip:focus,
+.as-skip:focus-visible {
+  position: fixed;
+  top: calc(var(--as-top) + 12px);
+  left: 12px;
+  z-index: 60;
+  width: auto;
+  height: auto;
+  clip-path: none;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+}
+
+/* ── Sidebar ── */
+.as-side {
+  position: sticky;
+  top: var(--as-top);
+  align-self: start;
+  height: 100vh;
+  height: calc(100dvh - var(--as-top));
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px 12px;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--line);
+}
+
+.as-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 6px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  flex: 0 0 auto;
+}
+.as-brand .brandword {
+  font-size: 15.5px;
+  white-space: nowrap;
+}
+
+/* ── Nav ── */
+.as-nav {
+  position: relative;          /* offsetLeft in AppShell.tsx measures from here */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.as-navrow {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid transparent;   /* reserved, so the active state never shifts */
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  color: var(--ink-2);
+  text-decoration: none;
+  flex: 0 0 auto;
+  transition:
+    background-color var(--t-fast) var(--ease-out),
+    border-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
+}
+.as-navrow:hover {
+  background: color-mix(in srgb, var(--bg) 68%, transparent);
+  color: var(--ink);
+}
+.as-navrow[aria-current="page"] {
+  background: var(--bg);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+/* ── Footer: who is signed in, and the way out ── */
+.as-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.as-who {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  padding: 0 6px;
+}
+.as-name,
+.as-mail {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.35;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.as-name { font-weight: 600; }
+
+.as-out {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  transition:
+    border-color var(--t-fast) var(--ease-out),
+    color var(--t-fast) var(--ease-out);
+}
+.as-out:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+/* ── Content region ── */
+.as-main {
+  min-width: 0;
+  padding: 32px;
+  background: var(--bg-soft);
+}
+/* Focused only programmatically, by the skip control — no visible ring for a
+   click, a clear one for the keyboard. */
+.as-main:focus { outline: none; }
+.as-main:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -6px;
+  border-radius: 8px;
+}
+
+.as-canvas {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+/* Pages written for the marketing container re-constrain themselves to
+   1020px. Inside the shell the canvas is already the measure, so let them
+   fill it. Scoped to .as-canvas — nothing outside the shell changes. */
+.as-canvas .shell {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* ── Below 900px: the rail becomes a tab strip pinned to the top ── */
+@media (max-width: 900px) {
+  .as { display: block; }
+
+  .as-side {
+    position: sticky;
+    top: var(--as-top);
+    z-index: 30;
+    height: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand foot"
+      "nav   nav";
+    align-items: center;
+    gap: 8px 12px;
+    padding: 10px 16px 4px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .as-brand {
+    grid-area: brand;
+    height: 32px;
+    margin-bottom: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .as-foot {
+    grid-area: foot;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .as-who { padding: 0; text-align: right; }
+  .as-mail { display: none; }        /* the strip stays a shallow band */
+  .as-out { width: auto; padding: 0 12px; }
+
+  .as-nav {
+    grid-area: nav;
+    flex-direction: row;
+    gap: 6px;
+    margin: 0 -16px;
+    padding: 2px 16px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .as-nav::-webkit-scrollbar { display: none; }
+  .as-navrow {
+    white-space: nowrap;
+    scroll-snap-align: center;
+  }
+
+  .as-main { padding: 20px 16px 48px; }
+}
+
+@media (max-width: 600px) {
+  .as-who { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as-navrow,
+  .as-out { transition: none; }
+  .as-nav { scroll-behavior: auto; }
+}
+
+/* The print sheet is the report, not the chrome. */
+@media print {
+  .as {
+    display: block;
+    background: #fff;
+    min-height: 0;
+  }
+  .as-side,
+  .as-skip { display: none; }
+  .as-main { padding: 0; background: #fff; }
+}

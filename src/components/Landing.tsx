@@ -354,7 +354,10 @@ function Hand({ side, hit }: { side: "l" | "r"; hit: Strike | null }) {
         {/* back of the hand: wide across the knuckles, tapering to the wrist */}
         <path
           className="ld-hand-palm"
-          d="M46 100 C 44 90, 50 86, 60 86 h46 c8 0 10 6 10 14 v26\n             c0 16-10 26-27 26 h-12 c-16 0-24-10-26-24 Z"
+          /* One line on purpose. A JSX attribute is literal text, not a JS
+             string, so a "\n" written here reaches the DOM as backslash-n and
+             the browser rejects the whole path with "Expected path command". */
+          d="M46 100 C 44 90, 50 86, 60 86 h46 c8 0 10 6 10 14 v26 c0 16-10 26-27 26 h-12 c-16 0-24-10-26-24 Z"
         />
       </svg>
     </span>

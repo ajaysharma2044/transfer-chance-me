@@ -12,6 +12,7 @@ import SchoolPage from "./components/SchoolPage";
 import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
 import Portal from "./components/Portal";
+import FileFlow from "./components/FileFlow";
 import Account from "./components/Account";
 import Review from "./components/Review";
 import CollegePage from "./components/CollegePage";
@@ -35,6 +36,7 @@ type View =
   | { kind: "pricing" }
   | { kind: "auth" }
   | { kind: "portal" }
+  | { kind: "file" }
   | { kind: "account" }
   | { kind: "review" }
   | { kind: "browse" }
@@ -69,6 +71,7 @@ function viewFromHash(): View {
   if (h === "pricing") return { kind: "pricing" };
   if (h === "login") return { kind: "auth" };
   if (h === "portal") return { kind: "portal" };
+  if (h === "file") return { kind: "file" };
   if (h === "account") return { kind: "account" };
   if (h === "review") return { kind: "review" };
   if (h === "browse") return { kind: "browse" };
@@ -183,7 +186,13 @@ export default function App() {
         if (!(await syncReady())) return;
         const cloud = await pullProfile();
         if (!live) return;
-        if (cloud.profile) setProfile(cloud.profile);
+        // Merge over the defaults, never adopt the stored object verbatim.
+        // A row written before a field existed has no key for it, and the
+        // app treats several of these as always-present (profile.activities
+        // .length, profile.courses.length). Spreading defaults first is what
+        // makes every older row forward-compatible; loadProfile() does the
+        // same for the localStorage copy.
+        if (cloud.profile) setProfile({ ...DEFAULT_PROFILE, ...cloud.profile });
         else await pushProfile(profile);
       } catch { /* sync is best-effort; never block the app on it */ }
     })();
@@ -233,9 +242,13 @@ export default function App() {
   function handleAuth(s: Session) {
     setSession(s);
     setSessionState(s);
-    // Came from the results gate? Send them straight to what they were promised.
-    let next = "portal";
+    // Where a new account lands. An empty file has nothing for the dashboard
+    // to be a dashboard OF — every figure on it would read as an em dash — so
+    // a first sign-in goes to the file flow to upload a transcript, and only
+    // an account that already has something lands on the portal.
+    let next = profile.docs.length || profile.gpa !== DEFAULT_PROFILE.gpa ? "portal" : "file";
     try {
+      // Came from the results gate? Send them straight to what they were promised.
       const pending = sessionStorage.getItem(NEXT_KEY);
       if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
     } catch { /* ok */ }
@@ -318,7 +331,14 @@ export default function App() {
         </main>
       )}
       {view.kind === "portal" && (
-        <main><Portal session={session} profile={profile} go={nav} /></main>
+        <main><Portal session={session} profile={profile} go={nav} onChange={setProfile} /></main>
+      )}
+      {view.kind === "file" && (
+        <main>
+          {session
+            ? <FileFlow profile={profile} onChange={setProfile} go={nav} />
+            : <Auth onDone={handleAuth} />}
+        </main>
       )}
       {view.kind === "review" && (
         <main><Review profile={profile} onChange={setProfile} /></main>
