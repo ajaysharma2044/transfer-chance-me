@@ -166,6 +166,18 @@ export type Hook = "none" | "veteran" | "nontraditional";
 export type Essay = "named" | "general" | "draft";
 export type EcLevel = "minimal" | "campus" | "national";
 
+/** One extracurricular, as the student enters it in the file flow. */
+export interface ActivityEntry {
+  /** What they call it — "CS tutoring center lead". */
+  title: string;
+  /** What they actually did, in their words. */
+  detail: string;
+  /** Hours per week, when they know it. */
+  hours: number | null;
+  /** Years involved, when they know it. */
+  years: number | null;
+}
+
 export interface Profile {
   gpa: number;
   /** The applicant's current school, picked from the IPEDS directory */
@@ -201,6 +213,28 @@ export interface Profile {
   firstGen: boolean;
   /** Activities & extracurriculars in their own words */
   activitiesText: string;
+  /**
+   * The same activities, one entry each, when the student has entered them
+   * that way. `activitiesText` stays the source of truth for the AI prompt
+   * and for anyone who pasted a block of text; this is the structured view
+   * the file flow fills in, so a single activity can carry its own verdict
+   * and rewrite instead of the whole blob getting one grade.
+   *
+   * Empty array means "not entered per-activity", NOT "no activities" —
+   * check activitiesText before telling a student they have none.
+   */
+  activities: ActivityEntry[];
+  /**
+   * Transferable credits completed. Read off a transcript when one is
+   * uploaded, otherwise entered by hand. Kept as a number rather than being
+   * collapsed into `standing`, because several targets gate on the count
+   * itself: USC leans on the high-school record below 30 units, Rice and
+   * Vanderbilt need 12+ post-HS, Notre Dame needs 24+.
+   */
+  credits: number | null;
+  /** ACT composite. Stored beside `sat` rather than converted, because a
+   *  converted score is not the score a school receives. */
+  act: number | null;
   /** Awards & honors in their own words */
   awardsText: string;
   /**
@@ -246,6 +280,9 @@ export const DEFAULT_PROFILE: Profile = {
   workHours: null,
   firstGen: false,
   activitiesText: "",
+  activities: [],
+  credits: null,
+  act: null,
   awardsText: "",
   highSchool: "",
   hsGradYear: null,
