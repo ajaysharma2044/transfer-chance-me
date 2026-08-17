@@ -203,6 +203,22 @@ export interface Profile {
   activitiesText: string;
   /** Awards & honors in their own words */
   awardsText: string;
+  /**
+   * The high school they graduated from, and when.
+   *
+   * Deliberately NOT an input to the odds model: across this corpus the
+   * high-school record correlates with college GPA at 0.016 (see
+   * HIGH_SCHOOL_FACT), so scoring it would be inventing signal.
+   *
+   * It is collected because specific TARGETS score it even though the
+   * aggregate does not — Vanderbilt ("HS is scored, downward HS-to-college
+   * trend costs a band"), USC (under 30 transferable units, the decision
+   * rests "in large part" on the HS record), NYU, Michigan and Georgetown
+   * all require it, while Berkeley ignores it on a junior file. So this
+   * drives per-school requirements and warnings, never a probability.
+   */
+  highSchool: string;
+  hsGradYear: number | null;
 }
 
 export const DEFAULT_PROFILE: Profile = {
@@ -231,6 +247,8 @@ export const DEFAULT_PROFILE: Profile = {
   firstGen: false,
   activitiesText: "",
   awardsText: "",
+  highSchool: "",
+  hsGradYear: null,
 };
 
 export interface Driver {

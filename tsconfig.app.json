@@ -4,7 +4,10 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client"],
+    /* "node" is here only for scripts/preview_prompt.ts, which runs under
+       vite-node and needs both Vite's import.meta.env and Node's fs/process.
+       It does not let src/ reach Node APIs — the bundler would still fail. */
+    "types": ["vite/client", "node"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
@@ -22,5 +25,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  /* scripts/preview_prompt.ts runs under vite-node and imports src/, so it
+     needs this project's Vite types rather than the plain-Node ones. */
+  "include": ["src", "scripts/preview_prompt.ts"]
 }

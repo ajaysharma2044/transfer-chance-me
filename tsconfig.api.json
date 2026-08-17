@@ -19,5 +19,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["api/**/*.ts"]
+  /* export_signups.ts is a plain Node script and belongs here. Other scripts
+     under scripts/ import app code that uses `import.meta.env` (Vite-only)
+     and are checked by tsconfig.app.json instead — listing all of scripts/
+     here would fail on those. */
+  "include": ["api/**/*.ts", "scripts/export_signups.ts"]
 }
