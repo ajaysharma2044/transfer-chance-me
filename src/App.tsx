@@ -274,8 +274,15 @@ export default function App() {
   const page = (
     <>
       {view.kind === "landing" && <Landing onStart={() => nav("check")} onOpenSchool={openSchool} />}
+      {/* Intake is gated too. Its first step is a transcript upload, and an
+          upload from someone with no account has nowhere to be stored — it
+          would live in one browser and quietly vanish. The landing page, the
+          pricing page and the school directory stay public; the funnel is
+          "read the landing page → sign up → build your file". */}
       {view.kind === "intake" && (
-        <Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} />
+        session
+          ? <Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} />
+          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
       )}
       {view.kind === "results" && (
         session ? (
@@ -310,15 +317,29 @@ export default function App() {
           notice={AUTH_RETURN_ERROR}
         />
       )}
+      {/* Portal has its own signed-out card, but it is a dead end: a sentence
+          and a button that goes somewhere else. Every other gated route shows
+          the real form, so this one does too — one login screen, reached the
+          same way from anywhere. */}
       {view.kind === "portal" && (
-        <Portal session={session} profile={profile} go={nav} onChange={setProfile} />
+        session
+          ? <Portal session={session} profile={profile} go={nav} onChange={setProfile} />
+          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
       )}
       {view.kind === "file" && (
         session
           ? <FileFlow profile={profile} onChange={setProfile} go={nav} />
           : <Auth onDone={handleAuth} />
       )}
-      {view.kind === "review" && <Review profile={profile} onChange={setProfile} />}
+      {/* Signed-out visitors never reach the review. It is the page where a
+          student pastes their essays and transcript, it spends real money per
+          run, and with the proxy on those materials are stored against an
+          account — which there has to BE. */}
+      {view.kind === "review" && (
+        session
+          ? <Review profile={profile} onChange={setProfile} />
+          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
+      )}
       {view.kind === "browse" && <SchoolsIndex go={nav} />}
       {view.kind === "college" && <CollegePage idx={view.idx} go={nav} />}
       {view.kind === "admin" && <Admin sub={view.sub} go={nav} />}

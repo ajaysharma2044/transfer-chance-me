@@ -35,3 +35,6 @@ dist-ssr
 
 # Graphify knowledge-graph output (derived artifact)
 graphify-out/
+
+# Local Netlify folder
+.netlify

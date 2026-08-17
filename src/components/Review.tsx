@@ -116,7 +116,14 @@ export default function Review({ profile, onChange }: Props) {
         <p className="rv-dek">
           Paste your actual materials. A reviewer grounded in {Number(MODEL.meta.rows).toLocaleString()} real
           transfer outcomes reads everything and returns quote-level feedback, per-school verdicts, and a
-          prioritized fix list. Your materials go directly from your browser to the AI — never to us.
+          prioritized fix list.{" "}
+          {/* This sentence has to track what the deployment ACTUALLY does.
+              With the proxy on, materials pass through our server on the way
+              to the model — saying otherwise would be a false privacy claim on
+              the one page where students paste their most personal writing. */}
+          {proxyMode
+            ? "Your materials pass through our server to reach the reviewer, and are stored on your account so you can come back to them."
+            : "Your materials go directly from your browser to the AI — never to us."}
         </p>
       </header>
 

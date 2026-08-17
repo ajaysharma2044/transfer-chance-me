@@ -13,6 +13,8 @@
 // file muddies what each test proves. See the module's local branches.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const sdk = vi.hoisted(() => ({
   signUp: vi.fn(),
@@ -189,5 +191,46 @@ describe("setPassword", () => {
       error: { message: "New password should be different from the old password." },
     });
     await expect(setPassword("long-enough-pw")).rejects.toThrow(/current password/i);
+  });
+});
+
+/* ── Route gating ────────────────────────────────────────────────────────────
+ * Every surface that handles a student's own materials must require an
+ * account. This is a source-level check because there is no DOM harness here,
+ * and it guards a specific regression: a route added to the render tree
+ * without a `session ?` branch is invisible until someone opens it signed out.
+ */
+describe("gated routes", () => {
+  const app = readFileSync(join(process.cwd(), "src/App.tsx"), "utf8");
+
+  // Routes that must not render their component without a session.
+  const GATED = ["intake", "review", "portal", "file", "account"];
+
+  for (const kind of GATED) {
+    it(`#/${kind} requires a session`, () => {
+      // Find the render block for this view and confirm it branches on session.
+      const i = app.indexOf(`view.kind === "${kind}"`);
+      expect(i, `no render block for view kind "${kind}"`).toBeGreaterThan(-1);
+      const next = app.indexOf("view.kind ===", i + 20);
+      const block = app.slice(i, next === -1 ? i + 700 : next);
+      expect(
+        /session\s*(\?|&&)/.test(block),
+        `#/${kind} renders without checking session — signed-out visitors reach it`,
+      ).toBe(true);
+    });
+  }
+
+  it("the public marketing routes are NOT gated", () => {
+    // The funnel has to survive: someone must be able to read the pitch and
+    // browse schools before deciding to sign up.
+    for (const kind of ["landing", "pricing", "browse"]) {
+      const i = app.indexOf(`view.kind === "${kind}"`);
+      expect(i, `no render block for "${kind}"`).toBeGreaterThan(-1);
+      // Bound the window at the NEXT route, or a short block bleeds into the
+      // following one and reads its session check as its own.
+      const next = app.indexOf("view.kind ===", i + 20);
+      const block = app.slice(i, next === -1 ? i + 200 : next);
+      expect(/session\s*\?/.test(block), `${kind} should stay public`).toBe(false);
+    }
   });
 });
