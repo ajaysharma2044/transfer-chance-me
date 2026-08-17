@@ -20,6 +20,47 @@
   --sans: "Inter Variable", "Inter", -apple-system, system-ui, sans-serif;
   --w: min(1020px, calc(100vw - 48px));
   color-scheme: light;
+
+  /* ── Gradient system ───────────────────────────────────────────────────
+     One palette, defined once, so a surface in the portal and a surface in
+     the hero are literally the same colours rather than two people's guesses
+     at the same colours. Everything below is built from the four brand hues
+     already declared above — no new colour enters the system here.
+
+     --grad-brand   the signature sweep: blue → purple → teal. Buttons,
+                    active states, meters, and gradient text.
+     --grad-ink     the same sweep dialled into text, where full saturation
+                    is unreadable at body sizes.
+     --wash-*       the aurora: soft radial fields for section backgrounds.
+                    Low alpha on purpose — these sit UNDER content and must
+                    never fight the type for contrast.
+     --sheen        the glass highlight along the top edge of a raised card. */
+  --grad-brand: linear-gradient(115deg, var(--blue), var(--accent) 55%, var(--teal));
+  --grad-brand-soft: linear-gradient(115deg,
+    color-mix(in srgb, var(--blue) 12%, transparent),
+    color-mix(in srgb, var(--accent) 12%, transparent) 55%,
+    color-mix(in srgb, var(--teal) 12%, transparent));
+  --grad-ink: linear-gradient(100deg, var(--blue), var(--accent) 62%);
+  --wash-violet: radial-gradient(circle at 22% 18%, rgba(108, 75, 224, 0.13), transparent 46%);
+  --wash-blue:   radial-gradient(circle at 78% 30%, rgba(36, 120, 229, 0.11), transparent 46%);
+  --wash-teal:   radial-gradient(circle at 52% 88%, rgba(20, 184, 160, 0.09), transparent 44%);
+  --sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+
+  /* Elevation. Brand-tinted rather than neutral grey: a purple-cast shadow
+     under a purple-accented card reads as one material, where a grey one
+     reads as a sticker sitting on top of the page. */
+  --lift-1: 0 1px 2px rgba(20, 24, 63, 0.04), 0 4px 14px rgba(20, 24, 63, 0.05);
+  --lift-2: 0 2px 6px rgba(20, 24, 63, 0.05), 0 14px 38px rgba(76, 60, 160, 0.10);
+  --lift-3: 0 4px 12px rgba(20, 24, 63, 0.06), 0 28px 70px rgba(76, 60, 160, 0.14);
+
+  /* Motion. Two curves only, used everywhere, so the whole product decelerates
+     with the same physics. --ease-out for arrivals, --ease-spring for anything
+     that should feel like it has mass and slight overshoot. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.22, 1.28, 0.36, 1);
+  --t-fast: 180ms;
+  --t-mid: 420ms;
+  --t-slow: 900ms;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -696,6 +737,95 @@ html { scroll-behavior: smooth; }
 
 /* The old reveal system defers to this one where both apply. */
 [data-fx] .reveal { opacity: 1; transform: none; }
+
+/* ── Gradient surfaces ───────────────────────────────────────────────────
+   The vocabulary every page draws from, so "the gradient thing" is one
+   decision rather than a per-page reinvention. Built entirely from the
+   tokens in :root. */
+
+/* Gradient type. Only for figures and display headings — at body sizes the
+   lighter end of the sweep drops under contrast, so this is deliberately
+   not available as a general text treatment. */
+.g-text {
+  background: var(--grad-ink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* A gradient clipped to text has no colour of its own to fall back on. If
+     the clip fails to apply, the text renders transparent — invisible. This
+     keeps it legible in that case. */
+  -webkit-text-fill-color: transparent;
+}
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .g-text { color: var(--accent); -webkit-text-fill-color: currentColor; background: none; }
+}
+
+/* The aurora field. Sits under a section; drifts slowly enough to read as
+   light rather than as animation. */
+.g-wash { position: relative; isolation: isolate; }
+.g-wash::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10%;
+  z-index: -1;
+  background: var(--wash-violet), var(--wash-blue), var(--wash-teal);
+  animation: g-drift 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes g-drift {
+  from { transform: translate3d(-2%, -1.5%, 0) scale(1); }
+  to   { transform: translate3d(2%, 1.5%, 0) scale(1.06); }
+}
+
+/* Raised card. The ::after is a one-pixel light along the top edge — the
+   detail that separates "a box with a shadow" from "a pane of glass". */
+.g-card {
+  position: relative;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--lift-1);
+  transition: box-shadow var(--t-mid) var(--ease-out),
+              transform var(--t-mid) var(--ease-out),
+              border-color var(--t-mid) var(--ease-out);
+}
+.g-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  border-radius: 16px 16px 0 0;
+  background: var(--sheen);
+  pointer-events: none;
+}
+.g-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--lift-2);
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--line));
+}
+
+/* Gradient hairline — a section divider that carries the brand. */
+.g-rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--line-strong) 18%, var(--line-strong) 82%, transparent);
+}
+
+/* Meter. The fill is the brand sweep; the track is neutral so the fill reads
+   as the measurement and the track as the scale. */
+.g-meter { position: relative; height: 4px; border-radius: 3px; background: var(--bg-soft); overflow: hidden; }
+.g-meter > i {
+  position: absolute; inset: 0 auto 0 0;
+  display: block; border-radius: 3px;
+  background: var(--grad-brand);
+  transform-origin: left center;
+  transition: width var(--t-slow) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-wash::before { animation: none; }
+  .g-card, .g-card-hover:hover { transition: none; transform: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   [data-fx], [data-fx].fx-in,

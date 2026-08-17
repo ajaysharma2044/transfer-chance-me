@@ -19,6 +19,7 @@ import SchoolsIndex from "./components/SchoolsIndex";
 import Admin from "./components/admin/Admin";
 import AdminNavLink from "./components/admin/AdminNavLink";
 import { LogoMark, Wordmark } from "./components/Logo";
+import { useScrollFx } from "./hooks/useScrollFx";
 
 // URL routing (hash-based, static-host friendly):
 //   #/            landing        #/check      intake
@@ -209,6 +210,13 @@ export default function App() {
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
+
+  // Scroll choreography for the whole app, not just the landing page.
+  // Re-keyed on the route because it queries the DOM once per run: after a
+  // route change the previous page's [data-fx] nodes are gone and the new
+  // page's have never been observed, so without this they would sit at
+  // opacity 0 forever.
+  useScrollFx([view.kind]);
 
   /** Navigate to a route ("" for landing, "portal", "schools/<id>", …). */
   const nav = (route: string) => {

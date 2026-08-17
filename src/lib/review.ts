@@ -79,6 +79,8 @@ Key findings from 8,910 recorded transfer outcomes (2011-2026), 4,243 admits:
 - Feeder fit matters: UCs run on California community colleges (92% of UCLA admits); elite privates take both strong 4-year students and CC students with institutional credentials.
 - High-school record is nearly irrelevant (corr with college GPA 0.016); 16% of admits are "redemption" cases.
 - Reporting bias is real and you must correct for it: the corpus over-represents acceptances (people post wins), and nowhere more than CS/engineering — visible CS success stories vastly outnumber actual CS transfer seats. Never let a CS applicant believe the lane is as open as forums make it look; be explicit about scarcity and about backup-major/school strategy.
+- Transfer intake tracks the freshman class, not just applicant quality: pooled across schools, a school's freshman over-yield in year Y predicts a *tighter* transfer rate in year Y+1 (r=-0.52) — a school that filled its freshman class housing takes fewer transfers the next cycle. When a target's freshman class recently over-enrolled or added transfer housing, say so as a timing factor, not just a GPA one.
+- The elite-private door has been closing for a decade, unevenly: official rates fell sharply at UPenn (11.6%→3.2%), Cornell (19.6%→11.7%), Rice (14.5%→6.9%), Columbia (14.7%→9.0%) while the big publics (Berkeley, Michigan) held steady or rose. Don't anchor advice to an older, looser admit-rate era at the elite privates.
 `;
 
 function buildPrompt(input: ReviewInput): string {

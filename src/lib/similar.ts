@@ -150,9 +150,44 @@ export interface AdmitSignature {
  *  that would read as authoritative. */
 const MIN_SIGNATURE_N = 8;
 
+/** Signature results, keyed by school name.
+ *
+ *  computeSignature() filters all 856 corpus people on every call. The ledger
+ *  asks for one signature per row while an essay textarea re-renders the same
+ *  page on every keystroke, so the uncached version re-scanned the corpus
+ *  dozens of times per frame. The corpus is a frozen JSON import — the answer
+ *  for a given school can never change inside a session — so the cache is
+ *  sound for the lifetime of the module. `null` is cached too: a miss is as
+ *  expensive to recompute as a hit. */
+const SIG_CACHE = new Map<string, AdmitSignature | null>();
+/** Raw observed-admit counts, including the sub-threshold ones. */
+const COUNT_CACHE = new Map<string, number>();
+
+/** How many files in the outcome corpus record an admit at this school.
+ *  Counted, never estimated; 0 when the school is not in the corpus at all.
+ *  Below MIN_SIGNATURE_N this is still the true count — it is what lets a
+ *  thin school say "6 observed admits, too few to band" instead of claiming
+ *  it has none. */
+export function observedAdmits(school: string): number {
+  const hit = COUNT_CACHE.get(school);
+  if (hit !== undefined) return hit;
+  const i = DATA.schools.indexOf(school);
+  const n = i < 0 ? 0 : DATA.people.filter((r) => r.a.includes(i)).length;
+  COUNT_CACHE.set(school, n);
+  return n;
+}
+
 /** What the admitted files at this school actually look like, from the corpus.
- *  Returns null when we have too few observed admits to say anything. */
+ *  Returns null when we have too few observed admits to say anything.
+ *  Memoized — see SIG_CACHE. */
 export function admitSignature(school: string): AdmitSignature | null {
+  if (SIG_CACHE.has(school)) return SIG_CACHE.get(school)!;
+  const out = computeSignature(school);
+  SIG_CACHE.set(school, out);
+  return out;
+}
+
+function computeSignature(school: string): AdmitSignature | null {
   const i = DATA.schools.indexOf(school);
   if (i < 0) return null;
   const admitted = DATA.people.filter((r) => r.a.includes(i));

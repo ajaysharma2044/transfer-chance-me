@@ -1,25 +1,47 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { estimateAll, fmtPct, MODEL, TAG_CAMPUSES, tagFloor } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import type { Session } from "../lib/auth";
 import { analyzeEssay } from "../lib/essay";
+import type { EssayAnalysis } from "../lib/essay";
 import { analyzeCourses, MAJOR_LABEL as MAJOR_TEXT } from "../lib/coursework";
+import type { CourseGaps as CourseGapsResult } from "../lib/coursework";
 import { cloudEnabled } from "../lib/supabase";
 import { pushDoc } from "../lib/sync";
 import ucData from "../data/uc_data.json";
-import playbook from "../data/playbook.json";
 import Tile from "./Tile";
+import CampusPhoto from "./CampusPhoto";
 import Report from "./Report";
 import ActionPlan from "./ActionPlan";
-import ReaderView from "./ReaderView";
 import CourseGaps from "./CourseGaps";
-import { buildPlan } from "../lib/actionplan";
-import { countdown } from "../lib/deadlines";
+import { buildPlan, liftLabel } from "../lib/actionplan";
+import type { MoveLever, MoveTag, Plan, PlannedMove } from "../lib/actionplan";
+import { countdown, DEADLINES } from "../lib/deadlines";
+import { admitBand, bandPos, BAND_MAX, BAND_MIN } from "../lib/band";
+import type { AdmitBand } from "../lib/band";
+import { blockerFor } from "../lib/blockers";
+import type { Blocker } from "../lib/blockers";
+import { HIGH_SCHOOL_FACT, readerSheet } from "../lib/reader";
+import { useCountUp, useInView } from "../lib/reveal";
+import { markOf } from "../lib/schools";
+import {
+  admitSignature, admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW,
+} from "../lib/similar";
 import "./portal.css";
 
-// The signed-in home: your file, your chances, the UC block (the single
-// biggest destination in this dataset, and the one with its own rules), your
-// written material, and a working school list with statuses and notes.
+// Portal v2 — the cockpit-ledger.
+//
+// The dashboard is an instrument panel over a working ledger of schools, not a
+// document about the file. The rule that generated every line below: a sentence
+// whose job is to report a value becomes the value plus the scale it is read
+// against; a sentence whose job is to caveat becomes a permanent uppercase
+// micro-label (never behind disclosure — this product's position is that it
+// does not invent numbers, so the caveats are load-bearing); a sentence whose
+// job is to say what is wrong at one school becomes a chip in that school's
+// ledger row. Everything else is deleted or goes behind <details>.
+//
+// Every figure names the function it reads. Nothing here is written by hand.
 
 type Status = "planning" | "applied" | "waitlisted" | "accepted" | "rejected";
 
@@ -40,6 +62,10 @@ const MAJOR_LABEL: Record<string, string> = {
   humanities: "Humanities", undecided: "Undecided",
 };
 
+const INSTITUTION_LABEL: Record<Profile["institution"], string> = {
+  cc: "Community college", public4: "4-year public", private4: "4-year private",
+};
+
 const STATUS_LABEL: Record<Status, string> = {
   planning: "Planning",
   applied: "Applied",
@@ -47,6 +73,34 @@ const STATUS_LABEL: Record<Status, string> = {
   accepted: "Accepted",
   rejected: "Rejected",
 };
+
+const TAG_COLOR: Record<MoveTag, string> = {
+  Extracurricular: "var(--teal)",
+  Credential: "var(--accent)",
+  Coursework: "var(--blue)",
+  Timeline: "var(--coral)",
+  Essay: "var(--accent)",
+};
+
+/** Which reading-sheet row a move repairs. readerSheet() emits its dimensions
+ *  in a fixed order — 01 academic, 02 context, 03 preparation, 04 engagement,
+ *  05 narrative, 06 circumstance — so a move's lever maps to a row number, and
+ *  the plan and the sheet reconcile at three words a move. */
+const FEEDS_LABEL: Record<MoveLever, string> = {
+  ecLevel: "feeds row 04", ptk: "feeds row 04", honors: "feeds row 04",
+  essay: "feeds row 05", igetc: "feeds row 03", courses: "feeds row 03",
+  none: "",
+};
+
+const SIGNAL_LABEL: Record<string, string> = {
+  strong: "strong", solid: "solid", thin: "thin", gap: "gap",
+};
+
+const fmt = (n: number): string => n.toLocaleString();
+
+/** n=4,243 admitted files. MODEL.meta.admits, never a literal — engine.ts
+ *  mutates MODEL.meta.schools to 208, so meta is read field by field. */
+const ADMIT_FILES = Number(MODEL.meta.admits);
 
 function loadList(): ListEntry[] {
   try {
@@ -101,14 +155,16 @@ const CC_SHARES: number[] = Object.values(UC_JSON.campuses)
 const CC_MIN = CC_SHARES.length ? Math.min(...CC_SHARES) : null;
 const CC_MAX = CC_SHARES.length ? Math.max(...CC_SHARES) : null;
 
-interface PlaybookItem { id: string; title: string; steps: string[]; why: string }
-const PLAYBOOK = playbook as unknown as PlaybookItem[];
-const pbTitle = (id: string): string | null => PLAYBOOK.find((p) => p.id === id)?.title ?? null;
-
-/** "a, b and c" — for reading a list of criteria out in a sentence. */
-function joinList(xs: string[]): string {
-  if (xs.length <= 1) return xs[0] ?? "";
-  return `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`;
+/** How many of the 208 measured schools have an admitted-GPA band at all.
+ *  Counted once, lazily: admitBand() walks the corpus, and the answer cannot
+ *  change inside a session. The ledger footer prints it so 167 blank tracks
+ *  read as honesty rather than breakage. */
+let BANDED_TOTAL: number | null = null;
+function bandedTotal(): number {
+  if (BANDED_TOTAL == null) {
+    BANDED_TOTAL = MODEL.schools.filter((s) => admitBand(s).kind !== "none").length;
+  }
+  return BANDED_TOTAL;
 }
 
 /** Days until the next occurrence of a fixed calendar date — the same
@@ -120,11 +176,566 @@ function daysUntil(month: number, day: number, from = new Date()): number {
   return Math.round((next.getTime() - today.getTime()) / 86_400_000);
 }
 
+const clamp = (n: number): number => Math.max(0, Math.min(100, n));
+
+/** Enough of the name to read inside a tick label or a chip. */
+function shortCampus(name: string): string {
+  return name.replace(/^UC /, "").replace(/^University of /, "");
+}
+
+/* ── 3.1 · the sticky readout ─────────────────────────────────────────── */
+
+function Bar({ best, next }: { best: Estimate; next: Plan["next"] }) {
+  return (
+    <div className="po-bar" role="status">
+      <span className="po-bar-pos">
+        <Tile name={best.school.name} size={18} />
+        <b className="num">{fmtPct(best.lo)}–{fmtPct(best.hi)}%</b>
+        <span>{best.school.name}</span>
+        <i>{best.tier}</i>
+      </span>
+      {next && (
+        <span className={`po-bar-wall${next.days <= 45 ? " soon" : ""}`}>
+          <em>WALL</em>
+          <b className="num">{next.days}d</b>
+          <span>{next.school} · {next.label}</span>
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* ── 3.1b · the hero ───────────────────────────────────────────────────────
+   One premium block in place of the four dense strips this replaced (status
+   bar, file line, two gauges, funnel). Same figures, same sources — the only
+   thing that changed is that the page now opens on the number the reader came
+   for, at a size worth reading, over their top school's campus.
+
+   The numbers count up as they arrive. `useCountUp` resolves to the exact
+   value, so nothing here can display a tween artefact as a real estimate. */
+
+function PortalHero({
+  profile, best, plan, measured, atTarget, tracked, blocked, go,
+}: {
+  profile: Profile; best: Estimate; plan: Plan;
+  measured: number; atTarget: number; tracked: number; blocked: number;
+  go: (r: string) => void;
+}) {
+  const [ref, seen] = useInView<HTMLElement>();
+  const lo = useCountUp(best.lo * 100, seen, { decimals: 0 });
+  const hi = useCountUp(best.hi * 100, seen, { decimals: 0 });
+  const next = plan.next;
+  const days = useCountUp(next?.days ?? 0, seen);
+  const open = plan.moves.filter((m) => !m.done).length;
+  const trend = profile.gpaTrend === "upward" ? "↗" : profile.gpaTrend === "downward" ? "↘" : "";
+
+  return (
+    <header className="po-hero g-wash" ref={ref}>
+      <div className="po-hero-photo" aria-hidden="true">
+        <CampusPhoto name={best.school.name} height={340} />
+      </div>
+
+      <div className="po-hero-body">
+        <p className="po-hero-eyebrow">
+          <Tile name={best.school.name} size={20} />
+          Strongest position · {best.school.name}
+        </p>
+
+        <p className="po-hero-fig">
+          <b className="num g-text">{Math.round(lo)}–{Math.round(hi)}%</b>
+          <span className="po-hero-tier">{best.tier}</span>
+        </p>
+
+        <dl className="po-hero-id">
+          <div><dt>GPA</dt><dd className="num">{profile.gpa.toFixed(2)}{trend}</dd></div>
+          <div><dt>At</dt><dd>{profile.schoolName ?? INSTITUTION_LABEL[profile.institution]}</dd></div>
+          <div><dt>Major</dt><dd>{MAJOR_LABEL[profile.major] ?? profile.major}</dd></div>
+          <div><dt>Entering</dt><dd>{profile.standing}</dd></div>
+        </dl>
+
+        {/* Credentials the old file line carried. Kept because each one moves a
+            real number in the engine — a filled chip means the engine used it,
+            an empty one means it had nothing to use. */}
+        <ul className="po-hero-creds">
+          <li className={profile.igetc ? "on" : ""}>IGETC</li>
+          <li className={profile.ptk ? "on" : ""}>PTK</li>
+          <li className={profile.honors ? "on" : ""}>Honors</li>
+          {profile.sat != null && <li className="on num">SAT {profile.sat}</li>}
+          <li className={profile.docs.length ? "on num" : "num"}>
+            {profile.docs.length
+              ? `${profile.docs.length} doc${profile.docs.length > 1 ? "s" : ""} · ${profile.courses.length} courses`
+              : "no transcript"}
+          </li>
+        </ul>
+
+        <div className="po-hero-acts">
+          <button type="button" className="btn" onClick={() => go("check")}>Edit my profile</button>
+          <button type="button" className="btn-quiet" onClick={() => window.print()}>
+            Download report
+          </button>
+        </div>
+      </div>
+
+      {next && (
+        <aside className={`po-hero-wall${next.days <= 45 ? " urgent" : ""}`}>
+          <span className="po-hero-wlabel">Nearest deadline</span>
+          <b className="num">{Math.round(days)}<i>days</i></b>
+          <span className="po-hero-wsub">{next.school} · {next.label}</span>
+        </aside>
+      )}
+
+      {/* The funnel, kept because every stage is counted rather than asserted —
+          but as four figures rather than a sentence with arrows in it. */}
+      <ol className="po-hero-funnel num" aria-label="How the list narrows">
+        <li><b>{fmt(measured)}</b><span>measured</span></li>
+        <li><b>{atTarget}</b><span>at target</span></li>
+        <li><b>{tracked}</b><span>tracked</span></li>
+        <li className={blocked ? "hot" : ""}><b>{blocked}</b><span>blocked</span></li>
+        <li className="po-hero-funnel-gain">
+          <b>{plan.stackedPp >= 0.1 ? `+${plan.stackedPp.toFixed(1)}` : open}</b>
+          <span>{plan.stackedPp >= 0.1 ? `pts across ${open} moves` : "moves open"}</span>
+        </li>
+      </ol>
+    </header>
+  );
+}
+
+/* ── 3.5 · the one move ───────────────────────────────────────────────── */
+
+function MovePanel({ m }: { m: PlannedMove }) {
+  // The fit bar reads minWeeks against weeksLeft, so the caption reads the
+  // same comparison. `m.feasible` is measured against the LAST window on the
+  // list, which is a different (looser) question.
+  const over = m.minWeeks > m.weeksLeft;
+  const width = clamp((m.minWeeks / Math.max(1, Math.max(m.minWeeks, m.weeksLeft))) * 100);
+  return (
+    <article
+      className={`po-move${over ? " over" : ""}`}
+      style={{ "--mc": TAG_COLOR[m.tag] } as CSSProperties}
+      aria-labelledby="po-move-h"
+    >
+      <header>
+        <span className="po-move-rank num">01</span>
+        <span className="po-move-tag">{m.tag}</span>
+        <h2 id="po-move-h">{m.title}</h2>
+        <span className="po-move-lift">{liftLabel(m)}</span>
+      </header>
+
+      <div className="po-move-fit">
+        <span className="po-move-flabel">Fits</span>
+        <span className="po-fit" aria-hidden="true">
+          <span className="po-fit-need" style={{ width: `${width}%` }} />
+        </span>
+        <span className="po-move-fnum num">
+          {over
+            ? `no longer fits · ${m.minWeeks}w needed, ${m.weeksLeft}w left`
+            : `${m.minWeeks}w minimum inside ${m.weeksLeft}w left`}
+        </span>
+        <span className="po-move-when">{m.deadlineLabel}</span>
+      </div>
+
+      {m.movers.length > 0 && (
+        <p className="po-move-movers">
+          <span className="po-move-flabel">Moves</span>
+          {m.movers.map((mv) => (
+            <span key={mv.name} className="po-move-mover">
+              <Tile name={mv.name} size={16} />
+              {mv.name}
+              <b className="num">{fmtPct(mv.from)}→{fmtPct(mv.to)}%</b>
+            </span>
+          ))}
+        </p>
+      )}
+
+      <p className="po-move-why">{m.why}</p>
+      {FEEDS_LABEL[m.lever] && <p className="po-move-feeds">{FEEDS_LABEL[m.lever]}</p>}
+
+      <details className="po-move-more">
+        <summary>the steps</summary>
+        <ol>{m.steps.map((s) => <li key={s}>{s}</li>)}</ol>
+        <p>{m.realism}</p>
+        <p>{m.proof}</p>
+      </details>
+    </article>
+  );
+}
+
+/* ── 3.6 · one linear day axis ────────────────────────────────────────── */
+// x ∝ days, linear or not at all: evenly spacing ticks for tidiness lies
+// about the gap between Sep 30 and Feb 1. Replaces three separate renderings
+// of the same countdown() data.
+
+function Walls({ plan }: { plan: Plan }) {
+  const windows = plan.windows.slice(0, 6);
+  if (windows.length === 0) return null;
+  const maxDays = Math.max(1, ...windows.map((w) => w.days));
+  return (
+    <section className="po-walls" role="region" tabIndex={0} aria-label="Your deadlines">
+      <span className="po-walls-a">Today</span>
+      <span className="po-walls-b num">+{maxDays}d</span>
+      <ul className="po-walls-ax">
+        {windows.map((w) => (
+          <li
+            key={`${w.school}-${w.label}`}
+            style={{ left: `${clamp((w.days / maxDays) * 100)}%` }}
+            className={w.days <= 45 ? "soon" : ""}
+            title={w.note}
+          >
+            <b className="num">{w.days}d</b>
+            <span>{w.school}</span>
+            <i>{w.label}</i>
+          </li>
+        ))}
+      </ul>
+      <ul className="po-walls-list">
+        {windows.slice(0, 3).map((w) => (
+          <li key={`${w.school}-${w.label}`} className={w.days <= 45 ? "soon" : ""}>
+            <b className="num">{w.days}d</b>
+            <span>{w.school}</span>
+            <i>{w.label}</i>
+          </li>
+        ))}
+        {windows.length > 3 && <li className="po-walls-more num">+{windows.length - 3} more</li>}
+      </ul>
+      <p className="po-walls-note">Typical fall-transfer dates · verify on the school's site</p>
+    </section>
+  );
+}
+
+/* ── 3.7 · THE LEDGER ─────────────────────────────────────────────────── */
+
+type Sort = "odds" | "due" | "band";
+
+/** The band cell, in words. The bar is aria-hidden decoration over this. */
+function bandSentence(b: AdmitBand, gpa: number): string {
+  if (b.kind === "none") return b.caption;
+  return `${b.p25!.toFixed(2)}–${b.p75!.toFixed(2)}, median ${b.p50!.toFixed(2)}, ${b.caption}; you ${gpa.toFixed(2)}`;
+}
+
+function BandCell({ b, gpa }: { b: AdmitBand; gpa: number }) {
+  return (
+    <span className={`po-led-band po-band-${b.kind}`}>
+      {b.kind === "none" ? (
+        <span className="po-band-empty" aria-hidden="true" />
+      ) : (
+        <span className="po-band" aria-hidden="true">
+          <span
+            className="po-band-range"
+            style={{ left: `${bandPos(b.p25!)}%`, width: `${Math.max(0, bandPos(b.p75!) - bandPos(b.p25!))}%` }}
+          />
+          <span className="po-band-med" style={{ left: `${bandPos(b.p50!)}%` }} />
+          <span className="po-band-you" style={{ left: `${bandPos(gpa)}%` }} />
+        </span>
+      )}
+      <i className="num">{b.caption}</i>
+      {b.kind !== "none" && (
+        <i className="po-band-figs num">
+          {b.p25!.toFixed(2)}–{b.p75!.toFixed(2)} · med {b.p50!.toFixed(2)} · you {gpa.toFixed(2)}
+        </i>
+      )}
+      <span className="sr-only">{bandSentence(b, gpa)}</span>
+    </span>
+  );
+}
+
+function LedgerOpen({
+  profile, e, entry, blk, gaps, onNote,
+}: {
+  profile: Profile;
+  e: Estimate;
+  entry: ListEntry;
+  blk: Blocker;
+  gaps: CourseGapsResult;
+  onNote: (v: string) => void;
+}) {
+  // Only the open row pays for these.
+  const sheet = useMemo(() => readerSheet(profile, e), [profile, e]);
+  const matches = useMemo(() => findSimilar(profile, [e.school.name], 3), [profile, e.school.name]);
+  const dl = DEADLINES[e.school.name];
+  const merced = e.school.name === "UC Merced" ? UC_JSON.campuses["UC Merced"]?.ccNote : null;
+
+  return (
+    <div className="po-led-open-body" role="region" aria-label={`Detail for ${e.school.name}`}>
+      <div className="po-lo-col">
+        <h4>How it reads</h4>
+        <ul className="po-lo-dims">
+          {sheet.dimensions.map((d, i) => (
+            <li key={d.id} className={`po-sig-${d.signal}${d.id === sheet.pivot.id ? " pivot" : ""}`}>
+              <span className="po-lo-n num">{String(i + 1).padStart(2, "0")}</span>
+              <span className="po-lo-label">{d.label}</span>
+              <span className="po-dim-metre" aria-hidden="true">
+                <span style={{ width: `${Math.round(d.score * 100)}%` }} />
+              </span>
+              <span className="po-lo-sig">{SIGNAL_LABEL[d.signal]}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="po-lo-note">{sheet.pivot.note}</p>
+        {sheet.pivot.lift && <p className="po-dim-lift">{sheet.pivot.lift}</p>}
+      </div>
+
+      <div className="po-lo-col">
+        <h4>At this school</h4>
+        <ul className="po-lo-drivers">
+          {e.drivers.slice(0, 3).map((d) => (
+            <li key={d.text} className={`po-lo-${d.dir}`}>
+              <em aria-hidden="true">{d.dir === "up" ? "↑" : d.dir === "down" ? "↓" : "–"}</em>
+              {d.text}
+            </li>
+          ))}
+        </ul>
+        {e.school.counsel?.levers?.length ? (
+          <ul className="po-lo-levers">
+            {e.school.counsel.levers.slice(0, 2).map((l) => <li key={l}>{l}</li>)}
+          </ul>
+        ) : null}
+        {blk.extra > 0 && (
+          <p className="po-lo-blocks">
+            <span className="po-lo-flabel">Also firing</span>
+            {blk.all.slice(1).map((k, i) => <em key={`${k}-${i}`}>{k}</em>)}
+          </p>
+        )}
+        {dl?.note && <p className="po-lo-fine">{dl.note}</p>}
+        {merced && <p className="po-lo-fine">† {merced}</p>}
+        {gaps.missingCore.length > 0 && (
+          <p className="po-lo-fine num">
+            {gaps.coreDone} of {gaps.coreTotal} core requirements covered
+          </p>
+        )}
+      </div>
+
+      <div className="po-lo-col">
+        <h4>Closest real files</h4>
+        {matches.map((m, i) => {
+          const d = m.gpa - profile.gpa;
+          return (
+            <div className="po-lo-match" key={`${m.gpa}-${m.major}-${m.year}-${i}`}>
+              <span className="po-lo-mtop">
+                <b className="num">{m.gpa.toFixed(2)}</b>
+                <span>{m.major}{m.institutionLabel ? ` · ${m.institutionLabel}` : ""} · {m.year}</span>
+                <em className={`num${d > 0 ? " behind" : ""}`}>
+                  {d > 0 ? "+" : d < 0 ? "−" : "±"}{Math.abs(d).toFixed(2)}
+                </em>
+              </span>
+              <Ledgerette label="IN" tone="in" names={m.admits} />
+              {m.denies.length > 0 && <Ledgerette label="OUT" tone="out" names={m.denies} />}
+            </div>
+          );
+        })}
+        <label className="po-lo-notefield">
+          <span className="po-lo-flabel">Your note</span>
+          <input
+            type="text"
+            className="po-note"
+            placeholder="Deadline, portal login, who's writing recs…"
+            value={entry.note}
+            onChange={(ev) => onNote(ev.target.value)}
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
+/** IN / OUT ledger of Tiles, capped at 3 — the remainder is counted, never
+ *  silently dropped. */
+function Ledgerette({ label, tone, names }: { label: string; tone: "in" | "out"; names: string[] }) {
+  const shown = names.slice(0, 3);
+  return (
+    <span className="po-lo-led">
+      <em className={`po-lo-tag po-lo-${tone}`}>{label}</em>
+      {shown.map((s) => (
+        <span key={s} className="po-lo-school"><Tile name={s} size={15} /> {markOf(s).word}</span>
+      ))}
+      {names.length > 3 && <span className="po-lo-more num">+{names.length - 3} more</span>}
+    </span>
+  );
+}
+
+/* ── 3.8 · the reading sheet ──────────────────────────────────────────── */
+
+function ReadingSheet({ profile, ests }: { profile: Profile; ests: Estimate[] }) {
+  const picks = ests.slice(0, 6);
+  const [pick, setPick] = useState(0);
+  const [openDim, setOpenDim] = useState<string | null>(null);
+  const target = picks[Math.min(pick, picks.length - 1)];
+  const sheet = useMemo(() => readerSheet(profile, target), [profile, target]);
+
+  return (
+    <section className="po-read" aria-labelledby="po-read-h">
+      <header className="po-read-head">
+        <h2 id="po-read-h">How it reads</h2>
+        <div className="po-read-pick" role="tablist" aria-label="Read against">
+          {picks.map((t, i) => (
+            <button
+              type="button"
+              role="tab"
+              key={t.school.id}
+              aria-selected={i === pick}
+              className={i === pick ? "on" : ""}
+              onClick={() => setPick(i)}
+            >
+              <Tile name={t.school.name} size={20} />
+              <span className="sr-only">{t.school.name}</span>
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <p className={`po-read-gate${sheet.gateCleared ? " ok" : " under"}${sheet.bandEstimated ? " est" : ""}`}>
+        <span className="po-read-glabel">Academic gate</span>
+        <b>{sheet.gateCleared ? "Cleared" : "Under the band"}</b>
+        {sheet.bandEstimated && <i>Band estimated — this school publishes none</i>}
+      </p>
+
+      <ol className="po-read-dims">
+        {sheet.dimensions.map((d, i) => {
+          const isPivot = d.id === sheet.pivot.id;
+          const open = isPivot || openDim === d.id;
+          return (
+            <li key={d.id} className={`po-dim po-sig-${d.signal}${isPivot ? " pivot" : ""}`}>
+              <button
+                type="button"
+                aria-expanded={open}
+                onClick={() => setOpenDim((o) => (o === d.id ? null : d.id))}
+              >
+                <span className="po-dim-n num">{String(i + 1).padStart(2, "0")}</span>
+                <span className="po-dim-label">{d.label}</span>
+                <span className="po-dim-metre" aria-hidden="true">
+                  <span style={{ width: `${Math.round(d.score * 100)}%` }} />
+                </span>
+                <span className="po-dim-sig">{SIGNAL_LABEL[d.signal]}</span>
+                {isPivot && <i className="po-dim-pivot">Reader stops here</i>}
+                {d.schoolInvariant && <i className="po-dim-inv">Same at every school</i>}
+              </button>
+              {open && (
+                <div className="po-dim-body">
+                  <p className="po-dim-note">{d.note}</p>
+                  {d.lift && <p className="po-dim-lift">{d.lift}</p>}
+                  <p className="po-dim-lens">{d.lens}</p>
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+
+      <p className="po-read-foot">
+        <span>Readings, not odds · n={fmt(ADMIT_FILES)} admitted files</span>
+        <span>High school r={HIGH_SCHOOL_FACT.corr} — not on this sheet</span>
+      </p>
+    </section>
+  );
+}
+
+/* ── 3.9 · the corpus panel ───────────────────────────────────────────── */
+
+function CorpusPanel({ profile, targets }: { profile: Profile; targets: string[] }) {
+  // The caller rebuilds `targets` every render, so the memos hang off a stable
+  // string of it — findSimilar scans 856 files and the essay box re-renders the
+  // page on every keystroke.
+  const key = targets.join("|");
+  const names = useMemo(() => (key ? key.split("|") : []), [key]);
+  const matches = useMemo(() => findSimilar(profile, names, 3), [profile, names]);
+  const sigs = useMemo(() => admitSignatures(names, 2), [names]);
+  const eligible = useMemo(() => countEligible(profile), [profile]);
+  const thin = useMemo(() => names.filter((t) => admitSignature(t) === null), [names]);
+  // Name at most two, then count the rest. Counted, never silently dropped.
+  const thinLabel = thin.length > 2
+    ? `${thin.slice(0, 2).join(", ")} and ${thin.length - 2} more`
+    : thin.join(" and ");
+
+  return (
+    <section className="po-corp" aria-labelledby="po-corp-h">
+      <h2 id="po-corp-h">Files like yours</h2>
+      <p className="po-corp-q">
+        <span className="po-corp-op">MATCH</span>
+        <span>
+          gpa <b className="num">{profile.gpa.toFixed(2)}</b> ±{MATCH_WINDOW.toFixed(2)} · major family ·
+          from {INSTITUTION_LABEL[profile.institution].toLowerCase()}
+        </span>
+      </p>
+      <p className="po-corp-funnel num">
+        <span><b>{fmt(CORPUS_META.people)}</b> files scanned</span><i>▸</i>
+        <span><b>{eligible}</b> inside the window</span><i>▸</i>
+        <span><b>{matches.length}</b> nearest returned</span>
+        <span className="po-corp-dec">{fmt(CORPUS_META.records)} recorded decisions</span>
+      </p>
+
+      <div className="po-corp-head num"><span>#</span><span>GPA</span><span>FILE</span><span>Δ VS YOU</span></div>
+      {matches.map((m, i) => {
+        const d = m.gpa - profile.gpa;
+        return (
+          <div className="po-corp-card" key={`${m.gpa}-${m.major}-${m.year}-${i}`}>
+            <div className="po-corp-top">
+              <span className="po-corp-idx num">{String(i + 1).padStart(2, "0")}</span>
+              <b className="po-corp-gpa num">{m.gpa.toFixed(2)}</b>
+              <span className="po-corp-meta">
+                {m.major}{m.institutionLabel ? ` · ${m.institutionLabel}` : ""} · {m.year}
+              </span>
+              <span className={`po-corp-delta num${d > 0 ? " behind" : ""}`}>
+                {d > 0 ? "+" : d < 0 ? "−" : "±"}{Math.abs(d).toFixed(2)}
+              </span>
+            </div>
+            <Ledgerette label="IN" tone="in" names={m.admits} />
+            {m.denies.length > 0 && <Ledgerette label="OUT" tone="out" names={m.denies} />}
+          </div>
+        );
+      })}
+
+      {sigs.length > 0 && <h3 className="po-corp-h2">Admitted files at your targets</h3>}
+      {sigs.map((s) => (
+        <div className="po-sig" key={s.school}>
+          <div className="po-sig-top">
+            <span className="po-sig-photo">
+              <CampusPhoto name={s.school} color={markOf(s.school).color} height={26} />
+            </span>
+            <Tile name={s.school} size={16} />
+            <b>{markOf(s.school).word}</b>
+            <span className="po-sig-n num">n={s.n} observed admits</span>
+          </div>
+          <div className="po-band po-band-observed" aria-hidden="true">
+            <span
+              className="po-band-range"
+              style={{
+                left: `${bandPos(s.gpaP25)}%`,
+                width: `${Math.max(0, bandPos(s.gpaP75) - bandPos(s.gpaP25))}%`,
+              }}
+            />
+            <span className="po-band-med" style={{ left: `${bandPos(s.gpaMedian)}%` }} />
+            <span className="po-band-you" style={{ left: `${bandPos(profile.gpa)}%` }} />
+          </div>
+          <p className="po-sig-line num">
+            {s.gpaP25.toFixed(2)}–{s.gpaP75.toFixed(2)}, median <b>{s.gpaMedian.toFixed(2)}</b> ·
+            you <b className="po-sig-mine">{profile.gpa.toFixed(2)}</b>
+          </p>
+        </div>
+      ))}
+      {sigs.length > 0 && (
+        <p className="po-corp-axis num" aria-hidden="true">
+          <i>{BAND_MIN.toFixed(2)}</i><i>{((BAND_MIN + BAND_MAX) / 2).toFixed(2)}</i><i>{BAND_MAX.toFixed(2)}</i>
+        </p>
+      )}
+
+      {thin.length > 0 && (
+        <p className="po-corp-honest">
+          {thinLabel}: too few observed admits to characterize — you get the official rate there,
+          not a number we made up.
+        </p>
+      )}
+    </section>
+  );
+}
+
+/* ── 3.10 · the UC block ──────────────────────────────────────────────── */
+
 interface UcRow { name: string; est: Estimate; uc: UcCampusData | null }
 
 function UcSection({
   profile, ests, go,
 }: { profile: Profile; ests: Estimate[]; go: (route: string) => void }) {
+  const [openFloor, setOpenFloor] = useState<string | null>(null);
+
   const rows = useMemo<UcRow[]>(() => {
     const byName = new Map(ests.map((e) => [e.school.name, e]));
     const out: UcRow[] = [];
@@ -136,37 +747,39 @@ function UcSection({
     return out.sort((a, b) => b.est.p - a.est.p);
   }, [ests]);
 
-  const gaps = useMemo(() => analyzeCourses(profile), [profile]);
-  const essay = useMemo(
-    () => (profile.essayText.trim() ? analyzeEssay(profile.essayText) : null),
-    [profile.essayText],
-  );
-
   if (rows.length === 0) return null;
 
   // ── TAG: the engine's own three structural gates, shown one by one ──
   const gates = [
-    { ok: profile.institution === "cc", label: "Enrolled at a community college", miss: "community college enrollment" },
+    { ok: profile.institution === "cc", label: "Community college", miss: "community-college enrollment" },
     { ok: profile.caResident, label: "California resident", miss: "California residency" },
-    { ok: profile.standing === "junior", label: "Entering at junior standing", miss: "junior-standing entry" },
+    { ok: profile.standing === "junior", label: "Junior standing", miss: "junior-standing entry" },
   ];
   const gatesOk = gates.every((g) => g.ok);
+  const firstMiss = gates.find((g) => !g.ok)?.miss ?? null;
+
   // Floors for THIS applicant's major, not the campus-wide minimum — see
   // tagFloor() in engine.ts. Showing the campus figure here contradicted the
   // odds the engine printed on the same screen.
   const floors = Object.keys(TAG_CAMPUSES)
-    .map((c) => [c, tagFloor(c, profile.major) ?? 9] as [string, number])
+    .map((c) => [c, tagFloor(c, profile.major)] as [string, number | null])
+    .filter((f): f is [string, number] => f[1] != null)
     .sort((a, b) => a[1] - b[1]);
   const cleared = floors.filter(([, min]) => profile.gpa >= min);
-  const lowest = floors[0] ?? null;
+
+  // Two campuses can land on the same floor for one major (Irvine and Santa
+  // Barbara both sit at 3.4). Stacking two ticks at one x would hide one of
+  // them, so a shared floor is one tick naming both campuses.
+  const ticks: { min: number; campuses: string[] }[] = [];
+  for (const [campus, min] of floors) {
+    const hit = ticks.find((t) => t.min === min);
+    if (hit) hit.campuses.push(campus);
+    else ticks.push({ min, campuses: [campus] });
+  }
 
   const tagDays = daysUntil(9, 30);
-  const wall = countdown(rows[0].name);
-  const ucNamed = essay ? essay.namedSchools.filter((n) => UC_NAMES.includes(n)) : [];
-
-  const tagStep = pbTitle("file-uc-tag-by-sep-30");
-  const assistStep = pbTitle("close-major-prep-gaps-on-assist");
-  const piqStep = pbTitle("draft-uc-piqs-before-nov-30");
+  const AX_MIN = 2.6, AX_MAX = 3.7;
+  const pctOf = (v: number): number => clamp(((v - AX_MIN) / (AX_MAX - AX_MIN)) * 100);
 
   return (
     <section className="po-uc" aria-labelledby="po-uc-h">
@@ -174,27 +787,13 @@ function UcSection({
         <div className="po-uc-headtext">
           <span className="po-uc-eyebrow">The biggest transfer destination in this dataset</span>
           <h2 id="po-uc-h">The University of California</h2>
-          <p>
-            {rows.length} campuses on one application, one November 30 wall, and the only contractual
-            admission guarantee anywhere in this data.
+          <span className="po-uc-facts num">
+            {rows.length} campuses ▸ one application ▸ one Nov 30 wall
             {CC_MIN != null && CC_MAX != null && (
-              <> Across the {CC_SHARES.length} campuses UC publishes a feeder breakdown for,{" "}
-                <b className="num">{CC_MIN}%–{CC_MAX}%</b> of admitted transfers came from California
-                community colleges.</>
+              <> ▸ {CC_MIN}%–{CC_MAX}% from CA CCs across the {CC_SHARES.length} campuses
+                UC publishes a breakdown for</>
             )}
-          </p>
-        </div>
-        <div className="po-uc-clocks">
-          <div className={`po-uc-clock${tagDays <= 45 ? " soon" : ""}`}>
-            <b className="num">{tagDays}</b>
-            <span>days to TAG · Sep 30</span>
-          </div>
-          {wall && (
-            <div className={`po-uc-clock${wall.days <= 45 ? " soon" : ""}`}>
-              <b className="num">{wall.days}</b>
-              <span>days to the UC application · {wall.label}</span>
-            </div>
-          )}
+          </span>
         </div>
       </header>
 
@@ -229,7 +828,7 @@ function UcSection({
                   <b className="num">{est.school.rate.toFixed(1)}%</b>
                   {est.school.admitted != null && est.school.applicants != null && (
                     <i className="num">
-                      {est.school.admitted.toLocaleString()} of {est.school.applicants.toLocaleString()} admitted
+                      {fmt(est.school.admitted)} of {fmt(est.school.applicants)} admitted
                     </i>
                   )}
                 </span>
@@ -258,125 +857,93 @@ function UcSection({
         })}
       </ul>
 
-      <div className="po-uc-panels">
-        <article className="po-uc-panel">
-          <h3>Transfer Admission Guarantee</h3>
-          {gatesOk && cleared.length > 0 ? (
-            <p className="po-uc-lead">
-              Your <b className="num">{profile.gpa.toFixed(2)}</b> clears the published floor at{" "}
-              <b>{cleared.length} of {floors.length}</b> TAG campuses. You may file exactly one, by
-              September 30 — and it voids unless the regular UC application follows by November 30.
-            </p>
-          ) : gatesOk ? (
-            <p className="po-uc-lead">
-              Your <b className="num">{profile.gpa.toFixed(2)}</b> is below every published TAG floor
-              {lowest && <> — the lowest is {lowest[0]} at <b className="num">{lowest[1].toFixed(1)}</b></>}.
-              Without the guarantee these campuses read your file competitively, like the rest.
-            </p>
-          ) : (
-            <p className="po-uc-lead">
-              TAG is a California community college program for junior-entry transfers. Your file is
-              missing {joinList(gates.filter((g) => !g.ok).map((g) => g.miss))}, so the guarantee
-              isn't on the table and the TAG campuses read your application competitively, like the rest.
-            </p>
-          )}
+      <div className="po-tag">
+        <p className="po-tag-head">
+          <span>TAG · Transfer Admission Guarantee</span>
+          <b className={`num${tagDays <= 45 ? " soon" : ""}`}>{tagDays}d to Sep 30</b>
+          <em className={gatesOk ? "" : "no"}>
+            {gatesOk
+              ? `Eligible · clears ${cleared.length} of ${floors.length}`
+              : `Blocked · needs ${firstMiss}`}
+          </em>
+        </p>
 
-          <ul className="po-uc-gates">
-            {gates.map((g) => (
-              <li key={g.label} className={g.ok ? "ok" : "no"}>
-                <span aria-hidden="true">{g.ok ? "✓" : "○"}</span>
-                {g.label}
-              </li>
-            ))}
-          </ul>
+        <ul className="po-tag-gates">
+          {gates.map((g) => (
+            <li key={g.label} className={g.ok ? "ok" : "no"}>
+              <span aria-hidden="true">{g.ok ? "●" : "○"}</span>{g.label}
+            </li>
+          ))}
+        </ul>
 
-          <ul className="po-uc-floors">
-            {floors.map(([campus, min]) => {
-              const clear = gatesOk && profile.gpa >= min;
-              return (
-                <li key={campus} className={clear ? "clear" : ""}>
-                  <span className="po-uc-floor-name">{campus}</span>
-                  <span className="po-uc-floor-min num">{min.toFixed(1)}</span>
-                  {clear && UC_JSON.tag.minGpaNotes[campus] && (
-                    <i>{UC_JSON.tag.minGpaNotes[campus]}</i>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-
-          <p className="po-uc-fine">{UC_JSON.tag.minGpaNotes.source}</p>
-          {tagStep && <p className="po-uc-step">In your plan below: <b>{tagStep}</b></p>}
-        </article>
-
-        <article className="po-uc-panel">
-          <h3>Major prep, the way ASSIST checks it</h3>
-          {profile.courses.length === 0 ? (
-            <>
-              <p className="po-uc-lead">
-                No courses on your file yet, so there is nothing to check against your major's
-                articulation.
-              </p>
-              <button type="button" className="btn btn-sm" onClick={() => go("check")}>
-                Add my courses
+        <div className="po-tag-ax">
+          <span className="po-tag-a num">{AX_MIN.toFixed(2)}</span>
+          <span className="po-tag-b num">{AX_MAX.toFixed(2)}</span>
+          {ticks.map((t) => {
+            const id = t.min.toFixed(2);
+            return (
+              <button
+                type="button"
+                key={id}
+                className={`po-tag-tick${profile.gpa >= t.min ? " clear" : ""}`}
+                style={{ left: `${pctOf(t.min)}%` }}
+                aria-expanded={openFloor === id}
+                onClick={() => setOpenFloor((f) => (f === id ? null : id))}
+              >
+                <b className="num">{t.min.toFixed(1)}</b>
+                <span>{t.campuses.map(shortCampus).join(" · ")}</span>
               </button>
-            </>
-          ) : (
-            <>
-              <p className="po-uc-lead">
-                <b className="num">{gaps.coreDone} of {gaps.coreTotal}</b> lower-division requirements
-                for {MAJOR_TEXT[profile.major]} are covered by the courses on your file.
-              </p>
-              {gaps.missingCore.length > 0 ? (
-                <ul className="po-uc-gaps">
-                  {gaps.missingCore.slice(0, 6).map((m) => <li key={m.key}>{m.label}</li>)}
-                </ul>
-              ) : (
-                <p className="po-uc-ok">Nothing open in the core sequence.</p>
-              )}
-            </>
-          )}
-          <p className="po-uc-igetc">
-            IGETC: <b>{profile.igetc ? "complete on your file" : "not marked complete"}</b>
-          </p>
-          <p className="po-uc-fine">
-            Matched against the standard lower-division transfer spine, not any one campus's catalog.
-            ASSIST.org is the authority: set your college as sending and each UC as receiving, open
-            your exact major's agreement, and check it line by line.
-          </p>
-          {assistStep && <p className="po-uc-step">In your plan below: <b>{assistStep}</b></p>}
-        </article>
+            );
+          })}
+          <span className="po-tag-you" style={{ left: `${pctOf(profile.gpa)}%` }}>
+            <b className="num">{profile.gpa.toFixed(2)}</b>
+            <span>You</span>
+          </span>
+        </div>
 
-        <article className="po-uc-panel">
-          <h3>Personal insight questions</h3>
-          {essay ? (
-            <p className="po-uc-lead">
-              Your "why transfer" draft runs <b className="num">{essay.words}</b> words and{" "}
-              {ucNamed.length > 0
-                ? <>names <b>{ucNamed.join(", ")}</b></>
-                : <>names no UC campus specifically</>}.
-            </p>
-          ) : (
-            <p className="po-uc-lead">
-              No "why transfer" draft on file yet — it goes in Your writing, below.
-            </p>
-          )}
-          {essay?.verdict === "complaint" && (
-            <p className="po-uc-warn">
-              It reads complaint-shaped ({essay.complaintScore} complaint signals against{" "}
-              {essay.fitScore} fit signals). Cut every sentence that criticises your current college.
-            </p>
-          )}
-          <p className="po-uc-body">
-            UC reads no per-campus essay. The same four PIQs go to every campus, so the school-specific
-            paragraph that earns credit at the privates has nowhere to live here — the course evidence
-            goes into the transfer prompt instead.
-          </p>
-          {wall?.note && <p className="po-uc-fine">{wall.note}. No late round.</p>}
-          {piqStep && <p className="po-uc-step">In your plan below: <b>{piqStep}</b></p>}
-        </article>
+        {openFloor && (
+          <div className="po-tag-note">
+            {(ticks.find((t) => t.min.toFixed(2) === openFloor)?.campuses ?? []).map((c) => (
+              <p key={c}>{UC_JSON.tag.minGpaNotes[c]}</p>
+            ))}
+          </div>
+        )}
+
+        <p className="po-tag-rule">Voids unless the regular UC application follows by November 30.</p>
+        <p className="po-tag-src">{UC_JSON.tag.minGpaNotes.source}</p>
       </div>
     </section>
+  );
+}
+
+/* ── 3.11 · major prep, one line ──────────────────────────────────────── */
+
+function PrepLine({
+  profile, gaps, go,
+}: { profile: Profile; gaps: CourseGapsResult; go: (r: string) => void }) {
+  const core = gaps.statuses.filter((s) => s.tier === "core");
+  return (
+    <>
+      <p className="po-prep">
+        <span className="po-prep-label">Major prep · {MAJOR_TEXT[profile.major]}</span>
+        <span className="po-prep-bar" aria-hidden="true">
+          {core.map((s) => <i key={s.key} className={s.have ? "on" : ""} title={s.label} />)}
+        </span>
+        <b className="num">{gaps.coreDone} of {gaps.coreTotal} covered</b>
+        {gaps.missingCore.length > 0 && (
+          <span className="po-prep-open">
+            <span className="po-prep-olabel">Open</span>
+            {gaps.missingCore.slice(0, 6).map((m) => <em key={m.key}>{m.label}</em>)}
+          </span>
+        )}
+        <span className="po-prep-igetc">IGETC {profile.igetc ? "●" : "○"}</span>
+        <span className="po-prep-src">ASSIST.org is the authority</span>
+      </p>
+      <details className="po-prep-more">
+        <summary>All {gaps.coreTotal} requirements, line by line</summary>
+        <CourseGaps profile={profile} onEdit={() => go("check")} />
+      </details>
+    </>
   );
 }
 
@@ -443,9 +1010,52 @@ function lineCount(s: string): number {
   return s.split("\n").filter((l) => l.trim()).length;
 }
 
+/** essay.ts's own thresholds: 250 short · 400–650 target · 800 long. */
+const WBAND_MAX = 800;
+const wpos = (words: number): string => `${clamp((words / WBAND_MAX) * 100)}%`;
+
+/** A note's chip form. Full text rides on title=. */
+function shortNote(n: string): string {
+  if (n.startsWith("Very short")) return "very short";
+  if (n.startsWith("Long")) return "long";
+  if (n.startsWith("No professors named")) return "no professors named";
+  return n.split(/[—.]/)[0].trim().toLowerCase();
+}
+
+function EssayRow({ a }: { a: EssayAnalysis }) {
+  const total = Math.max(1, a.fitScore + a.complaintScore);
+  return (
+    <p className="po-essay-row">
+      <b className="num">{a.words}</b>
+      <span className="po-essay-wlabel">words</span>
+      <span className="po-wband" aria-hidden="true">
+        <span className="po-wband-target" />
+        <span className="po-wband-you" style={{ left: wpos(a.words) }} />
+      </span>
+      <span className="po-essay-names">
+        Names {a.namedSchools.length
+          ? a.namedSchools.map((n) => <Tile key={n} name={n} size={16} />)
+          : "—"}
+      </span>
+      <span className="po-essay-prof">Prof <b className="num">{a.professorMentions}</b></span>
+      <span className="po-fitbar" aria-hidden="true">
+        <span style={{ width: `${(a.fitScore / total) * 100}%` }} />
+        <span style={{ width: `${(a.complaintScore / total) * 100}%` }} />
+      </span>
+      <span className="po-essay-fit num">Fit {a.fitScore}–{a.complaintScore}</span>
+      <span className={`po-essay-verdict po-v-${a.verdict}`}>{a.verdict}</span>
+    </p>
+  );
+}
+
 function WritingSection({
-  profile, onChange, go,
-}: { profile: Profile; onChange?: (p: Profile) => void; go: (route: string) => void }) {
+  profile, onChange, go, essayMove,
+}: {
+  profile: Profile;
+  onChange?: (p: Profile) => void;
+  go: (route: string) => void;
+  essayMove: PlannedMove | null;
+}) {
   const initialWriting = (): Writing => {
     const stored = storedWriting();
     return {
@@ -550,17 +1160,16 @@ function WritingSection({
     <section className="po-write" id="po-write" aria-labelledby="po-write-h">
       <div className="po-card-head">
         <h2 id="po-write-h">Your writing</h2>
+        {essayMove && (
+          <span className="po-write-lever">The essay lever · {liftLabel(essayMove)}</span>
+        )}
         <button type="button" className="btn-quiet" onClick={() => go("review")}>
           Send to deep review →
         </button>
       </div>
-      <p className="po-write-dek">
-        The essay, statement and lists your application is actually made of. Edit them here — the same
-        check that scores your essay runs as you type, and Save writes the result back to your file.
-      </p>
 
       <div className="po-doc">
-        <label htmlFor="po-essay">Why transfer</label>
+        <label htmlFor="po-essay">Why transfer · feeds row 05</label>
         <textarea
           id="po-essay"
           rows={10}
@@ -569,33 +1178,22 @@ function WritingSection({
           onChange={(e) => set("essay", e.target.value)}
         />
         {essay ? (
-          <div className="essay-report">
-            <p className="essay-line">
-              <b className="num">{essay.words}</b> words
-              {" · "}
-              {essay.namedSchools.length > 0
-                ? <>school-specific for <b>{essay.namedSchools.join(", ")}</b></>
-                : <>no school named specifically yet</>}
-              {essay.professorMentions > 0 && (
-                <> · {essay.professorMentions} professor{essay.professorMentions > 1 ? "s" : ""} named</>
-              )}
-              {" · verdict: "}<b>{essay.verdict}</b>
-            </p>
+          <>
+            <EssayRow a={essay} />
             {essay.verdict === "complaint" && (
-              <p className="essay-note warn">
+              <p className="po-essay-warn">
                 Reads complaint-shaped ({essay.complaintScore} complaint signals vs {essay.fitScore} fit
                 signals). Admits frame the move around what the target offers, not what your school lacks.
               </p>
             )}
-            {essay.notes.filter((n) => !n.startsWith("Reads complaint")).map((n) => (
-              <p key={n} className="essay-note">{n}</p>
-            ))}
-            {essay.namedSchools.length > 0 && essay.verdict !== "complaint" && (
-              <p className="essay-note ok">
-                Schools you name get the specificity credit in your chances; the rest read this essay as general.
+            {essay.notes.filter((n) => !n.startsWith("Reads complaint")).length > 0 && (
+              <p className="po-essay-chips">
+                {essay.notes.filter((n) => !n.startsWith("Reads complaint")).map((n) => (
+                  <em key={n} title={n}>{shortNote(n)}</em>
+                ))}
               </p>
             )}
-          </div>
+          </>
         ) : (
           <p className="po-write-hint">
             Nothing here yet. This is the single biggest lever still on the table in your estimate.
@@ -612,27 +1210,12 @@ function WritingSection({
           value={draft.statement}
           onChange={(e) => set("statement", e.target.value)}
         />
-        {statement && (
-          <div className="essay-report">
-            <p className="essay-line">
-              <b className="num">{statement.words}</b> words
-              {" · "}
-              {statement.namedSchools.length > 0
-                ? <>names <b>{statement.namedSchools.join(", ")}</b></>
-                : <>names no school specifically</>}
-            </p>
-            {statement.verdict === "complaint" && (
-              <p className="essay-note warn">
-                Reads complaint-shaped — the same check that runs on your essay, run on this.
-              </p>
-            )}
-          </div>
-        )}
+        {statement && <EssayRow a={statement} />}
       </div>
 
       <div className="po-doc-pair">
         <div className="po-doc">
-          <label htmlFor="po-activities">Activities</label>
+          <label htmlFor="po-activities">Activities · feeds row 04</label>
           <textarea
             id="po-activities"
             rows={6}
@@ -640,13 +1223,13 @@ function WritingSection({
             value={draft.activities}
             onChange={(e) => set("activities", e.target.value)}
           />
-          <p className="po-write-hint">
-            {lineCount(draft.activities)} {lineCount(draft.activities) === 1 ? "entry" : "entries"} — pattern
-            beats prestige; campus-anchored involvement is what recurs in admit files.
+          <p className="po-write-hint num">
+            {lineCount(draft.activities)} {lineCount(draft.activities) === 1 ? "entry" : "entries"} ·
+            pattern beats prestige
           </p>
         </div>
         <div className="po-doc">
-          <label htmlFor="po-awards">Awards &amp; honors</label>
+          <label htmlFor="po-awards">Awards &amp; honors · feeds row 04</label>
           <textarea
             id="po-awards"
             rows={6}
@@ -654,11 +1237,15 @@ function WritingSection({
             value={draft.awards}
             onChange={(e) => set("awards", e.target.value)}
           />
-          <p className="po-write-hint">
-            {lineCount(draft.awards)} {lineCount(draft.awards) === 1 ? "entry" : "entries"} on file.
+          <p className="po-write-hint num">
+            {lineCount(draft.awards)} {lineCount(draft.awards) === 1 ? "entry" : "entries"} on file
           </p>
         </div>
       </div>
+
+      <p className="po-write-piq">
+        UC reads no per-campus essay — the same four PIQs go to every campus.
+      </p>
 
       <div className="po-write-foot">
         <button type="button" className="btn btn-sm" disabled={!dirty || saving} onClick={save}>
@@ -685,6 +1272,8 @@ function WritingSection({
   );
 }
 
+/* ── The page ─────────────────────────────────────────────────────────── */
+
 interface Props {
   session: Session | null;
   profile: Profile;
@@ -697,10 +1286,73 @@ interface Props {
 export default function Portal({ session, profile, go, onChange }: Props) {
   const [list, setList] = useState<ListEntry[]>(loadList);
   const [adding, setAdding] = useState(false);
+  const [query, setQuery] = useState("");
+  const [openRow, setOpenRow] = useState<string | null>(null);
+  const [sort, setSort] = useState<Sort>("odds");
 
   useEffect(() => {
     localStorage.setItem(LIST_KEY, JSON.stringify(list));
   }, [list]);
+
+  // Computed once for the whole page and passed down. buildPlan() re-runs
+  // estimateAll() over 208 schools once per playbook move; calling it here and
+  // again inside ActionPlan doubled that.
+  const ests = useMemo(() => estimateAll(profile), [profile]);
+  const plan = useMemo(() => buildPlan(profile, ests), [profile, ests]);
+  const gaps = useMemo(() => analyzeCourses(profile), [profile]);
+  const essayAnalysis = useMemo(
+    () => (profile.essayText.trim() ? analyzeEssay(profile.essayText) : null),
+    [profile.essayText],
+  );
+  const byName = useMemo(() => new Map(ests.map((e) => [e.school.name, e])), [ests]);
+
+  // The ledger. An empty list is seeded from the engine's top 8 and says so;
+  // the first edit materialises the seed into a real list.
+  const seeded = list.length === 0;
+  const base = useMemo<ListEntry[]>(
+    () => (list.length
+      ? list
+      : ests.slice(0, 8).map((e) => ({ school: e.school.name, status: "planning" as Status, note: "" }))),
+    [list, ests],
+  );
+
+  const rows = useMemo(() => {
+    const rs = base.filter((r) => byName.has(r.school));
+    const copy = [...rs];
+    if (sort === "due") {
+      return copy.sort((a, b) => (countdown(a.school)?.days ?? 1e9) - (countdown(b.school)?.days ?? 1e9));
+    }
+    if (sort === "band") {
+      const gap = (n: string): number => {
+        const b = admitBand(byName.get(n)!.school);
+        return b.p50 == null ? Infinity : profile.gpa - b.p50;
+      };
+      return copy.sort((a, b) => gap(a.school) - gap(b.school));
+    }
+    return copy.sort((a, b) => byName.get(b.school)!.p - byName.get(a.school)!.p);
+  }, [base, byName, sort, profile.gpa]);
+
+  const blockers = useMemo(() => {
+    const m = new Map<string, Blocker>();
+    for (const r of rows) {
+      const e = byName.get(r.school);
+      if (e) m.set(r.school, blockerFor(profile, e, gaps, essayAnalysis));
+    }
+    return m;
+  }, [rows, byName, profile, gaps, essayAnalysis]);
+
+  const bandedRows = rows.filter((r) => admitBand(byName.get(r.school)!.school).kind !== "none").length;
+  const blockedRows = rows.filter((r) => blockers.get(r.school)?.structural).length;
+  const targets = ests.filter((e) => e.p >= 0.12).length;
+  const essayMove = plan.moves.find((m) => m.lever === "essay" && !m.done) ?? null;
+  const topMove = plan.moves.find((m) => !m.done) ?? plan.moves[0] ?? null;
+  const listed = new Set(base.map((l) => l.school));
+
+  const hits = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return MODEL.schools.filter((s) => s.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [query]);
 
   if (!session) {
     return (
@@ -712,211 +1364,219 @@ export default function Portal({ session, profile, go, onChange }: Props) {
     );
   }
 
-  const ests = estimateAll(profile);
-  const byName = new Map(ests.map((e) => [e.school.name, e]));
-  const listed = new Set(list.map((l) => l.school));
-  const targets = ests.filter((e) => e.p >= 0.12).length;
-  const plan = buildPlan(profile, ests);
-  const nextDue = plan.next;
-  const openMoves = plan.moves.filter((m) => !m.done).length;
-  const firstName = (session.name || session.email).split(" ")[0];
-
   const setEntry = (school: string, patch: Partial<ListEntry>) =>
-    setList((ls) => ls.map((l) => (l.school === school ? { ...l, ...patch } : l)));
+    setList(() => base.map((l) => (l.school === school ? { ...l, ...patch } : l)));
+  const removeEntry = (school: string) =>
+    setList(() => base.filter((l) => l.school !== school));
+  const toggleSchool = (school: string) =>
+    setList(() => (listed.has(school)
+      ? base.filter((l) => l.school !== school)
+      : [...base, { school, status: "planning" as Status, note: "" }]));
 
   return (
     <div className="shell po">
-      <header className="po-head">
-        <div>
-          <h1>Welcome back, {firstName}</h1>
-          <p className="po-sub">
-            Target odds or better at <b>{targets} of {ests.length}</b> schools with your current file.
-          </p>
-        </div>
-        <button type="button" className="btn btn-sm" onClick={() => window.print()}>Download report</button>
-      </header>
+      <Bar best={ests[0]} next={plan.next} />
+      <PortalHero
+        profile={profile}
+        best={ests[0]}
+        plan={plan}
+        measured={MODEL.schools.length}
+        atTarget={targets}
+        tracked={rows.length}
+        blocked={blockedRows}
+        go={go}
+      />
 
-      <div className="po-stats">
-        <div className="po-stat">
-          <b className="num">{fmtPct(ests[0].lo)}–{fmtPct(ests[0].hi)}%</b>
-          <span>your best position · {ests[0].school.name}</span>
+      {topMove && <div data-fx><MovePanel m={topMove} /></div>}
+      <div data-fx><Walls plan={plan} /></div>
+
+      <section className="po-led" aria-labelledby="po-led-h" data-fx>
+        <header className="po-led-head">
+          <h2 id="po-led-h">Your ledger</h2>
+          <span className="po-led-scope num">
+            {rows.length} tracked · {bandedRows} banded · {blockedRows} blocked
+            {seeded && " · seeded from your top 8"}
+          </span>
+          <span className="po-led-sorts">
+            <button
+              type="button" className={sort === "odds" ? "on" : ""}
+              aria-pressed={sort === "odds"} onClick={() => setSort("odds")}
+            >Odds</button>
+            <button
+              type="button" className={sort === "due" ? "on" : ""}
+              aria-pressed={sort === "due"} onClick={() => setSort("due")}
+            >Due</button>
+            <button
+              type="button" className={sort === "band" ? "on" : ""}
+              aria-pressed={sort === "band"} onClick={() => setSort("band")}
+            >Band</button>
+          </span>
+          <button type="button" className="btn btn-sm" onClick={() => setAdding((a) => !a)}>
+            {adding ? "Done" : "+ Add"}
+          </button>
+        </header>
+
+        {adding && (
+          <div className="po-pick">
+            <input
+              type="text"
+              className="po-pick-in"
+              placeholder="Search all 208 measured schools…"
+              aria-label="Search schools to add"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <div className="po-pick-hits">
+              {hits.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="po-pick-hit"
+                  aria-pressed={listed.has(s.name)}
+                  onClick={() => toggleSchool(s.name)}
+                >
+                  <Tile name={s.name} size={18} />
+                  <span>{s.name}</span>
+                  <i className="num">{s.rate.toFixed(0)}%</i>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="po-led-scroll" role="region" tabIndex={0} aria-label="Your ledger table">
+          <div className="po-led-cols" aria-hidden="true">
+            <span className="po-led-colgrid">
+              <span>#</span><span>School</span><span>Official</span>
+              <span>Admitted band — where observed</span><span>Your odds</span>
+              <span>Blocking</span><span>Due</span>
+            </span>
+            <span>Status</span>
+            <span />
+          </div>
+
+          <ul className="po-led-rows">
+            {rows.map((r, i) => {
+              const e = byName.get(r.school)!;
+              const b = admitBand(e.school);
+              const blk = blockers.get(r.school)!;
+              const cd = countdown(r.school);
+              const open = openRow === r.school;
+              const mercedNote = r.school === "UC Merced"
+                ? UC_JSON.campuses["UC Merced"]?.ccNote
+                : undefined;
+              return (
+                <li key={r.school} className={`po-led-row po-led-${blk.kind.toLowerCase()}`}>
+                  <button
+                    type="button"
+                    className="po-led-open"
+                    aria-expanded={open}
+                    onClick={() => setOpenRow((o) => (o === r.school ? null : r.school))}
+                  >
+                    <span className="po-led-i num">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="po-led-school">
+                      <Tile name={r.school} size={22} />
+                      <span>
+                        <b>{r.school}</b>
+                        <i title={e.school.cycle}>{e.school.cycle}</i>
+                      </span>
+                    </span>
+                    <span className="po-led-rate">
+                      <b className="num">{e.school.rate.toFixed(1)}%</b>
+                      {e.school.admitted != null && e.school.applicants != null && (
+                        <i className="num">{fmt(e.school.admitted)}/{fmt(e.school.applicants)}</i>
+                      )}
+                      {mercedNote && <em className="po-led-dag" title={mercedNote}>†</em>}
+                    </span>
+                    <BandCell b={b} gpa={profile.gpa} />
+                    <span className="po-led-odds">
+                      <b className="num">{fmtPct(e.lo)}–{fmtPct(e.hi)}%</b>
+                      <i>{e.tier}</i>
+                    </span>
+                    <span className={`po-led-blk po-tone-${blk.tone}`}>
+                      <em>{blk.kind === "NONE" ? "—" : blk.kind}</em>
+                      <i title={blk.clause}>{blk.clause}</i>
+                      {blk.extra > 0 && <b className="num">+{blk.extra}</b>}
+                    </span>
+                    <span className={`po-led-due${cd && cd.days <= 45 ? " soon" : ""}`}>
+                      {cd ? <><b className="num">~{cd.days}d</b><i>{cd.label}</i></> : <i>—</i>}
+                    </span>
+                  </button>
+
+                  <select
+                    aria-label={`Status for ${r.school}`}
+                    className={`po-status po-${r.status}`}
+                    value={r.status}
+                    onChange={(ev) => setEntry(r.school, { status: ev.target.value as Status })}
+                  >
+                    {(Object.keys(STATUS_LABEL) as Status[]).map((s) => (
+                      <option key={s} value={s}>{STATUS_LABEL[s]}</option>
+                    ))}
+                  </select>
+
+                  <button
+                    type="button"
+                    className="po-remove"
+                    aria-label={`Remove ${r.school}`}
+                    onClick={() => removeEntry(r.school)}
+                  >×</button>
+
+                  {open && (
+                    <LedgerOpen
+                      profile={profile}
+                      e={e}
+                      entry={r}
+                      blk={blk}
+                      gaps={gaps}
+                      onNote={(v) => setEntry(r.school, { note: v })}
+                    />
+                  )}
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <div className="po-stat">
-          <b className="num">{targets}</b>
-          <span>schools at target odds or better</span>
-        </div>
-        <div className={`po-stat${nextDue && nextDue.days <= 45 ? " urgent" : ""}`}>
-          <b className="num">{nextDue ? nextDue.days : "—"}</b>
-          <span>{nextDue ? `days to ${nextDue.school} (${nextDue.label})` : "no deadlines tracked"}</span>
-        </div>
-        <div className="po-stat">
-          <b className="num">{openMoves}</b>
-          <span>moves open on your file</span>
-        </div>
+
+        <p className="po-led-foot">
+          <span>
+            {bandedTotal()} of {MODEL.schools.length} measured schools have an admitted-GPA band ·
+            the rest carry their official rate and nothing invented
+          </span>
+          <span className="po-led-key">
+            <em className="po-key-study" /> study corpus
+            <em className="po-key-observed" /> observed outcomes
+            <em className="po-key-you" /> you {profile.gpa.toFixed(2)}
+          </span>
+          <span className="num">
+            Scale {BAND_MIN.toFixed(2)} ── {BAND_MAX.toFixed(2)} · ~ typical dates, verify
+          </span>
+        </p>
+      </section>
+
+      <div className="po-cols" data-fx>
+        <ReadingSheet profile={profile} ests={ests} />
+        <CorpusPanel profile={profile} targets={rows.map((r) => r.school)} />
       </div>
 
-      <section className="po-planwrap">
+      <section className="po-planwrap" data-fx>
         <UcSection profile={profile} ests={ests} go={go} />
       </section>
 
-      <section className="po-planwrap">
-        <ReaderView profile={profile} ests={ests} />
-      </section>
-
-      <section className="po-planwrap">
-        <ActionPlan profile={profile} ests={ests} />
-      </section>
-
-      <section className="po-planwrap">
-        <CourseGaps profile={profile} onEdit={() => go("check")} />
-      </section>
-
-      <section className="po-planwrap">
-        <WritingSection profile={profile} onChange={onChange} go={go} />
-      </section>
-
-      <div className="po-grid">
-        <section className="po-card">
-          <div className="po-card-head">
-            <h2>Your file</h2>
-            <button type="button" className="btn-quiet" onClick={() => go("check")}>Edit</button>
-          </div>
-          <dl className="po-kv">
-            <div><dt>GPA</dt><dd className="num">{profile.gpa.toFixed(2)}</dd></div>
-            <div><dt>School</dt><dd>{profile.schoolName ?? { cc: "Community college", public4: "4-year public", private4: "4-year private" }[profile.institution]}</dd></div>
-            <div><dt>Entering as</dt><dd>{profile.standing}</dd></div>
-            <div><dt>Major</dt><dd>{MAJOR_LABEL[profile.major] ?? profile.major}</dd></div>
-            {profile.sat != null && <div><dt>SAT</dt><dd className="num">{profile.sat}</dd></div>}
-          </dl>
-        </section>
-
-        <section className="po-card">
-          <div className="po-card-head">
-            <h2>Best positions</h2>
-            <button type="button" className="btn-quiet" onClick={() => go("results")}>All {ests.length} →</button>
-          </div>
-          <ul className="po-best">
-            {ests.slice(0, 5).map((e) => (
-              <li key={e.school.id}>
-                <button type="button" className="po-best-row" onClick={() => go(`schools/${e.school.id}`)}>
-                  <Tile name={e.school.name} size={24} />
-                  <span className="po-best-name">{e.school.name}</span>
-                  <span className="po-best-band num">{fmtPct(e.lo)}–{fmtPct(e.hi)}%</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="po-card">
-          <div className="po-card-head">
-            <h2>Timeline</h2>
-          </div>
-          <ul className="po-clock">
-            {(list.length > 0 ? list.map((l) => l.school) : ests.slice(0, 5).map((e) => e.school.name))
-              .map((name) => ({ name, cd: countdown(name) }))
-              .filter((x) => x.cd)
-              .sort((a, b) => a.cd!.days - b.cd!.days)
-              .slice(0, 6)
-              .map(({ name, cd }) => (
-                <li key={name} className={cd!.days <= 45 ? "po-clock-soon" : ""}>
-                  <span className="po-clock-school"><Tile name={name} size={20} /> {name}</span>
-                  <span className="po-clock-when">{cd!.label}</span>
-                  <span className="po-clock-days num">{cd!.days}d</span>
-                </li>
-              ))}
-          </ul>
-          <p className="po-clock-note">Typical fall-transfer deadlines — always verify on the school's site.</p>
-        </section>
-
-        <section className="po-card">
-          <div className="po-card-head">
-            <h2>Documents</h2>
-            <button type="button" className="btn-quiet" onClick={() => go("check")}>Upload</button>
-          </div>
-          {profile.docs.length > 0 ? (
-            <div className="chipset">
-              {profile.docs.map((d) => <span key={d} className="chip">{d}</span>)}
-              {profile.courses.length > 0 && <span className="chip">{profile.courses.length} courses read</span>}
-            </div>
-          ) : (
-            <p className="po-body po-empty">Drop in a transcript or Common App PDF — parsed on your device, never uploaded.</p>
-          )}
-        </section>
+      <div data-fx>
+        <PrepLine profile={profile} gaps={gaps} go={go} />
       </div>
 
-      <section className="po-list">
-        <div className="po-card-head">
-          <h2>My schools</h2>
-          <button type="button" className="btn btn-sm" onClick={() => setAdding((a) => !a)}>
-            {adding ? "Done" : "+ Add schools"}
-          </button>
-        </div>
+      <section className="po-planwrap" data-fx>
+        <WritingSection profile={profile} onChange={onChange} go={go} essayMove={essayMove} />
+      </section>
 
-        {adding && (
-          <div className="po-addwall">
-            {MODEL.schools.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                className="chip po-add"
-                aria-pressed={listed.has(s.name)}
-                onClick={() =>
-                  listed.has(s.name)
-                    ? setList((ls) => ls.filter((l) => l.school !== s.name))
-                    : setList((ls) => [...ls, { school: s.name, status: "planning", note: "" }])
-                }
-              >
-                <Tile name={s.name} size={18} />
-                {s.name}
-                <i className="po-add-rate">{s.rate.toFixed(0)}%</i>
-              </button>
-            ))}
-          </div>
-        )}
+      <section className="po-planwrap po-plan" data-fx>
+        <ActionPlan profile={profile} ests={ests} plan={plan} />
+      </section>
 
-        {list.length === 0 && !adding && (
-          <p className="po-body po-empty">No schools on your list yet. Add the ones you're targeting to track statuses and notes.</p>
-        )}
-
-        {list.map((l) => {
-          const e = byName.get(l.school);
-          const id = e?.school.id;
-          return (
-            <div className="po-row" key={l.school}>
-              <button type="button" className="po-row-school" onClick={() => id && go(`schools/${id}`)}>
-                <Tile name={l.school} size={28} />
-                <span>
-                  <span className="po-row-name">{l.school}</span>
-                  {e && <span className="po-row-band num">{fmtPct(e.lo)}–{fmtPct(e.hi)}% · {e.tier}</span>}
-                </span>
-              </button>
-              <select
-                aria-label={`Status for ${l.school}`}
-                className={`po-status po-${l.status}`}
-                value={l.status}
-                onChange={(ev) => setEntry(l.school, { status: ev.target.value as Status })}
-              >
-                {(Object.keys(STATUS_LABEL) as Status[]).map((s) => (
-                  <option key={s} value={s}>{STATUS_LABEL[s]}</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                className="po-note"
-                placeholder="Notes — deadline, portal login, who's writing recs…"
-                value={l.note}
-                onChange={(ev) => setEntry(l.school, { note: ev.target.value })}
-              />
-              <button
-                type="button"
-                className="po-remove"
-                aria-label={`Remove ${l.school}`}
-                onClick={() => setList((ls) => ls.filter((x) => x.school !== l.school))}
-              >×</button>
-            </div>
-          );
-        })}
+      <section className="po-hs" data-fx>
+        <b className="num">{HIGH_SCHOOL_FACT.corr}</b>
+        <p>{HIGH_SCHOOL_FACT.line}</p>
       </section>
 
       <Report profile={profile} ests={ests} date={new Date().toLocaleDateString()} />

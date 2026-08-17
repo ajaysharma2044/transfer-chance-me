@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import type { Estimate, Profile } from "../engine";
 import { fmtPct } from "../engine";
 import { buildPlan, liftLabel } from "../lib/actionplan";
-import type { MoveTag, PlannedMove } from "../lib/actionplan";
+import type { MoveTag, Plan, PlannedMove } from "../lib/actionplan";
 import Tile from "./Tile";
 import "./actionplan.css";
 
@@ -83,9 +83,17 @@ function MoveCard({ m, rank }: { m: PlannedMove; rank: number }) {
 }
 
 export default function ActionPlan({
-  profile, ests, compact = false,
-}: { profile: Profile; ests?: Estimate[]; compact?: boolean }) {
-  const plan = useMemo(() => buildPlan(profile, ests), [profile, ests]);
+  profile, ests, plan: planProp, compact = false,
+}: { profile: Profile; ests?: Estimate[]; plan?: Plan; compact?: boolean }) {
+  // buildPlan() re-runs estimateAll() over all 208 schools once per playbook
+  // move plus once for the stacked figure. A page that already built the plan
+  // passes it down instead of paying for it twice; the hook still runs in the
+  // same order either way, it just has nothing to do.
+  const ownPlan = useMemo(
+    () => (planProp ? null : buildPlan(profile, ests)),
+    [profile, ests, planProp],
+  );
+  const plan = planProp ?? ownPlan!;
   const [lane, setLane] = useState<MoveTag | "All">("All");
 
   const shown = plan.moves.filter((m) => lane === "All" || m.tag === lane);

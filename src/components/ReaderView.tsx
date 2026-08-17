@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import type { Estimate, Profile } from "../engine";
+import { MODEL } from "../engine";
 import { HIGH_SCHOOL_FACT, readerSheet } from "../lib/reader";
 import Tile from "./Tile";
 import "./reader.css";
@@ -89,7 +90,7 @@ export default function ReaderView({ profile, ests }: { profile: Profile; ests: 
 
       <p className="rd-foot">
         These are readings, not probabilities — a model of how a file gets weighed, built from what
-        {" "}{Number(4243).toLocaleString()} admitted files in the study have in common. Real committees vary,
+        {" "}{Number(MODEL.meta.admits).toLocaleString()} admitted files in the study have in common. Real committees vary,
         and no one outside the room sees the rubric.
       </p>
     </section>

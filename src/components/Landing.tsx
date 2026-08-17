@@ -6,7 +6,6 @@ import { buildPlan } from "../lib/actionplan";
 import { admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW } from "../lib/similar";
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
-import { useScrollFx } from "../hooks/useScrollFx";
 import { countdown } from "../lib/deadlines";
 import GpaStrip from "./GpaStrip";
 import CorpusField from "./CorpusField";
@@ -1527,7 +1526,8 @@ function Findings({ rows }: { rows: string }) {
 export default function Landing({ onStart, onOpenSchool }: { onStart: () => void; onOpenSchool: (name: string) => void }) {
   const rows = Number(MODEL.meta.rows).toLocaleString();
   useReveal();
-  useScrollFx();
+  // useScrollFx now runs once in App for every route. Calling it here too
+  // would attach a second scroll listener over the same nodes.
 
   // Pointer parallax: the hero's cards and glow orbs drift a few pixels
   // toward the cursor at different depths. Off under reduced motion.

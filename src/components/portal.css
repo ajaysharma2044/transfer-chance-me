@@ -1,65 +1,440 @@
-/* Portal — the signed-in home */
+/* Portal v2 — the cockpit-ledger.
+ *
+ * Brand tokens only: --blue --teal --accent --coral --ink --ink-2 --ink-3
+ * --line --line-strong --bg --bg-soft (plus #fff for chip text, as the demo's
+ * .ld-match-in already does). Every figure carries .num.
+ *
+ * GRADIENTS. The landing hero's gradient family is reused verbatim, and it is
+ * only ever allowed to carry a VALUE or mark the primary action:
+ *   strong / good      linear-gradient(90deg, var(--teal), var(--blue))
+ *   mid                linear-gradient(90deg, var(--blue), var(--accent))
+ *   weak / long shot   linear-gradient(90deg, var(--coral), var(--accent))
+ *   headline figure    linear-gradient(100deg, var(--blue), var(--accent) 55%, var(--teal))
+ *   primary action     linear-gradient(120deg, var(--blue), var(--accent) 85%)  (.btn, global)
+ * Meter fills, the fit bar, the band ranges, the prep bar, the two headline
+ * figures and the measured-lift chip. Never a card wash for decoration, and
+ * body text always resolves to solid --ink / --ink-2.
+ */
 
 .po { padding: 36px 0 120px; }
 .po-gate { padding: 96px 0; text-align: center; }
 .po-gate h1 { font-size: 28px; font-weight: 650; letter-spacing: -0.02em; margin-bottom: 8px; }
 .po-gate p { color: var(--ink-2); margin-bottom: 22px; }
 
-.po-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 26px; flex-wrap: wrap; }
-.po-head h1 { font-size: clamp(24px, 3.5vw, 32px); font-weight: 650; letter-spacing: -0.02em; }
-.po-sub { color: var(--ink-2); font-size: 14.5px; margin-top: 4px; }
-.po-sub b { color: var(--accent); }
-
-.po-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
-
-.po-card {
-  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
-  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
-  padding: 20px 22px;
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
 }
-.po-card-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
+
+.po-card-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
 .po-card-head h2 { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+.po-card-head .btn-quiet { margin-left: auto; }
+.po-planwrap { margin-bottom: 24px; }
 
-.po-kv { display: flex; flex-direction: column; gap: 8px; }
-.po-kv div { display: flex; justify-content: space-between; font-size: 14px; }
-.po-kv dt { color: var(--ink-3); }
-.po-kv dd { font-weight: 550; text-transform: capitalize; }
-
-.po-best { list-style: none; display: flex; flex-direction: column; }
-.po-best-row {
-  display: flex; align-items: center; gap: 12px; width: 100%;
-  padding: 8px 6px; border-radius: 10px; text-align: left; font-size: 14px;
+/* ── 3.1 · the sticky readout ────────────────────────────────────────── */
+/* Pure CSS sticky — no scroll listener, no measurement, nothing to thrash. */
+.po-bar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; gap: 18px; height: 40px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line); margin-bottom: 14px;
+  font-size: 11.5px; color: var(--ink-2);
 }
-.po-best-row:hover { background: var(--bg-soft); }
-.po-best-name { font-weight: 550; }
-.po-best-band { margin-left: auto; color: var(--accent); font-weight: 600; }
+.po-bar-pos { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.po-bar-pos b { font-size: 13px; font-weight: 800; color: var(--accent); }
+.po-bar-pos > span:last-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.po-bar-pos i {
+  font-style: normal; font-size: 9.5px; font-weight: 800;
+  letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); white-space: nowrap;
+}
+.po-bar-wall { margin-left: auto; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.po-bar-wall em {
+  font-style: normal; font-size: 9px; font-weight: 800;
+  letter-spacing: 0.09em; color: var(--ink-3);
+}
+.po-bar-wall b { font-size: 13px; font-weight: 800; color: var(--blue); }
+.po-bar-wall.soon b { color: var(--coral); }
 
-.po-body { font-size: 14px; color: var(--ink-2); }
-.po-body b { color: var(--ink); }
-.po-empty { color: var(--ink-3); }
-.po-warn { color: var(--warn); }
+/* ── 3.2 · the hero ──────────────────────────────────────────────────────
+   Replaces the old file-line + two gauges + funnel sentence. Same figures,
+   one surface. The layout is a 2-column grid with the funnel spanning the
+   full width underneath, so the page opens on the number rather than on a
+   row of labels.
 
-.po-list {
+   The campus photo is a BACKDROP, not content: it sits at low opacity behind
+   the body column and is masked out before it reaches the figures, because a
+   percentage over a photograph is the fastest way to make a real number look
+   like marketing. */
+.po-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.85fr);
+  gap: 0 32px;
+  margin: 18px 0 30px;
+  padding: 34px 34px 0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--lift-2);
+}
+
+/* The photo: pushed to the right edge, faded into the card so it reads as
+   light coming from the school rather than as a pasted-in image. */
+.po-hero-photo {
+  position: absolute;
+  inset: 0 0 0 46%;
+  z-index: -1;
+  opacity: 0.5;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(100deg, transparent, #000 62%);
+  mask-image: linear-gradient(100deg, transparent, #000 62%);
+}
+.po-hero-photo .campus { height: 100% !important; border-radius: 0; }
+.po-hero-photo .campus img { width: 100%; height: 100%; object-fit: cover; }
+/* Attribution stays (the image is openly licensed) but moves to the top
+   corner: its default bottom-right spot is where the funnel's gain chip
+   lands, and the two were unreadable stacked. */
+.po-hero-photo .campus figcaption { top: 10px; right: 12px; bottom: auto; }
+/* A second scrim over the photo so the credential chips that overlap its
+   left edge keep their contrast whatever the image happens to be. */
+.po-hero-photo::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, var(--bg) 12%, color-mix(in srgb, var(--bg) 58%, transparent) 52%, transparent);
+}
+
+.po-hero-body { grid-column: 1; padding-bottom: 26px; }
+
+.po-hero-eyebrow {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+/* The headline figure. Big enough to be the reason the page exists. */
+.po-hero-fig {
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  margin: 10px 0 2px;
+}
+.po-hero-fig b {
+  font-size: clamp(46px, 6.4vw, 76px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+.po-hero-tier {
+  font-size: 10.5px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+.po-hero-id { display: flex; flex-wrap: wrap; gap: 6px 0; margin-top: 18px; }
+.po-hero-id div {
+  display: flex; flex-direction: column; gap: 1px;
+  padding-right: 20px; margin-right: 20px; border-right: 1px solid var(--line);
+}
+.po-hero-id div:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+.po-hero-id dt {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-hero-id dd { font-size: 14px; font-weight: 650; color: var(--ink); text-transform: capitalize; }
+
+/* Credential chips. Filled = the engine had this and used it. */
+.po-hero-creds { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; list-style: none; }
+.po-hero-creds li {
+  padding: 3.5px 10px; border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em;
+  color: var(--ink-3); background: var(--bg-soft);
+  transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out);
+}
+.po-hero-creds li.on {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--bg));
+}
+
+.po-hero-acts { display: flex; align-items: center; gap: 18px; margin-top: 24px; }
+
+/* Nearest deadline: the second figure, in the right column. */
+.po-hero-wall {
+  grid-column: 2;
+  align-self: start;
+  margin-top: 4px;
+  padding: 18px 20px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+}
+.po-hero-wlabel {
+  display: block; font-size: 9.5px; font-weight: 800;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3);
+}
+.po-hero-wall b {
+  display: flex; align-items: baseline; gap: 7px;
+  margin-top: 6px; font-size: 40px; font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1; color: var(--blue);
+}
+.po-hero-wall b i {
+  font-style: normal; font-size: 10px; font-weight: 800;
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3);
+}
+.po-hero-wsub { display: block; margin-top: 8px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.po-hero-wall.urgent { border-color: color-mix(in srgb, var(--coral) 32%, transparent); }
+.po-hero-wall.urgent b { color: var(--coral); }
+
+/* The funnel, spanning both columns along the bottom edge. */
+.po-hero-funnel {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; gap: 0;
+  margin: 0 -34px; padding: 14px 34px;
+  border-top: 1px solid var(--line);
+  background: var(--grad-brand-soft);
+  list-style: none;
+}
+.po-hero-funnel li {
+  display: flex; align-items: baseline; gap: 6px;
+  padding-right: 22px; margin-right: 22px;
+  border-right: 1px solid color-mix(in srgb, var(--ink-3) 22%, transparent);
+}
+.po-hero-funnel li:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+.po-hero-funnel b { font-size: 15px; font-weight: 800; color: var(--ink); }
+.po-hero-funnel span {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-hero-funnel li.hot b { color: var(--coral); }
+.po-hero-funnel-gain { margin-left: auto; }
+.po-hero-funnel-gain b { color: var(--teal); }
+
+/* ── 3.5 · the one move ──────────────────────────────────────────────── */
+.po-move {
+  border: 1px solid var(--line); border-left: 3px solid var(--mc, var(--accent));
+  border-radius: 12px; padding: 12px 18px; margin-bottom: 14px; background: var(--bg);
+}
+.po-move header { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.po-move-rank { font-size: 10px; font-weight: 800; color: var(--ink-3); }
+.po-move-tag {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--mc);
+}
+.po-move h2 { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+/* The measured lift is the payoff figure — the primary-action gradient. */
+.po-move-lift {
+  margin-left: auto; font-size: 10.5px; font-weight: 800; color: #fff;
+  background: linear-gradient(120deg, var(--mc), var(--accent) 90%);
+  border-radius: 5px; padding: 2px 7px; white-space: nowrap;
+}
+.po-move-fit, .po-move-movers {
+  display: flex; align-items: center; gap: 9px;
+  margin-top: 9px; font-size: 11px; color: var(--ink-2); flex-wrap: wrap;
+}
+.po-move-flabel {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3); flex: 0 0 44px;
+}
+.po-fit {
+  flex: 0 0 96px; height: 6px; border-radius: 3px; background: var(--bg-soft); overflow: hidden;
+}
+.po-fit-need {
+  display: block; height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--blue));
+}
+/* A move that no longer fits overflows its track and says so in words. */
+.po-move.over .po-fit { overflow: visible; }
+.po-move.over .po-fit-need { background: linear-gradient(90deg, var(--coral), var(--accent)); }
+.po-move.over .po-move-fnum { color: var(--coral); font-weight: 700; }
+.po-move-when { margin-left: auto; font-size: 10px; color: var(--ink-3); }
+.po-move-mover { display: inline-flex; align-items: center; gap: 5px; }
+.po-move-mover b { color: var(--ink); font-weight: 750; }
+.po-move-why { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin-top: 8px; max-width: 84ch; }
+.po-move-feeds {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3); margin-top: 5px;
+}
+.po-move-more { margin-top: 8px; }
+.po-move-more summary {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3); cursor: pointer;
+}
+.po-move-more ol { margin: 8px 0 0 18px; font-size: 12px; color: var(--ink-2); line-height: 1.6; }
+.po-move-more p { font-size: 12px; color: var(--ink-2); line-height: 1.6; margin-top: 7px; }
+
+/* ── 3.6 · one linear day axis. x ∝ days, or it does not ship. ───────── */
+.po-walls {
+  position: relative; margin-bottom: 16px; padding: 16px 0 5px;
+  border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line);
+}
+.po-walls-a, .po-walls-b {
+  position: absolute; top: 5px; font-size: 9px;
+  font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3);
+}
+.po-walls-a { left: 0; }
+.po-walls-b { right: 0; }
+/* Inset by half a tick label so the +Nd end mark cannot hang off the shell.
+   The scale inside stays strictly linear in days. */
+.po-walls-ax { list-style: none; position: relative; height: 64px; margin: 2px 40px 0; }
+.po-walls-ax > li {
+  position: absolute; top: 0; transform: translateX(-50%); text-align: center; white-space: nowrap;
+}
+.po-walls-ax > li::before {
+  content: ""; display: block; width: 1px; height: 10px;
+  margin: 0 auto 4px; background: var(--line-strong);
+}
+.po-walls-ax > li.soon::before { background: var(--coral); width: 2px; }
+.po-walls-ax > li b { display: block; font-size: 12.5px; font-weight: 800; color: var(--blue); }
+.po-walls-ax > li.soon b { color: var(--coral); }
+.po-walls-ax > li span { display: block; font-size: 10px; font-weight: 650; color: var(--ink-2); }
+.po-walls-ax > li i { display: block; font-style: normal; font-size: 9.5px; color: var(--ink-3); }
+.po-walls-note {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+/* The ≤900px fallback: a plain list, built here, revealed in the media query. */
+.po-walls-list { display: none; list-style: none; }
+
+/* ── 3.7 · THE LEDGER ────────────────────────────────────────────────── */
+.po-led {
   border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
   box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
-  padding: 20px 22px;
+  padding: 18px 22px 20px; margin-bottom: 22px;
 }
-.po-addwall { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.po-add[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-.po-add[aria-pressed="true"]::before { background: var(--accent); }
+.po-led-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.po-led-head h2 { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+.po-led-scope {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-led-sorts { margin-left: auto; display: flex; gap: 4px; }
+.po-led-sorts button {
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--ink-3); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px;
+}
+.po-led-sorts button.on { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
 
-.po-row {
-  display: grid; grid-template-columns: 1.2fr 150px 1.6fr 32px; gap: 14px; align-items: center;
-  padding: 12px 0; border-top: 1px solid var(--line);
+/* The inline typeahead that replaced the 208-chip wall. */
+.po-pick { margin-bottom: 14px; }
+.po-pick-in {
+  width: 100%; font: inherit; font-size: 13.5px; padding: 9px 12px;
+  border: 1px solid var(--line-strong); border-radius: 9px; background: var(--bg-soft); color: var(--ink);
 }
-.po-row-school { display: flex; align-items: center; gap: 12px; text-align: left; }
-.po-row-school:hover .po-row-name { color: var(--accent); }
-.po-row-name { display: block; font-weight: 550; font-size: 14.5px; }
-.po-row-band { display: block; font-size: 12.5px; color: var(--ink-3); }
+.po-pick-in:focus { border-color: var(--accent); outline: none; background: var(--bg); }
+.po-pick-hits { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.po-pick-hit {
+  display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px;
+  border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px 5px 6px;
+}
+.po-pick-hit:hover { border-color: var(--line-strong); background: var(--bg-soft); }
+.po-pick-hit[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.po-pick-hit i { font-style: normal; font-size: 10.5px; font-weight: 650; color: var(--ink-3); }
+
+.po-led-scroll { overflow-x: auto; }
+.po-led-cols {
+  display: grid; grid-template-columns: 1fr 108px 24px; gap: 10px; align-items: end;
+  padding: 0 0 6px; border-bottom: 1px solid var(--line-strong);
+  font-size: 8.5px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-led-colgrid, .po-led-open {
+  display: grid;
+  grid-template-columns: 22px 1.5fr 76px 1.35fr 88px 2.1fr 70px;
+  gap: 10px; align-items: center;
+}
+.po-led-colgrid { padding: 0 6px; }
+.po-led-rows { list-style: none; }
+.po-led-row {
+  display: grid; grid-template-columns: 1fr 108px 24px; gap: 10px;
+  align-items: center; border-top: 1px solid var(--line);
+}
+.po-led-row:first-child { border-top: none; }
+.po-led-open { width: 100%; text-align: left; padding: 10px 6px; border-radius: 10px; }
+.po-led-open:hover { background: var(--bg-soft); }
+/* The one row state that is a VALUE, so the one row that gets a wash. */
+.po-led-row.po-led-tag { background: linear-gradient(90deg, rgba(20, 184, 160, 0.07), transparent 60%); }
+
+.po-led-i { font-size: 8.5px; font-weight: 800; color: var(--ink-3); }
+.po-led-school { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.po-led-school b {
+  display: block; font-size: 13.5px; font-weight: 600; letter-spacing: -0.01em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Some cycle strings carry a whole provenance note (Cleveland State's runs to
+   40 words). The row clamps it and hands the full text to the title. */
+.po-led-school i {
+  display: block; font-style: normal; font-size: 10px; color: var(--ink-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.po-led-school > span { min-width: 0; }
+.po-led-rate b { display: block; font-size: 13px; font-weight: 650; }
+.po-led-rate i { display: block; font-style: normal; font-size: 9.5px; color: var(--ink-3); }
+.po-led-dag { font-style: normal; color: var(--coral); font-weight: 800; cursor: help; }
+
+/* The .ld-sig-band device. ONE fixed 3.20–4.00 domain on every row, never
+   autoscaled — a bar that rescales per row cannot be compared across rows. */
+.po-band { position: relative; display: block; height: 6px; border-radius: 3px; background: var(--bg-soft); }
+.po-band-range { position: absolute; top: 0; height: 6px; border-radius: 3px; }
+/* Two corpora, two claims, never the same fill. */
+.po-band-study .po-band-range {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--blue) 34%, transparent),
+    color-mix(in srgb, var(--accent) 28%, transparent));
+}
+.po-band-study .po-band-med { background: var(--blue); }
+.po-band-observed .po-band-range {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--teal) 34%, transparent),
+    color-mix(in srgb, var(--blue) 28%, transparent));
+}
+.po-band-observed .po-band-med { background: var(--teal); }
+.po-band-med { position: absolute; top: -1px; width: 2px; height: 8px; border-radius: 1px; }
+.po-band-you {
+  position: absolute; top: -3px; width: 2.5px; height: 12px; border-radius: 1px;
+  background: var(--accent); box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+/* No band: a dashed baseline. Never a faint bar. */
+.po-band-empty { display: block; height: 0; border-top: 1px dashed var(--line-strong); margin: 3px 0; }
+.po-led-band i {
+  display: block; font-style: normal; font-size: 9.5px;
+  font-weight: 700; color: var(--ink-3); margin-top: 4px;
+}
+/* Figures instead of a picture — switched on under 700px, see §6.2. */
+.po-led-band i.po-band-figs { display: none; }
+
+.po-led-odds b { display: block; font-size: 13.5px; font-weight: 700; color: var(--accent); }
+.po-led-odds i {
+  display: block; font-style: normal; font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3);
+}
+
+/* the demo's .ld-match-tag chip */
+.po-led-blk { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.po-led-blk em {
+  flex: 0 0 auto; font-style: normal; font-size: 8.5px; font-weight: 800;
+  letter-spacing: 0.06em; border-radius: 3px; padding: 2px 5px;
+}
+.po-led-blk i {
+  font-style: normal; font-size: 10.5px; color: var(--ink-2);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.po-led-blk b { margin-left: auto; font-size: 9px; font-weight: 800; color: var(--ink-3); }
+.po-tone-teal em { color: #fff; background: var(--teal); }
+.po-tone-coral em { color: #fff; background: var(--coral); }
+.po-tone-accent em { color: #fff; background: var(--accent); }
+.po-tone-blue em { color: #fff; background: var(--blue); }
+.po-tone-ink em { color: var(--ink-3); background: var(--bg-soft); }
+
+.po-led-due b { display: block; font-size: 13px; font-weight: 700; color: var(--blue); }
+.po-led-due.soon b { color: var(--coral); }
+.po-led-due i { display: block; font-style: normal; font-size: 9.5px; color: var(--ink-3); }
 
 .po-status {
-  font: inherit; font-size: 13.5px; padding: 8px 10px; border-radius: 8px;
+  font: inherit; font-size: 12.5px; padding: 6px 8px; border-radius: 8px;
   border: 1px solid var(--line-strong); background: var(--bg); color: var(--ink);
+  max-width: 100%;
 }
 .po-accepted { border-color: var(--good); color: var(--good); font-weight: 600; }
 .po-waitlisted { border-color: var(--warn); color: var(--warn); }
@@ -67,60 +442,234 @@
 .po-applied { border-color: var(--accent); color: var(--accent); }
 
 .po-note {
-  width: 100%; font: inherit; font-size: 13.5px; padding: 8px 12px;
+  width: 100%; font: inherit; font-size: 12.5px; padding: 7px 11px;
   border: 1px solid var(--line); border-radius: 8px; background: var(--bg-soft); color: var(--ink);
 }
 .po-note:focus { border-color: var(--accent); outline: none; background: var(--bg); }
-
 .po-remove { color: var(--ink-3); font-size: 17px; border-radius: 6px; }
 .po-remove:hover { color: var(--bad); }
 
-@media (max-width: 860px) {
-  .po-grid { grid-template-columns: 1fr; }
-  .po-row { grid-template-columns: 1fr; gap: 8px; }
-  .po-remove { justify-self: end; }
+/* The row expansion — three columns, only ever one open. */
+.po-led-open-body {
+  grid-column: 1 / -1; display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 18px;
+  padding: 12px 6px 16px; border-top: 1px dashed var(--line);
+}
+.po-lo-col h4 {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 8px;
+}
+.po-lo-dims { list-style: none; }
+.po-lo-dims li {
+  display: grid; grid-template-columns: 18px 1fr 60px 36px; gap: 7px;
+  align-items: center; padding: 3px 0; font-size: 11px; color: var(--ink-2);
+}
+.po-lo-dims li.pivot { font-weight: 700; color: var(--ink); }
+.po-lo-n { font-size: 8.5px; font-weight: 800; color: var(--ink-3); }
+.po-lo-sig {
+  font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; text-align: right; color: var(--ink-3);
+}
+.po-lo-note { font-size: 11.5px; color: var(--ink-2); line-height: 1.55; margin-top: 8px; }
+.po-lo-drivers, .po-lo-levers { list-style: none; }
+.po-lo-drivers li {
+  display: flex; gap: 7px; font-size: 11.5px; color: var(--ink-2);
+  line-height: 1.5; padding: 3px 0;
+}
+.po-lo-drivers em { font-style: normal; font-weight: 800; color: var(--ink-3); }
+.po-lo-up em { color: var(--teal); }
+.po-lo-down em { color: var(--coral); }
+.po-lo-levers li {
+  font-size: 11px; color: var(--ink-3); line-height: 1.5; padding: 3px 0 0 12px; position: relative;
+}
+.po-lo-levers li::before { content: "·"; position: absolute; left: 2px; }
+.po-lo-blocks { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+.po-lo-blocks em {
+  font-style: normal; font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em;
+  color: var(--ink-3); background: var(--bg-soft); border-radius: 3px; padding: 2px 5px;
+}
+.po-lo-flabel {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-lo-fine { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; margin-top: 8px; }
+.po-lo-match { padding: 7px 0; border-top: 1px solid var(--line); }
+.po-lo-match:first-of-type { border-top: none; }
+.po-lo-mtop { display: flex; align-items: baseline; gap: 7px; font-size: 10.5px; color: var(--ink-3); }
+.po-lo-mtop b { font-size: 14px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.po-lo-mtop em { margin-left: auto; font-style: normal; font-weight: 750; color: var(--teal); }
+.po-lo-mtop em.behind { color: var(--coral); }
+.po-lo-led { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 5px; }
+.po-lo-tag {
+  font-style: normal; font-size: 8px; font-weight: 800; letter-spacing: 0.08em;
+  border-radius: 3px; padding: 2px 4px;
+}
+.po-lo-in { color: #fff; background: var(--teal); }
+.po-lo-out { color: var(--ink-3); background: var(--bg-soft); }
+.po-lo-school { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--ink-2); }
+.po-lo-more { font-size: 10px; font-weight: 700; color: var(--ink-3); }
+.po-lo-notefield { display: block; margin-top: 12px; }
+.po-lo-notefield .po-note { margin-top: 5px; }
+
+.po-led-foot {
+  display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px;
+  padding-top: 10px; border-top: 1px dashed var(--line-strong);
+  font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-led-key { display: flex; align-items: center; gap: 4px; }
+.po-led-key em {
+  display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-left: 8px;
+}
+.po-led-key em:first-child { margin-left: 0; }
+.po-key-study {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--blue) 34%, transparent),
+    color-mix(in srgb, var(--accent) 28%, transparent));
+}
+.po-key-observed {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--teal) 34%, transparent),
+    color-mix(in srgb, var(--blue) 28%, transparent));
+}
+.po-key-you { background: var(--accent); }
+
+/* ── 3.8 / 3.9 · the demo's .ld-match-cols ratio ─────────────────────── */
+.po-cols { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0 22px; margin-bottom: 22px; }
+.po-read-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.po-read-head h2 { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; }
+.po-read-pick { margin-left: auto; display: flex; gap: 5px; }
+.po-read-pick button { border-radius: 8px; padding: 2px; opacity: 0.45; }
+.po-read-pick button.on { opacity: 1; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.po-read-pick button:hover { opacity: 1; }
+
+.po-read-gate {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+  border-radius: 9px; border: 1px solid var(--line); background: var(--bg-soft); font-size: 11px;
+}
+.po-read-gate.ok {
+  border-color: color-mix(in srgb, var(--teal) 38%, var(--line));
+  background: color-mix(in srgb, var(--teal) 6%, var(--bg));
+}
+.po-read-gate.under {
+  border-color: color-mix(in srgb, var(--coral) 38%, var(--line));
+  background: color-mix(in srgb, var(--coral) 6%, var(--bg));
+}
+/* An estimated band is hatched, permanently — never behind a disclosure. */
+.po-read-gate.est {
+  background-image: repeating-linear-gradient(45deg,
+    transparent 0 5px, color-mix(in srgb, var(--line-strong) 45%, transparent) 5px 6px);
+}
+.po-read-glabel {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-read-gate b {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.po-read-gate i {
+  margin-left: auto; font-style: normal; font-size: 8.5px;
+  font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3);
 }
 
-@media print {
-  .po > *:not(.report) { display: none !important; }
+.po-read-dims { list-style: none; margin-top: 10px; }
+.po-dim { border-top: 1px solid var(--line); }
+.po-dim:first-child { border-top: none; }
+.po-dim > button {
+  display: grid; grid-template-columns: 20px 1fr 96px 44px;
+  gap: 9px; align-items: center; width: 100%; text-align: left; padding: 7px 4px; min-height: 22px;
+}
+.po-dim > button:hover { background: var(--bg-soft); }
+.po-dim-n { font-size: 9px; font-weight: 800; color: var(--ink-3); }
+.po-dim-label { font-size: 12.5px; font-weight: 600; }
+.po-dim.pivot .po-dim-label { color: var(--ink); font-weight: 700; }
+/* No percentage may ever appear on these meters — they are readings, not odds. */
+.po-dim-metre { height: 6px; border-radius: 3px; background: var(--bg-soft); overflow: hidden; }
+.po-dim-metre span { display: block; height: 100%; border-radius: 3px; }
+.po-sig-strong .po-dim-metre span { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+.po-sig-solid .po-dim-metre span { background: linear-gradient(90deg, var(--blue), var(--accent)); }
+.po-sig-thin .po-dim-metre span { background: linear-gradient(90deg, var(--accent), var(--coral)); }
+.po-sig-gap .po-dim-metre span { background: linear-gradient(90deg, var(--coral), var(--accent)); }
+.po-dim-sig {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; text-align: right; color: var(--ink-3);
+}
+.po-dim-pivot {
+  grid-column: 2 / -1; font-style: normal; font-size: 8.5px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+}
+.po-dim-inv {
+  grid-column: 2 / -1; font-style: normal; font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3);
+}
+.po-dim-note { font-size: 12px; color: var(--ink-2); line-height: 1.55; padding: 0 4px 9px 29px; }
+.po-dim-lens { font-size: 11px; font-style: italic; color: var(--ink-3); padding: 0 4px 9px 29px; }
+.po-dim-lift { font-size: 11.5px; color: var(--ink); padding: 0 4px 9px 29px; }
+.po-dim-lift::before { content: "→ "; color: var(--accent); font-weight: 800; }
+.po-read-foot {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px;
+  padding-top: 9px; border-top: 1px dashed var(--line-strong);
+  font-size: 9px; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--ink-3);
 }
 
-/* Timeline card */
-.po-clock { list-style: none; display: flex; flex-direction: column; }
-.po-clock li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
-.po-clock li:first-child { border-top: none; }
-.po-clock-school { display: flex; align-items: center; gap: 8px; font-weight: 550; }
-.po-clock-when { margin-left: auto; color: var(--ink-3); }
-.po-clock-days { font-weight: 650; color: var(--accent); width: 44px; text-align: right; }
-.po-clock-soon .po-clock-days { color: var(--coral); }
-.po-clock-note { font-size: 11.5px; color: var(--ink-3); margin-top: 10px; }
-
-/* ── Stat band + plan (inside dashboard) ─────────────────────────── */
-.po-stats {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-  margin: 20px 0 22px;
+/* Corpus panel — .ld-match-query / -funnel / -honest transcribed */
+.po-corp h2 { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; margin-bottom: 10px; }
+.po-corp-q { display: flex; align-items: baseline; gap: 8px; font-size: 11.5px; color: var(--ink-2); }
+.po-corp-q b { color: var(--ink); font-weight: 750; }
+.po-corp-op {
+  flex: 0 0 auto; font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: #fff;
+  background: var(--ink); border-radius: 4px; padding: 2.5px 5px;
 }
-.po-stat {
-  border: 1px solid var(--line); border-radius: 14px; background: var(--bg);
-  padding: 15px 17px;
-  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04);
+.po-corp-funnel {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  margin: 7px 0 13px; padding-bottom: 11px; border-bottom: 1px solid var(--line);
+  font-size: 9.5px; font-weight: 650; letter-spacing: 0.03em;
+  text-transform: uppercase; color: var(--ink-3);
 }
-.po-stat b {
-  display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.03em;
-  color: var(--ink); line-height: 1.1;
+.po-corp-funnel b { font-weight: 800; color: var(--ink-2); }
+.po-corp-funnel i { font-style: normal; color: var(--line-strong); }
+.po-corp-dec { margin-left: auto; }
+.po-corp-head {
+  display: grid; grid-template-columns: 20px 40px 1fr auto; gap: 6px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--line-strong);
+  font-size: 8px; font-weight: 800; letter-spacing: 0.09em; color: var(--ink-3);
 }
-.po-stat span { display: block; font-size: 11.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.4; }
-.po-stat:nth-child(1) b { color: var(--teal); }
-.po-stat:nth-child(2) b { color: var(--blue); }
-.po-stat:nth-child(4) b { color: var(--accent); }
-.po-stat.urgent { border-color: color-mix(in srgb, var(--coral) 45%, var(--line)); background: linear-gradient(120deg, #fff, #fff6f4); }
-.po-stat.urgent b { color: var(--coral); }
+.po-corp-head span:last-child { text-align: right; }
+.po-corp-card { padding: 8px 0 10px; border-top: 1px solid var(--line); }
+.po-corp-card:first-of-type { border-top: none; }
+.po-corp-top { display: grid; grid-template-columns: 20px 40px 1fr auto; gap: 6px; align-items: baseline; }
+.po-corp-idx { font-size: 8.5px; font-weight: 800; color: var(--ink-3); }
+.po-corp-gpa { font-size: 17px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.po-corp-meta { font-size: 10.5px; color: var(--ink-3); font-weight: 600; }
+.po-corp-delta { font-size: 10.5px; font-weight: 750; color: var(--teal); text-align: right; }
+.po-corp-delta.behind { color: var(--coral); }
+.po-corp-h2 {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--ink-3); margin: 16px 0 8px;
+}
+.po-sig { padding: 9px 0; border-top: 1px solid var(--line); }
+.po-sig:first-of-type { border-top: none; }
+.po-sig-top { display: flex; align-items: center; gap: 5px; margin-bottom: 7px; }
+.po-sig-photo { flex: 0 0 40px; height: 26px; border-radius: 5px; overflow: hidden; }
+.po-sig-photo .campus { border-radius: 4px; }
+.po-sig-photo figcaption { display: none; }
+.po-sig-top b { font-size: 12.5px; font-weight: 750; color: var(--ink); }
+.po-sig-n { margin-left: auto; font-size: 9px; font-weight: 700; color: var(--ink-3); }
+.po-sig-line { font-size: 10.5px; color: var(--ink-3); line-height: 1.5; margin-top: 5px; }
+.po-sig-line b { color: var(--ink-2); font-weight: 750; }
+.po-sig-mine { color: var(--accent); }
+.po-corp-axis {
+  display: flex; justify-content: space-between; margin-top: 5px;
+  padding-top: 5px; border-top: 1px solid var(--line);
+  font-size: 8px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-3);
+}
+.po-corp-axis i { font-style: normal; }
+.po-corp-honest {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line-strong);
+  font-size: 10px; color: var(--ink-3); line-height: 1.55;
+}
 
-.po-planwrap { margin-bottom: 24px; }
-
-/* ── The UC block ────────────────────────────────────────────────
-   Same card chrome as .po-list / .po-card: one border, one radius,
-   the same two-layer shadow. Nothing here is decorative.          */
+/* ── 3.10 · the UC block ─────────────────────────────────────────────── */
 .po-uc {
   border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
   box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
@@ -133,18 +682,10 @@
   letter-spacing: 0.07em; color: var(--ink-3); margin-bottom: 5px;
 }
 .po-uc-head h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
-.po-uc-head p { font-size: 13px; color: var(--ink-2); margin-top: 6px; line-height: 1.6; max-width: 68ch; }
-.po-uc-head p b { color: var(--ink); font-weight: 700; }
-
-.po-uc-clocks { display: flex; gap: 10px; flex: 0 0 auto; }
-.po-uc-clock {
-  border: 1px solid var(--line); border-radius: 12px; background: var(--bg-soft);
-  padding: 11px 14px; min-width: 118px;
+.po-uc-facts {
+  display: block; margin-top: 7px; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); line-height: 1.7;
 }
-.po-uc-clock b { display: block; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; color: var(--blue); line-height: 1.1; }
-.po-uc-clock span { display: block; font-size: 10.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
-.po-uc-clock.soon { border-color: color-mix(in srgb, var(--coral) 45%, var(--line)); background: linear-gradient(120deg, #fff, #fff6f4); }
-.po-uc-clock.soon b { color: var(--coral); }
 
 .po-uc-cols,
 .po-uc-row {
@@ -192,62 +733,74 @@
 .po-uc-odds b { display: block; font-size: 14px; font-weight: 700; color: var(--accent); }
 .po-uc-odds i { display: block; font-style: normal; font-size: 11px; color: var(--ink-3); margin-top: 1px; }
 
-.po-uc-panels {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-  margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line);
+/* The TAG floor axis: one shared 2.60–3.70 scale, the ticks that clear it,
+   and the applicant's own mark. "Clears 5 of 6" is literally the ticks left
+   of the mark. */
+.po-tag { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.po-tag-head {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3);
 }
-.po-uc-panel {
-  border: 1px solid var(--line); border-radius: 14px; background: var(--bg-soft);
-  padding: 16px 17px;
+.po-tag-head b { font-size: 13px; color: var(--blue); letter-spacing: -0.02em; }
+.po-tag-head b.soon { color: var(--coral); }
+.po-tag-head em { margin-left: auto; font-style: normal; color: var(--teal); }
+.po-tag-head em.no { color: var(--coral); }
+.po-tag-gates {
+  list-style: none; display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 0;
+  font-size: 11.5px; color: var(--ink-2);
 }
-.po-uc-panel h3 { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
-.po-uc-lead { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
-.po-uc-lead b { color: var(--ink); font-weight: 700; }
-.po-uc-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; margin-top: 10px; }
-.po-uc-warn { font-size: 12.5px; color: var(--warn); line-height: 1.55; margin-top: 8px; }
-.po-uc-ok { font-size: 12.5px; color: var(--good); margin-top: 8px; }
-.po-uc-igetc { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
-.po-uc-igetc b { color: var(--ink); font-weight: 650; }
-.po-uc-panel .btn { margin-top: 12px; }
-
-.po-uc-gates { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
-.po-uc-gates li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); }
-.po-uc-gates li span { width: 14px; text-align: center; font-weight: 800; font-size: 11px; color: var(--line-strong); }
-.po-uc-gates li.ok { color: var(--ink); }
-.po-uc-gates li.ok span { color: var(--teal); }
-.po-uc-gates li.no span { color: var(--coral); }
-
-.po-uc-floors { list-style: none; margin-top: 12px; }
-.po-uc-floors li {
-  display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline;
-  padding: 6px 0; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3);
+.po-tag-gates li span { color: var(--teal); font-weight: 800; margin-right: 6px; }
+.po-tag-gates li.no { color: var(--ink-3); }
+.po-tag-gates li.no span { color: var(--coral); }
+/* The floors and the applicant's own mark share one 2.60–3.70 scale, so a
+   mark that lands a hundredth off a floor (3.62 against Riverside's 3.60)
+   would print on top of it. The mark gets its own band under the ticks. */
+.po-tag-ax { position: relative; height: 86px; margin: 18px 0 4px; border-top: 1px solid var(--line-strong); }
+.po-tag-a, .po-tag-b {
+  position: absolute; top: 4px; font-size: 8.5px; font-weight: 700; color: var(--ink-3);
 }
-.po-uc-floors li:first-child { border-top: none; }
-.po-uc-floors li.clear { color: var(--ink); }
-.po-uc-floor-name { font-weight: 550; }
-.po-uc-floor-min { font-weight: 700; }
-.po-uc-floors li.clear .po-uc-floor-min { color: var(--teal); }
-.po-uc-floors li i {
-  grid-column: 1 / -1; font-style: normal; font-size: 11px; color: var(--ink-3);
-  line-height: 1.5; margin-top: 2px;
+.po-tag-a { left: 0; }
+.po-tag-b { right: 0; }
+.po-tag-tick {
+  position: absolute; top: 0; z-index: 2; transform: translateX(-50%);
+  padding-top: 16px; text-align: center; white-space: nowrap; max-width: 30%;
 }
-
-.po-uc-gaps { list-style: none; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
-.po-uc-gaps li {
-  font-size: 11.5px; font-weight: 550; color: var(--ink);
-  border: 1px solid color-mix(in srgb, var(--coral) 35%, var(--line));
-  background: var(--bg); border-radius: 7px; padding: 4px 9px;
+.po-tag-tick::before {
+  content: ""; position: absolute; top: 0; left: 50%;
+  width: 1px; height: 10px; background: var(--line-strong);
 }
-
+.po-tag-tick.clear::before { background: var(--teal); width: 2px; }
+.po-tag-tick b { display: block; font-size: 11.5px; font-weight: 800; color: var(--ink-3); }
+.po-tag-tick.clear b { color: var(--teal); }
+.po-tag-tick span {
+  display: block; font-size: 9px; font-weight: 700; color: var(--ink-3);
+  overflow: hidden; text-overflow: ellipsis;
+}
+.po-tag-you { position: absolute; top: 46px; z-index: 1; transform: translateX(-50%); text-align: center; }
+.po-tag-you::before {
+  content: ""; position: absolute; top: -46px; left: 50%;
+  width: 2.5px; height: 52px; margin-left: -1.25px; border-radius: 1px; background: var(--accent);
+  box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.po-tag-you b { display: block; margin-top: 10px; font-size: 12.5px; font-weight: 800; color: var(--accent); }
+.po-tag-you span {
+  font-size: 8.5px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+.po-tag-note {
+  font-size: 11px; color: var(--ink-2); line-height: 1.55; margin-top: 8px;
+  padding: 8px 10px; border-radius: 8px; background: var(--bg-soft);
+}
+.po-tag-note p + p { margin-top: 6px; }
+.po-tag-rule { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-top: 10px; }
+.po-tag-src { font-size: 10.5px; color: var(--ink-3); margin-top: 6px; line-height: 1.5; }
 .po-uc-fine {
   font-size: 11px; color: var(--ink-3); line-height: 1.55;
   margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line);
 }
-.po-uc-step { font-size: 11.5px; color: var(--ink-2); margin-top: 8px; }
-.po-uc-step b { color: var(--accent); font-weight: 650; }
 
 @media (max-width: 900px) {
-  .po-uc-panels { grid-template-columns: 1fr; }
   .po-uc-cols { display: none; }
   .po-uc-row {
     grid-template-columns: 1fr auto;
@@ -262,25 +815,100 @@
   .po-uc-odds { grid-area: odds; }
 }
 
-/* ── Your writing ───────────────────────────────────────────────── */
+/* ── 3.11 · major prep, one line ─────────────────────────────────────── */
+.po-prep {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 0; margin-bottom: 4px;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  font-size: 11px; color: var(--ink-2);
+}
+.po-prep-label, .po-prep-src, .po-prep-igetc, .po-prep-olabel {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-prep-src { margin-left: auto; }
+/* One segment per core requirement; the covered ones show their slice of the
+   progress gradient, the open ones stay grey. The gradient IS the progress. */
+.po-prep-bar {
+  display: flex; border-radius: 3px; overflow: hidden;
+  background: linear-gradient(90deg, var(--blue), var(--accent));
+}
+.po-prep-bar i { width: 13px; height: 7px; border-right: 1px solid var(--bg); }
+.po-prep-bar i:last-child { border-right: none; }
+.po-prep-bar i:not(.on) { background: var(--bg-soft); }
+.po-prep b { color: var(--ink); font-weight: 750; }
+.po-prep-open { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.po-prep-open em {
+  font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--ink-2);
+  border: 1px solid color-mix(in srgb, var(--coral) 35%, var(--line));
+  border-radius: 6px; padding: 2px 7px;
+}
+.po-prep-more { margin-bottom: 24px; }
+.po-prep-more summary {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-3); cursor: pointer; padding: 10px 0;
+}
+.po-prep-more[open] summary { margin-bottom: 6px; }
+
+/* ── 3.12 · your writing ─────────────────────────────────────────────── */
 .po-write {
   border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
   box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
   padding: 22px 24px;
 }
-.po-write-dek { font-size: 13px; color: var(--ink-2); line-height: 1.6; max-width: 72ch; margin-bottom: 18px; }
+.po-write-lever {
+  font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
 .po-doc { margin-bottom: 20px; }
 .po-doc > label {
   display: flex; align-items: center; gap: 9px;
-  font-size: 13.5px; font-weight: 550; color: var(--ink); margin-bottom: 10px;
-}
-.po-doc > label::before {
-  content: ""; width: 7px; height: 7px; border-radius: 2.5px; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--blue), var(--accent));
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 10px;
 }
 .po-doc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .po-doc-pair .po-doc { margin-bottom: 12px; }
 .po-write-hint { font-size: 12px; color: var(--ink-3); margin-top: 8px; line-height: 1.55; max-width: 62ch; }
+
+.po-essay-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 9px;
+  font-size: 9.5px; font-weight: 800; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.po-essay-row > b { font-size: 15px; letter-spacing: -0.02em; color: var(--ink); }
+/* 250 short · 400–650 target · 800 long — essay.ts's own thresholds. */
+.po-wband {
+  position: relative; flex: 0 0 130px; height: 6px; border-radius: 3px; background: var(--bg-soft);
+}
+.po-wband-target {
+  position: absolute; left: 50%; width: 31.25%; height: 6px; border-radius: 3px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--teal) 34%, transparent),
+    color-mix(in srgb, var(--blue) 28%, transparent));
+}
+.po-wband-you {
+  position: absolute; top: -3px; width: 2.5px; height: 12px; border-radius: 1px;
+  background: var(--accent); box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.po-essay-names { display: inline-flex; align-items: center; gap: 4px; }
+.po-essay-prof b, .po-essay-fit { color: var(--ink-2); }
+/* Two-sided: fit signals against complaint signals. */
+.po-fitbar {
+  flex: 0 0 70px; height: 6px; border-radius: 3px; overflow: hidden;
+  display: flex; background: var(--bg-soft);
+}
+.po-fitbar span:first-child { background: linear-gradient(90deg, var(--teal), var(--blue)); }
+.po-fitbar span:last-child { background: linear-gradient(90deg, var(--coral), var(--accent)); }
+.po-essay-verdict { font-weight: 800; }
+.po-v-complaint { color: var(--coral); }
+.po-v-specific { color: var(--teal); }
+.po-essay-warn { font-size: 12.5px; color: var(--coral); line-height: 1.55; margin-top: 8px; max-width: 74ch; }
+.po-essay-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.po-essay-chips em {
+  font-style: normal; font-size: 10.5px; font-weight: 600; color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px;
+}
+.po-write-piq { font-size: 12px; color: var(--ink-2); line-height: 1.55; margin-top: 4px; }
 
 .po-write-foot {
   display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
@@ -292,18 +920,123 @@
 .po-write-state.bad { color: var(--bad); }
 .po-write-note { font-size: 11px; color: var(--ink-3); margin-top: 10px; line-height: 1.55; max-width: 78ch; }
 
-@media (max-width: 720px) {
+/* ── 3.13 · the plan ─────────────────────────────────────────────────── */
+/* .po-walls is the one linear day axis on this page; ActionPlan's own
+   .ap-timeline is the same countdown() data rendered a second time. It stays
+   in the component for Results.tsx and is dropped here only. */
+.po-plan .ap-timeline { display: none; }
+
+/* ── 3.14 · the 0.016 fact ───────────────────────────────────────────── */
+.po-hs {
+  display: flex; align-items: center; gap: 18px; padding: 16px 20px;
+  border: 1px solid var(--line); border-radius: 13px; background: var(--bg-soft);
+}
+.po-hs b {
+  font-size: 30px; font-weight: 800; letter-spacing: -0.03em; flex: 0 0 auto;
+  background: linear-gradient(100deg, var(--blue), var(--accent) 55%, var(--teal));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.po-hs p { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; max-width: 70ch; }
+
+/* ── 6.2 · MOBILE ────────────────────────────────────────────────────── */
+
+/* 900–1100: one column, reading sheet first (it is already first in source). */
+@media (max-width: 1100px) {
+  .po-cols { grid-template-columns: 1fr; gap: 22px 0; }
+  .po-led-rate i { display: none; }
+}
+
+@media (max-width: 900px) {
+  /* Hero collapses to one column; the photo becomes a soft header band. */
+  .po-hero { grid-template-columns: 1fr; padding: 24px 22px 0; }
+  .po-hero-photo { inset: 0 0 auto 0; height: 150px; opacity: 0.35;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent);
+    mask-image: linear-gradient(180deg, #000 30%, transparent); }
+  .po-hero-photo::after { background: linear-gradient(180deg, transparent, var(--bg)); }
+  .po-hero-wall { grid-column: 1; margin: 4px 0 20px; }
+  .po-hero-funnel { margin: 0 -22px; padding: 12px 22px; }
+  .po-hero-funnel li { padding-right: 14px; margin-right: 14px; }
+  /* The axis stops being an axis: a plain list of the nearest windows. */
+  .po-walls { padding: 12px 0 10px; }
+  .po-walls-a, .po-walls-b { display: none; }
+  .po-walls-ax { display: none; }
+  .po-walls-list { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .po-walls-list li { display: flex; align-items: baseline; gap: 6px; font-size: 11px; color: var(--ink-2); }
+  .po-walls-list li b { font-size: 13px; font-weight: 800; color: var(--blue); }
+  .po-walls-list li.soon b { color: var(--coral); }
+  .po-walls-list li i { font-style: normal; font-size: 10px; color: var(--ink-3); }
+  .po-walls-more { font-size: 10px; font-weight: 700; color: var(--ink-3); }
+  .po-walls-note { margin-top: 8px; }
+  .po-led-open-body { grid-template-columns: 1fr; gap: 14px; }
+}
+
+@media (max-width: 700px) {
+  /* The bar is the first thing to go: there is no room for two readouts. */
+  .po-bar { display: none; }
+  .po-led-cols { display: none; }
+  .po-led-row {
+    grid-template-columns: 1fr auto; gap: 6px 10px;
+    grid-template-areas: "open open" "status remove" "body body";
+    padding: 10px 0;
+  }
+  .po-led-open {
+    grid-area: open; grid-template-columns: 1fr auto; gap: 8px 10px;
+    grid-template-areas: "school odds" "band blk" "due due"; padding: 0;
+  }
+  .po-led-i, .po-led-rate { display: none; }
+  .po-led-school { grid-area: school; }
+  .po-led-odds { grid-area: odds; text-align: right; }
+  .po-led-band { grid-area: band; }
+  .po-led-blk { grid-area: blk; justify-content: flex-end; }
+  .po-led-due { grid-area: due; display: flex; align-items: baseline; gap: 6px; }
+  .po-status { grid-area: status; justify-self: start; }
+  .po-remove { grid-area: remove; justify-self: end; }
+  .po-led-open-body { grid-area: body; }
+  /* ≤700px the band cell is ~150px across a 0.80-GPA domain: 0.05 GPA is
+     sub-pixel and the notches smear into a picture that claims precision it
+     does not have. Figures instead. No 1px lie of a chart. */
+  .po-band, .po-band-empty { display: none; }
+  .po-led-band i.po-band-figs { display: block; }
+  .po-corp-dec { display: none; }
   .po-doc-pair { grid-template-columns: 1fr; }
+  .po-dim > button { grid-template-columns: 18px 1fr 64px 40px; gap: 7px; }
+  .po-hero-acts { flex-wrap: wrap; gap: 12px; }
 }
 
-/* School picker chips carry their logo and admit rate */
-.po-add { display: inline-flex; align-items: center; gap: 7px; }
-.po-add-rate { font-style: normal; font-size: 10.5px; color: var(--ink-3); font-weight: 650; }
-.po-add[aria-pressed="true"] .po-add-rate { color: inherit; opacity: 0.75; }
-
-@media (max-width: 860px) {
-  .po-stats { grid-template-columns: 1fr 1fr; }
+/* A short window has no room for a sticky readout either. */
+@media (max-height: 640px) {
+  .po-bar { display: none; }
 }
-@media (max-width: 520px) {
-  .po-stats { grid-template-columns: 1fr; }
+
+@media (max-width: 640px) {
+  /* The floor axis becomes a two-column list, the mark becomes a heading. */
+  .po-tag-ax { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; padding-top: 10px; }
+  .po-tag-a, .po-tag-b, .po-tag-you::before { display: none; }
+  .po-tag-tick {
+    position: static; transform: none; max-width: none; padding-top: 0;
+    display: flex; align-items: baseline; gap: 7px; text-align: left;
+  }
+  .po-tag-tick::before { display: none; }
+  .po-tag-tick b { font-size: 12px; }
+  .po-tag-tick span { white-space: normal; }
+  .po-tag-tick.clear::after { content: "✓"; color: var(--teal); font-weight: 800; }
+  .po-tag-you {
+    position: static; transform: none; grid-column: 1 / -1;
+    display: flex; align-items: baseline; gap: 7px; text-align: left; order: -1;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  .po-tag-you b { margin-top: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .po-band-range, .po-band-med, .po-band-you, .po-dim-metre span,
+  .po-fit-need, .po-prep-bar i, .po-wband-you, .po-tag-you, .po-tag-tick,
+  .po-move-lift, .po-led-open {
+    transition: none !important; animation: none !important;
+  }
+  .po-bar { backdrop-filter: none; }
+}
+
+@media print {
+  .po > *:not(.report) { display: none !important; }
 }

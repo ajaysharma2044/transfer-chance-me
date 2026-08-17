@@ -23,6 +23,21 @@ export interface Dimension {
   /** What would change the note. */
   lift: string | null;
   color: string;
+  /**
+   * This dimension's score and note read the PROFILE only — pick a different
+   * school and nothing here moves. Verified against the source below:
+   *   · engagement(p)   — takes no School at all.
+   *   · circumstance(p) — takes no School at all.
+   *   · preparation(p, s) — score reads p.courses / p.igetc / p.standing and
+   *     note reads p.courses / p.igetc; the only use of `s` in the whole
+   *     function is the `.lift` string, which may name that school's
+   *     pathways. The reading is invariant; the suggestion attached to it
+   *     is not.
+   * academic, context and narrative all genuinely re-read per school.
+   * Six meters under a school picker otherwise claim six per-school readings
+   * when three of them are static.
+   */
+  schoolInvariant: boolean;
 }
 
 export interface ReaderSheet {
@@ -34,6 +49,11 @@ export interface ReaderSheet {
   headline: string;
   gateCleared: boolean;
   gateNote: string;
+  /** The band this gate was read against is derived from selectivity, not
+   *  published. True for every school with no `gpa.p50` — which is all seven
+   *  appended UC campuses and every extra school. Already computed inside
+   *  band(); it used to survive only as a parenthetical inside gateNote. */
+  bandEstimated: boolean;
 }
 
 const sig = (s: number): Signal => (s >= 0.75 ? "strong" : s >= 0.5 ? "solid" : s >= 0.28 ? "thin" : "gap");
@@ -94,6 +114,7 @@ function academic(p: Profile, s: School): Dimension {
     note,
     lift: p.gpaTrend === "downward" ? "One clean upward term changes how this paragraph reads." : null,
     color: "var(--blue)",
+    schoolInvariant: false,
   };
 }
 
@@ -127,6 +148,7 @@ function context(p: Profile, s: School): Dimension {
     note,
     lift: !isCC && pipe ? "Naming the specific program you'd enter matters more from outside the pipeline." : null,
     color: "var(--teal)",
+    schoolInvariant: false,
   };
 }
 
@@ -156,6 +178,7 @@ function narrative(p: Profile, s: School): Dimension {
     note,
     lift: score < 0.8 ? `Name two courses and one professor at ${s.name} you could not access where you are.` : null,
     color: "var(--accent)",
+    schoolInvariant: false,
   };
 }
 
@@ -184,6 +207,7 @@ function engagement(p: Profile): Dimension {
     note,
     lift: score < 0.7 ? "An officer seat or a tutoring job — three weeks of real commitment — changes this box." : null,
     color: "var(--coral)",
+    schoolInvariant: true,
   };
 }
 
@@ -206,6 +230,7 @@ function preparation(p: Profile, s: School): Dimension {
     note,
     lift: !hasCourses ? "Add your courses — it's the fastest way to turn a blank box into a strong one." : (s.counsel?.programs?.length ? `Their named pathways: ${s.counsel.programs.join(", ")}.` : null),
     color: "#7a5cf0",
+    schoolInvariant: true,
   };
 }
 
@@ -232,6 +257,7 @@ function circumstance(p: Profile): Dimension {
     note,
     lift: bits.length === 0 ? "Work hours and first-generation status are read as substance, never as excuses." : null,
     color: "#e8a33d",
+    schoolInvariant: true,
   };
 }
 
@@ -263,7 +289,7 @@ export function readerSheet(p: Profile, e: Estimate): ReaderSheet {
       : "Under the band — the rest of the sheet has to overperform") +
     (estimated ? " (band estimated; this school doesn't publish it)" : "");
 
-  return { school: s.name, dimensions: dims, pivot, headline, gateCleared, gateNote };
+  return { school: s.name, dimensions: dims, pivot, headline, gateCleared, gateNote, bandEstimated: estimated };
 }
 
 /** High school, honestly: the corpus says it barely predicts anything. */
