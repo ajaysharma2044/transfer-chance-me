@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { estimateAll, fmtPct, MODEL, TAG_CAMPUSES } from "../engine";
+import { estimateAll, fmtPct, MODEL, TAG_CAMPUSES, tagFloor } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import type { Session } from "../lib/auth";
 import { analyzeEssay } from "../lib/essay";
@@ -151,7 +151,12 @@ function UcSection({
     { ok: profile.standing === "junior", label: "Entering at junior standing", miss: "junior-standing entry" },
   ];
   const gatesOk = gates.every((g) => g.ok);
-  const floors = Object.entries(TAG_CAMPUSES).sort((a, b) => a[1] - b[1]);
+  // Floors for THIS applicant's major, not the campus-wide minimum — see
+  // tagFloor() in engine.ts. Showing the campus figure here contradicted the
+  // odds the engine printed on the same screen.
+  const floors = Object.keys(TAG_CAMPUSES)
+    .map((c) => [c, tagFloor(c, profile.major) ?? 9] as [string, number])
+    .sort((a, b) => a[1] - b[1]);
   const cleared = floors.filter(([, min]) => profile.gpa >= min);
   const lowest = floors[0] ?? null;
 
@@ -203,7 +208,7 @@ function UcSection({
 
       <ul className="po-uc-list">
         {rows.map(({ name, est, uc }) => {
-          const min = TAG_CAMPUSES[name];
+          const min = tagFloor(name, profile.major);
           const share = uc ? ccShare(uc.ccNote) : null;
           const met = min != null && gatesOk && profile.gpa >= min;
           return (

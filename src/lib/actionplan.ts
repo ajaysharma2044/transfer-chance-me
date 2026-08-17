@@ -6,7 +6,7 @@
 // produced their odds, and report the true difference. Moves that sharpen the
 // file without changing a scored input say so instead of faking a number.
 
-import { estimateAll, MODEL, TAG_CAMPUSES } from "../engine";
+import { estimateAll, MODEL, TAG_CAMPUSES, tagFloor } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import { countdown, DEADLINES } from "./deadlines";
 import playbook from "../data/playbook.json";
@@ -159,7 +159,13 @@ export function planWindows(profile: Profile, ests: Estimate[]): PlanWindow[] {
   const tagEligible =
     profile.institution === "cc" && profile.caResident && profile.standing === "junior";
   if (tagEligible) {
-    const campus = Object.keys(TAG_CAMPUSES).find((c) => profile.gpa >= (TAG_CAMPUSES[c] ?? 9));
+    // tagFloor(), not the campus minimum: TAG_CAMPUSES holds the LOWEST
+    // college threshold per campus, and the published matrix puts several
+    // majors well above it (Riverside CS 3.6 against a 2.7 floor). Reading
+    // the campus figure told a 2.8 CS applicant they had "a guaranteed seat"
+    // when the engine — correctly — guaranteed them nothing anywhere.
+    const campus = Object.keys(TAG_CAMPUSES)
+      .find((c) => profile.gpa >= (tagFloor(c, profile.major) ?? 9));
     if (campus) {
       const now = new Date();
       const yr = now.getMonth() > 8 || (now.getMonth() === 8 && now.getDate() > 30)
