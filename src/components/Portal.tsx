@@ -8,7 +8,7 @@ import type { EssayAnalysis } from "../lib/essay";
 import { analyzeCourses, MAJOR_LABEL as MAJOR_TEXT } from "../lib/coursework";
 import type { CourseGaps as CourseGapsResult } from "../lib/coursework";
 import { cloudEnabled } from "../lib/supabase";
-import { pushDoc } from "../lib/sync";
+import { pullProfile, pushDoc, pushSchools } from "../lib/sync";
 import ucData from "../data/uc_data.json";
 import Tile from "./Tile";
 import CampusPhoto from "./CampusPhoto";
@@ -1293,6 +1293,43 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   useEffect(() => {
     localStorage.setItem(LIST_KEY, JSON.stringify(list));
   }, [list]);
+
+  // ── Ledger sync (both directions) ──────────────────────────────────────
+  // The profile and the documents already reach the account; until this, the
+  // school list — statuses, notes, the thing the portal is FOR — lived only
+  // in this browser and silently vanished on any other device.
+
+  // Adopt on mount: a device with no local list takes the account's copy.
+  // A device WITH a local list keeps it — the local list is newer or equal
+  // by construction, because every local edit is pushed below.
+  useEffect(() => {
+    if (!cloudEnabled || !session) return;
+    let live = true;
+    pullProfile()
+      .then(({ schools }) => {
+        if (!live || !schools || loadList().length) return;
+        const adopted: ListEntry[] = Object.entries(schools).map(([school, v]) => ({
+          school, status: (v.status as Status) || "planning", note: v.notes ?? "",
+        }));
+        if (adopted.length) setList(adopted);
+      })
+      .catch(() => { /* offline: the local list stands */ });
+    return () => { live = false; };
+    // Session identity only — this is adopt-on-login, not a subscription.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.email]);
+
+  // Push on change, debounced. Deliberately pushes `list` and not the seeded
+  // preview: an untouched seed is a suggestion, not the student's data.
+  useEffect(() => {
+    if (!cloudEnabled || !session || !list.length) return;
+    const t = window.setTimeout(() => {
+      const rec: Record<string, { status: string; notes: string }> = {};
+      for (const l of list) rec[l.school] = { status: l.status, notes: l.note };
+      pushSchools(rec).catch(() => { /* offline is not an error here */ });
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [list, session]);
 
   // Computed once for the whole page and passed down. buildPlan() re-runs
   // estimateAll() over 208 schools once per playbook move; calling it here and

@@ -4,6 +4,7 @@
 
 import { MODEL } from "../engine";
 import type { Profile } from "../engine";
+import INTEL_RAW from "../data/intel.json";
 
 const KEY_STORE = "tcm.apikey.v1";
 const RESULT_STORE = "tcm.review.v1";
@@ -53,6 +54,34 @@ export function loadLastReview(): ReviewResult | null {
   } catch { return null; }
 }
 
+/* ── Field notes from the T25 Transfer Admissions Study ────────────────────
+ * Distilled from the study's per-school intelligence briefs (Google Drive).
+ * Injected per TARGET only, so the prompt grows with the applicant's list,
+ * not with the corpus. Every line traces back to a brief; nothing here is
+ * model-generated at request time. */
+
+interface IntelEntry {
+  timing?: string;
+  paths?: string[];
+  pitfalls?: string[];
+  aid?: string;
+  notes?: string[];
+}
+const INTEL = INTEL_RAW as unknown as Record<string, IntelEntry | unknown>;
+
+export function intelLines(name: string): string {
+  const e = INTEL[name] as IntelEntry | undefined;
+  if (!e || typeof e !== "object") return "";
+  const lines = [
+    e.timing ? `Timing: ${e.timing}` : "",
+    e.paths?.length ? `Doors in: ${e.paths.join("; ")}` : "",
+    e.pitfalls?.length ? `Pitfalls seen in real files: ${e.pitfalls.join("; ")}` : "",
+    e.aid ? `Aid: ${e.aid}` : "",
+    ...(e.notes ?? []).map((n) => `- ${n}`),
+  ].filter(Boolean);
+  return lines.length ? `Field notes (from our T25 study briefs):\n${lines.join("\n")}` : "";
+}
+
 function schoolContext(targets: string[]): string {
   return targets
     .map((name) => {
@@ -65,6 +94,7 @@ function schoolContext(targets: string[]): string {
         c?.levers?.length ? `What moves the file: ${c.levers.join("; ")}` : "",
         c?.watchouts?.length ? `Watchouts: ${c.watchouts.join("; ")}` : "",
         c?.programs?.length ? `Named pathways admits cite: ${c.programs.join(", ")}` : "",
+        intelLines(s.name),
       ].filter(Boolean).join("\n");
     })
     .filter(Boolean)

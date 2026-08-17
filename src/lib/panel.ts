@@ -8,7 +8,7 @@
 import { MODEL } from "../engine";
 import type { Profile } from "../engine";
 import { buildPlan } from "./actionplan";
-import { getApiKey, proxyMode, REVIEW_ENDPOINT } from "./review";
+import { getApiKey, intelLines, proxyMode, REVIEW_ENDPOINT } from "./review";
 
 const PANEL_STORE = "tcm.panel.v1";
 
@@ -99,6 +99,7 @@ function schoolBlock(targets: string[]): string {
       c?.typical ? `Typical admit: ${c.typical}` : "",
       c?.levers?.length ? `Moves the file: ${c.levers.join("; ")}` : "",
       c?.watchouts?.length ? `Watchouts: ${c.watchouts.join("; ")}` : "",
+      intelLines(s.name),
     ].filter(Boolean).join("\n");
   }).filter(Boolean).join("\n\n");
 }

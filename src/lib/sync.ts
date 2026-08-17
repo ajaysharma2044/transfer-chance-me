@@ -47,6 +47,26 @@ export async function pushProfile(
   if (error) throw new Error(`Couldn't save your profile: ${error.message}`);
 }
 
+/**
+ * Store ONLY the school ledger (statuses + notes), leaving the profile
+ * column untouched — upsert writes just the columns it is given.
+ *
+ * Separate from pushProfile because the two change on different rhythms:
+ * the ledger changes on every status click in the portal, and pushing the
+ * whole profile on each of those would race the debounced profile push in
+ * App with a possibly-staler copy of the profile.
+ */
+export async function pushSchools(
+  schools: Record<string, { status: string; notes: string }>,
+): Promise<void> {
+  const id = await uid();
+  if (!id || !supabase) return;
+  const { error } = await supabase
+    .from("profiles")
+    .upsert({ id, schools, updated_at: new Date().toISOString() });
+  if (error) throw new Error(`Couldn't save your school list: ${error.message}`);
+}
+
 /** What the account holds. Returns nulls when there is nothing stored yet,
  *  so a caller can tell "no cloud copy" from "an empty one". */
 export async function pullProfile(): Promise<CloudState> {
