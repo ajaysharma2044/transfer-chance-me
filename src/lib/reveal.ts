@@ -45,31 +45,73 @@ export function useCountUp(
   { duration = 900, decimals = 0 }: { duration?: number; decimals?: number } = {},
 ): number {
   const [value, setValue] = useState(() => (motionOff() ? target : 0));
-  const done = useRef(false);
+
+  // The target lives in a ref, NOT in the effect's dependency list.
+  //
+  // This is the whole design. `target` is derived from the profile, and the
+  // profile is replaced at least once on load (local copy first, then the
+  // account's). An effect keyed on `target` therefore tears down and restarts
+  // mid-flight — and if the restarts arrive faster than the animation runs,
+  // the tween is cancelled forever and the figure freezes at whatever partial
+  // value it had reached. That shipped: the portal sat at "23–25%" against a
+  // true 90–99%, which is not a cosmetic bug, it is the product displaying a
+  // wrong number with total confidence.
+  //
+  // Reading the target through a ref means a change retargets the SAME
+  // in-flight animation instead of restarting it, so the tween always
+  // converges on the latest value.
+  const targetRef = useRef(target);
+  targetRef.current = target;
+  /** True only while a tween is in flight. */
+  const running = useRef(false);
 
   useEffect(() => {
     if (motionOff()) { setValue(target); return; }
-    if (!shown || done.current) return;
-    let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / duration);
-      // easeOutExpo — quick off the mark, long settle. The deceleration is
-      // what reads as an instrument coming to rest; a linear tween reads as
-      // digits scrambling, which looks like a slot machine, not a measurement.
-      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-      const p = Math.pow(10, decimals);
-      setValue(Math.round(target * eased * p) / p);
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else { done.current = true; setValue(target); }
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, shown, duration, decimals]);
+    if (!shown) return;
 
-  // A target that changes after the tween finished — the reader edited their
-  // GPA — must show the new number, not the one the tween happened to land on.
-  useEffect(() => { if (done.current) setValue(target); }, [target]);
+    let raf = 0;
+    let cancelled = false;
+    running.current = true;
+    const start = performance.now();
+    const from = 0;
+
+    const tick = (now: number) => {
+      if (cancelled) return;
+      const t = Math.min(1, (now - start) / duration);
+      // easeOutExpo — quick off the mark, long settle. The deceleration reads
+      // as an instrument coming to rest; a linear tween reads as digits
+      // scrambling, which looks like a slot machine, not a measurement.
+      const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      const to = targetRef.current;
+      const p = Math.pow(10, decimals);
+      setValue(Math.round((from + (to - from) * eased) * p) / p);
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running.current = false;
+        setValue(to); // land on the exact figure, never a tween artefact
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelled = true;
+      running.current = false;
+      cancelAnimationFrame(raf);
+      // Unmounting or turning motion off mid-flight must not leave a partial
+      // number on screen as if it were real.
+      setValue(targetRef.current);
+    };
+    // Deliberately excludes `target` — see the ref above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shown, duration, decimals]);
+
+  // A target that changes AFTER the tween has landed — the reader edited
+  // their GPA — updates the figure directly. Guarded on `running` so it
+  // cannot fight an animation that is still converging on the same value.
+  useEffect(() => {
+    if (!running.current) setValue(target);
+  }, [target]);
 
   return value;
 }

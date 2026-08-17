@@ -110,7 +110,12 @@ function seedActivities(text: string): ActivityEntry[] {
     .map((l) => l.replace(/^\s*[-•*·]\s*/, "").trim())
     .filter(Boolean)
     .slice(0, 12)
-    .map((title) => ({ title, detail: "", hours: null, years: null }));
+    .map((title, i) => ({
+      // Seeded rows need identity too — they are immediately editable and
+      // removable, and without an id they fall back to the positional key.
+      id: `seed-${i}-${title.slice(0, 12).replace(/\W+/g, "")}`,
+      title, detail: "", hours: null, years: null,
+    }));
 }
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -722,7 +727,14 @@ function StepActivities({
   const update = (i: number, patch: Partial<ActivityEntry>) =>
     write(activities.map((a, j) => (j === i ? { ...a, ...patch } : a)));
 
-  const blank = (): ActivityEntry => ({ title: "", detail: "", hours: null, years: null });
+  /** Identity for a new row. crypto.randomUUID is not in every browser this
+   *  ships to, so fall back rather than throw. */
+  const newId = (): string =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `a${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+
+  const blank = (): ActivityEntry => ({ id: newId(), title: "", detail: "", hours: null, years: null });
   // Adding a row while a pasted block is still the only record would leave
   // that block orphaned, so the block becomes rows first and the new one goes
   // on the end. Nothing the student wrote is dropped.
@@ -770,7 +782,10 @@ function StepActivities({
 
       <div className="ff-acts">
         {activities.map((a, i) => (
-          <div className="ff-act" key={i} style={{ "--i": i } as CSSProperties}>
+          // Keyed on identity, not position. With key={i}, deleting a middle
+          // row makes React reuse the removed row's DOM node for the row that
+          // shifts up, so one activity's typed text appears on another's row.
+          <div className="ff-act" key={a.id ?? `legacy-${i}`} style={{ "--i": i } as CSSProperties}>
             <div className="ff-act-top">
               <span className="ff-act-n num">{String(i + 1).padStart(2, "0")}</span>
               <div className="ff-f ff-act-title">

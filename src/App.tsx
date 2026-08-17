@@ -13,6 +13,7 @@ import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
 import Portal from "./components/Portal";
 import FileFlow from "./components/FileFlow";
+import AppShell from "./components/AppShell";
 import Account from "./components/Account";
 import Review from "./components/Review";
 import CollegePage from "./components/CollegePage";
@@ -262,6 +263,87 @@ export default function App() {
     nav("");
   }
 
+  /* Routes that belong to the signed-in product rather than the marketing
+     site. Inside the shell these render WITHOUT their own <main>, because
+     AppShell owns that landmark and nesting it is invalid.
+     `auth` is deliberately absent: the sidebar would advertise a signed-in
+     product to someone who is not signed in yet. */
+  const SHELL_ROUTES = new Set(["portal", "file", "results", "review", "account", "intake"]);
+  const inShell = session !== null && SHELL_ROUTES.has(view.kind);
+
+  const page = (
+    <>
+      {view.kind === "landing" && <Landing onStart={() => nav("check")} onOpenSchool={openSchool} />}
+      {view.kind === "intake" && (
+        <Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} />
+      )}
+      {view.kind === "results" && (
+        session ? (
+          <Results profile={profile} onRevise={() => nav("check")} onOpenSchool={openSchool} />
+        ) : (
+          <ResultsGate
+            profile={profile}
+            onSignup={() => {
+              try { sessionStorage.setItem(NEXT_KEY, "results"); } catch { /* ok */ }
+              nav("login");
+            }}
+          />
+        )
+      )}
+      {view.kind === "pricing" && <Pricing onStart={() => nav("check")} />}
+      {view.kind === "account" && (
+        session
+          ? <Account session={session} onLogout={logout} />
+          : <Auth
+              onDone={(s) => {
+                try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ok */ }
+                setRecovery(false); setSession(s); setSessionState(s); nav("account");
+              }}
+              recovery={recovery}
+              notice={AUTH_RETURN_ERROR}
+            />
+      )}
+      {view.kind === "auth" && (
+        <Auth
+          onDone={(s) => { setRecovery(false); handleAuth(s); }}
+          recovery={recovery}
+          notice={AUTH_RETURN_ERROR}
+        />
+      )}
+      {view.kind === "portal" && (
+        <Portal session={session} profile={profile} go={nav} onChange={setProfile} />
+      )}
+      {view.kind === "file" && (
+        session
+          ? <FileFlow profile={profile} onChange={setProfile} go={nav} />
+          : <Auth onDone={handleAuth} />
+      )}
+      {view.kind === "review" && <Review profile={profile} onChange={setProfile} />}
+      {view.kind === "browse" && <SchoolsIndex go={nav} />}
+      {view.kind === "college" && <CollegePage idx={view.idx} go={nav} />}
+      {view.kind === "admin" && <Admin sub={view.sub} go={nav} />}
+      {view.kind === "school" && (
+        <SchoolPage
+          name={view.name}
+          onBack={() => nav("")}
+          onStart={() => nav("check")}
+          onOpenSchool={openSchool}
+        />
+      )}
+    </>
+  );
+
+  if (inShell) {
+    return (
+      <>
+        <div className="topbar" aria-hidden="true" />
+        <AppShell session={session} route={view.kind === "intake" ? "check" : view.kind} go={nav} onLogout={logout}>
+          {page}
+        </AppShell>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="topbar" aria-hidden="true" />
@@ -292,70 +374,7 @@ export default function App() {
         </header>
       </div>
 
-      {view.kind === "landing" && <Landing onStart={() => nav("check")} onOpenSchool={openSchool} />}
-      {view.kind === "intake" && (
-        <main><Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} /></main>
-      )}
-      {view.kind === "results" && (
-        <main>
-          {session ? (
-            <Results profile={profile} onRevise={() => nav("check")} onOpenSchool={openSchool} />
-          ) : (
-            <ResultsGate
-              profile={profile}
-              onSignup={() => {
-                try { sessionStorage.setItem(NEXT_KEY, "results"); } catch { /* ok */ }
-                nav("login");
-              }}
-            />
-          )}
-        </main>
-      )}
-      {view.kind === "pricing" && <main><Pricing onStart={() => nav("check")} /></main>}
-      {view.kind === "account" && (
-        session ? (
-          <main><Account session={session} onLogout={logout} /></main>
-        ) : (
-          // Signed out on the account URL: sign in first, then return here.
-          <main><Auth onDone={(s) => { try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ok */ } setRecovery(false); setSession(s); setSessionState(s); nav("account"); }} recovery={recovery} notice={AUTH_RETURN_ERROR} /></main>
-        )
-      )}
-
-      {view.kind === "auth" && (
-        <main>
-          <Auth
-            onDone={(s) => { setRecovery(false); handleAuth(s); }}
-            recovery={recovery}
-            notice={AUTH_RETURN_ERROR}
-          />
-        </main>
-      )}
-      {view.kind === "portal" && (
-        <main><Portal session={session} profile={profile} go={nav} onChange={setProfile} /></main>
-      )}
-      {view.kind === "file" && (
-        <main>
-          {session
-            ? <FileFlow profile={profile} onChange={setProfile} go={nav} />
-            : <Auth onDone={handleAuth} />}
-        </main>
-      )}
-      {view.kind === "review" && (
-        <main><Review profile={profile} onChange={setProfile} /></main>
-      )}
-      {view.kind === "browse" && <main><SchoolsIndex go={nav} /></main>}
-      {view.kind === "college" && <main><CollegePage idx={view.idx} go={nav} /></main>}
-      {view.kind === "admin" && <main><Admin sub={view.sub} go={nav} /></main>}
-      {view.kind === "school" && (
-        <main>
-          <SchoolPage
-            name={view.name}
-            onBack={() => nav("")}
-            onStart={() => nav("check")}
-            onOpenSchool={openSchool}
-          />
-        </main>
-      )}
+      <main>{page}</main>
     </>
   );
 }

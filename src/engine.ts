@@ -168,6 +168,16 @@ export type EcLevel = "minimal" | "campus" | "national";
 
 /** One extracurricular, as the student enters it in the file flow. */
 export interface ActivityEntry {
+  /**
+   * Stable identity for React keys and for edits.
+   *
+   * Not the array index: deleting a middle row shifts every index below it,
+   * so an index key makes React reuse the deleted row's DOM node — and its
+   * uncontrolled input state — for the row that moved up. The student sees
+   * one activity's text land on another's row. Optional so rows written
+   * before this field existed still load; the UI backfills them.
+   */
+  id?: string;
   /** What they call it — "CS tutoring center lead". */
   title: string;
   /** What they actually did, in their words. */

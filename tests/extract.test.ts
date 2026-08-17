@@ -226,3 +226,50 @@ describe("regressions the four additions must not cause", () => {
     expect(courses).toEqual([]);
   });
 });
+
+// ── Column-aligned transcripts ────────────────────────────────────────────
+// A real transcript PDF lays subject and number out in columns, so several
+// spaces sit between them. The original pattern allowed at most one and
+// returned nothing for those files — the common case, silently.
+describe("course codes on column-aligned transcripts", () => {
+  it("reads codes separated by runs of spaces", () => {
+    const r = extractProfile(
+      "MATH    1B      CALCULUS II          4.00  A\n" +
+      "CIS     22C     DATA STRUCTURES      4.50  A-\n" +
+      "PHYS   4A       MECHANICS            5.00  B+\n",
+    );
+    expect(r.courses).toEqual(expect.arrayContaining(["MATH 1B", "CIS 22C", "PHYS 4A"]));
+  });
+
+  it("normalises the separator so one course is not two entries", () => {
+    const r = extractProfile("MATH   1B  CALCULUS\nMATH 1B  CALCULUS\n");
+    expect(r.courses.filter((c) => c === "MATH 1B")).toHaveLength(1);
+  });
+
+  it("does NOT join the end of one line to the start of the next", () => {
+    // "BIOL" ends a row; "3.00" opens the next. Collapsing whitespace across
+    // the newline would invent the course "BIOL 3".
+    const r = extractProfile("INTRO TO BIOL\n3.00 units earned\n");
+    expect(r.courses).not.toContain("BIOL 3");
+  });
+
+  it("still reads a single-space code", () => {
+    const r = extractProfile("ENGL 101 COMPOSITION 3.00 A\n");
+    expect(r.courses).toContain("ENGL 101");
+  });
+});
+
+describe("course codes: summary rows are not courses", () => {
+  it("ignores transcript summary lines that look like wide-gap course codes", () => {
+    const r = extractProfile(
+      "MATH    1B      CALCULUS II      4.00  A\n" +
+      "TOTAL          16.00\n" +
+      "TERM GPA        3.61\n" +
+      "UNITS          16\n",
+    );
+    expect(r.courses).toContain("MATH 1B");
+    for (const bad of ["TOTAL 16", "TERM 3", "UNITS 16"]) {
+      expect(r.courses).not.toContain(bad);
+    }
+  });
+});

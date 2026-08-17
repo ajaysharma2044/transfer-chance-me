@@ -30,7 +30,10 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { label: "Dashboard", route: "portal" },
-  { label: "My file", route: "check" },
+  // "file" is the upload-and-feedback flow; "check" is the older standalone
+  // intake, which the flow supersedes for a signed-in user. Both routes still
+  // resolve, so the row stays lit for either.
+  { label: "My file", route: "file", family: ["check"] },
   { label: "Chances", route: "results" },
   { label: "Deep review", route: "review" },
   // A single college page is still "Schools" as far as the reader is concerned.

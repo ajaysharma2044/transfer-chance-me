@@ -440,10 +440,27 @@ export function extractProfile(raw: string): Extraction {
     found.push(`Awards: ${fields.awardsText}`);
   }
 
-  // Course codes (e.g. MATH 1B, CS 61A, ENGL-101)
+  // Course codes (e.g. MATH 1B, CS 61A, ENGL-101).
+  //
+  // Runs on `raw`, and the separator allows RUNS of spaces and tabs but never
+  // a newline. Real transcripts are column-aligned, so the subject and the
+  // number are usually separated by several spaces — the old `[- ]?` matched
+  // at most one and returned nothing at all for those files, which is most of
+  // them. Matching on the whitespace-collapsed `text` instead would fix the
+  // spacing but introduce a worse bug: it joins the end of one line to the
+  // start of the next, so a row ending "BIOL" above a row starting "3.00"
+  // becomes the course "BIOL 3". Staying on `raw` with a newline-free
+  // separator keeps every match inside one line.
+  // Column gaps in real transcripts run wide, so the separator is generous.
+  // That generosity is what makes the denylist necessary: at eight spaces,
+  // a summary row like "TOTAL          16.00" would otherwise be read as the
+  // course "TOTAL 16", and "TERM GPA   3.61" as "TERM 3".
+  const NOT_A_SUBJECT =
+    /^(SAT|ACT|GPA|PDF|TOTAL|TERM|UNITS?|CREDS?|CREDIT|EARNED|ATTEMP|GRADE|CUM|SEM|QTR|YEAR|FALL|WNTR|WINTER|SPRNG|SPRING|SUMR|SUMMER|PAGE|ID|SSN|DOB|GPA)\b/;
   const courses = [...new Set(
-    (raw.match(/\b[A-Z]{2,5}[- ]?\d{1,3}[A-Z]{0,2}\b/g) ?? [])
-      .filter((c) => !/^(SAT|ACT|GPA|PDF)/.test(c)),
+    (raw.match(/\b[A-Z]{2,5}[-\t ]{0,8}\d{1,3}[A-Z]{0,2}\b/g) ?? [])
+      .map((c) => c.replace(/[\t ]+/g, " "))
+      .filter((c) => !NOT_A_SUBJECT.test(c)),
   )].slice(0, 60);
   if (courses.length >= 4) found.push(`${courses.length} courses on transcript`);
 
