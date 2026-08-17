@@ -78,6 +78,24 @@ so a redeploy is required for them to take effect.
 
 ---
 
+## ⚠️ Turned off for development — must go back on before launch
+
+**"Confirm email" is currently DISABLED** (Authentication → Sign In / Providers →
+User Signups). It was switched off on 2026-08-16 so sign-ups would work without
+Supabase's built-in email sender, which is rate-limited to a few messages an
+hour and is not a production mailer.
+
+With it off, anyone can register using an email address they do not own — they
+can take someone else's address, and nobody ever proves they can read that
+inbox. That is acceptable with zero real users and unacceptable the moment
+students sign up.
+
+To fix properly, in this order:
+1. Settings → Auth → SMTP: connect a real sender (Resend and SendGrid are both
+   free at this volume).
+2. Authentication → Sign In / Providers → switch **Confirm email** back on.
+3. Sign up once with a real address and confirm the email actually arrives.
+
 ## Before you launch — this part is not optional
 
 The app now stores transcripts, essays, activity descriptions and GPAs.
