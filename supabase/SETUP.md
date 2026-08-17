@@ -1,5 +1,11 @@
 # Turning on real accounts
 
+> **Status:** the live project is `nikfuakdulqmumsaisnn` (org "Transfer Chance Me",
+> region West US North California). Both SQL files are applied and verified:
+> six tables, RLS enabled on all six, and an anonymous key confirmed unable to
+> read any row or grant itself a staff role. `.env.local` is written locally.
+> Outstanding: Google provider, SMTP, and the service-role key for admin routes.
+
 Fifteen minutes, all free tier. Until both env vars are set the app keeps
 using local-device accounts, so nothing breaks while you work through this.
 
