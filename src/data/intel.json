@@ -1,7 +1,447 @@
 {
-  "_meta": {
-    "source": "T25 Transfer Admissions Study (Google Drive) — school intelligence briefs",
-    "distilled": "pending",
-    "schools": 0
-  }
+ "_meta": {
+  "source": "T25 Transfer Admissions Study (Google Drive) — school intelligence briefs, distilled 2026-08-17",
+  "schools": 21
+ },
+ "Caltech": {
+  "timing": "Fall entry only; Caltech Application (not Common App) opens 1 Dec, due 1 Feb; math/physics entrance exams due 15 Feb; decisions early May; 3/2 dual-degree due 1 Apr.",
+  "paths": [
+   "3/2 Dual Degree Plan from listed liberal-arts partner colleges — separate door, 1 Apr deadline; do not mix into standard transfer scoring",
+   "Harvest: Physics 2 admits/0 rejects (one 2026 physics admit from a UC with research/award); geology and mech-eng cells are reject-only — n tiny"
+  ],
+  "pitfalls": [
+   "Missing/late math or physics Transfer Entrance Exam (due 15 Feb; 4 hrs each, no calculator/notes) — the exams, not SAT, are the required gate",
+   "Recs not from math/science/engineering college faculty (Caltech contacts them); humanities-only pair is wrong",
+   "Using Common App, applying to senior year, or second bachelor's — none allowed; dual-enrolled HS students apply first-year",
+   "Inventing a GPA floor or harvest median — no published floor, 0 named-GPA harvest admits; CDS 2024-25: 178 applied / 11 admitted / 10 enrolled"
+  ],
+  "aid": "No need-based aid for non-citizen/non-PR transfers, explicitly incl. undocumented/DACA from U.S. high schools; Intl Financial Aid Statement of Intent required. Domestic need-blind/full-need: unknown.",
+  "notes": [
+   "Residency: at least six terms and 216 Caltech units beyond core equivalents; not admitted to senior year",
+   "SAT/ACT not listed as required; whether submitted scores are even reviewed for Fall 2026/27 is unknown",
+   "Optional post-submit research/STEM/non-STEM portfolios exist but are not a substitute for the exams",
+   "English proficiency: DET 130 / IELTS 7 / TOEFL 100 unless native or English-medium secondary and university"
+  ]
+ },
+ "Carnegie Mellon": {
+  "timing": "Fall (all colleges except CFA): app 16 Feb, docs 1 Mar, notified by 17 May, enroll by 1 Jun. CFA: 1 Dec drama/music, 5 Jan arch/art/design. Spring 2026-27 unknown.",
+  "paths": [
+   "Apply to ONE college/program only; admission is space-permitting per college",
+   "CFA path uses first-year deadlines plus portfolio/audition",
+   "Harvest skews econ/business (Tepper/Dietrich), not SCS — CS almost unnamed (1 admit)"
+  ],
+  "pitfalls": [
+   "Engineering lock: external Engineering admits cannot later change department or major",
+   "BXA closed to external transfers",
+   "Course descriptions from each college required — missing them is a named gap",
+   "Do not assume spring entry from the CDS Oct 15 row; current transfer page is fall-only"
+  ],
+  "aid": "Transfer-specific need-blind/full-need is unknown on the transfer page; do not import first-year aid language.",
+  "notes": [
+   "CDS 2025-26 (D2 labeled Fall 2024): 1,610 applied / 136 admitted / 62 enrolled (8.45%); don't mix with older 5.57% figure",
+   "SAT/ACT not required for transfers; SAT Subject Tests will not be used",
+   "Needs one completed college semester before deadline; housing not guaranteed; English proficiency if non-native",
+   "Rec is professor or advisor (in place of counselor), not an in-field must; interview not mentioned"
+  ]
+ },
+ "Chicago": {
+  "timing": "Autumn entry only. TED (binding) due Mar 15, 2027, decision late March, reply late April; TR priority Mar 1, closes Jun 1, rolling decisions from early May.",
+  "paths": [
+   "Two plans: TED (binding, agreement upload) vs Transfer Rolling (non-binding; priority date encouraged not required); TR->TED switch by 2nd Friday of March",
+   "Common App or Coalition (Scoir) + UChicago Supplement",
+   "Harvest majors: economics (9), CS (6); 4-year senders (Berkeley, UCLA, Amherst, Tufts...); CC path near-zero (2 of 147)",
+   "Optional video profile and art/creative/research supplements are official slots if artifact already exists"
+  ],
+  "pitfalls": [
+   "Skipping aid application at time of admission = never eligible for aid later",
+   "Credit fit: 6 quarters residency, complete the Core, >half of major at UChicago; Hum/Civ/SocSci Core credit does NOT transfer",
+   "TED is binding — not a free boost; eligibility requires >=1 full-time term in a bachelor's program, no second bachelor's",
+   "No official transfer rate on file (CDS D2 absent) — do not cite one; harvest p50 college GPA ~3.99, research is the EC that shows"
+  ],
+  "aid": "100% demonstrated need, loan-free, only if aid filed at admission. Intl transfers ineligible for need aid AND merit; must document full financing. Domestic need-blind status unknown.",
+  "notes": [
+   "Tests optional with No Harm policy explicitly covering transfers; negative scores not considered; superscored; Feb ACT/Mar SAT window",
+   "Required: two college-instructor evals (first-years may use one recent HS teacher), College Transfer Report, Mid-Term Report if enrolled, final HS transcript",
+   "Two required essays: why leaving/why UChicago + extended prompt",
+   "Transfer aid deadlines conflict across pages: TED Mar 1 (transfer page) vs Mar 15 (financial overview); TR Apr 1"
+  ]
+ },
+ "Dartmouth": {
+  "timing": "Own Transfer Application (not Common App); fall entry only, no spring. 1 Mar deadline (app + aid); Feb last test date; decisions early-to-mid May; late May reply.",
+  "paths": [],
+  "pitfalls": [
+   "Tests REQUIRED; missing scores without published waiver (never tested / >5 yrs old / hardship) = fail",
+   "Eligibility: matriculated with two years or fewer of college coursework; no bachelor's holders; dual-enrollment-for-diploma = first-year",
+   "No transfer interviews at all — do not invent an interview/demonstrated-interest strategy",
+   "Do not mix CDS cycles: 2025-26 was 689 applied/68 admitted/40 enrolled; 2024-25 was 932/62 (6.65%)"
+  ],
+  "aid": "Transfer CSS/FAFSA/IDOC due 1 Mar. Intl transfer aid page exists (may file CSS) — not a no-aid school. Need-blind vs need-aware and full-need for transfers: unknown.",
+  "notes": [
+   "Single undergraduate college; transfer review college-level only; no published major-prep or closed-major list",
+   "File weighs: strong academics, successful transition, contribution to life of the College; two college instructor evaluations required",
+   "Syllabi strongly recommended at apply, required if admitted (for credit, not admission); credit max 17 courses in, min 18 at Dartmouth, lowest grade C",
+   "HS transcript required via final Secondary School Report; HS is mention-only unless college record is short; harvest too thin (n=19 named GPAs) to band or chance a major"
+  ]
+ },
+ "Duke": {
+  "timing": "Fall entry only, deadline 15 Mar; no spring program. Glimpse by 22 Mar; arts supplement 1 Feb–15 Mar. Test-optional 2026–27.",
+  "paths": [
+   "School-level door: Trinity College of Arts & Sciences or Pratt School of Engineering",
+   "~70 transfers per fall, mostly sophomores plus a small number of juniors",
+   "Apply via Duke Transfer Application or Coalition/Scoir (both weighed equally); Common App not accepted",
+   "Pratt transfer prereqs unpublished — missing college calc/physics is a named gap, not an auto fail"
+  ],
+  "pitfalls": [
+   "Max two years of coursework elsewhere; must spend at least two years at Duke; half of major/minor/certificate in residence",
+   "Common App not accepted for transfers this cycle",
+   "3.7 GPA is 'most successful' guidance, not a published floor; admitted 2023–24 avg 3.90, mid-50% 3.85–4.0",
+   "Part-time, vocational/technical/performance prior programs, or existing bachelor's = ineligible; alumni interviews cannot be requested"
+  ],
+  "aid": "Need-blind for US/PR/undocumented/DACA transfers, meets 100% of need. No need-based aid for international transfers; no merit scholarships for transfers.",
+  "notes": [
+   "Rates by cycle (do not blend): CDS Fall 2025 1,812/157/92 (~8.7% computed); apply page 2023–24 2,620/77/48 = 3%; 5-yr range 3–7%",
+   "Two instructor evaluations, at least one college; essays: 650-word why-transfer + 250-word up-to-three-pathways (majors/minors/certificates)",
+   "Eligibility: one full year of transferable work by August of enrollment; college attendance within past four years; dual-enrollment associate's = first-year door",
+   "Harvest: admit GPA cloud n=51, p25/p50/p75 3.915/3.967/4.00; nobody under 3.7 in dated slice; recent admits skew CS/econ from 4-years with research/internships"
+  ]
+ },
+ "Emory": {
+  "timing": "Posted table is Fall 2026: app Mar 15, aid Mar 18, notify early May, deposit Jun 1. Fall 2027 dates not posted; spring not listed. Test-optional through Fall 2027.",
+  "paths": [
+   "Default door is Emory College: no required courses to apply as transfer",
+   "Goizueta Business: small external cohort, prefer sophomore-fall entry; junior start only if not previously studying business",
+   "Nursing: apply directly to School of Nursing only if BSN prereqs done by start; otherwise Emory College"
+  ],
+  "pitfalls": [
+   "28-hour minimum excludes AP/IB/dual-enrollment credits",
+   "Goizueta with heavy other-college business transcript: officially 'not good transfer candidates'",
+   "Aid application must be filed with admission app; late aid applications not considered",
+   "Max 62 hours transferable; must complete two years / four semesters at Emory"
+  ],
+  "aid": "No merit for transfers; no need-based aid for international transfers. Need-blind vs need-aware unknown. Aid must be filed with the application. $200k tuition banner not transfer-specific.",
+  "notes": [
+   "Official rates 2024-25: 2,445 applied / 396 admitted = 16.20% transfer admit rate",
+   "GPA floor 3.0 cumulative; most admits 3.5+ (typical, not a floor). One faculty Academic Evaluation; no interviews",
+   "Harvest named-GPA admits n=109: p25/p50/p75 = 3.80/3.92/4.00; logistic unusable (rejects GPA 3.891 vs admits 3.866)",
+   "Recent admit pile: 4-year students in econ (15), business/finance (9), CS (7), neuroscience (5); not a CC TAP destination"
+  ]
+ },
+ "Georgetown": {
+  "timing": "App+supplement+aid due Mar 1; decisions by Jun 1, reply Jun 15; app opens mid-Oct. Spring option usually rising sophomores only (4-semester residency).",
+  "paths": [
+   "Apply direct to one of six schools + a major; Georgetown Application only (not Common App)",
+   "Harvest doors: McDonough/MSB, economics, political science/government, SFS; 4-year-heavy (CC rare)",
+   "CALL optional path for some CAS humanities/soc-sci majors (first semester Capitol Campus); does not hurt traditional path",
+   "Repeat senders: UCLA (5), WashU, UMD, NYU, Rutgers, American, Indiana; only repeat CCs: Montgomery College, LaGuardia"
+  ],
+  "pitfalls": [
+   "Closed majors = hard fail: American Studies; Business and Global Affairs; Intl Business, Language, and Culture",
+   "SAT/ACT required if HS grad within 5 yrs of matriculation; missing = fail. ACT Science recommended for science majors",
+   "Professor's Report must be a college professor, ideally in proposed field; HS-teacher rec is a named gap; SSR/HS transcript required (HS is scored)",
+   "CDS 3.0 GPA is a floor, not competitive — harvest p25/p50/p75 = 3.81/3.94/4.00; CCC path is not a UC-style advantage"
+  ],
+  "aid": "Need-based only; meets 100% need for US citizens/PRs (FAFSA+CSS). Intl transfer applicants NOT eligible for aid. Need-blind vs aware for transfers unknown.",
+  "notes": [
+   "CDS 2025-26: 2,878 applied / 319 admitted = 11.1% transfer admit rate",
+   "Most first-year-like transfer file: full Secondary School Report (HS transcript + counselor rec + profile) requested of all",
+   "Alumni interview evaluative if assigned and required to complete; no penalty if not assigned",
+   "Public Policy (AB) and Environment & Sustainability (BS): Capitol Campus residency + expected significant portion of Georgetown core done"
+  ]
+ },
+ "Johns Hopkins": {
+  "timing": "Fall only; Common App for Transfer. App 1 Mar 2027, aid 15 Mar, decision 14 May, reply 1 Jun 2027. No spring entry.",
+  "paths": [
+   "Homewood transfer door (sophomore/junior class); Peabody-to-Homewood is a separate internal path, not this door"
+  ],
+  "pitfalls": [
+   "<=12 semester credits after HS or dual-enrollment/early college = first-year applicant, not transfer",
+   "International expecting aid — none exists (citizenship controls, not US college attendance)",
+   "Expecting merit aid — official no; need-based only",
+   "Do not place a GPA band or fit a model: named-GPA admit n=29 (<30); 2018-22 harvest only 4 admits"
+  ],
+  "aid": "Meets 100% demonstrated need for all domestic transfers; need-based scholarships only, no merit, no loans. No aid for international transfers. Need-blind vs aware: unknown.",
+  "notes": [
+   "Official rates 2024-25: 2,370 applied / 125 admitted (5.27%); 2025-26 CDS not found",
+   "Policy 3.0 GPA floor per scoring thresholds; confirm on live FAQ. Named-admit GPA p25/p50/p75 = 3.90/3.97/4.00",
+   "SAT/ACT not required for transfers; materials: essay, $70/waiver, HS+college transcripts, College Officials Report, one instructor rec",
+   "College-level review only — no published major-prep list, closed-major list, or department review; harvest majors: econ, CS, premed lead; research is the EC that travels (16/23 with text)"
+  ]
+ },
+ "MIT": {
+  "timing": "Own portal (not Common App). Spring 2027 (US/PR only) due 15 Oct 2026; Fall due 1 Mar 2027 (CDS D9 says Mar 15 — report both). Aid docs by 15 Feb.",
+  "paths": [
+   "Institute-level admission: one app for all majors, no named closed-major list",
+   "Spring (February) entry exists but only for US citizens/permanent residents",
+   "Credit evaluated by departments AFTER admission — no pre-eval gates"
+  ],
+  "pitfalls": [
+   "SAT/ACT required (by 31 Oct spring / 31 Mar fall); missing = hard fail",
+   "Core prep gap: SV calc, MV calc, calc-based physics, intro bio, intro chem required for all majors",
+   "Must have 2-5 terms full-time at entry; one application per entry year (no spring+fall same year)",
+   "One of two academic recs must be math/science; no math/science rec is an official flag"
+  ],
+  "aid": "Need-blind including transfers (catalog); meets full need; same aid deadlines for domestic and international; CSS Profile/IDOC (+FAFSA domestic) by 15 Feb.",
+  "notes": [
+   "CDS Fall 2025: 1,713 applied / 35 admitted / 31 enrolled; interview Not Required; lowest transferable grade B",
+   "GPA language: typically 3.5+ with mostly As in math/science — competitive language, not a published minimum",
+   "Must complete >=3 semesters at MIT; most transfers enter as sophomores",
+   "Harvest too thin (n=4 named-GPA admits): CS is 1 admit / 11 rejects — no MIT 'type' or band"
+  ]
+ },
+ "Michigan": {
+  "timing": "LSA/Eng Common App: Winter 1 Oct; Fall 1 Feb. Ross BBA separate app opens late Dec, due 31 Mar; transfer supplement 1 Jun; decisions late June",
+  "paths": [
+   "OUA reviews LSA and Engineering only; other schools (Stamps, Taubman, Nursing) have own processes/deadlines",
+   "Ross external BBA: ~25 seats, preference for Michigan-resident community-college students (confirm ~25 on live page)",
+   "Junior standing (~55 transferable credit hours) given priority; HS work gets 'less of an emphasis'",
+   "Largest official transfer class in T25 set: 6,845 applied / 2,394 admitted (~35%) per official_rates matching thresholds"
+  ],
+  "pitfalls": [
+   "Ross needs exact equivalents of MATH 115+ calc, ECON 101, Sweetland-approved writing, each C- or better, all graded by 1 Jun",
+   "Engineering prereqs need direct-equivalent credit at C or better — departmental credit does not satisfy",
+   "4.0 at CC does not erase HS record (official myth/fact page); final official HS transcript or GED required; non-junior files still score HS",
+   "Only HS-era SAT/ACT accepted (test-optional); college-era tests rejected"
+  ],
+  "aid": "FAFSA + CSS Profile by 1 Mar (suggested filing 15 Dec); in-state vs OOS tuition differs; need-blind/full-need for transfers unknown",
+  "notes": [
+   "Eng prereq set: MATH 115, 116, PHYSICS 140+141, CHEM 130+125+126, EECS 183 or ENGR 101, ENGL 125; 3.0+ typical, not a hard floor",
+   "Harvest band 2023-26 n=69 (only dest with non-mixed-year band): p25/p50/p75 = 3.732/3.90/4.00",
+   "Logistic unusable/flipped: GPA coef -1.052; mean reject GPA 3.891 > mean admit 3.835 — do not use slope",
+   "Recent harvest skews CS (31) and econ (25); Ross nearly absent (1 recent); recs/midyear not required unless requested"
+  ]
+ },
+ "NYU": {
+  "timing": "Spring: Oct 15 (decisions Nov-Jan); summer/fall external: Mar 15 (May-Jun); artistic programs ~1 month earlier; FAFSA Mar 22 fall / Oct 22 spring.",
+  "paths": [
+   "Steinhardt: SAT/ACT not required with >=1 yr liberal-arts coursework; CCTOP is a named Steinhardt CC scholarship exception",
+   "Harvest: wider GPA floor than Ivies in file (29 of 101 named GPAs under 3.7); admit GPA p25/p50/p75 = 3.607/3.815/3.93 (n=64)",
+   "Recent named majors cluster in economics (9), CS (3), Stern (2); mixed CC and 4-year paths, no dominant feeder campus"
+  ],
+  "pitfalls": [
+   "Stern: fall only, external seats 'extremely competitive', mostly internal NYU; soph entry needs Calc I + Writing; junior adds micro, regression, fin acct; no seniors",
+   "NYU Abu Dhabi and Shanghai do not accept transfers; NYC campus only",
+   "Tisch/artistic on regular Mar 15 clock instead of ~1 month earlier (Film & TV: no spring, SlideRoom, recommend Mar 1)",
+   "Assuming first-year test-optional applies; university-wide transfer test rule unpublished (Meyers nursing: scores if <32 credits)"
+  ],
+  "aid": "Official: 'Transfer students are not eligible for NYU scholarships and grants' (FAFSA fed/state aid only; CSS not used; need-blind status unknown; CCTOP exception).",
+  "notes": [
+   "HS is scored: official line is college AND HS grades, college first; no credit cutoff removes HS; no published cutoff where HS recedes",
+   "CDS D2 transfer rate unknown (2025-26 PDF not fetched) — do not invent a rate",
+   "Most competitive applicants have >=1 full-time year by enrollment (competitive language, not a hard floor)",
+   "GPA-only ranking (rejects n=7<10), not calibrated; usable for rank/band only"
+  ]
+ },
+ "Northwestern": {
+  "timing": "Fall quarter entry only. Transfer ED (binding) due 1 Mar 2027, decision early April; RD due 1 Apr 2027, decision mid-late May; Bienen priority 15 Jan 2027. No deferrals.",
+  "paths": [
+   "May apply to all departments; no published required-course/major-prep list ('no specific required courses').",
+   "Harvest is 4-year-college heavy: recent admits zero from CC; repeat senders UIUC (3), BC, BU, Carleton, NYU (2 each). CC path is no UC-style boost.",
+   "ED Transfer exists and is binding; aid offer officially identical ED vs RD."
+  ],
+  "pitfalls": [
+   "Transfer review explicitly incorporates financial need — treat as need-aware; ignoring this on a domestic aid file is a flag.",
+   "Theatre spaces 'limited and only occasionally available'; Bienen requires supplement + audition by 15 Jan priority — missing extras is a fail.",
+   "Don't mix FAQ 'under 15% admitted' with CDS 11.97% — separate figures.",
+   "B average is 'typical', not a floor; <24 credits (CDS D4 min) is a standing risk, not a silent pass."
+  ],
+  "aid": "Need-aware for transfers (need is a published review element); aid 'dependent upon availability of funds'; no aid for international transfer applicants; FAFSA + CSS Profile due with app.",
+  "notes": [
+   "CDS 2024–25: 4,045 applied / 484 admitted / 277 enrolled = 11.97% transfer admit rate.",
+   "HS counselor rec/SSR not required; HS transcript with proof of graduation is; SAT/ACT not required; one academic evaluation + College Report + $75.",
+   "Typical entrant has ≥1 year full-time (24 sem/36 qtr hrs), good standing, liberal-arts/sciences breadth with B average.",
+   "Recent admit texture: GPA p25/50/75 = 3.81/3.935/4.00; majors CS and econ; ECs internships/research; residency requires ~6 quarters at NU."
+  ]
+ },
+ "Notre Dame": {
+  "timing": "Spring 2027: apply by 1 Oct 2026 (decisions 1 Dec–5 Jan). Fall 2027: 15 Mar 2027, no earlier than 15 Jan (decisions 20 May–14 Jun). Test-optional through 2026–27.",
+  "paths": [
+   "Apply to a specific college + major; space in desired major is an official decision factor",
+   "Alternate major allowed — official safety valve for limited-seat majors",
+   "Transfer hub links: Arts and Letters, Keough Global Affairs, Mendoza Business",
+   "Bigger official class than Ivies: CDS Fall 2025 1,541 applied / 262 admitted = 17.0%"
+  ],
+  "pitfalls": [
+   "Limited-seat majors (Neuroscience, MAE, CS, Business Analytics, Finance) with no alternate; major change after admit needs dean permission",
+   "Uses its own Notre Dame Transfer Application — Common App is the wrong door",
+   "Syllabi required for every college course, PDF named exactly as course number (e.g. MA 121.pdf); wrong name = file stays Awaiting",
+   "<24 post-HS semester hours or dual-enrollment counted toward the 24 = wrong door; below 3.0 (CDS D7) = hard fail"
+  ],
+  "aid": "No merit scholarships for transfers. FAFSA + CSS Profile. Need-blind vs need-aware and full-need for transfers: unknown.",
+  "notes": [
+   "Min B average (3.0); recent admitted average GPA 3.75+; required college courses at B or higher",
+   "Mid-term grade report from each current instructor required; recs optional but encouraged; no interviews (optional Glimpse/InitialView)",
+   "Prep advice: align with Core (11 Ways of Knowing) — writing-intensive + quantitative reasoning + science/tech; most competitive load 15–18 credits/term",
+   "Harvest: admit GPA cloud n=33, p25/p50/p75 3.86/3.93/4.00; almost all 4-year senders (Clemson, IU, McGill, Syracuse x2 each); CC path nearly absent"
+  ]
+ },
+ "Princeton": {
+  "timing": "Fall entry only, no spring. Mar 1 app + graded paper; Mar 9 arts supplement + PFAA/FAFSA; SAT by March/ACT by Feb if submitting; mid-May decisions.",
+  "paths": [
+   "Program 'especially encourages' lower-income, community-college, and US military veteran applicants (official encouragement, not a seat quota)",
+   "Need-blind for ALL including internationals; college-level admission only, no closed-major list or published major-prep gates"
+  ],
+  "pitfalls": [
+   "Missing graded written paper (prefer English/history, last 2-3 yrs) is a materials fail; 2 academic recs with >=1 college instructor required",
+   "Test-optional fall 2026-2027 only; testing REQUIRED again fall 2028",
+   "Needs >=1 year full-time transferable credit by spring prior to enrollment; Transfer Mid-Term Report required if currently enrolled",
+   "Treating the CC/veteran encouragement as a seat guarantee, or mixing veteran-heavy harvest into a traditional chance read"
+  ],
+  "aid": "Need-blind for all applicants incl. international; meets 100% demonstrated need with grants, no loans, no merit; PFAA/FAFSA due Mar 9.",
+  "notes": [
+   "CDS 2024-25: 1,985 applied / 38 admitted / 36 enrolled (fall 2024); newer D2 unavailable — no band or personal percent",
+   "Holistic: 'No particular factor is assigned a fixed weight'; no published GPA floor (CDS D12 C = lowest transferable grade, not a floor)",
+   "Credit limits: lowest transferable grade C; max 17 courses from 2-year colleges (CDS D12/D13)",
+   "Harvest too thin to chance: only 10 named admit GPAs (p50 3.88); veterans/returning adults dominate raw posts and are held out"
+  ]
+ },
+ "Rice": {
+  "timing": "Fall: Mar 15, rolling decisions in June; Spring: Oct 15, decisions by Dec 1. Shepherd Music fall-only, prelim Dec 1. Testing table still headed 2025-26.",
+  "paths": [
+   "No named closed majors on transfer page; only extras are Architecture (portfolio required) and Shepherd School of Music (fall-only)",
+   "CDS D13/D14: no limit on credits transferred in from 2-yr or 4-yr schools"
+  ],
+  "pitfalls": [
+   "Below 12 semester hours after HS or below 3.2 recent-college GPA (CDS D7 floor)",
+   "Must complete 4 semesters / 60 hours at Rice; lowest transferable grade C-",
+   "Shepherd as a spring start (fall only); Architecture without portfolio",
+   "Transfers not eligible for merit aid; don't mix old 6.92% figure with CDS 2025-26 7.46%"
+  ],
+  "aid": "Need-blind for domestic transfers; meets 100% need without loans (Rice Investment). No merit for transfers. No aid or merit for international transfers.",
+  "notes": [
+   "CDS 2025-26 D2: 1,675 applied / 125 admitted / 74 enrolled = 7.46% transfer admit rate",
+   "Requires two college instructor recs; tests recommended not required (superscore)",
+   "Harvest named-GPA admits n=29 (<30, no band): p25/p50/p75 = 3.75/3.92/4.00; median 4.0 recent",
+   "Recent admits skew CS/engineering from 4-year schools with research; older pile was business/finance"
+  ]
+ },
+ "UC Berkeley": {
+  "timing": "Fall only, UC App 1 Oct-30 Nov; TAU priority + Berkeley portal forms 31 Jan; FAFSA/CADAA 2 Mar; decisions end of April; SIR 1 Jun",
+  "paths": [
+   "CA community college applicants have official priority over other transfers; 4-year-path harvest n=17",
+   "Haas Spieker BBA is transfer-eligible via separate supplemental app due 31 Jan (not an L&S later-declare)",
+   "L&S/CDSS floor 3.0; Engineering floor 3.5 by end of fall of application",
+   "Chemistry is the only college accepting a second bachelor's (Chem/Chem Bio only)"
+  ],
+  "pitfalls": [
+   "No TAG at Berkeley (also UCLA, UCSD); treating TAP as TAG is an error",
+   "Fall 2027+: L&S admits directly to selected major — no later internal declare; Engineering cannot change major after admission (5 semesters to graduate)",
+   "Engineering: missing any required ASSIST core course or failing the January major-prerequisite form = ineligible",
+   "4-year unit cap can make applicant ineligible: 80 sem/120 qtr most colleges; 89/133.5 Engineering"
+  ],
+  "aid": "FAFSA/CADAA 2 Mar; in-state vs OOS tuition differs; need-blind/full-need status unknown on Berkeley transfer pages",
+  "notes": [
+   "60 sem / 90 qtr UC-transferable units by end of spring; 7-course pattern required; IGETC not required for L&S/CDSS admission, not recommended for Engineering",
+   "Recs not part of published file; SAT/ACT not used; HS record ignore_score on junior file",
+   "Harvest named-GPA admits n=355: p25/p50/p75 = 3.70/3.85/3.94; logistic usable, GPA coef +0.387, not calibrated (no CDS D2)",
+   "Haas prereqs: UGBA 10, two semesters calculus, intro econ, statistics (or Data 8 + connector), R1A+R1B; credit must be <=5 years old"
+  ]
+ },
+ "UCLA": {
+  "timing": "UC app 1 Oct–30 Nov for fall 2027 (fall quarter only, no spring); TAU by 31 Jan required for review; decisions late April; SIR 1 Jun; aid priority 2 Mar.",
+  "paths": [
+   "CA CC path dominates: 92.3% of Fall 2025 transfer admits from CA community colleges; junior-level only (60 sem/90 qtr units, window 60–86/90–129).",
+   "TAP (honors at member CCCs) gives priority consideration + only route to an alternate major — but not a guarantee, and no TAG at UCLA.",
+   "Less-selective L&S majors have far better published rates: English 51%, Sociology 42%, Political Science 41% vs CS 4%, Bus Econ 11%, Film/TV 2%.",
+   "IGETC strongly recommended for all schools except Samueli Engineering (IGETC not required; partial IGETC not accepted)."
+  ],
+  "pitfalls": [
+   "Cannot apply undeclared; Bus Econ, Econ, Cognitive Science, Life Sciences, Psychology and all Samueli majors can't be switched into after admission.",
+   "Non-TAP applicants are not reviewed for an alternate major; TAP alternates barred in Samueli, Arts & Architecture, Music, Nursing, TFT.",
+   "Top bus-econ/econ/psych applicants finish ALL major prep by end of fall before transfer; spring-only completion is a named gap.",
+   "Specialty schools (Arts & Arch, Music, Nursing, TFT) need UC app by 1 Dec + school supplement; missing supplement is a fail."
+  ],
+  "aid": "FAFSA/CADAA priority 2 Mar; international students ineligible for university, state, or federal aid; need-blind vs need-aware unknown.",
+  "notes": [
+   "GPA floors: 3.2 transferable overall, 3.4 Samueli Engineering; admitted average typically above 3.5. CDS D2 Fall 2025: 6,665/28,487 = 23.40% admit.",
+   "No recs, no official transcripts, no interview during selection; test-free (SAT/ACT not used at all); PIQs: 1 required major-prep PIQ + 3 of 7.",
+   "Review 'based largely on preparation for the major selected and GPAs in completed preparatory courses'; 7-course pattern + major prep by spring.",
+   "Personal criteria named by UCLA: employment while in school, family responsibilities, military service, return after weak early college grades."
+  ]
+ },
+ "USC": {
+  "timing": "Fall entry only (no spring on transfer page; Viterbi fall-only). Arts BFA/dance/music deadline 1 Dec 2026; all other majors 15 Feb 2027; decisions late May or mid-July; aid FAFSA/CADAA+CSS 2 Mar 2027.",
+  "paths": [
+   "Sophomore/junior transfers; first-choice major required (Undecided/Exploratory allowed)",
+   "Marshall/Leventhal: MATH 118 or 125 REQUIRED for admission by end of spring; accounting enters via Business Admin then Leventhal",
+   "Viterbi: Calc II (MATH 126) in progress at application + lab science or programming; AP/IB alone insufficient",
+   "Harvest senders: Pasadena City College 20, Santa Monica College 20 admits; recent posts mostly Marshall/econ from CC or 4-year"
+  ],
+  "pitfalls": [
+   "<30 transferable units: decision 'in large part' on HS record and/or tests — HS gets scored",
+   "Marshall without MATH 118/125 = hard fail; upper-division business from elsewhere = elective credit only; Pathways is invitation-only",
+   "Do not count on spring start from CDS checkbox; SCA Production B.A. needs 48 units",
+   "TAP is not a USC signal; logistic GPA slope flipped/unusable (reject mean 3.899 > admit mean 3.835)"
+  ],
+  "aid": "Need-based via FAFSA/CADAA + CSS due 2 Mar 2027; Cal Grants for CA residents; need-blind/full-need status for transfers unknown; veterans fee waiver.",
+  "notes": [
+   "CDS Fall 2025: 10,827 applied / 2,929 admitted / 1,544 enrolled = 27.05% admit share",
+   "Harvest admit GPA p25/50/75 = 3.75/3.88/3.98 (n=260, mixed-year); recent named-GPA median 3.93",
+   "≥30 units: weak HS can be 'repositioned' by two years of solid college work; recs only if major requests them; Viterbi wants no College/Mid-term Report",
+   "64 units residency required (Engineering 3+2 = 48; Architecture 80); tests optional 2027-28"
+  ]
+ },
+ "Vanderbilt": {
+  "timing": "Fall 2027: priority 15 Feb 2027, rolling, apps typically stop 1 May; aid FAFSA/CSS 1 Feb 2027; decisions from late April, rolling. No spring entry, no deferral.",
+  "paths": [
+   "Apply to one of five schools: A&S, Engineering, Peabody, College of Connected Computing, Blair Music",
+   "Peabody and Blair admit to MAJOR; major fit/space 'factor heavily' at Peabody",
+   "Engineering admits school-level, expects physics, calculus, chemistry done or in progress",
+   "Harvest cloud skews 4-year econ/poli-sci senders (WashU 3, TCU 2 repeat admits); CC path thin (n=7)"
+  ],
+  "pitfalls": [
+   "Demonstrated interest officially NOT considered for transfer; no visit/AO-contact campaign",
+   "Intl applicants requesting aid or with demonstrated need: application WITHDRAWN",
+   "HS transcript required regardless of years since graduation; HS is scored, downward HS-to-college trend costs a band",
+   "Blair needs extra app/prescreen; second bachelor's ineligible for A&S/Peabody; <12 post-HS credits = first-year door"
+  ],
+  "aid": "Meets 100% demonstrated need incl. transfers; need-blind for US/eligible non-citizens; need-aware from waitlist; no transfer merit; no intl need aid (aid request = withdrawn).",
+  "notes": [
+   "CDS Fall 2025: 3,177 applied / 831 admitted / 446 enrolled = 26.16%; ~450 transfers per fall",
+   "Typical admit GPA 'B+/A- or higher' (not a floor); harvest admit GPA p25/50/75 = 3.77/3.89/4.00 (n=101, mixed-year)",
+   "Needs 12+ semester hours post-HS (dual-enrollment for diploma excluded); must do 4 semesters/60 hours at Vanderbilt",
+   "Two academic recs, at least one college instructor strongly preferred; no interviews; test-optional fall 2027-28, required fall 2029"
+  ]
+ },
+ "WashU": {
+  "timing": "Common App. Fall: app 2 Mar (transfer page) vs 1 Mar (how-to-apply table) — note both; decisions by 8 May, reply 21 May. Spring: app 15 Oct, decisions 14-20 Nov.",
+  "paths": [
+   "Spring 2027 entry is College of Arts & Sciences ONLY (intl must already be at a US university; 1+ semester done)",
+   "McKelvey Engineering: no max transfer credits in (others cap at 60 in); min 60 at WashU incl 30 junior/senior",
+   "Sam Fox Art/Architecture: SlideRoom portfolio of 12-15 pieces required"
+  ],
+  "pitfalls": [
+   "One-school lock at admission (Arch/Art/A&S/Olin/McKelvey); later cross-school transfer internal and 'not guaranteed'",
+   "Olin: Calc I & II required and Calc II CANNOT be taken the summer before enrollment",
+   "McKelvey: needs English composition, two semesters calc-based physics, Calc I-III (CS may sub 8 units approved natural science for physics)",
+   "Spring applicants outside A&S, or Art/Arch without the 12-15 piece portfolio = official miss"
+  ],
+  "aid": "International transfer applicants NOT eligible for WashU aid (FLAG). Domestic: 100% demonstrated-need language on transfer page; need-blind vs need-aware for transfers unknown.",
+  "notes": [
+   "Typical successful applicant: ~3.5+ GPA and a first-year composition course (published typical language, not a floor)",
+   "Test optional; self-report on Common App; interview not required, optional video/writing supplement",
+   "Credit: Arch/Art/A&S/Business max 60 in + final 60 / 4 consecutive FT semesters at WashU",
+   "No official CDS transfer rate in file; harvest n=21 named-GPA admits (0 from 2023-26) — too thin to band"
+  ]
+ },
+ "Yale": {
+  "timing": "Fall entry only; Transfer Common App (late Nov) due 1 Mar; aid docs + testing 1 Apr; Mid-Term Report 20 Apr; decisions early May, reply late May.",
+  "paths": [
+   "Eli Whitney Students Program: nontrad door for education interrupted 5+ years — own rules, testing optional, full/part-time; scored separately",
+   "Transfer rhetoric explicitly welcomes community college, first-gen, and military applicants; recent harvest admits skew CC (19 CC vs 3 four-year)",
+   "Harvest: Political Science is the only repeating named major (9 admits/6 rejects); Economics 1/14 is not a door"
+  ],
+  "pitfalls": [
+   "SAT/ACT required on transfer page (CDS C8F allows AP/IB test-flexible) — do not treat Yale transfer as test-optional; empty testing lane = fail",
+   "Engineering-intending without single-variable calculus + intro physics sequences done before transfer — the one published prep gap",
+   "Cannot enter beyond junior; must do two years (four terms) at Yale; max 18 Yale course credits transfer in, min 18 earned at Yale",
+   "Recs must be from credit-bearing college-campus instructors, not HS teachers; Mid-Term Report (20 Apr) missing is a flag"
+  ],
+  "aid": "Need-blind for all citizenships, transfer same as first-year; meets 100% of demonstrated need; no merit/athletic scholarships; transfer CSS Profile due 1 Apr.",
+  "notes": [
+   "CDS 2025-26 Fall 2025 transfer: 1,747 applied / 45 admitted / 35 enrolled",
+   "Harvest named-GPA admits n=36, p25/p50/p75 = 3.958/4.0/4.0 — harvest, not a rate; no chance-me band (HYPSM)",
+   "No published GPA floor (CDS D12 unpublished) and no per-major prep list except the engineering note",
+   "Complete HS transcript incl. graduation date required; no published rule that college work overwrites weak HS"
+  ]
+ }
 }

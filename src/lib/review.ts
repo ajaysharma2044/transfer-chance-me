@@ -113,7 +113,9 @@ Key findings from 8,910 recorded transfer outcomes (2011-2026), 4,243 admits:
 - The elite-private door has been closing for a decade, unevenly: official rates fell sharply at UPenn (11.6%→3.2%), Cornell (19.6%→11.7%), Rice (14.5%→6.9%), Columbia (14.7%→9.0%) while the big publics (Berkeley, Michigan) held steady or rose. Don't anchor advice to an older, looser admit-rate era at the elite privates.
 `;
 
-function buildPrompt(input: ReviewInput): string {
+/** Exported for the prompt-preview script and tests; the app itself only
+ *  calls it through runReview. */
+export function buildPrompt(input: ReviewInput): string {
   const p = input.profile;
   return `You are the senior reviewer at a transfer-admissions consultancy staffed by transfer students at Ivy League schools, Duke, UChicago and Stanford. You are reviewing a real applicant's transfer application materials. Your feedback must be specific, honest, and actionable - quote their actual sentences, never generic advice. Ground every judgment in the dataset findings and per-school intelligence below.
 
