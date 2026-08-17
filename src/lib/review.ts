@@ -155,12 +155,22 @@ Return ONLY a JSON object (no markdown fences, no commentary) with exactly this 
 Quotes must be verbatim from the applicant's materials. Be direct about problems; flattery costs admissions.`;
 }
 
+/** A full review was measured at ~104s. This is the client's patience, set
+ *  above that so a slow-but-working review is never killed from this side —
+ *  the server enforces its own, shorter deadline and explains itself. Without
+ *  any timeout at all a dropped connection leaves the UI spinning forever. */
+const CLIENT_TIMEOUT_MS = 180_000;
+
 export async function runReview(input: ReviewInput): Promise<ReviewResult> {
   let res: Response;
+  const clock = new AbortController();
+  const stop = setTimeout(() => clock.abort(), CLIENT_TIMEOUT_MS);
+  try {
   if (proxyMode) {
     // Server-side proxy: no key ever touches the browser.
     res = await fetch(REVIEW_ENDPOINT, {
       method: "POST",
+      signal: clock.signal,
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ prompt: buildPrompt(input) }),
     });
@@ -169,6 +179,7 @@ export async function runReview(input: ReviewInput): Promise<ReviewResult> {
     if (!key) throw new Error("No API key set.");
     res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: clock.signal,
       headers: {
         "content-type": "application/json",
         "x-api-key": key,
@@ -177,7 +188,10 @@ export async function runReview(input: ReviewInput): Promise<ReviewResult> {
       },
       body: JSON.stringify({
         model: "claude-sonnet-5",
-        max_tokens: 6000,
+        // Matches the server's cap. The old 6,000 truncated verbose models
+        // mid-JSON, which surfaced as "unreadable response" rather than as
+        // the length problem it was.
+        max_tokens: 12000,
         messages: [{ role: "user", content: buildPrompt(input) }],
       }),
     });
@@ -186,6 +200,13 @@ export async function runReview(input: ReviewInput): Promise<ReviewResult> {
     const body = await res.text().catch(() => "");
     if (res.status === 401) throw new Error("That API key was rejected. Check it in the key settings below.");
     if (res.status === 429) throw new Error("Rate limited — wait a moment and try again.");
+    // The proxy sends a specific, actionable message on its own deadline.
+    // Surface that rather than burying it in a generic failure string.
+    if (res.status === 504) {
+      let msg = "The review took too long to finish.";
+      try { msg = (JSON.parse(body) as { error?: string }).error ?? msg; } catch { /* keep default */ }
+      throw new Error(msg);
+    }
     throw new Error(`Review failed (${res.status}). ${body.slice(0, 200)}`);
   }
   const data = await res.json();
@@ -200,4 +221,17 @@ export async function runReview(input: ReviewInput): Promise<ReviewResult> {
   const result: ReviewResult = { ...parsed, generatedAt: new Date().toISOString() };
   try { localStorage.setItem(RESULT_STORE, JSON.stringify(result)); } catch { /* ok */ }
   return result;
+  } catch (e) {
+    // Our own patience ran out. Distinguish it from a server error, because
+    // the two call for different responses from the reader.
+    if ((e as { name?: string } | null)?.name === "AbortError") {
+      throw new Error(
+        `The review did not finish within ${Math.round(CLIENT_TIMEOUT_MS / 1000)} seconds. ` +
+        "Your materials may be unusually long — try trimming them, or run it again.",
+      );
+    }
+    throw e;
+  } finally {
+    clearTimeout(stop);
+  }
 }

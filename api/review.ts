@@ -104,6 +104,23 @@ function applyCors(req: VercelRequest, res: VercelResponse): boolean {
   return true;
 }
 
+/**
+ * Vercel function configuration.
+ *
+ * maxDuration is NOT optional here. A full review was measured this session at
+ * 104 seconds (3,994 prompt tokens in, 4,681 out on Sonnet 4.5; 6,722 out on
+ * qwen3.7-plus, which is the live model). Vercel's default function timeout is
+ * far below that on every plan, so without this the endpoint returns 504 on
+ * every real review while working perfectly for a short test call — the worst
+ * shape of bug, since it passes exactly the checks you would think to run.
+ *
+ * 60 is deliberate rather than optimal: it is the ceiling on Hobby and is
+ * valid on every tier, so this deploys anywhere. It is still SHORT of the
+ * measured 104s. On Pro, raise this to 300 — that is the single change needed,
+ * and until it is made a long review can still be cut off.
+ */
+export const config = { maxDuration: 60 };
+
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   if (!applyCors(req, res)) return;
   if (req.method === "OPTIONS") {
@@ -149,11 +166,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   }
 
   const started = Date.now();
+
+  /* Abort a few seconds before the platform would kill the function.
+   *
+   * Without this the platform terminates the invocation mid-flight and the
+   * browser receives a bare 504 with no body — indistinguishable from the
+   * site being down, and the student has no idea their review was simply too
+   * long. Aborting ourselves means we still own the response and can say what
+   * actually happened. It also releases the upstream connection instead of
+   * leaving it dangling. */
+  const timer = new AbortController();
+  const budgetMs = (config.maxDuration - 5) * 1000;
+  const deadline = setTimeout(() => timer.abort(), budgetMs);
+
   try {
     const upstream =
       via === "openrouter"
         ? await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
+            signal: timer.signal,
             headers: {
               "content-type": "application/json",
               authorization: `Bearer ${apiKey}`,
@@ -173,6 +204,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           })
         : await fetch("https://api.anthropic.com/v1/messages", {
             method: "POST",
+            signal: timer.signal,
             headers: {
               "content-type": "application/json",
               "x-api-key": apiKey,
@@ -233,9 +265,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       usd: null, // Anthropic's response carries no price; derive it from counts.
     });
     res.status(200).json(data);
-  } catch {
-    logUsage(via, 502, Date.now() - started, null);
-    res.status(502).json({ error: "Could not reach the review service." });
+  } catch (e) {
+    // Our own deadline, not an upstream failure. Say which, because the two
+    // need different things from the reader: "try again" is useless advice
+    // when the request will always take longer than the function may run.
+    const aborted = (e as { name?: string } | null)?.name === "AbortError";
+    logUsage(via, aborted ? 504 : 502, Date.now() - started, null);
+    res.status(aborted ? 504 : 502).json({
+      error: aborted
+        ? `The review took longer than this server is allowed to run (${config.maxDuration}s). ` +
+          "Shorten your materials and try again, or ask us to raise the limit."
+        : "Could not reach the review service.",
+    });
+  } finally {
+    clearTimeout(deadline);
   }
 }
 
