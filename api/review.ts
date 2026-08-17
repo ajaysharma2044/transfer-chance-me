@@ -29,9 +29,23 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const MAX_PROMPT_CHARS = 40_000; // whole prompt, all fields concatenated client-side
 const MODEL = "claude-sonnet-5";
-const MAX_TOKENS = 6000;
-/** OpenRouter default. Overridable without a redeploy via OPENROUTER_MODEL. */
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? "anthropic/claude-sonnet-4.5";
+/* Measured, not guessed: the same full review prompt produced 4,681 output
+ * tokens on Sonnet 4.5 and 6,722 on qwen3.7-plus. At the old 6,000 cap qwen's
+ * reply was cut mid-string and the client's JSON.parse threw — a truncated
+ * review is indistinguishable from a broken one. Headroom is nearly free
+ * (billing is per token emitted, not per token allowed), so this is set well
+ * above the most verbose model rather than tuned to the current one. */
+const MAX_TOKENS = 12000;
+
+/* Verbose models bury the JSON in preamble or run past the cap. This costs a
+ * few tokens and keeps every backend inside the contract src/lib/review.ts
+ * parses. */
+const BREVITY =
+  "Return ONLY the JSON object requested — no markdown fences, no commentary. " +
+  "Keep every field tight and the whole response under 5,000 tokens.";
+/** OpenRouter default — the user's pick: ~10x cheaper than Sonnet ($0.32/$1.28
+ *  vs $3/$15 per M). Overridable without a redeploy via OPENROUTER_MODEL. */
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? "qwen/qwen3.7-plus";
 
 /* ── Per-IP rate limit: token bucket, in-memory ────────────────────────────
  * LIMITATION: Vercel serverless functions are ephemeral and may run as many
@@ -151,7 +165,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             body: JSON.stringify({
               model: OPENROUTER_MODEL,
               max_tokens: MAX_TOKENS,
-              messages: [{ role: "user", content: prompt }],
+              messages: [
+                { role: "system", content: BREVITY },
+                { role: "user", content: prompt },
+              ],
             }),
           })
         : await fetch("https://api.anthropic.com/v1/messages", {
@@ -164,6 +181,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             body: JSON.stringify({
               model: MODEL,
               max_tokens: MAX_TOKENS,
+              system: BREVITY,
               messages: [{ role: "user", content: prompt }],
             }),
           });
