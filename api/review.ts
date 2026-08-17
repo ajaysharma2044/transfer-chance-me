@@ -9,16 +9,29 @@
 // Response:      the raw Anthropic Messages API response JSON, so the
 //                existing client parser (data.content[0].text) keeps working.
 //
-// Env vars:
-//   ANTHROPIC_API_KEY  (required) — server-held Anthropic key.
+// Two upstreams are supported. OpenRouter wins when its key is present,
+// because it is the one that can be swapped between models without a deploy;
+// Anthropic direct is the fallback. Either way the RESPONSE the client sees
+// is Anthropic-shaped ({content:[{text}]}), so src/lib/review.ts and
+// src/lib/panel.ts keep working untouched.
+//
+// Env vars (ALL server-side — never a VITE_ var, which would ship the key to
+// every visitor's browser):
+//   OPENROUTER_API_KEY (optional) — if set, requests go to OpenRouter.
+//   OPENROUTER_MODEL   (optional) — defaults to anthropic/claude-sonnet-4.5.
+//   ANTHROPIC_API_KEY  (used when OPENROUTER_API_KEY is absent).
 //   ALLOWED_ORIGIN     (required in prod) — e.g. "https://transferchance.me".
 //                      Requests whose Origin is present and different are 403'd.
+//   PUBLIC_SITE_URL    (optional) — sent to OpenRouter as HTTP-Referer for
+//                      its dashboard attribution.
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const MAX_PROMPT_CHARS = 40_000; // whole prompt, all fields concatenated client-side
 const MODEL = "claude-sonnet-5";
 const MAX_TOKENS = 6000;
+/** OpenRouter default. Overridable without a redeploy via OPENROUTER_MODEL. */
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? "anthropic/claude-sonnet-4.5";
 
 /* ── Per-IP rate limit: token bucket, in-memory ────────────────────────────
  * LIMITATION: Vercel serverless functions are ephemeral and may run as many
@@ -88,9 +101,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  // OpenRouter first when configured; Anthropic direct otherwise.
+  const orKey = process.env.OPENROUTER_API_KEY;
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = orKey ?? anthropicKey;
+  const via: "openrouter" | "anthropic" = orKey ? "openrouter" : "anthropic";
   if (!apiKey) {
-    res.status(500).json({ error: "Server is not configured (missing ANTHROPIC_API_KEY)." });
+    res.status(500).json({
+      error: "Server is not configured (set OPENROUTER_API_KEY or ANTHROPIC_API_KEY).",
+    });
     return;
   }
 
@@ -115,31 +134,107 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
+  const started = Date.now();
   try {
-    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
+    const upstream =
+      via === "openrouter"
+        ? await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              authorization: `Bearer ${apiKey}`,
+              // Attribution on the OpenRouter dashboard. Never the user's URL —
+              // that would leak which page a student was on.
+              "HTTP-Referer": process.env.PUBLIC_SITE_URL ?? "https://transferchance.me",
+              "X-Title": "Transfer Chance Me",
+            },
+            body: JSON.stringify({
+              model: OPENROUTER_MODEL,
+              max_tokens: MAX_TOKENS,
+              messages: [{ role: "user", content: prompt }],
+            }),
+          })
+        : await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              "x-api-key": apiKey,
+              "anthropic-version": "2023-06-01",
+            },
+            body: JSON.stringify({
+              model: MODEL,
+              max_tokens: MAX_TOKENS,
+              messages: [{ role: "user", content: prompt }],
+            }),
+          });
+
     const data = await upstream.json().catch(() => null);
     if (!upstream.ok) {
       // Pass through status but not upstream internals beyond the error type.
       const msg =
         (data as { error?: { message?: string } } | null)?.error?.message ??
         "Upstream request failed.";
+      logUsage(via, upstream.status, Date.now() - started, null);
       res.status(upstream.status === 429 ? 429 : 502).json({ error: msg });
       return;
     }
+
+    // Normalise OpenRouter's OpenAI-shaped reply into the Anthropic shape the
+    // client already parses, so neither review.ts nor panel.ts has to change.
+    if (via === "openrouter") {
+      const or = data as {
+        choices?: { message?: { content?: string } }[];
+        usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+      } | null;
+      const text = or?.choices?.[0]?.message?.content;
+      if (typeof text !== "string") {
+        logUsage(via, 502, Date.now() - started, null);
+        res.status(502).json({ error: "The review service returned an unreadable response." });
+        return;
+      }
+      logUsage(via, 200, Date.now() - started, {
+        in: or?.usage?.prompt_tokens ?? 0,
+        out: or?.usage?.completion_tokens ?? 0,
+      });
+      res.status(200).json({ content: [{ type: "text", text }] });
+      return;
+    }
+
+    const anth = data as { usage?: { input_tokens?: number; output_tokens?: number } } | null;
+    logUsage(via, 200, Date.now() - started, {
+      in: anth?.usage?.input_tokens ?? 0,
+      out: anth?.usage?.output_tokens ?? 0,
+    });
     res.status(200).json(data);
   } catch {
+    logUsage(via, 502, Date.now() - started, null);
     res.status(502).json({ error: "Could not reach the review service." });
   }
+}
+
+/**
+ * One structured line per call, to the function log.
+ *
+ * Deliberately carries NO prompt text and no user identity — this is the path
+ * that handles student essays and transcripts, and a log line is the easiest
+ * place for that content to leak somewhere it was never meant to live. Counts
+ * and latency are enough to spot a cost spike or an upstream going bad.
+ */
+function logUsage(
+  via: string,
+  status: number,
+  ms: number,
+  tokens: { in: number; out: number } | null,
+): void {
+  console.log(
+    JSON.stringify({
+      evt: "review_call",
+      via,
+      model: via === "openrouter" ? OPENROUTER_MODEL : MODEL,
+      status,
+      ms,
+      tokens_in: tokens?.in ?? null,
+      tokens_out: tokens?.out ?? null,
+    }),
+  );
 }

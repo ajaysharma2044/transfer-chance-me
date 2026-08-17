@@ -43,6 +43,11 @@ describe("built client bundle", () => {
     // The exact names of the server-only vars.
     expect(text).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(text).not.toContain("ANTHROPIC_API_KEY");
+    expect(text).not.toContain("OPENROUTER_API_KEY");
+
+    // The literal key shapes, in case a var is ever renamed around them.
+    expect(text).not.toMatch(/sk-or-v1-[A-Za-z0-9]{16,}/);  // OpenRouter
+    expect(text).not.toMatch(/sk-ant-[A-Za-z0-9_-]{16,}/);  // Anthropic
 
     // A Supabase service key is a JWT whose payload carries
     // "role":"service_role". Catch the value even if the variable was renamed.
