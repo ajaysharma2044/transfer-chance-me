@@ -32,3 +32,6 @@ dist-ssr
 .dev.vars
 .dev.vars.*
 .wrangler/
+
+# Graphify knowledge-graph output (derived artifact)
+graphify-out/

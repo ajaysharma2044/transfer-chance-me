@@ -184,7 +184,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     if (via === "openrouter") {
       const or = data as {
         choices?: { message?: { content?: string } }[];
-        usage?: { prompt_tokens?: number; completion_tokens?: number; total_tokens?: number };
+        usage?: {
+          prompt_tokens?: number;
+          completion_tokens?: number;
+          total_tokens?: number;
+          /** Actual dollars charged for THIS call. OpenRouter reports it;
+           *  Anthropic direct does not, which is why the field is optional. */
+          cost?: number;
+        };
       } | null;
       const text = or?.choices?.[0]?.message?.content;
       if (typeof text !== "string") {
@@ -195,6 +202,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       logUsage(via, 200, Date.now() - started, {
         in: or?.usage?.prompt_tokens ?? 0,
         out: or?.usage?.completion_tokens ?? 0,
+        usd: typeof or?.usage?.cost === "number" ? or.usage.cost : null,
       });
       res.status(200).json({ content: [{ type: "text", text }] });
       return;
@@ -204,6 +212,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     logUsage(via, 200, Date.now() - started, {
       in: anth?.usage?.input_tokens ?? 0,
       out: anth?.usage?.output_tokens ?? 0,
+      usd: null, // Anthropic's response carries no price; derive it from counts.
     });
     res.status(200).json(data);
   } catch {
@@ -217,14 +226,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
  *
  * Deliberately carries NO prompt text and no user identity — this is the path
  * that handles student essays and transcripts, and a log line is the easiest
- * place for that content to leak somewhere it was never meant to live. Counts
- * and latency are enough to spot a cost spike or an upstream going bad.
+ * place for that content to leak somewhere it was never meant to live. Counts,
+ * cost and latency are enough to spot a spend spike or an upstream going bad.
+ *
+ * `usd` is the real amount charged for the call, which OpenRouter returns and
+ * Anthropic does not. Logging the reported figure rather than tokens × a
+ * hard-coded rate means the number stays right when prices change or when
+ * OPENROUTER_MODEL is pointed at a different model.
  */
 function logUsage(
   via: string,
   status: number,
   ms: number,
-  tokens: { in: number; out: number } | null,
+  tokens: { in: number; out: number; usd: number | null } | null,
 ): void {
   console.log(
     JSON.stringify({
@@ -235,6 +249,7 @@ function logUsage(
       ms,
       tokens_in: tokens?.in ?? null,
       tokens_out: tokens?.out ?? null,
+      usd: tokens?.usd ?? null,
     }),
   );
 }
