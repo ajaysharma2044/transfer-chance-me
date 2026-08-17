@@ -1,0 +1,83 @@
+# Netlify deployment config.
+#
+# vercel.json and wrangler.toml + public/_headers are still live: this project
+# can deploy to Vercel, Cloudflare Pages or Netlify, and each platform reads
+# only its own file. Full instructions are in NETLIFY.md.
+#
+# ⚠ BEFORE THE FIRST DEPLOY, read NETLIFY.md → "Two CSPs, and you must pick
+# one". Vite copies public/_headers into dist/, and Netlify reads a _headers
+# file in the publish directory as well as this file. That second file carries
+# a DIFFERENT Content-Security-Policy (it allows Supabase; the one below, taken
+# verbatim from vercel.json, does not). Shipping both is not a style problem —
+# it decides whether signed-in sync works.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+  # No NODE_VERSION here on purpose: Netlify reads .nvmrc (currently "22") for
+  # both the build and the function runtime, and a second copy of that number
+  # in this file is a drift source, not a safety net.
+
+[functions]
+  # The default for TypeScript functions, stated because something depends on
+  # it: netlify/functions/review-background.ts imports api/_guard.ts, which
+  # lives OUTSIDE the functions directory. esbuild follows the import graph and
+  # bundles it. Switch bundlers and that import is what breaks first.
+  node_bundler = "esbuild"
+
+# ── Routing ─────────────────────────────────────────────────────────────────
+# Order matters, and the rules in this file are evaluated before the ones in
+# dist/_redirects — whose catch-all (/* → /index.html 200) would otherwise
+# answer /api/* with the SPA shell. vercel.json avoided the same collision with
+# a negative lookahead in its rewrite; this is that lookahead, spelled out.
+#
+# Each function also declares its own URL via `export const config = { path }`,
+# so the two agree. These rules are the load-bearing ones because they are the
+# ones ordered against the catch-all.
+
+[[redirects]]
+  from = "/api/review"
+  to = "/.netlify/functions/review"
+  status = 200
+
+[[redirects]]
+  from = "/api/contribute"
+  to = "/.netlify/functions/contribute"
+  status = 200
+
+# Any other /api/ path is a mistake, and 200 + HTML is the worst way to say so:
+# the client's `res.ok` check passes and the JSON parse is what fails, three
+# frames away from the cause. Fail at the status line instead.
+[[redirects]]
+  from = "/api/*"
+  to = "/index.html"
+  status = 404
+
+# SPA fallback. The app uses a hash router, so the server almost always sees
+# "/" already; this is the safety net for a typed or bookmarked clean path.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ── Security headers ────────────────────────────────────────────────────────
+# Copied byte-for-byte from vercel.json so the two deployments cannot drift
+# silently. The CSP is load-bearing: it is what stops an injected script from
+# posting a student's essay somewhere else.
+#
+# The functions set their own no-store / nosniff / referrer-policy headers
+# rather than relying on this block. A header rule that does not reach function
+# responses fails silently, and the responses that carry the review — the
+# student's own writing, quoted back — are exactly the ones that must not be
+# cached by an intermediary.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://accounts.google.com; connect-src https://en.wikipedia.org 'self' https://api.anthropic.com https://accounts.google.com; img-src https://upload.wikimedia.org 'self' data: https://www.google.com; font-src 'self'; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

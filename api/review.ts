@@ -15,6 +15,11 @@
 // is Anthropic-shaped ({content:[{text}]}), so src/lib/review.ts and
 // src/lib/panel.ts keep working untouched.
 //
+// The prompt carries student essays, so it is treated as hostile input: it is
+// fenced as data and the rules the model must keep live in the system message
+// (api/_guard.ts). The reply is validated before it is handed back, because
+// the client parses it and renders it without a second look.
+//
 // Env vars (ALL server-side — never a VITE_ var, which would ship the key to
 // every visitor's browser):
 //   OPENROUTER_API_KEY (optional) — if set, requests go to OpenRouter.
@@ -26,6 +31,14 @@
 //                      its dashboard attribution.
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import {
+  detectInjection,
+  guardSystem,
+  parseReviewJson,
+  screeningNote,
+  validateReview,
+  wrapUntrusted,
+} from "./_guard.js";
 
 const MAX_PROMPT_CHARS = 40_000; // whole prompt, all fields concatenated client-side
 const MODEL = "claude-sonnet-5";
@@ -46,6 +59,12 @@ const BREVITY =
 /** OpenRouter default — the user's pick: ~10x cheaper than Sonnet ($0.32/$1.28
  *  vs $3/$15 per M). Overridable without a redeploy via OPENROUTER_MODEL. */
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? "qwen/qwen3.7-plus";
+
+/* One corrective retry, never two. A shape the model got wrong twice is a
+ * broken model or a broken prompt, not bad luck, and an uncapped "try again"
+ * on a 12k-token call is how one request becomes a bill. Every attempt is
+ * counted in the log line. */
+const MAX_RETRIES = 1;
 
 /* ── Per-IP rate limit: token bucket, in-memory ────────────────────────────
  * LIMITATION: Vercel serverless functions are ephemeral and may run as many
@@ -165,6 +184,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
     return;
   }
 
+  /* The browser composes the whole prompt (buildPrompt in src/lib/review.ts),
+   * so the server cannot tell the review brief from the essay pasted into it —
+   * and every byte of it arrived from a browser regardless. So the lot is
+   * fenced as data, and the rules that must hold live in the system message,
+   * the one channel an applicant cannot write into.
+   *
+   * The gap this leaves is worth naming: an injection that imitates the
+   * brief's own voice still sits in the same block as the brief. Closing that
+   * means having the client POST its fields separately so only the applicant's
+   * own text is fenced — a change on both sides of the wire. */
+  const flags = detectInjection(prompt);
+  const fenced = wrapUntrusted(prompt);
+  const system = `${guardSystem(fenced.nonce)}\n\n${BREVITY}`;
+  const turns: Turn[] = [
+    {
+      role: "user",
+      content: flags.length ? `${fenced.text}\n\n${screeningNote(flags.length)}` : fenced.text,
+    },
+  ];
+
   const started = Date.now();
 
   /* Abort a few seconds before the platform would kill the function.
@@ -179,98 +218,63 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   const budgetMs = (config.maxDuration - 5) * 1000;
   const deadline = setTimeout(() => timer.abort(), budgetMs);
 
+  // Every attempt is billed, so the log line reports the sum, not the last one.
+  const spent = { in: 0, out: 0, usd: null as number | null };
+  let attempts = 0;
+
   try {
-    const upstream =
-      via === "openrouter"
-        ? await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            signal: timer.signal,
-            headers: {
-              "content-type": "application/json",
-              authorization: `Bearer ${apiKey}`,
-              // Attribution on the OpenRouter dashboard. Never the user's URL —
-              // that would leak which page a student was on.
-              "HTTP-Referer": process.env.PUBLIC_SITE_URL ?? "https://transferchance.me",
-              "X-Title": "Transfer Chance Me",
-            },
-            body: JSON.stringify({
-              model: OPENROUTER_MODEL,
-              max_tokens: MAX_TOKENS,
-              messages: [
-                { role: "system", content: BREVITY },
-                { role: "user", content: prompt },
-              ],
-            }),
-          })
-        : await fetch("https://api.anthropic.com/v1/messages", {
-            method: "POST",
-            signal: timer.signal,
-            headers: {
-              "content-type": "application/json",
-              "x-api-key": apiKey,
-              "anthropic-version": "2023-06-01",
-            },
-            body: JSON.stringify({
-              model: MODEL,
-              max_tokens: MAX_TOKENS,
-              system: BREVITY,
-              messages: [{ role: "user", content: prompt }],
-            }),
-          });
+    for (;;) {
+      attempts += 1;
+      const reply = await callModel(via, apiKey, system, turns, timer.signal);
 
-    const data = await upstream.json().catch(() => null);
-    if (!upstream.ok) {
-      // Pass through status but not upstream internals beyond the error type.
-      const msg =
-        (data as { error?: { message?: string } } | null)?.error?.message ??
-        "Upstream request failed.";
-      logUsage(via, upstream.status, Date.now() - started, null);
-      res.status(upstream.status === 429 ? 429 : 502).json({ error: msg });
-      return;
-    }
+      if (!reply.ok) {
+        // Pass through status but not upstream internals beyond the error type.
+        const msg =
+          (reply.data as { error?: { message?: string } } | null)?.error?.message ??
+          "Upstream request failed.";
+        logUsage(via, reply.status, Date.now() - started, null, flags.length, attempts);
+        res.status(reply.status === 429 ? 429 : 502).json({ error: msg });
+        return;
+      }
 
-    // Normalise OpenRouter's OpenAI-shaped reply into the Anthropic shape the
-    // client already parses, so neither review.ts nor panel.ts has to change.
-    if (via === "openrouter") {
-      const or = data as {
-        choices?: { message?: { content?: string } }[];
-        usage?: {
-          prompt_tokens?: number;
-          completion_tokens?: number;
-          total_tokens?: number;
-          /** Actual dollars charged for THIS call. OpenRouter reports it;
-           *  Anthropic direct does not, which is why the field is optional. */
-          cost?: number;
-        };
-      } | null;
-      const text = or?.choices?.[0]?.message?.content;
-      if (typeof text !== "string") {
-        logUsage(via, 502, Date.now() - started, null);
+      spent.in += reply.tokens.in;
+      spent.out += reply.tokens.out;
+      if (reply.tokens.usd !== null) spent.usd = (spent.usd ?? 0) + reply.tokens.usd;
+
+      if (reply.text === null) {
+        logUsage(via, 502, Date.now() - started, spent, flags.length, attempts);
         res.status(502).json({ error: "The review service returned an unreadable response." });
         return;
       }
-      logUsage(via, 200, Date.now() - started, {
-        in: or?.usage?.prompt_tokens ?? 0,
-        out: or?.usage?.completion_tokens ?? 0,
-        usd: typeof or?.usage?.cost === "number" ? or.usage.cost : null,
-      });
-      res.status(200).json({ content: [{ type: "text", text }] });
-      return;
-    }
 
-    const anth = data as { usage?: { input_tokens?: number; output_tokens?: number } } | null;
-    logUsage(via, 200, Date.now() - started, {
-      in: anth?.usage?.input_tokens ?? 0,
-      out: anth?.usage?.output_tokens ?? 0,
-      usd: null, // Anthropic's response carries no price; derive it from counts.
-    });
-    res.status(200).json(data);
+      const parsed = parseReviewJson(reply.text);
+      const check = parsed.ok ? validateReview(parsed.value) : { ok: false, errors: [parsed.error] };
+      if (check.ok) {
+        logUsage(via, 200, Date.now() - started, spent, flags.length, attempts);
+        /* Anthropic's own response is passed through whole, as it always was;
+         * OpenRouter's is normalised into that shape so neither review.ts nor
+         * panel.ts has to change. */
+        res
+          .status(200)
+          .json(via === "anthropic" ? reply.data : { content: [{ type: "text", text: reply.text }] });
+        return;
+      }
+
+      if (attempts > MAX_RETRIES) {
+        // The errors name our own field types only — never the model's text,
+        // which is a rephrasing of the student's material.
+        logUsage(via, 502, Date.now() - started, spent, flags.length, attempts);
+        res.status(502).json({ error: "The review service returned an unreadable response." });
+        return;
+      }
+      turns.push({ role: "assistant", content: reply.text }, { role: "user", content: correction(check.errors) });
+    }
   } catch (e) {
     // Our own deadline, not an upstream failure. Say which, because the two
     // need different things from the reader: "try again" is useless advice
     // when the request will always take longer than the function may run.
     const aborted = (e as { name?: string } | null)?.name === "AbortError";
-    logUsage(via, aborted ? 504 : 502, Date.now() - started, null);
+    logUsage(via, aborted ? 504 : 502, Date.now() - started, null, flags.length, attempts);
     res.status(aborted ? 504 : 502).json({
       error: aborted
         ? `The review took longer than this server is allowed to run (${config.maxDuration}s). ` +
@@ -280,6 +284,119 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
   } finally {
     clearTimeout(deadline);
   }
+}
+
+interface Turn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+interface Reply {
+  ok: boolean;
+  status: number;
+  /** Raw upstream JSON, kept so the Anthropic path can be passed through. */
+  data: unknown;
+  /** The model's message text, or null when the reply carried none. */
+  text: string | null;
+  tokens: { in: number; out: number; usd: number | null };
+}
+
+/** One upstream round-trip, in whichever dialect `via` speaks. Both dialects
+ *  are reduced to the same {text, tokens} so the caller — which retries — does
+ *  not branch on the backend. */
+async function callModel(
+  via: "openrouter" | "anthropic",
+  apiKey: string,
+  system: string,
+  turns: Turn[],
+  signal: AbortSignal,
+): Promise<Reply> {
+  if (via === "openrouter") {
+    const upstream = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      signal,
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${apiKey}`,
+        // Attribution on the OpenRouter dashboard. Never the user's URL —
+        // that would leak which page a student was on.
+        "HTTP-Referer": process.env.PUBLIC_SITE_URL ?? "https://transferchance.me",
+        "X-Title": "Transfer Chance Me",
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        max_tokens: MAX_TOKENS,
+        messages: [{ role: "system", content: system }, ...turns],
+      }),
+    });
+    const data = await upstream.json().catch(() => null);
+    const or = data as {
+      choices?: { message?: { content?: string } }[];
+      usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        total_tokens?: number;
+        /** Actual dollars charged for THIS call. OpenRouter reports it;
+         *  Anthropic direct does not, which is why the field is optional. */
+        cost?: number;
+      };
+    } | null;
+    const text = or?.choices?.[0]?.message?.content;
+    return {
+      ok: upstream.ok,
+      status: upstream.status,
+      data,
+      text: typeof text === "string" ? text : null,
+      tokens: {
+        in: or?.usage?.prompt_tokens ?? 0,
+        out: or?.usage?.completion_tokens ?? 0,
+        usd: typeof or?.usage?.cost === "number" ? or.usage.cost : null,
+      },
+    };
+  }
+
+  const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    signal,
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: MAX_TOKENS,
+      system,
+      messages: turns,
+    }),
+  });
+  const data = await upstream.json().catch(() => null);
+  const anth = data as {
+    content?: { text?: string }[];
+    usage?: { input_tokens?: number; output_tokens?: number };
+  } | null;
+  const text = anth?.content?.[0]?.text;
+  return {
+    ok: upstream.ok,
+    status: upstream.status,
+    data,
+    text: typeof text === "string" ? text : null,
+    tokens: {
+      in: anth?.usage?.input_tokens ?? 0,
+      out: anth?.usage?.output_tokens ?? 0,
+      usd: null, // Anthropic's response carries no price; derive it from counts.
+    },
+  };
+}
+
+/** The one retry's message. Carries field names and nothing else: the student's
+ *  material must not be echoed back into a turn we compose. */
+function correction(errors: string[]): string {
+  return [
+    "Your reply did not match the required JSON object:",
+    ...errors.slice(0, 12).map((e) => `- ${e}`),
+    "Send the same review again as ONLY the corrected JSON object — no markdown fences, no commentary.",
+  ].join("\n");
 }
 
 /**
@@ -294,12 +411,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
  * Anthropic does not. Logging the reported figure rather than tokens × a
  * hard-coded rate means the number stays right when prices change or when
  * OPENROUTER_MODEL is pointed at a different model.
+ *
+ * `injection` is how many injection SHAPES were flagged in the prompt — a
+ * count, never the text that matched, which is student writing and belongs
+ * only in the review. A rising count across many calls is the signal that
+ * some template doing the rounds carries an attack. `attempts` is 1 unless
+ * the model's first answer failed validation and the one retry was spent.
  */
 function logUsage(
   via: string,
   status: number,
   ms: number,
   tokens: { in: number; out: number; usd: number | null } | null,
+  injection: number,
+  attempts: number,
 ): void {
   console.log(
     JSON.stringify({
@@ -311,6 +436,8 @@ function logUsage(
       tokens_in: tokens?.in ?? null,
       tokens_out: tokens?.out ?? null,
       usd: tokens?.usd ?? null,
+      injection,
+      attempts,
     }),
   );
 }

@@ -222,8 +222,19 @@ function PortalHero({
   go: (r: string) => void;
 }) {
   const [ref, seen] = useInView<HTMLElement>();
-  const lo = useCountUp(best.lo * 100, seen, { decimals: 0 });
-  const hi = useCountUp(best.hi * 100, seen, { decimals: 0 });
+
+  /* The odds figure does NOT count up, deliberately.
+   *
+   * The sticky bar renders the same band a few pixels above this, unanimated.
+   * A tween therefore puts two different values for one number on screen at
+   * once — "12–13%" under a bar reading "90–99%" — for about a second on every
+   * load. On a page whose entire claim is that it does not invent numbers,
+   * a headline figure that is wrong on arrival is the wrong thing to spend
+   * motion on. The figure is exact from the first frame; the ENTRANCE is what
+   * animates (see .po-hero-fig in portal.css).
+   *
+   * The deadline below still counts: nothing else on screen contradicts it,
+   * and a day count ticking up reads as a countdown rather than as an error. */
   const next = plan.next;
   const days = useCountUp(next?.days ?? 0, seen);
   const open = plan.moves.filter((m) => !m.done).length;
@@ -242,7 +253,9 @@ function PortalHero({
         </p>
 
         <p className="po-hero-fig">
-          <b className="num g-text">{Math.round(lo)}–{Math.round(hi)}%</b>
+          <b className={`num g-text po-hero-num${seen ? " in" : ""}`}>
+            {fmtPct(best.lo)}–{fmtPct(best.hi)}%
+          </b>
           <span className="po-hero-tier">{best.tier}</span>
         </p>
 

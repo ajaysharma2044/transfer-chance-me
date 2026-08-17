@@ -1208,3 +1208,20 @@ span.po-led-band > i.po-band-figs { display: none; }
 @media print {
   .po > *:not(.report) { display: none !important; }
 }
+
+/* The headline figure arrives by ENTRANCE, not by counting.
+   It is exact from the first painted frame — see the note in Portal.tsx:
+   the sticky bar shows the same band unanimated a few pixels above, so a
+   tween would put two different values for one number on screen at once. */
+.po-hero-num {
+  opacity: 0;
+  transform: translateY(10px) scale(0.985);
+  transition:
+    opacity 620ms var(--ease-out),
+    transform 720ms var(--ease-spring);
+}
+.po-hero-num.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .po-hero-num, .po-hero-num.in { opacity: 1; transform: none; transition: none; }
+}
