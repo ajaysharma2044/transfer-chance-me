@@ -27,17 +27,18 @@
 // and one `await res.json()`. It must POST, then poll. The exact edit is
 // written out in NETLIFY.md — nothing else in src/ changes.
 //
-// The job store is Upstash Redis over its REST API, the same store api/
-// contribute.ts already uses, chosen because it needs no npm dependency. It is
-// REQUIRED here, unlike on Vercel: two separate function invocations have no
-// shared memory, so the prompt and the result have to live somewhere both can
-// reach. See NETLIFY.md → "What the prompt store means for privacy".
+// The job store is Netlify Blobs (./_jobs.ts). A store is REQUIRED here,
+// unlike on Vercel: two separate invocations share no memory, so the prompt
+// and the result must live somewhere both can reach. Blobs is built into the
+// platform, so that costs no new vendor holding student essays and no new
+// bill. See NETLIFY.md → "What the prompt store means for privacy".
 //
 // Env vars (ALL server-side — never a VITE_ var, which Vite would inline into
 // every visitor's browser bundle):
 //   OPENROUTER_API_KEY / ANTHROPIC_API_KEY  at least one, read by the worker.
-//   UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN  required (job store).
 //   ALLOWED_ORIGIN     required in prod. Comma-separated allow-list.
+
+import { bump, dropJob, getJob, putJob, putPrompt } from "./_jobs.js";
 
 export const config = { path: "/api/review" };
 
@@ -56,51 +57,31 @@ const JOB_TTL_SEC = 900;
  * error doc to read — polls a pending job until the heat death of the tab. */
 const POLL_AFTER_MS = 3_000;
 
-/* ── Job store (Upstash Redis REST) ─────────────────────────────────────── */
-
-interface Store {
-  url: string;
-  token: string;
-}
-
-function store(): Store | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  return url && token ? { url, token } : null;
-}
-
-const jobKey = (id: string): string => `tcm:review:${id}`;
-const promptKey = (id: string): string => `tcm:review:${id}:prompt`;
-
-/** One Upstash REST command. Throws on transport or HTTP failure. */
-async function redis(s: Store, command: (string | number)[]): Promise<unknown> {
-  const r = await fetch(s.url, {
-    method: "POST",
-    headers: { authorization: `Bearer ${s.token}`, "content-type": "application/json" },
-    body: JSON.stringify(command.map(String)),
-  });
-  if (!r.ok) throw new Error(`upstash ${r.status}`);
-  const data = (await r.json()) as { result?: unknown };
-  return data.result ?? null;
-}
+/* ── Job store ──────────────────────────────────────────────────────────────
+ * Netlify Blobs, via ./_jobs.ts. Built into the platform: no second vendor
+ * holding student review text, no extra bill, nothing to configure. The
+ * earlier draft of this file used Upstash Redis, which was a new service to
+ * solve a problem the host already solves.
+ */
 
 /* ── Rate limiting ──────────────────────────────────────────────────────────
  * Two tiers, on purpose:
  *
- *   POST (starting a review) is the path that spends money, so it counts in
- *   Upstash — a real global limit, and strictly stronger than the Vercel
- *   original, whose Map lived in one instance's memory.
+ *   POST (starting a review) is the path that spends money, so it is counted
+ *   in Blobs — shared across instances, and strictly stronger than the Vercel
+ *   original whose Map lived in one instance's memory. `bump` is not atomic
+ *   (see _jobs.ts), so a simultaneous burst can slip one or two past; it makes
+ *   hammering the paid endpoint expensive rather than free, which is the job.
  *
  *   GET (polling) is counted in instance memory only. Netlify runs many
- *   instances, so the effective ceiling is (limit × live instances): this is
- *   protection against one client hammering one instance, nothing more. It is
- *   exactly as weak as the Vercel version was, and it is deliberate — a review
- *   needs ~35 polls, and metering each one would triple this endpoint's store
- *   traffic to guard a request that costs nothing to serve.
+ *   instances, so the effective ceiling is (limit x live instances): protection
+ *   against one client hammering one instance, nothing more. Deliberate — a
+ *   review needs ~35 polls, and metering each one in the store would triple
+ *   this endpoint's store traffic to guard a request that costs nothing.
  */
 const START_MAX = 5; // per IP per window — matches api/review.ts
 const START_WINDOW_SEC = 60;
-const POLL_MAX = 120; // ≈ one poll every 500ms, well above the 3s cadence
+const POLL_MAX = 120; // ~ one poll every 500ms, well above the 3s cadence
 const POLL_WINDOW_SEC = 60;
 
 const buckets = new Map<string, { count: number; resets: number }>();
@@ -115,30 +96,6 @@ function allowInMemory(key: string, max: number, windowSec: number): boolean {
   }
   b.count += 1;
   return b.count <= max;
-}
-
-/**
- * Fixed-window counter. EXPIRE is set only on the first hit of a window, so a
- * client cannot keep sliding its own window forward by hammering the endpoint.
- * A store hiccup falls back to the in-memory counter rather than either
- * failing the request or waving it through unmetered.
- */
-async function allowRequest(
-  s: Store | null,
-  key: string,
-  max: number,
-  windowSec: number,
-): Promise<boolean> {
-  if (!s) return allowInMemory(key, max, windowSec);
-  try {
-    const window = Math.floor(Date.now() / 1000 / windowSec);
-    const k = `tcm:rl:${window}:${key}`;
-    const used = Number(await redis(s, ["INCR", k]));
-    if (used === 1) await redis(s, ["EXPIRE", k, windowSec * 2]);
-    return used <= max;
-  } catch {
-    return allowInMemory(key, max, windowSec);
-  }
 }
 
 /* ── Client identity ────────────────────────────────────────────────────────
@@ -255,19 +212,16 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === "GET") return poll(req, cors);
   if (req.method !== "POST") return json({ error: "POST to start, GET to poll." }, 405, cors);
 
-  const s = store();
-  if (!s) {
-    // 503, not 500: this deployment is simply not configured for proxy mode,
-    // and the site keeps working in browser-key mode. Deliberately does not
-    // name the variables back to the browser.
-    return json({ error: "The review service is not configured on this deployment." }, 503, cors);
-  }
+  // Netlify Blobs needs no configuration, so a missing model key is the only
+  // thing that can leave this deployment unable to run a review. 503, not 500:
+  // the site keeps working in browser-key mode. Deliberately does not name the
+  // variables back to the browser.
   if (!process.env.OPENROUTER_API_KEY && !process.env.ANTHROPIC_API_KEY) {
     return json({ error: "The review service is not configured on this deployment." }, 503, cors);
   }
 
   const ip = clientIp(req);
-  if (!(await allowRequest(s, `review:start:${ip}`, START_MAX, START_WINDOW_SEC))) {
+  if (!(await bump(`start:${ip}`, START_MAX, START_WINDOW_SEC))) {
     const headers = new Headers(cors);
     headers.set("Retry-After", String(START_WINDOW_SEC));
     return json({ error: "Too many requests — wait a minute and try again." }, 429, headers);
@@ -289,8 +243,8 @@ export default async function handler(req: Request): Promise<Response> {
   const jobId = globalThis.crypto.randomUUID();
 
   try {
-    await redis(s, ["SET", promptKey(jobId), prompt, "EX", JOB_TTL_SEC]);
-    await redis(s, ["SET", jobKey(jobId), JSON.stringify({ status: "pending" }), "EX", JOB_TTL_SEC]);
+    await putPrompt(jobId, prompt);
+    await putJob(jobId, { status: "pending", started: Date.now() });
   } catch {
     return json({ error: "Could not queue the review — try again." }, 502, cors);
   }
@@ -316,7 +270,7 @@ export default async function handler(req: Request): Promise<Response> {
     if (!triggered.ok) throw new Error(`trigger ${triggered.status}`);
   } catch {
     // Don't leave a pending job the client would poll for 15 minutes.
-    await redis(s, ["DEL", jobKey(jobId), promptKey(jobId)]).catch(() => {});
+    await dropJob(jobId).catch(() => {});
     console.log(JSON.stringify({ evt: "review_trigger_failed", job: jobId }));
     return json({ error: "Could not start the review — try again." }, 502, cors);
   }
@@ -351,23 +305,16 @@ async function poll(req: Request, cors: Headers): Promise<Response> {
     return json({ error: "Too many requests — wait a minute and try again." }, 429, headers);
   }
 
-  const s = store();
-  if (!s) return json({ error: "The review service is not configured on this deployment." }, 503, cors);
-
-  let raw: unknown;
+  let state;
   try {
-    raw = await redis(s, ["GET", jobKey(jobId)]);
+    state = await getJob(jobId);
   } catch {
     return json({ error: "Could not reach the review store — try again." }, 502, cors);
   }
-  if (typeof raw !== "string") {
+  // Absent covers both "never existed" and "past its TTL" — the store enforces
+  // expiry on read (see _jobs.ts), so those are the same answer to the client.
+  if (!state) {
     return json({ error: "That review has expired or was never started." }, 404, cors);
   }
-
-  // Written by us, but parsed defensively — a malformed doc must not 500.
-  try {
-    return json(JSON.parse(raw), 200, cors);
-  } catch {
-    return json({ status: "error", error: "The review result was unreadable — run it again." }, 200, cors);
-  }
+  return json(state, 200, cors);
 }

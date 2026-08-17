@@ -161,6 +161,52 @@ Quotes must be verbatim from the applicant's materials. Be direct about problems
  *  any timeout at all a dropped connection leaves the UI spinning forever. */
 const CLIENT_TIMEOUT_MS = 180_000;
 
+/**
+ * Wait for a queued review (the Netlify background-function path) and return
+ * it as a Response, so the caller's existing parsing is untouched.
+ *
+ * The cadence and the give-up point come from the server's own 202 rather than
+ * being hard-coded here: a client with its own copy of those numbers drifts
+ * from the deployment the moment either changes.
+ */
+async function pollForReview(
+  queued: { jobId?: string; pollAfterMs?: number; expiresInMs?: number },
+  signal: AbortSignal,
+): Promise<Response> {
+  const every = Math.max(1000, queued.pollAfterMs ?? 3000);
+  // The server's expiry, bounded by the client's own patience — whichever
+  // gives up first should win, and neither should wait on a job that can no
+  // longer exist.
+  const until = Date.now() + Math.min(queued.expiresInMs ?? CLIENT_TIMEOUT_MS, CLIENT_TIMEOUT_MS);
+  const url = `${REVIEW_ENDPOINT}?job=${encodeURIComponent(queued.jobId!)}`;
+
+  for (;;) {
+    if (signal.aborted) throw Object.assign(new Error("aborted"), { name: "AbortError" });
+    if (Date.now() > until) {
+      throw new Error("The review did not finish in time — run it again.");
+    }
+    await new Promise((r) => setTimeout(r, every));
+
+    const r = await fetch(url, { signal, headers: { accept: "application/json" } });
+    if (r.status === 404) throw new Error("That review expired before it finished — run it again.");
+    if (!r.ok) continue; // a transient 5xx on one poll is not a failed review
+
+    const doc = (await r.json()) as { status?: string; result?: unknown; error?: string };
+    if (doc.status === "pending") continue;
+    if (doc.status === "error") throw new Error(doc.error ?? "The review failed — run it again.");
+    if (doc.status === "done") {
+      // Hand back exactly what the synchronous endpoint would have returned,
+      // so the parsing below this call site never learns which host it is on.
+      return new Response(JSON.stringify(doc.result), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+    // An unknown status is a contract break, not something to spin on.
+    throw new Error("The review service returned an unexpected response.");
+  }
+}
+
 export async function runReview(input: ReviewInput): Promise<ReviewResult> {
   let res: Response;
   const clock = new AbortController();
@@ -174,6 +220,25 @@ export async function runReview(input: ReviewInput): Promise<ReviewResult> {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ prompt: buildPrompt(input) }),
     });
+
+    /* 202 means a queue, not a result.
+     *
+     * Vercel answers 200 with the review, because a synchronous function there
+     * can run long enough to produce one. Netlify cannot — 10s against a ~104s
+     * review — so its endpoint queues the work and answers 202 { jobId }, and
+     * the review arrives by polling.
+     *
+     * Both are supported from one client on purpose: this app has config for
+     * both hosts, and a client that assumed either one would break silently on
+     * the other. The status code is the discriminator, so nothing has to be
+     * configured to match the deployment. */
+    if (res.status === 202) {
+      const queued = (await res.json()) as {
+        jobId?: string; pollAfterMs?: number; expiresInMs?: number;
+      };
+      if (!queued.jobId) throw new Error("The review service queued nothing — run it again.");
+      res = await pollForReview(queued, clock.signal);
+    }
   } else {
     const key = getApiKey();
     if (!key) throw new Error("No API key set.");

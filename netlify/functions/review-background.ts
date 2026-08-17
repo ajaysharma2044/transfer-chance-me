@@ -26,7 +26,6 @@
 // Env vars (server-side only, never VITE_-prefixed):
 //   OPENROUTER_API_KEY / OPENROUTER_MODEL / PUBLIC_SITE_URL
 //   ANTHROPIC_API_KEY  (used when OPENROUTER_API_KEY is absent)
-//   UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN
 
 import {
   detectInjection,
@@ -36,6 +35,8 @@ import {
   validateReview,
   wrapUntrusted,
 } from "../../api/_guard";
+import { putJob, takePrompt } from "./_jobs.js";
+import type { JobState } from "./_jobs.js";
 
 /* Kept in lockstep with api/review.ts. Change both together or the Vercel and
  * Netlify deployments answer the same request with different models and costs. */
@@ -58,33 +59,28 @@ const MAX_RETRIES = 1;
  * upstream still leaves time to record a readable failure. */
 const RUN_BUDGET_MS = 600_000;
 
-const JOB_TTL_SEC = 900;
 
-interface Store {
-  url: string;
-  token: string;
-}
+/* ── Job store ──────────────────────────────────────────────────────────────
+ * Netlify Blobs, via ./_jobs.ts — same store the POST half writes to.
+ *
+ * ONE GUARANTEE IS WEAKER THAN THE REDIS DRAFT, and it matters: that version
+ * claimed a job with SET NX, an atomic compare-and-set, so a replayed
+ * invocation could never buy the same review twice. Blobs has no atomic CAS.
+ *
+ * The claim here is takePrompt(): the prompt is read and deleted in one call,
+ * so a second invocation finds nothing and stops. Two invocations that read
+ * before either deletes would both proceed — the window is milliseconds, and
+ * the cost of losing that race is one duplicate model call (~$0.01), not
+ * corrupted or duplicated data, because both would write the same result to
+ * the same key. That trade buys removing an entire third-party service from
+ * the path that handles student essays, which is the better deal.
+ */
 
-const jobKey = (id: string): string => `tcm:review:${id}`;
-const promptKey = (id: string): string => `tcm:review:${id}:prompt`;
-const claimKey = (id: string): string => `tcm:review:${id}:claim`;
-
-async function redis(s: Store, command: (string | number)[]): Promise<unknown> {
-  const r = await fetch(s.url, {
-    method: "POST",
-    headers: { authorization: `Bearer ${s.token}`, "content-type": "application/json" },
-    body: JSON.stringify(command.map(String)),
-  });
-  if (!r.ok) throw new Error(`upstash ${r.status}`);
-  const data = (await r.json()) as { result?: unknown };
-  return data.result ?? null;
-}
-
-async function finish(s: Store, jobId: string, doc: unknown): Promise<void> {
+async function finish(jobId: string, doc: JobState): Promise<void> {
   try {
-    await redis(s, ["SET", jobKey(jobId), JSON.stringify(doc), "EX", JOB_TTL_SEC]);
+    await putJob(jobId, doc);
   } catch {
-    // Nothing left to do: the client's poll will hit the pending doc until it
+    // Nothing left to do: the client's poll sees the pending doc until it
     // expires. Logged so the failure is visible in the function log.
     console.log(JSON.stringify({ evt: "review_store_write_failed", job: jobId }));
   }
@@ -98,14 +94,6 @@ const ACCEPTED = (): Response => new Response(null, { status: 202 });
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== "POST") return ACCEPTED();
 
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
-    console.log(JSON.stringify({ evt: "review_worker_unconfigured" }));
-    return ACCEPTED();
-  }
-  const s: Store = { url, token };
-
   let jobId = "";
   try {
     const body = (await req.json()) as { jobId?: unknown };
@@ -115,34 +103,22 @@ export default async function handler(req: Request): Promise<Response> {
   }
   if (!UUID_RE.test(jobId)) return ACCEPTED();
 
-  // Atomic one-shot claim. Stops a replayed invocation — and Netlify's own
-  // retry, if this ever manages to throw — from buying the same review twice.
+  /* Claim and read in one step. takePrompt deletes as it reads, so a replayed
+   * invocation finds nothing and stops — see the note on the store above for
+   * why this is best-effort rather than atomic, and what losing the race
+   * costs. Deleting here also means the student's essay text sits in the store
+   * for seconds rather than the full TTL. */
+  let prompt: string | null;
   try {
-    const claimed = await redis(s, ["SET", claimKey(jobId), "1", "NX", "EX", JOB_TTL_SEC]);
-    if (claimed === null) {
-      console.log(JSON.stringify({ evt: "review_already_claimed", job: jobId }));
-      return ACCEPTED();
-    }
+    prompt = await takePrompt(jobId);
   } catch {
-    console.log(JSON.stringify({ evt: "review_claim_failed", job: jobId }));
-    return ACCEPTED();
-  }
-
-  let prompt: unknown;
-  try {
-    prompt = await redis(s, ["GET", promptKey(jobId)]);
-  } catch {
-    await finish(s, jobId, { status: "error", error: "Could not read the queued review — run it again." });
+    await finish(jobId, { status: "error", error: "Could not read the queued review — run it again.", finished: Date.now() });
     return ACCEPTED();
   }
   if (typeof prompt !== "string" || prompt.length === 0) {
-    await finish(s, jobId, { status: "error", error: "That review expired before it could run — run it again." });
+    await finish(jobId, { status: "error", error: "That review expired before it could run — run it again." , finished: Date.now() });
     return ACCEPTED();
   }
-  // The essay text has been read; it has no further use. Dropping it now keeps
-  // the student's material in the store for seconds rather than 15 minutes.
-  await redis(s, ["DEL", promptKey(jobId)]).catch(() => {});
-
   // OpenRouter first when configured; Anthropic direct otherwise. Same
   // precedence as api/review.ts.
   const orKey = process.env.OPENROUTER_API_KEY;
@@ -150,9 +126,9 @@ export default async function handler(req: Request): Promise<Response> {
   const apiKey = orKey ?? anthropicKey;
   const via: "openrouter" | "anthropic" = orKey ? "openrouter" : "anthropic";
   if (!apiKey) {
-    await finish(s, jobId, {
+    await finish(jobId, {
       status: "error",
-      error: "The review service is not configured on this deployment.",
+      error: "The review service is not configured on this deployment.", finished: Date.now(),
     });
     return ACCEPTED();
   }
@@ -199,7 +175,7 @@ export default async function handler(req: Request): Promise<Response> {
             : reply.status === 401 || reply.status === 403
               ? "The review service rejected this deployment's credentials."
               : "The review service could not complete this request.";
-        await finish(s, jobId, { status: "error", error });
+        await finish(jobId, { status: "error", error , finished: Date.now() });
         return ACCEPTED();
       }
 
@@ -209,9 +185,9 @@ export default async function handler(req: Request): Promise<Response> {
 
       if (reply.text === null) {
         logUsage(via, 502, Date.now() - started, spent, flags.length, attempts);
-        await finish(s, jobId, {
+        await finish(jobId, {
           status: "error",
-          error: "The review service returned an unreadable response.",
+          error: "The review service returned an unreadable response.", finished: Date.now(),
         });
         return ACCEPTED();
       }
@@ -224,9 +200,10 @@ export default async function handler(req: Request): Promise<Response> {
          * OpenRouter's is normalised into that shape. Either way the client
          * reads result.content[0].text, exactly as it reads the Vercel
          * endpoint's body today. */
-        await finish(s, jobId, {
+        await finish(jobId, {
           status: "done",
           result: via === "anthropic" ? reply.data : { content: [{ type: "text", text: reply.text }] },
+          finished: Date.now(),
         });
         return ACCEPTED();
       }
@@ -235,9 +212,9 @@ export default async function handler(req: Request): Promise<Response> {
         // The errors name our own field types only — never the model's text,
         // which is a rephrasing of the student's material.
         logUsage(via, 502, Date.now() - started, spent, flags.length, attempts);
-        await finish(s, jobId, {
+        await finish(jobId, {
           status: "error",
-          error: "The review service returned an unreadable response.",
+          error: "The review service returned an unreadable response.", finished: Date.now(),
         });
         return ACCEPTED();
       }
@@ -249,11 +226,12 @@ export default async function handler(req: Request): Promise<Response> {
   } catch (err) {
     const aborted = (err as { name?: string } | null)?.name === "AbortError";
     logUsage(via, aborted ? 504 : 502, Date.now() - started, spent, flags.length, attempts);
-    await finish(s, jobId, {
+    await finish(jobId, {
       status: "error",
       error: aborted
         ? "The review took too long and was cancelled — try again, or shorten your materials."
         : "Could not reach the review service.",
+      finished: Date.now(),
     });
     return ACCEPTED();
   } finally {
