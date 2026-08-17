@@ -266,10 +266,34 @@ function tokenClaim(token: string, claim: string): string | null {
   return typeof v === "string" ? v : null;
 }
 
+/**
+ * How long ago this session actually AUTHENTICATED — not how long ago the
+ * access token was minted.
+ *
+ * `iat` is the wrong source: Supabase refreshes access tokens roughly hourly,
+ * so `iat` is always recent and a session left signed in for a week still
+ * looked "fresh". That made `sensitive: true` — the re-authentication gate in
+ * front of role changes and bulk export — silently do nothing, and meant the
+ * admin session cap never fired either.
+ *
+ * `amr` (authentication methods references) carries one entry per factor with
+ * the timestamp of that factor, and those timestamps do NOT move on refresh.
+ * We take the most recent one: that is the last time a human actually proved
+ * who they were.
+ */
 function sessionAgeMs(token: string): number {
-  const iat = decode(token)?.iat;
-  if (typeof iat !== "number") return Number.MAX_SAFE_INTEGER;
-  return Math.max(0, Date.now() - iat * 1000);
+  const claims = decode(token);
+  const amr = claims?.amr;
+  if (Array.isArray(amr)) {
+    const stamps = amr
+      .map((e) => (e && typeof e === "object" ? (e as { timestamp?: unknown }).timestamp : null))
+      .filter((t): t is number => typeof t === "number");
+    if (stamps.length) return Math.max(0, Date.now() - Math.max(...stamps) * 1000);
+  }
+  // No amr claim means we cannot prove recency. Fail closed: treat the
+  // session as ancient so sensitive actions demand a fresh sign-in rather
+  // than being waved through on an unverifiable assumption.
+  return Number.MAX_SAFE_INTEGER;
 }
 
 /** Uniform error handling so no route leaks internals in its message. */

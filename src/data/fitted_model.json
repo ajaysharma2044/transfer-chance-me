@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "fittedOn": "data/processed/t25/t25_applicants.csv",
+    "nRows": 2891,
+    "nSchools": 24,
+    "droppedSchoolsForN": [
+      "Caltech"
+    ],
+    "backtest": {
+      "aucHoldout2025_2026": 0.686,
+      "brier": 0.2198,
+      "logLoss": 0.6333
+    },
+    "note": "Shared GPA/major/feeder slopes fit by pooled logistic regression across all schools; per-school intercept prior-corrected to that school's official CDS transfer admit rate (King & Zeng 2001 rare-events correction), since the raw sample over-represents accepted applicants. Policy facts (TAG, junior-standing gates), thin-sample qualitative findings (veteran/nontraditional hooks, essay/EC analysis) stay as hand-authored rules in engine.ts -- there isn't enough tabular data to fit those reliably."
+  },
+  "gpaStd": {
+    "mean": 3.8797,
+    "std": 0.1798
+  },
+  "coefficients": {
+    "gpa": 0.2436,
+    "major": {
+      "cs": -0.7524,
+      "engineering": -0.3192,
+      "business": -0.7536,
+      "econ": -0.4337,
+      "other": -0.2329
+    },
+    "feeder": {
+      "cc": -0.1095,
+      "pub4": -0.3433,
+      "priv4": 0.0332
+    },
+    "feederCcAtUc": 0.483
+  },
+  "schoolIntercept": {
+    "Brown": -2.7796,
+    "Carnegie Mellon": -1.8816,
+    "Chicago": -2.0489,
+    "Columbia": -1.9987,
+    "Cornell": -1.7055,
+    "Dartmouth": -1.8677,
+    "Duke": -2.0754,
+    "Emory": -0.9342,
+    "Georgetown": -1.7836,
+    "Harvard": -4.5182,
+    "Johns Hopkins": -2.6777,
+    "MIT": -3.2102,
+    "Michigan": -0.1787,
+    "Northwestern": -1.6553,
+    "Notre Dame": -0.723,
+    "Princeton": -3.6031,
+    "Rice": -2.1566,
+    "Stanford": -3.4531,
+    "UC Berkeley": -0.9137,
+    "UCLA": -0.9365,
+    "UNC": -0.1276,
+    "UPenn": -3.0599,
+    "Vanderbilt": -0.7035,
+    "Yale": -3.3327
+  },
+  "schoolN": {
+    "Brown": 123,
+    "Carnegie Mellon": 37,
+    "Chicago": 78,
+    "Columbia": 163,
+    "Cornell": 225,
+    "Dartmouth": 44,
+    "Duke": 92,
+    "Emory": 58,
+    "Georgetown": 29,
+    "Harvard": 61,
+    "Johns Hopkins": 59,
+    "MIT": 31,
+    "Michigan": 176,
+    "Northwestern": 161,
+    "Notre Dame": 22,
+    "Princeton": 56,
+    "Rice": 36,
+    "Stanford": 85,
+    "UC Berkeley": 513,
+    "UCLA": 443,
+    "UNC": 48,
+    "UPenn": 134,
+    "Vanderbilt": 126,
+    "Yale": 91
+  }
+}

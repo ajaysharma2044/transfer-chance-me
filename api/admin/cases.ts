@@ -6,7 +6,7 @@
 // crafted query string still receives only their own cases.
 
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { audit, fail, requireStaff, serviceClient } from "../_admin.js";
+import { audit, AuthzError, fail, requireStaff, serviceClient } from "../_admin.js";
 
 const PAGE = 50;
 
@@ -19,9 +19,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const actor = await requireStaff(req);
     const sb = serviceClient();
 
-    const q = String(req.query.q ?? "").trim().slice(0, 120);
-    const status = String(req.query.status ?? "").trim();
-    const page = Math.max(0, Number(req.query.page ?? 0) || 0);
+    // req.query values can be arrays; String() on an array joins with commas
+    // and would smuggle a comma into the filter grammar below.
+    const first = (v: unknown) => (Array.isArray(v) ? v[0] : v);
+    const rawQ = String(first(req.query.q) ?? "").trim().slice(0, 120);
+    // PostgREST's .or() takes a comma-separated filter EXPRESSION. Any comma,
+    // parenthesis or dot in user text is grammar, not data — a name like
+    // "O'Brien, Mary" breaks the query, and a crafted value could bolt on
+    // filters the caller was never meant to run. Restrict the search to
+    // characters that cannot be grammar and reject the rest outright.
+    const q = /^[\w@.\- ]*$/.test(rawQ) ? rawQ.replace(/[.]/g, "") : null;
+    if (rawQ && q === null) throw new AuthzError(400, "Search contains characters that aren't allowed.");
+    const status = String(first(req.query.status) ?? "").trim();
+    const page = Math.min(200, Math.max(0, Number(first(req.query.page) ?? 0) || 0));
 
     // Reviewers: restrict to assigned subjects before any other filter.
     let allowed: string[] | null = null;
@@ -74,6 +84,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       meta: { count: cases.length, scope: allowed ? "assigned" : "all", q: q || undefined },
     });
 
+    // Applicant data must never sit in a shared cache or browser history.
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
     res.status(200).json({ cases, total: count ?? cases.length, scope: allowed ? "assigned" : "all" });
   } catch (e) {
     fail(res, e);

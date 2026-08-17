@@ -15,6 +15,8 @@ import Portal from "./components/Portal";
 import Review from "./components/Review";
 import CollegePage from "./components/CollegePage";
 import SchoolsIndex from "./components/SchoolsIndex";
+import Admin from "./components/admin/Admin";
+import AdminNavLink from "./components/admin/AdminNavLink";
 import { LogoMark, Wordmark } from "./components/Logo";
 
 // URL routing (hash-based, static-host friendly):
@@ -22,6 +24,7 @@ import { LogoMark, Wordmark } from "./components/Logo";
 //   #/results     chances table  #/pricing    pricing
 //   #/login       auth           #/portal     signed-in dashboard
 //   #/schools/<id>  per-college page
+//   #/admin[/...]   internal staff console (server decides access, not this)
 
 type View =
   | { kind: "landing" }
@@ -33,7 +36,8 @@ type View =
   | { kind: "review" }
   | { kind: "browse" }
   | { kind: "college"; idx: number }
-  | { kind: "school"; name: string };
+  | { kind: "school"; name: string }
+  | { kind: "admin"; sub: string };
 
 const STORE = "tcm.profile.v1";
 /** Where to land after signing in, when auth interrupted something. */
@@ -48,6 +52,10 @@ function viewFromHash(): View {
   if (h === "portal") return { kind: "portal" };
   if (h === "review") return { kind: "review" };
   if (h === "browse") return { kind: "browse" };
+  // Staff console. The sub-path is handed to Admin unparsed; nothing about
+  // reaching this route grants anything — api/_admin.ts decides on the server.
+  if (h === "admin") return { kind: "admin", sub: "" };
+  if (h.startsWith("admin/")) return { kind: "admin", sub: h.slice("admin/".length) };
   if (h.startsWith("college/")) {
     const idx = Number(h.slice("college/".length));
     if (Number.isInteger(idx) && idx >= 0) return { kind: "college", idx };
@@ -178,6 +186,9 @@ export default function App() {
             <a className="btn-quiet" href="#/pricing">Pricing</a>
             {session ? (
               <>
+                {/* Renders only for an account holding a staff role, and that
+                    is cosmetic: #/admin is a URL anyone can type. */}
+                <AdminNavLink />
                 <a className="btn-quiet" href="#/portal">Portal</a>
                 <button type="button" className="btn-quiet" onClick={logout}>Log out</button>
               </>
@@ -218,6 +229,7 @@ export default function App() {
       )}
       {view.kind === "browse" && <main><SchoolsIndex go={nav} /></main>}
       {view.kind === "college" && <main><CollegePage idx={view.idx} go={nav} /></main>}
+      {view.kind === "admin" && <main><Admin sub={view.sub} go={nav} /></main>}
       {view.kind === "school" && (
         <main>
           <SchoolPage

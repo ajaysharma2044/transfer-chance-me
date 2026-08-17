@@ -13,8 +13,10 @@
 --      users. With RLS on and no permissive policy, those writes are denied
 --      for everyone holding an anon or user token. Only the service_role key
 --      — server-side only, never in the browser bundle — can grant a role.
---   3. Every admin read path is expressed as a policy here AND re-checked in
---      the API layer. The policy is the backstop, not the only gate.
+--   3. Staff get NO read policy on applicant data. A policy would let them
+--      read essays and transcripts from the browser with no audit row, which
+--      would defeat the audited-access design. Staff read only through the
+--      API, which authorises, logs, and then returns.
 --   4. admin_audit is append-only by construction: there is an INSERT policy
 --      and a SELECT policy, and deliberately no UPDATE or DELETE policy, so
 --      staff cannot rewrite or erase their own trail through the app.
@@ -119,18 +121,22 @@ language sql stable security definer set search_path = public as $$
     )
 $$;
 
--- ── Staff read access to applicant data ────────────────────────────────────
--- Additive to the "own row" policies in schema.sql: Postgres ORs permissive
--- policies together, so users keep their own access and staff gain scoped
--- access. Note these are SELECT only — no staff policy grants UPDATE or
--- DELETE on a user's own record.
+-- ── Staff read access to applicant data: DELIBERATELY NOT GRANTED ──────────
+-- An earlier version of this file gave staff SELECT policies on profiles and
+-- documents. That was a mistake and these DROPs remove it.
+--
+-- The reason: with such a policy, any staff member could read essay and
+-- transcript text straight from the browser using the anon key — no server
+-- call, and therefore no audit row. That silently defeats the entire design
+-- in which every staff view of applicant data is recorded. A control that can
+-- be walked around is not a control.
+--
+-- Staff reach applicant data only through the API, which holds the service
+-- key (bypassing RLS by design), checks the role, writes the audit row, and
+-- only then returns anything. See api/_admin.ts and api/admin/document.ts.
 drop policy if exists "staff read cases" on public.profiles;
-create policy "staff read cases" on public.profiles
-  for select using (public.can_view_case(id));
-
 drop policy if exists "staff read case docs" on public.documents;
-create policy "staff read case docs" on public.documents
-  for select using (public.can_view_case(user_id));
+drop policy if exists "staff read consents" on public.consents;
 
 -- ── Consent ────────────────────────────────────────────────────────────────
 -- Purposes are tracked separately: holding a file to deliver the service the
@@ -162,7 +168,6 @@ alter table public.consents enable row level security;
 
 drop policy if exists "own consents read"  on public.consents;
 drop policy if exists "own consents write" on public.consents;
-drop policy if exists "staff read consents" on public.consents;
 create policy "own consents read"  on public.consents
   for select using (auth.uid() = user_id);
 -- A consent record may only be written by the user it belongs to. Staff
@@ -170,8 +175,7 @@ create policy "own consents read"  on public.consents
 -- different answer has to go and ask for it.
 create policy "own consents write" on public.consents
   for insert with check (auth.uid() = user_id);
-create policy "staff read consents" on public.consents
-  for select using (public.can_view_case(user_id));
+-- Staff read consents through the API only, for the same reason as above.
 
 /** The current answer for one purpose — the most recent record wins. */
 create or replace function public.has_consent(subject uuid, p public.consent_purpose)

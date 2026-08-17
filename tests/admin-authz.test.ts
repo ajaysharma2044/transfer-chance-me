@@ -76,7 +76,28 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "service-key-for-tests";
  *  the property we want: claims are read only after verification. */
 function token(claims: Record<string, unknown>): string {
   const b64 = (o: unknown) => Buffer.from(JSON.stringify(o)).toString("base64url");
-  return `${b64({ alg: "HS256" })}.${b64({ iat: Math.floor(Date.now() / 1000), ...claims })}.sig`;
+  const now = Math.floor(Date.now() / 1000);
+  // Real Supabase tokens carry `amr` — one entry per authentication factor,
+  // each with the timestamp of that factor. Session freshness is measured
+  // from there, not from `iat`, because `iat` moves on every hourly refresh
+  // and would make a week-old session look brand new.
+  return `${b64({ alg: "HS256" })}.${b64({
+    iat: now,
+    amr: [{ method: "password", timestamp: now }, { method: "totp", timestamp: now }],
+    ...claims,
+  })}.sig`;
+}
+
+/** A token whose last real authentication was `ageSec` ago, with `iat` still
+ *  fresh — exactly what an idle-but-refreshed session looks like. */
+function agedToken(ageSec: number, claims: Record<string, unknown> = {}): string {
+  const b64 = (o: unknown) => Buffer.from(JSON.stringify(o)).toString("base64url");
+  const now = Math.floor(Date.now() / 1000);
+  return `${b64({ alg: "HS256" })}.${b64({
+    iat: now,
+    amr: [{ method: "password", timestamp: now - ageSec }],
+    ...claims,
+  })}.sig`;
 }
 
 const req = (t: string, extra: Record<string, unknown> = {}) =>
@@ -213,7 +234,7 @@ describe("reviewers are confined to assigned cases", () => {
 describe("sensitive actions need a recent session", () => {
   it("refuses a stale session even for an owner", async () => {
     state.staffRow = { role: "owner", revoked_at: null, ip_allow: null };
-    const old = token({ aal: "aal2", iat: Math.floor(Date.now() / 1000) - 60 * 60 });
+    const old = agedToken(60 * 60, { aal: "aal2" });
     await expect(
       requireStaff(req(old), { min: "owner", sensitive: true }),
     ).rejects.toThrow(/confirm your password/i);
@@ -270,5 +291,28 @@ describe("the audit log", () => {
     state.failAudit = true;
     const actor = { id: "a-1", role: "owner" as const, email: "o@x.com", ip: "1.1.1.1", userAgent: "t", authAgeMs: 0 };
     await expect(audit(actor, { action: "view_document" })).rejects.toThrow(AuthzError);
+  });
+});
+
+describe("session freshness is measured from real authentication", () => {
+  it("does not treat a refreshed token as a fresh sign-in", async () => {
+    // The regression this guards: `iat` is minutes old because Supabase
+    // refreshed the access token, but the human last authenticated a day ago.
+    // Reading `iat` would wave this straight through a sensitive action.
+    state.staffRow = { role: "owner", revoked_at: null, ip_allow: null };
+    // 2h: past the 15-minute re-auth window, still inside the 8h session cap,
+    // so this isolates the re-auth gate rather than the session-expiry one.
+    const refreshedButOld = agedToken(2 * 60 * 60, { aal: "aal2" });
+    await expect(
+      requireStaff(req(refreshedButOld), { min: "owner", sensitive: true }),
+    ).rejects.toThrow(/confirm your password/i);
+  });
+
+  it("fails closed when the token carries no amr claim at all", async () => {
+    state.staffRow = { role: "owner", revoked_at: null, ip_allow: null };
+    const b64 = (o: unknown) => Buffer.from(JSON.stringify(o)).toString("base64url");
+    const noAmr = `${b64({ alg: "HS256" })}.${b64({ aal: "aal2", iat: Math.floor(Date.now() / 1000) })}.sig`;
+    // Unprovable recency must not be read as recent.
+    await expect(requireStaff(req(noAmr))).rejects.toThrow(/expired/i);
   });
 });

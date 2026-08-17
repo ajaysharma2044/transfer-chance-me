@@ -118,6 +118,184 @@
 
 .po-planwrap { margin-bottom: 24px; }
 
+/* ── The UC block ────────────────────────────────────────────────
+   Same card chrome as .po-list / .po-card: one border, one radius,
+   the same two-layer shadow. Nothing here is decorative.          */
+.po-uc {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
+  padding: 22px 24px;
+}
+.po-uc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.po-uc-headtext { flex: 1 1 340px; }
+.po-uc-eyebrow {
+  display: block; font-size: 10px; font-weight: 750; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--ink-3); margin-bottom: 5px;
+}
+.po-uc-head h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+.po-uc-head p { font-size: 13px; color: var(--ink-2); margin-top: 6px; line-height: 1.6; max-width: 68ch; }
+.po-uc-head p b { color: var(--ink); font-weight: 700; }
+
+.po-uc-clocks { display: flex; gap: 10px; flex: 0 0 auto; }
+.po-uc-clock {
+  border: 1px solid var(--line); border-radius: 12px; background: var(--bg-soft);
+  padding: 11px 14px; min-width: 118px;
+}
+.po-uc-clock b { display: block; font-size: 21px; font-weight: 800; letter-spacing: -0.03em; color: var(--blue); line-height: 1.1; }
+.po-uc-clock span { display: block; font-size: 10.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.35; }
+.po-uc-clock.soon { border-color: color-mix(in srgb, var(--coral) 45%, var(--line)); background: linear-gradient(120deg, #fff, #fff6f4); }
+.po-uc-clock.soon b { color: var(--coral); }
+
+.po-uc-cols,
+.po-uc-row {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 0.62fr 0.72fr 0.95fr;
+  gap: 12px; align-items: center;
+}
+.po-uc-cols {
+  margin-top: 20px; padding: 0 6px 6px;
+  font-size: 9.5px; font-weight: 750; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+.po-uc-cols span:nth-child(n + 3) { text-align: right; }
+
+.po-uc-list { list-style: none; }
+.po-uc-list li { border-top: 1px solid var(--line); }
+.po-uc-list li.tagged { background: linear-gradient(90deg, rgba(20, 184, 160, 0.07), transparent 60%); }
+.po-uc-row { width: 100%; text-align: left; padding: 10px 6px; border-radius: 10px; }
+.po-uc-row:hover { background: var(--bg-soft); }
+.po-uc-list li.tagged .po-uc-row:hover { background: rgba(20, 184, 160, 0.1); }
+
+.po-uc-campus { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.po-uc-campus b { display: block; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.po-uc-campus i { display: block; font-style: normal; font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+.po-uc-row:hover .po-uc-campus b { color: var(--accent); }
+
+.po-uc-rate b { display: block; font-size: 14px; font-weight: 650; color: var(--ink); }
+.po-uc-rate i { display: block; font-style: normal; font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+
+.po-uc-cc { text-align: right; font-size: 13px; font-weight: 600; color: var(--teal); }
+/* The column header carries this label on wide screens; the row carries it
+   when the header is dropped for the stacked layout. */
+.po-uc-cc i { display: none; }
+
+.po-uc-tagcell {
+  display: flex; align-items: baseline; justify-content: flex-end; gap: 5px;
+  font-size: 13px; color: var(--ink-3);
+}
+.po-uc-tagcell em { font-style: normal; font-weight: 800; color: var(--line-strong); }
+.po-uc-tagcell i { font-style: normal; font-size: 11.5px; }
+.po-uc-tagcell.met { color: var(--teal); font-weight: 700; }
+.po-uc-tagcell.met em { color: var(--teal); }
+
+.po-uc-odds { text-align: right; }
+.po-uc-odds b { display: block; font-size: 14px; font-weight: 700; color: var(--accent); }
+.po-uc-odds i { display: block; font-style: normal; font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+
+.po-uc-panels {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line);
+}
+.po-uc-panel {
+  border: 1px solid var(--line); border-radius: 14px; background: var(--bg-soft);
+  padding: 16px 17px;
+}
+.po-uc-panel h3 { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
+.po-uc-lead { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; }
+.po-uc-lead b { color: var(--ink); font-weight: 700; }
+.po-uc-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.6; margin-top: 10px; }
+.po-uc-warn { font-size: 12.5px; color: var(--warn); line-height: 1.55; margin-top: 8px; }
+.po-uc-ok { font-size: 12.5px; color: var(--good); margin-top: 8px; }
+.po-uc-igetc { font-size: 12.5px; color: var(--ink-2); margin-top: 10px; }
+.po-uc-igetc b { color: var(--ink); font-weight: 650; }
+.po-uc-panel .btn { margin-top: 12px; }
+
+.po-uc-gates { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+.po-uc-gates li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); }
+.po-uc-gates li span { width: 14px; text-align: center; font-weight: 800; font-size: 11px; color: var(--line-strong); }
+.po-uc-gates li.ok { color: var(--ink); }
+.po-uc-gates li.ok span { color: var(--teal); }
+.po-uc-gates li.no span { color: var(--coral); }
+
+.po-uc-floors { list-style: none; margin-top: 12px; }
+.po-uc-floors li {
+  display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline;
+  padding: 6px 0; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--ink-3);
+}
+.po-uc-floors li:first-child { border-top: none; }
+.po-uc-floors li.clear { color: var(--ink); }
+.po-uc-floor-name { font-weight: 550; }
+.po-uc-floor-min { font-weight: 700; }
+.po-uc-floors li.clear .po-uc-floor-min { color: var(--teal); }
+.po-uc-floors li i {
+  grid-column: 1 / -1; font-style: normal; font-size: 11px; color: var(--ink-3);
+  line-height: 1.5; margin-top: 2px;
+}
+
+.po-uc-gaps { list-style: none; margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.po-uc-gaps li {
+  font-size: 11.5px; font-weight: 550; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--coral) 35%, var(--line));
+  background: var(--bg); border-radius: 7px; padding: 4px 9px;
+}
+
+.po-uc-fine {
+  font-size: 11px; color: var(--ink-3); line-height: 1.55;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line);
+}
+.po-uc-step { font-size: 11.5px; color: var(--ink-2); margin-top: 8px; }
+.po-uc-step b { color: var(--accent); font-weight: 650; }
+
+@media (max-width: 900px) {
+  .po-uc-panels { grid-template-columns: 1fr; }
+  .po-uc-cols { display: none; }
+  .po-uc-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "campus odds" "rate tag" "cc tag";
+    row-gap: 4px;
+  }
+  .po-uc-campus { grid-area: campus; }
+  .po-uc-rate { grid-area: rate; }
+  .po-uc-cc { grid-area: cc; text-align: left; }
+  .po-uc-cc i { display: inline; font-style: normal; font-weight: 400; color: var(--ink-3); }
+  .po-uc-tagcell { grid-area: tag; justify-content: flex-end; align-self: center; }
+  .po-uc-odds { grid-area: odds; }
+}
+
+/* ── Your writing ───────────────────────────────────────────────── */
+.po-write {
+  border: 1px solid var(--line); border-radius: 16px; background: var(--bg);
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
+  padding: 22px 24px;
+}
+.po-write-dek { font-size: 13px; color: var(--ink-2); line-height: 1.6; max-width: 72ch; margin-bottom: 18px; }
+.po-doc { margin-bottom: 20px; }
+.po-doc > label {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 13.5px; font-weight: 550; color: var(--ink); margin-bottom: 10px;
+}
+.po-doc > label::before {
+  content: ""; width: 7px; height: 7px; border-radius: 2.5px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue), var(--accent));
+}
+.po-doc-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.po-doc-pair .po-doc { margin-bottom: 12px; }
+.po-write-hint { font-size: 12px; color: var(--ink-3); margin-top: 8px; line-height: 1.55; max-width: 62ch; }
+
+.po-write-foot {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--line);
+}
+.po-write-foot .btn:disabled { opacity: 0.45; cursor: default; }
+.po-write-foot .btn:disabled:hover { transform: none; box-shadow: none; }
+.po-write-state { font-size: 12.5px; color: var(--ink-2); }
+.po-write-state.bad { color: var(--bad); }
+.po-write-note { font-size: 11px; color: var(--ink-3); margin-top: 10px; line-height: 1.55; max-width: 78ch; }
+
+@media (max-width: 720px) {
+  .po-doc-pair { grid-template-columns: 1fr; }
+}
+
 /* School picker chips carry their logo and admit rate */
 .po-add { display: inline-flex; align-items: center; gap: 7px; }
 .po-add-rate { font-style: normal; font-size: 10.5px; color: var(--ink-3); font-weight: 650; }
