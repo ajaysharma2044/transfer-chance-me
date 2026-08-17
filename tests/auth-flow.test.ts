@@ -113,13 +113,21 @@ describe("signUp against the cloud", () => {
     expect(r.session?.name).toBe("sam");
   });
 
-  it("translates the SDK's blunt error into the app's voice", async () => {
+  it("does not reveal that an email already has an account", async () => {
+    // The sign-up form must not become an oracle for which students have
+    // accounts here. Supabase says "User already registered"; the user-facing
+    // message must not repeat that, or anyone could probe an address and read
+    // the answer off the screen. The person who owns the address finds out
+    // from the email they just received.
     sdk.signUp.mockResolvedValue({
       data: { user: null, session: null },
       error: { message: "User already registered" },
     });
     await expect(signUp("Sam", "sam@example.com", "long-enough-pw")).rejects.toThrow(
-      /already an account/i,
+      /check your inbox/i,
+    );
+    await expect(signUp("Sam", "sam@example.com", "long-enough-pw")).rejects.not.toThrow(
+      /already|exists|registered|taken/i,
     );
   });
 });

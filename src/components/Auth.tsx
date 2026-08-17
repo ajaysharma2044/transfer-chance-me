@@ -370,6 +370,17 @@ export default function Auth({
           </p>
         )}
 
+        {/* Reset mode hides the tabs, so without this there is no way out of
+            the screen except setting a password or editing the URL. */}
+        {mode === "reset" && (
+          <p className="au-switch">
+            Don't need to change it?{" "}
+            <button type="button" className="au-link" onClick={() => switchMode("login")}>
+              Back to log in
+            </button>
+          </p>
+        )}
+
         {showTabs && (
           <p className="au-note">
             {cloudEnabled ? (

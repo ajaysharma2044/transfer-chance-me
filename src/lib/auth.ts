@@ -261,7 +261,12 @@ export async function logOut(): Promise<void> {
 function friendly(msg: string): string {
   const m = msg.toLowerCase();
   if (m.includes("invalid login")) return "That email and password don't match.";
-  if (m.includes("already registered")) return "There's already an account with this email. Try logging in.";
+  // Deliberately NOT "there's already an account with this email": that answer
+  // turns the sign-up form into an oracle for whether a given student has an
+  // account here, which the forgot-password flow is careful never to reveal.
+  // The person who genuinely owns the address learns what to do from the
+  // email they just received; an attacker learns nothing either way.
+  if (m.includes("already registered")) return "Check your inbox to finish setting up this email.";
   if (m.includes("email not confirmed")) return "Confirm your email first — check your inbox for the link.";
   if (m.includes("only request this")) return "That was requested a moment ago — give it a minute, then try again.";
   if (m.includes("rate limit") || m.includes("too many")) return "Too many attempts. Wait a minute and try again.";

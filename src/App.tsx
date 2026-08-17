@@ -129,22 +129,47 @@ export default function App() {
   //     stores that in sessionStorage) or to their portal
   // In-app logins don't take this path — handleAuth below routes those — so
   // this only fires for visits that START signed-in from a redirect.
-  useEffect(() => initAuth((s, event) => {
-    setSessionState(s);
-    if (event === "PASSWORD_RECOVERY" || (RECOVERY_RETURN && s)) {
-      setRecovery(true);
-      window.location.hash = "#/login";
-      return;
-    }
-    if (AUTH_RETURN && !RECOVERY_RETURN && s && event === "SIGNED_IN") {
-      let next = "portal";
-      try {
-        const pending = sessionStorage.getItem(NEXT_KEY);
-        if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
-      } catch { /* ok */ }
-      window.location.hash = `#/${next}`;
-    }
-  }), []);
+  useEffect(() => {
+    // These describe how THIS PAGE-LOAD started, so each must be consumed
+    // once and then stop matching. Leaving them armed made every later auth
+    // event re-run the arrival logic: a token refresh (~55 min) or a
+    // tab-refocus in a tab that began at a reset link would throw a
+    // signed-in user back into the new-password screen, and a later
+    // in-app login would eat the stored destination.
+    let arrivalPending = AUTH_RETURN;
+    let recoveryPending = RECOVERY_RETURN;
+
+    return initAuth((s, event) => {
+      setSessionState(s);
+
+      if (event === "PASSWORD_RECOVERY" || (recoveryPending && s)) {
+        recoveryPending = false;
+        arrivalPending = false;
+        setRecovery(true);
+        window.location.hash = "#/login";
+        return;
+      }
+
+      if (arrivalPending && s && event === "SIGNED_IN") {
+        arrivalPending = false;
+        let next = "portal";
+        try {
+          const pending = sessionStorage.getItem(NEXT_KEY);
+          if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
+        } catch { /* ok */ }
+        window.location.hash = `#/${next}`;
+      }
+    });
+  }, []);
+
+  // A provider or email link that came back with an error carries no session,
+  // so neither branch above fires and the router sees an unroutable hash —
+  // which used to strand a cancelled Google sign-in, or an expired reset
+  // link, on the marketing page with no explanation. Send those to the login
+  // screen, which knows how to show the message.
+  useEffect(() => {
+    if (AUTH_RETURN_ERROR) window.location.hash = "#/login";
+  }, []);
 
   // On sign-in, adopt the account's saved profile so a user's work follows
   // them to a new device. A local profile that is still untouched must not
