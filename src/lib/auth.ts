@@ -96,28 +96,44 @@ function toSession(u: SbUser | null | undefined): Session | null {
  * Hydrate the session mirror from the real backend and keep it in step.
  * Call once at start-up; returns an unsubscribe. No-ops without Supabase,
  * where localStorage already is the source of truth.
+ *
+ * The event name is passed through because the app has to react to more
+ * than presence/absence of a session: PASSWORD_RECOVERY means "this visit
+ * came from a reset-password email and the next screen must be the new
+ * password form", and SIGNED_IN right after an OAuth or confirmation
+ * redirect is the moment to route to wherever the user was headed.
  */
-export function initAuth(onChange?: (s: Session | null) => void): () => void {
+export function initAuth(onChange?: (s: Session | null, event: string) => void): () => void {
   if (!cloudEnabled || !supabase) return () => {};
   const sb = supabase;
 
   sb.auth.getSession().then(({ data }) => {
     const s = toSession(data.session?.user);
     setSession(s);
-    onChange?.(s);
+    onChange?.(s, "INITIAL_SESSION");
   });
 
-  const { data } = sb.auth.onAuthStateChange((_event, sess) => {
+  const { data } = sb.auth.onAuthStateChange((event, sess) => {
     const s = toSession(sess?.user);
     setSession(s);
-    onChange?.(s);
+    onChange?.(s, event);
   });
   return () => data.subscription.unsubscribe();
 }
 
 /* ── Auth API (identical signatures either side of the backend) ── */
 
-export async function signUp(name: string, email: string, password: string): Promise<Session> {
+export interface SignUpResult {
+  /** Present when the account is usable immediately. */
+  session: Session | null;
+  /** True when the account was created but the email must be confirmed
+   *  before the first login. This is a normal outcome, not an error — the
+   *  UI shows a "check your inbox" state, never a red failure message. */
+  needsConfirmation: boolean;
+  email: string;
+}
+
+export async function signUp(name: string, email: string, password: string): Promise<SignUpResult> {
   const em = normalizeEmail(email);
   const nm = name.trim();
   if (!nm) throw new Error("Please tell us your name.");
@@ -131,12 +147,14 @@ export async function signUp(name: string, email: string, password: string): Pro
       options: { data: { full_name: nm } },
     });
     if (error) throw new Error(friendly(error.message));
-    // With email confirmation switched on there is no session yet — the user
-    // has to click the link first, and saying so beats a silent no-op.
+    // Supabase quirk: signing up with an email that already has a confirmed
+    // account returns success with an "obfuscated" user and no identities,
+    // to avoid disclosing who has an account. Surface it as the confirmation
+    // state — the honest message is in the email that account just received.
     if (!data.session) {
-      throw new Error("Check your email to confirm your account, then log in.");
+      return { session: null, needsConfirmation: true, email: em };
     }
-    return toSession(data.user) ?? { email: em, name: nm };
+    return { session: toSession(data.user) ?? { email: em, name: nm }, needsConfirmation: false, email: em };
   }
 
   const users = loadUsers();
@@ -148,7 +166,57 @@ export async function signUp(name: string, email: string, password: string): Pro
   users.push({ name: nm, email: em, passwordHash, createdAt: new Date().toISOString() });
   saveUsers(users);
 
-  return { email: em, name: nm };
+  return { session: { email: em, name: nm }, needsConfirmation: false, email: em };
+}
+
+/** Send the confirmation email again. Rate-limited by Supabase, and the
+ *  limiter's message is passed through so the UI can say when to retry. */
+export async function resendConfirmation(email: string): Promise<void> {
+  if (!cloudEnabled || !supabase) return;
+  const { error } = await supabase.auth.resend({ type: "signup", email: normalizeEmail(email) });
+  if (error) throw new Error(friendly(error.message));
+}
+
+/**
+ * Start the forgot-password flow. The email links back to the app with a
+ * recovery token; initAuth() then reports PASSWORD_RECOVERY and the app
+ * shows the new-password form.
+ *
+ * Always resolves for a well-formed address, whether or not an account
+ * exists — completing the sentence "no account with that email" would tell
+ * anyone which addresses have accounts here, and this database holds
+ * student records.
+ */
+export async function requestPasswordReset(email: string): Promise<void> {
+  const em = normalizeEmail(email);
+  if (!/^\S+@\S+\.\S+$/.test(em)) throw new Error("That doesn't look like an email address.");
+  if (!cloudEnabled || !supabase) {
+    throw new Error("Password reset needs the online account system, which isn't configured.");
+  }
+  const { error } = await supabase.auth.resetPasswordForEmail(em, {
+    redirectTo: window.location.origin,
+  });
+  if (error) throw new Error(friendly(error.message));
+}
+
+/** Set a new password on the CURRENT session — the recovery flow's final
+ *  step, and the account page's change-password. Works for Google-created
+ *  accounts too: it adds an email+password way in alongside Google. */
+export async function setPassword(newPassword: string): Promise<void> {
+  if (newPassword.length < 8) throw new Error("Password needs at least 8 characters.");
+  if (!cloudEnabled || !supabase) {
+    throw new Error("Password changes need the online account system, which isn't configured.");
+  }
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  if (error) throw new Error(friendly(error.message));
+}
+
+/** How this session signed in ("google", "email", …) — the account page
+ *  uses it to label the password section correctly. */
+export async function authProvider(): Promise<string | null> {
+  if (!cloudEnabled || !supabase) return null;
+  const { data } = await supabase.auth.getUser();
+  return (data.user?.app_metadata?.provider as string | undefined) ?? null;
 }
 
 export async function logIn(email: string, password: string): Promise<Session> {
@@ -195,7 +263,11 @@ function friendly(msg: string): string {
   if (m.includes("invalid login")) return "That email and password don't match.";
   if (m.includes("already registered")) return "There's already an account with this email. Try logging in.";
   if (m.includes("email not confirmed")) return "Confirm your email first — check your inbox for the link.";
+  if (m.includes("only request this")) return "That was requested a moment ago — give it a minute, then try again.";
   if (m.includes("rate limit") || m.includes("too many")) return "Too many attempts. Wait a minute and try again.";
+  if (m.includes("different from the old")) return "That's your current password — pick a new one.";
+  if (m.includes("session missing") || m.includes("session_not_found") || m.includes("expired"))
+    return "That link has expired. Request a fresh one and use it within an hour.";
   if (m.includes("password")) return "Password needs at least 8 characters.";
   return msg;
 }

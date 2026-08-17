@@ -12,6 +12,7 @@ import SchoolPage from "./components/SchoolPage";
 import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
 import Portal from "./components/Portal";
+import Account from "./components/Account";
 import Review from "./components/Review";
 import CollegePage from "./components/CollegePage";
 import SchoolsIndex from "./components/SchoolsIndex";
@@ -33,6 +34,7 @@ type View =
   | { kind: "pricing" }
   | { kind: "auth" }
   | { kind: "portal" }
+  | { kind: "account" }
   | { kind: "review" }
   | { kind: "browse" }
   | { kind: "college"; idx: number }
@@ -43,6 +45,22 @@ const STORE = "tcm.profile.v1";
 /** Where to land after signing in, when auth interrupted something. */
 const NEXT_KEY = "tcm.next.v1";
 
+/* Auth links (OAuth returns, confirmation emails, reset emails) land on this
+ * page with their tokens in the URL hash. The Supabase SDK consumes and
+ * scrubs that hash almost immediately, so what KIND of visit this is has to
+ * be captured at module load — by the first render it is gone. */
+const BOOT_HASH = typeof window !== "undefined" ? window.location.hash : "";
+/** This visit arrived from an auth email or an OAuth provider. */
+const AUTH_RETURN = /access_token=|refresh_token=|error_code=|error_description=/.test(BOOT_HASH);
+/** …specifically from a password-reset email. */
+const RECOVERY_RETURN = /type=recovery/.test(BOOT_HASH);
+/** …and it failed at the provider (user cancelled, config error). */
+const AUTH_RETURN_ERROR = (() => {
+  const m = BOOT_HASH.match(/error_description=([^&]+)/);
+  if (!m) return null;
+  try { return decodeURIComponent(m[1].replace(/\+/g, " ")); } catch { return m[1]; }
+})();
+
 function viewFromHash(): View {
   const h = window.location.hash.replace(/^#\/?/, "").replace(/\/+$/, "");
   if (h === "check") return { kind: "intake" };
@@ -50,6 +68,7 @@ function viewFromHash(): View {
   if (h === "pricing") return { kind: "pricing" };
   if (h === "login") return { kind: "auth" };
   if (h === "portal") return { kind: "portal" };
+  if (h === "account") return { kind: "account" };
   if (h === "review") return { kind: "review" };
   if (h === "browse") return { kind: "browse" };
   // Staff console. The sub-path is handed to Admin unparsed; nothing about
@@ -97,9 +116,35 @@ export default function App() {
     localStorage.setItem(STORE, JSON.stringify(profile));
   }, [profile]);
 
-  // Track the real backend session (Supabase) once at boot. Without a
-  // backend this is a no-op and localStorage stays the source of truth.
-  useEffect(() => initAuth((s) => setSessionState(s)), []);
+  // True while this visit is completing a password reset: the reset email
+  // signed them in with a recovery token, and the only sensible next screen
+  // is "choose a new password".
+  const [recovery, setRecovery] = useState<boolean>(RECOVERY_RETURN);
+
+  // Track the real backend session (Supabase) once at boot, and route the
+  // moments that arrive from outside the app:
+  //   · a reset-email visit goes to the new-password form
+  //   · a fresh sign-in that came from an OAuth redirect or a confirmation
+  //     email continues to wherever the user was headed (the results gate
+  //     stores that in sessionStorage) or to their portal
+  // In-app logins don't take this path — handleAuth below routes those — so
+  // this only fires for visits that START signed-in from a redirect.
+  useEffect(() => initAuth((s, event) => {
+    setSessionState(s);
+    if (event === "PASSWORD_RECOVERY" || (RECOVERY_RETURN && s)) {
+      setRecovery(true);
+      window.location.hash = "#/login";
+      return;
+    }
+    if (AUTH_RETURN && !RECOVERY_RETURN && s && event === "SIGNED_IN") {
+      let next = "portal";
+      try {
+        const pending = sessionStorage.getItem(NEXT_KEY);
+        if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
+      } catch { /* ok */ }
+      window.location.hash = `#/${next}`;
+    }
+  }), []);
 
   // On sign-in, adopt the account's saved profile so a user's work follows
   // them to a new device. A local profile that is still untouched must not
@@ -190,6 +235,7 @@ export default function App() {
                     is cosmetic: #/admin is a URL anyone can type. */}
                 <AdminNavLink />
                 <a className="btn-quiet" href="#/portal">Portal</a>
+                <a className="btn-quiet" href="#/account">Account</a>
                 <button type="button" className="btn-quiet" onClick={logout}>Log out</button>
               </>
             ) : (
@@ -220,7 +266,24 @@ export default function App() {
         </main>
       )}
       {view.kind === "pricing" && <main><Pricing onStart={() => nav("check")} /></main>}
-      {view.kind === "auth" && <main><Auth onDone={handleAuth} /></main>}
+      {view.kind === "account" && (
+        session ? (
+          <main><Account session={session} onLogout={logout} /></main>
+        ) : (
+          // Signed out on the account URL: sign in first, then return here.
+          <main><Auth onDone={(s) => { try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ok */ } setRecovery(false); setSession(s); setSessionState(s); nav("account"); }} recovery={recovery} notice={AUTH_RETURN_ERROR} /></main>
+        )
+      )}
+
+      {view.kind === "auth" && (
+        <main>
+          <Auth
+            onDone={(s) => { setRecovery(false); handleAuth(s); }}
+            recovery={recovery}
+            notice={AUTH_RETURN_ERROR}
+          />
+        </main>
+      )}
       {view.kind === "portal" && (
         <main><Portal session={session} profile={profile} go={nav} /></main>
       )}

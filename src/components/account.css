@@ -1,0 +1,162 @@
+/* ── Account page (ac- prefix) ──
+   Same visual language as portal.css cards and auth.css fields: one border,
+   one radius, the two-layer shadow, ink/line tokens only. */
+
+.ac-wrap {
+  width: var(--w);
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 44px 0 120px;
+}
+
+.ac-head { margin-bottom: 26px; }
+.ac-head h1 {
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.ac-sub { color: var(--ink-2); font-size: 14.5px; margin-top: 4px; }
+
+.ac-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow: 0 1px 2px rgba(20, 24, 63, 0.04), 0 10px 30px rgba(20, 24, 63, 0.05);
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+.ac-card h2 {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.ac-dek {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: -4px 0 16px;
+  max-width: 62ch;
+}
+.ac-dek b { color: var(--ink); font-weight: 650; }
+
+/* ── Key-value rows (Account section) ── */
+.ac-kv { display: flex; flex-direction: column; gap: 8px; }
+.ac-kv div { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; }
+.ac-kv dt { color: var(--ink-3); flex-shrink: 0; }
+.ac-kv dd { font-weight: 550; text-align: right; overflow-wrap: anywhere; }
+
+/* ── Fields — the .au-field recipe ── */
+.ac-field { margin-bottom: 18px; }
+.ac-field label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.ac-field input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink);
+  padding: 11px 13px;
+  font: inherit;
+  font-size: 15px;
+}
+.ac-field input::placeholder { color: var(--ink-3); }
+.ac-field input:focus-visible,
+.ac-field input:focus {
+  border-color: var(--ink);
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+/* ── Inline outcomes ── */
+.ac-error { color: var(--bad); font-size: 13.5px; margin-top: 10px; }
+.ac-ok { color: var(--good); font-size: 13.5px; margin-top: 10px; }
+
+/* ── Buttons ── */
+.ac-card .btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.ac-btn {
+  font-size: 13.5px;
+  font-weight: 550;
+  color: var(--ink);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 9px 18px;
+  background: var(--bg);
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.ac-btn:hover { border-color: var(--ink-3); background: var(--bg-soft); }
+.ac-btn:disabled { opacity: 0.5; cursor: default; }
+.ac-btn:disabled:hover { border-color: var(--line-strong); background: var(--bg); }
+
+.ac-btn.danger {
+  color: var(--bad);
+  border-color: color-mix(in srgb, var(--bad) 45%, var(--line-strong));
+}
+.ac-btn.danger:hover {
+  background: #fff6f4;
+  border-color: var(--bad);
+}
+.ac-btn.danger:disabled:hover {
+  background: var(--bg);
+  border-color: color-mix(in srgb, var(--bad) 45%, var(--line-strong));
+}
+
+.ac-submit { margin-top: 14px; }
+
+/* ── Your data: one row per action ── */
+.ac-action { padding: 16px 0; border-top: 1px solid var(--line); }
+.ac-action:first-of-type { border-top: none; padding-top: 2px; }
+.ac-action h3 { font-size: 13.5px; font-weight: 650; letter-spacing: -0.01em; }
+.ac-action p {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin: 4px 0 10px;
+  max-width: 60ch;
+}
+
+/* ── Typed confirmation ── */
+.ac-confirm-label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.ac-confirm-label b { color: var(--bad); letter-spacing: 0.04em; }
+.ac-confirm-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.ac-confirm-row input {
+  flex: 1;
+  min-width: 140px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink);
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13.5px;
+}
+.ac-confirm-row input::placeholder { color: var(--ink-3); }
+.ac-confirm-row input:focus-visible,
+.ac-confirm-row input:focus {
+  border-color: var(--ink);
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .ac-wrap { padding-top: 32px; }
+  .ac-kv div { flex-direction: column; gap: 2px; }
+  .ac-kv dd { text-align: left; }
+}

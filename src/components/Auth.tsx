@@ -1,25 +1,69 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { logIn, signUp } from "../lib/auth";
+import {
+  cloudEnabled,
+  logIn,
+  requestPasswordReset,
+  resendConfirmation,
+  setPassword as savePassword,
+  signInWithGoogle,
+  signUp,
+} from "../lib/auth";
+import { getSession } from "../lib/auth";
 import type { Session } from "../lib/auth";
 import { googleEnabled, mountGoogleButton } from "../lib/googleAuth";
-import { cloudEnabled, signInWithGoogle } from "../lib/auth";
 import "./auth.css";
 
-type Mode = "login" | "signup";
+// The whole sign-in surface, as states rather than pages:
+//   login        email + password, Google, forgot-password link
+//   signup       name + email + password, Google
+//   sent         account created, confirmation email on its way (resend, cooldown)
+//   forgot       ask for the email to reset
+//   forgot-sent  reset email on its way — same wording whether or not an
+//                account exists, so this screen can't be used to probe who
+//                has an account here
+//   reset        arrived from the email link: choose the new password
+type Mode = "login" | "signup" | "sent" | "forgot" | "forgot-sent" | "reset";
 
-export default function Auth({ onDone }: { onDone: (s: Session) => void }) {
-  const [mode, setMode] = useState<Mode>("login");
+const RESEND_COOLDOWN_S = 60;
+
+export default function Auth({
+  onDone,
+  recovery = false,
+  notice = null,
+}: {
+  onDone: (s: Session) => void;
+  /** True when this visit came from a password-reset email link. */
+  recovery?: boolean;
+  /** A message carried in from outside — e.g. a failed OAuth return. */
+  notice?: string | null;
+}) {
+  const [mode, setMode] = useState<Mode>(recovery ? "reset" : "login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [password2, setPassword2] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [error, setError] = useState<string | null>(notice);
+  const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
   const googleRef = useRef<HTMLDivElement>(null);
 
+  // A recovery link can land while the page is already open.
   useEffect(() => {
-    // With Supabase configured, Google runs through it (a redirect flow whose
-    // token the server verifies) rather than the browser-only GIS button.
+    if (recovery) setMode("reset");
+  }, [recovery]);
+
+  // Resend cooldown ticks down once per second.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = window.setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  useEffect(() => {
+    // Without Supabase, Google falls back to the browser-only GIS button.
     if (cloudEnabled) return;
     if (googleEnabled && googleRef.current) {
       mountGoogleButton(googleRef.current, onDone).catch(() => {
@@ -32,19 +76,16 @@ export default function Auth({ onDone }: { onDone: (s: Session) => void }) {
   function switchMode(m: Mode) {
     setMode(m);
     setError(null);
+    setInfo(null);
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function run(action: () => Promise<void>) {
     if (busy) return;
     setError(null);
+    setInfo(null);
     setBusy(true);
     try {
-      const session =
-        mode === "signup"
-          ? await signUp(name, email, password)
-          : await logIn(email, password);
-      onDone(session);
+      await action();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
     } finally {
@@ -52,44 +93,101 @@ export default function Auth({ onDone }: { onDone: (s: Session) => void }) {
     }
   }
 
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (mode === "login") {
+      void run(async () => {
+        onDone(await logIn(email, password));
+      });
+    } else if (mode === "signup") {
+      void run(async () => {
+        const r = await signUp(name, email, password);
+        if (r.needsConfirmation) {
+          setCooldown(RESEND_COOLDOWN_S);
+          setMode("sent");
+        } else if (r.session) {
+          onDone(r.session);
+        }
+      });
+    } else if (mode === "forgot") {
+      void run(async () => {
+        await requestPasswordReset(email);
+        setCooldown(RESEND_COOLDOWN_S);
+        setMode("forgot-sent");
+      });
+    } else if (mode === "reset") {
+      void run(async () => {
+        if (password !== password2) throw new Error("Those passwords don't match.");
+        await savePassword(password);
+        const s = getSession();
+        if (s) onDone(s);
+        else setError("Password saved — log in with it now.");
+      });
+    }
+  }
+
+  function resend() {
+    void run(async () => {
+      if (mode === "sent") await resendConfirmation(email);
+      else await requestPasswordReset(email);
+      setCooldown(RESEND_COOLDOWN_S);
+      setInfo("Sent again — give it a minute to arrive, and check spam.");
+    });
+  }
+
+  const showTabs = mode === "login" || mode === "signup";
+  const showGoogle = showTabs;
+
+  const title =
+    mode === "login" ? "Welcome back"
+    : mode === "signup" ? "Save your chances"
+    : mode === "sent" ? "Check your inbox"
+    : mode === "forgot" ? "Reset your password"
+    : mode === "forgot-sent" ? "Check your inbox"
+    : "Choose a new password";
+
+  const dek =
+    mode === "login" ? "Pick up where you left off."
+    : mode === "signup" ? "Save your profile and report to your account."
+    : mode === "sent" ? `We sent a confirmation link to ${email}. Click it and you're in.`
+    : mode === "forgot" ? "Enter your email and we'll send a reset link."
+    : mode === "forgot-sent" ? `If there's an account for ${email}, a reset link is on its way.`
+    : "You followed a reset link — set the new password for your account here.";
+
   return (
     <div className="au-wrap">
       <div className="au-card">
-        <div className="au-tabs" role="tablist" aria-label="Log in or create account">
-          <button
-            type="button"
-            role="tab"
-            id="au-tab-login"
-            aria-selected={mode === "login"}
-            aria-controls="au-panel"
-            className={`au-tab${mode === "login" ? " on" : ""}`}
-            onClick={() => switchMode("login")}
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            role="tab"
-            id="au-tab-signup"
-            aria-selected={mode === "signup"}
-            aria-controls="au-panel"
-            className={`au-tab${mode === "signup" ? " on" : ""}`}
-            onClick={() => switchMode("signup")}
-          >
-            Create account
-          </button>
-        </div>
+        {showTabs && (
+          <div className="au-tabs" role="tablist" aria-label="Log in or create account">
+            <button
+              type="button"
+              role="tab"
+              id="au-tab-login"
+              aria-selected={mode === "login"}
+              aria-controls="au-panel"
+              className={`au-tab${mode === "login" ? " on" : ""}`}
+              onClick={() => switchMode("login")}
+            >
+              Log in
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="au-tab-signup"
+              aria-selected={mode === "signup"}
+              aria-controls="au-panel"
+              className={`au-tab${mode === "signup" ? " on" : ""}`}
+              onClick={() => switchMode("signup")}
+            >
+              Create account
+            </button>
+          </div>
+        )}
 
-        <h1 className="au-title">
-          {mode === "login" ? "Welcome back" : "Save your chances"}
-        </h1>
-        <p className="au-dek">
-          {mode === "login"
-            ? "Pick up where you left off."
-            : "Save your profile and report to your account."}
-        </p>
+        <h1 className="au-title">{title}</h1>
+        <p className="au-dek">{dek}</p>
 
-        {cloudEnabled ? (
+        {showGoogle && cloudEnabled ? (
           <>
             <button
               type="button"
@@ -109,103 +207,186 @@ export default function Auth({ onDone }: { onDone: (s: Session) => void }) {
             </button>
             <div className="au-divider" aria-hidden="true"><span>or</span></div>
           </>
-        ) : googleEnabled ? (
+        ) : showGoogle && googleEnabled ? (
           <>
             <div className="au-google" ref={googleRef} />
             <div className="au-divider" aria-hidden="true"><span>or</span></div>
           </>
         ) : null}
 
-        <form
-          id="au-panel"
-          role="tabpanel"
-          aria-labelledby={mode === "login" ? "au-tab-login" : "au-tab-signup"}
-          className="au-form"
-          onSubmit={handleSubmit}
-          noValidate
-        >
-          {mode === "signup" && (
-            <div className="au-field">
-              <label htmlFor="au-name">Name</label>
-              <input
-                id="au-name"
-                type="text"
-                autoComplete="name"
-                placeholder="Jordan Rivera"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-          )}
-
-          <div className="au-field">
-            <label htmlFor="au-email">Email</label>
-            <input
-              id="au-email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="au-field">
-            <label htmlFor="au-password">Password</label>
-            <input
-              id="au-password"
-              type="password"
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              placeholder={mode === "signup" ? "At least 8 characters" : "Your password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          {error && (
-            <p className="au-error" role="alert">
-              {error}
+        {mode === "sent" || mode === "forgot-sent" ? (
+          <div className="au-sent" role="status">
+            <span className="au-sent-mark" aria-hidden="true">✉</span>
+            <p>
+              {mode === "sent"
+                ? "The link signs you in and brings you straight back here."
+                : "The link opens a screen to choose a new password. It works for an hour."}
             </p>
-          )}
-
-          <button type="submit" className="btn au-submit" disabled={busy}>
-            {busy ? "One moment…" : mode === "login" ? "Log in" : "Create account"}
-          </button>
-        </form>
-
-        <p className="au-switch">
-          {mode === "login" ? (
-            <>
-              New here?{" "}
-              <button type="button" className="au-link" onClick={() => switchMode("signup")}>
-                Create an account
+            {info && <p className="au-ok">{info}</p>}
+            {error && <p className="au-error" role="alert">{error}</p>}
+            <button type="button" className="btn au-submit" onClick={resend} disabled={busy || cooldown > 0}>
+              {cooldown > 0 ? `Send again (${cooldown}s)` : busy ? "One moment…" : "Send it again"}
+            </button>
+            <p className="au-switch">
+              Wrong email?{" "}
+              <button type="button" className="au-link" onClick={() => switchMode(mode === "sent" ? "signup" : "forgot")}>
+                Go back
               </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
+              {" · "}
               <button type="button" className="au-link" onClick={() => switchMode("login")}>
                 Log in
               </button>
-            </>
-          )}
-        </p>
+            </p>
+          </div>
+        ) : (
+          <form
+            id="au-panel"
+            role="tabpanel"
+            aria-labelledby={mode === "signup" ? "au-tab-signup" : "au-tab-login"}
+            className="au-form"
+            onSubmit={handleSubmit}
+            noValidate
+          >
+            {mode === "signup" && (
+              <div className="au-field">
+                <label htmlFor="au-name">Name</label>
+                <input
+                  id="au-name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Jordan Rivera"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+            )}
 
-        <p className="au-note">
-          {cloudEnabled ? (
-            <>
-              Your account saves your profile, school list and the material you write or upload,
-              so your work follows you to another device. Only you can read it, and you can delete
-              it whenever you like.
-            </>
-          ) : (
-            <>
-              Beta note: accounts live only in this browser, on this device. Nothing is sent
-              to a server, and your password is stored as a one-way hash — but clearing this
-              browser's data will remove your account.
-            </>
-          )}
-        </p>
+            {mode !== "reset" && (
+              <div className="au-field">
+                <label htmlFor="au-email">Email</label>
+                <input
+                  id="au-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            )}
+
+            {mode !== "forgot" && (
+              <div className="au-field">
+                <div className="au-labelrow">
+                  <label htmlFor="au-password">{mode === "reset" ? "New password" : "Password"}</label>
+                  <button
+                    type="button"
+                    className="au-link au-pwtoggle"
+                    onClick={() => setShowPw((v) => !v)}
+                    aria-pressed={showPw}
+                  >
+                    {showPw ? "Hide" : "Show"}
+                  </button>
+                </div>
+                <input
+                  id="au-password"
+                  type={showPw ? "text" : "password"}
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  placeholder={mode === "login" ? "Your password" : "At least 8 characters"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {mode !== "login" && (
+                  <p className="au-hint">At least 8 characters. A short sentence works well.</p>
+                )}
+              </div>
+            )}
+
+            {mode === "reset" && (
+              <div className="au-field">
+                <label htmlFor="au-password2">Type it again</label>
+                <input
+                  id="au-password2"
+                  type={showPw ? "text" : "password"}
+                  autoComplete="new-password"
+                  placeholder="Same password"
+                  value={password2}
+                  onChange={(e) => setPassword2(e.target.value)}
+                />
+              </div>
+            )}
+
+            {error && (
+              <p className="au-error" role="alert">
+                {error}
+              </p>
+            )}
+
+            <button type="submit" className="btn au-submit" disabled={busy}>
+              {busy
+                ? "One moment…"
+                : mode === "login" ? "Log in"
+                : mode === "signup" ? "Create account"
+                : mode === "forgot" ? "Send reset link"
+                : "Save new password"}
+            </button>
+
+            {mode === "login" && cloudEnabled && (
+              <p className="au-forgot">
+                <button type="button" className="au-link" onClick={() => switchMode("forgot")}>
+                  Forgot your password?
+                </button>
+              </p>
+            )}
+          </form>
+        )}
+
+        {showTabs && (
+          <p className="au-switch">
+            {mode === "login" ? (
+              <>
+                New here?{" "}
+                <button type="button" className="au-link" onClick={() => switchMode("signup")}>
+                  Create an account
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button type="button" className="au-link" onClick={() => switchMode("login")}>
+                  Log in
+                </button>
+              </>
+            )}
+          </p>
+        )}
+
+        {mode === "forgot" && (
+          <p className="au-switch">
+            Remembered it?{" "}
+            <button type="button" className="au-link" onClick={() => switchMode("login")}>
+              Log in
+            </button>
+          </p>
+        )}
+
+        {showTabs && (
+          <p className="au-note">
+            {cloudEnabled ? (
+              <>
+                Your account saves your profile, school list and the material you write or upload,
+                so your work follows you to another device. Only you can read it, and you can delete
+                it whenever you like.
+              </>
+            ) : (
+              <>
+                Beta note: accounts live only in this browser, on this device. Nothing is sent
+                to a server, and your password is stored as a one-way hash — but clearing this
+                browser's data will remove your account.
+              </>
+            )}
+          </p>
+        )}
       </div>
     </div>
   );
