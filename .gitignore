@@ -38,3 +38,4 @@ graphify-out/
 
 # Local Netlify folder
 .netlify
+signups*.csv
