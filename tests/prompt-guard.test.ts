@@ -141,7 +141,13 @@ const GOOD = {
   essay: { grade: "C", notes: [{ quote: "I want to transfer", issue: "vague", fix: "name a lab" }], direction: "Rewrite around one project." },
   statement: null,
   activities: { grade: "B", notes: [{ quote: "tutor", issue: "no scale", fix: "add hours" }], reframes: ["Led six tutors"] },
-  perSchool: [{ school: "UC Berkeley", verdict: "Below the EECS median.", moves: ["Finish ASSIST prereqs"] }],
+  perSchool: [{
+    school: "UC Berkeley",
+    verdict: "Below the EECS median.",
+    moves: ["Finish ASSIST prereqs"],
+    chance: { lo: 12, hi: 22, tier: "Reach" },
+    chanceRationale: "The essay names no Berkeley-specific program, so this sits below the statistical baseline.",
+  }],
   actions: ["Rewrite the essay"],
 };
 
@@ -168,6 +174,11 @@ describe("validateReview", () => {
     ["perSchool missing", { ...GOOD, perSchool: undefined }],
     ["perSchool entry without a verdict", { ...GOOD, perSchool: [{ school: "Yale", moves: [] }] }],
     ["perSchool entry with moves as a string", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: "y" }] }],
+    ["perSchool entry missing chance", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chanceRationale: "why" }] }],
+    ["perSchool entry with chance.hi < chance.lo", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 40, hi: 10, tier: "Target" }, chanceRationale: "why" }] }],
+    ["perSchool entry with an out-of-range chance.lo", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: -5, hi: 10, tier: "Target" }, chanceRationale: "why" }] }],
+    ["perSchool entry with an invalid tier", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 10, hi: 20, tier: "Basically certain" }, chanceRationale: "why" }] }],
+    ["perSchool entry missing chanceRationale", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 10, hi: 20, tier: "Target" } }] }],
     ["an essay note missing its fix", { ...GOOD, essay: { grade: "C", notes: [{ quote: "a", issue: "b" }], direction: "d" } }],
     ["actions missing", { ...GOOD, actions: undefined }],
   ];

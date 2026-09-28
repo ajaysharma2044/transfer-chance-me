@@ -29,13 +29,15 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
-  { label: "Dashboard", route: "portal" },
-  // "file" is the upload-and-feedback flow; "check" is the older standalone
-  // intake, which the flow supersedes for a signed-in user. Both routes still
-  // resolve, so the row stays lit for either.
-  { label: "My file", route: "file", family: ["check"] },
-  { label: "Chances", route: "results" },
-  { label: "Deep review", route: "review" },
+  // My audit is the whole product: profile, schools, deep review as one flow.
+  // The old routes (portal, file, check, results, review) still resolve, but
+  // they redirect to #/audit at the right section anchor — so the row keeps
+  // lighting up if a bookmark or email link lands the user on one.
+  {
+    label: "My audit",
+    route: "audit",
+    family: ["portal", "file", "check", "results", "review"],
+  },
   // A single college page is still "Schools" as far as the reader is concerned.
   { label: "Schools", route: "browse", family: ["schools/", "college/"] },
   { label: "Account", route: "account" },

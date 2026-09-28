@@ -77,6 +77,8 @@
 .rv-school { padding: 12px 0; border-top: 1px solid var(--line); }
 .rv-school-h { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; font-size: 14px; }
 .rv-school p { font-size: 13.5px; color: var(--ink-2); margin-bottom: 6px; }
+.rv-chance { margin-left: auto; font-size: 12.5px; font-weight: 600; color: var(--teal); background: #eefaf7; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.rv-chance-why { font-size: 12.5px; color: var(--ink-3, var(--ink-2)); font-style: italic; margin-top: -4px; }
 
 .rv-actions ol { margin-left: 18px; font-size: 14px; }
 .rv-actions li { margin-bottom: 8px; font-weight: 500; }

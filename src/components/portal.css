@@ -390,6 +390,29 @@
 }
 .po-led-head .btn-sm { padding: 7px 14px; font-size: 12.5px; }
 
+/* Empty state — the portal before the student picks their schools. Deliberately
+   generous with whitespace: the whole page waits on this action. */
+.po-led-empty {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 14px;
+  padding: 36px 4px 20px;
+}
+.po-led-empty p {
+  max-width: 52ch; margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.55;
+}
+.po-led-empty p b {
+  display: block; font-size: 20px; font-weight: 650; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 6px;
+}
+
+/* Hero empty state — same card, no photo, no odds figure. */
+.po-hero-empty { background: var(--bg); }
+.po-hero-empty .po-hero-num {
+  font-size: 32px !important; letter-spacing: -0.02em; font-weight: 700;
+}
+.po-hero-empty .po-hero-tier {
+  font-size: 13px; color: var(--ink-2); margin-top: 8px; display: block;
+}
+
 /* The inline typeahead that replaced the 208-chip wall. */
 .po-pick { margin-bottom: 16px; }
 .po-pick-in {

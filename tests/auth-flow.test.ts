@@ -203,22 +203,58 @@ describe("setPassword", () => {
 describe("gated routes", () => {
   const app = readFileSync(join(process.cwd(), "src/App.tsx"), "utf8");
 
-  // Routes that must not render their component without a session.
-  const GATED = ["intake", "review", "portal", "file", "account"];
+  // The signed-in product is now ONE route (#/audit); the old per-page routes
+  // are retired and redirect into it. The security property is unchanged —
+  // no student-material surface renders without a session — but it is now
+  // enforced at two points, and both are asserted here:
+  //
+  //   1. every retired route resolves to the audit view at URL-parse time,
+  //      so there is no per-route render block left to forget a gate on;
+  //   2. the ONE audit render block branches on session.
+  //
+  // This test replaced its previous form when the consolidation landed. The
+  // old version asserted a session branch per route; that architecture no
+  // longer exists, and asserting its ghost would fail forever on a safe app.
 
-  for (const kind of GATED) {
-    it(`#/${kind} requires a session`, () => {
-      // Find the render block for this view and confirm it branches on session.
-      const i = app.indexOf(`view.kind === "${kind}"`);
-      expect(i, `no render block for view kind "${kind}"`).toBeGreaterThan(-1);
-      const next = app.indexOf("view.kind ===", i + 20);
-      const block = app.slice(i, next === -1 ? i + 700 : next);
+  const RETIRED = ["check", "file", "portal", "results", "review"];
+
+  it("every retired student route redirects into the audit view", () => {
+    const m = app.match(/const AUDIT_REDIRECTS[^=]*=\s*\{([^}]*)\}/);
+    expect(m, "AUDIT_REDIRECTS map is missing from App.tsx").not.toBeNull();
+    for (const r of RETIRED) {
+      expect(m![1], `retired route "${r}" is not in AUDIT_REDIRECTS — a stale bookmark would 404 or, worse, render ungated`).toMatch(new RegExp(`\\b${r}\\b`));
+    }
+    expect(app, "the redirect lookup itself is gone").toContain("if (h in AUDIT_REDIRECTS)");
+  });
+
+  it("no retired route has its own render block left behind", () => {
+    // A leftover block is exactly how an ungated copy of a page ships.
+    for (const kind of ["intake", "review", "portal", "file"]) {
       expect(
-        /session\s*(\?|&&)/.test(block),
-        `#/${kind} renders without checking session — signed-out visitors reach it`,
-      ).toBe(true);
-    });
-  }
+        app.includes(`view.kind === "${kind}"`),
+        `App.tsx still renders view kind "${kind}" — the audit consolidation should have removed it`,
+      ).toBe(false);
+    }
+  });
+
+  it("#/audit requires a session", () => {
+    const i = app.indexOf('view.kind === "audit"');
+    expect(i, "no render block for the audit view").toBeGreaterThan(-1);
+    const next = app.indexOf("view.kind ===", i + 20);
+    const block = app.slice(i, next === -1 ? i + 700 : next);
+    expect(
+      /session\s*(\?|&&)/.test(block),
+      "#/audit renders without checking session — signed-out visitors reach the whole signed-in product",
+    ).toBe(true);
+  });
+
+  it("#/account requires a session", () => {
+    const i = app.indexOf('view.kind === "account"');
+    expect(i, "no render block for the account view").toBeGreaterThan(-1);
+    const next = app.indexOf("view.kind ===", i + 20);
+    const block = app.slice(i, next === -1 ? i + 700 : next);
+    expect(/session\s*(\?|&&)/.test(block)).toBe(true);
+  });
 
   it("the public marketing routes are NOT gated", () => {
     // The funnel has to survive: someone must be able to read the pitch and

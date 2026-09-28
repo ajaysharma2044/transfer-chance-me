@@ -2,7 +2,7 @@
 // The user's own API key is stored only in this browser and requests go
 // directly to Anthropic; no other server ever sees the application.
 
-import { MODEL } from "../engine";
+import { MODEL, estimate, fmtPct } from "../engine";
 import type { Profile } from "../engine";
 import INTEL_RAW from "../data/intel.json";
 
@@ -33,7 +33,19 @@ export interface ReviewInput {
 }
 
 export interface EssayNote { quote: string; issue: string; fix: string }
-export interface SchoolVerdict { school: string; verdict: string; moves: string[] }
+export interface SchoolChance { lo: number; hi: number; tier: string }
+export interface SchoolVerdict {
+  school: string;
+  verdict: string;
+  moves: string[];
+  /** AI-adjusted odds band (0-100), anchored to the statistical baseline
+   *  handed to it in the prompt — see schoolContext(). Optional on the type
+   *  so a review cached before this field existed still renders. */
+  chance?: SchoolChance;
+  /** One sentence: why this sits above/at/below the statistical baseline,
+   *  given what the baseline can't see (essay, activity detail, HS eligibility). */
+  chanceRationale?: string;
+}
 export interface ReviewResult {
   grade: string;
   summary: string;
@@ -82,14 +94,17 @@ export function intelLines(name: string): string {
   return lines.length ? `Field notes (from our T25 study briefs):\n${lines.join("\n")}` : "";
 }
 
-function schoolContext(targets: string[]): string {
+function schoolContext(targets: string[], profile: Profile): string {
   return targets
     .map((name) => {
       const s = MODEL.schools.find((x) => x.name === name);
       if (!s) return "";
       const c = s.counsel;
+      const est = estimate(profile, s);
+      const topDrivers = est.drivers.slice(0, 4).map((d) => `[${d.dir}] ${d.text}`).join("; ");
       return [
         `## ${s.name} (official transfer admit rate ${s.rate}%, admitted-GPA p25/median/p75: ${s.gpa.p25}/${s.gpa.p50}/${s.gpa.p75})`,
+        `Statistical baseline for THIS applicant (fitted model, before reading any material below): ${fmtPct(est.lo)}–${fmtPct(est.hi)}%, tier "${est.tier}". Drivers: ${topDrivers}. This baseline already prices in GPA position, feeder/major fit, and any TAG/policy facts — it does NOT see the essay, activity detail, or HS eligibility flags below. Your job is to read those and decide whether this file sits above, at, or below this band, and say why in one sentence. Do not invent a number disconnected from this baseline.`,
         c?.typical ? `Typical admit: ${c.typical}` : "",
         c?.levers?.length ? `What moves the file: ${c.levers.join("; ")}` : "",
         c?.watchouts?.length ? `Watchouts: ${c.watchouts.join("; ")}` : "",
@@ -122,14 +137,15 @@ export function buildPrompt(input: ReviewInput): string {
 ${DATASET_FINDINGS}
 
 # Per-school intelligence for this applicant's targets
-${schoolContext(input.targets)}
+${schoolContext(input.targets, p)}
 
 # Applicant profile
-- College GPA: ${p.gpa.toFixed(2)} (trend: ${p.gpaTrend})
+- College GPA: ${p.gpa.toFixed(2)} (trend: ${p.gpaTrend})${p.credits != null ? `; ${p.credits} transferable credits completed` : ""}
 - Current school: ${p.schoolName ?? p.institution}${p.caResident ? " (California)" : ""}
 - Entering as: ${p.standing}; intended major: ${p.major}${p.majorDetail ? ` — specifically: ${p.majorDetail}` : ""}
 - Credentials: ${[p.ptk && "Phi Theta Kappa", p.honors && "honors program", p.igetc && "IGETC", p.firstGen && "first-generation"].filter(Boolean).join(", ") || "none listed"}
-- Path: ${p.hook}${p.sat ? `; SAT ${p.sat}` : ""}${p.workHours ? `; works ${p.workHours} hrs/week while enrolled` : ""}
+- Path: ${p.hook}${p.sat ? `; SAT ${p.sat}` : ""}${p.act ? `; ACT ${p.act}` : ""}${p.workHours ? `; works ${p.workHours} hrs/week while enrolled` : ""}
+${p.highSchool ? `- High school: ${p.highSchool}${p.hsGradYear ? ` (class of ${p.hsGradYear})` : ""} — NOT an input to your odds judgment (HS record correlates with college GPA at 0.016 in this dataset — treat it as noise for scoring). It only matters where a specific target school's own eligibility rules key off it; say so only if the per-school intelligence above names such a rule for one of the applicant's targets, otherwise ignore it entirely.` : ""}
 ${p.awardsText ? `- Awards & honors (their words): ${p.awardsText.replace(/\n+/g, "; ")}` : ""}
 ${p.transferReason ? `- Their stated reason for transferring (raw, unpolished): "${p.transferReason}" — assess whether this reason, as framed, helps or hurts, and how to frame it.` : ""}
 ${p.courses.length ? `- Courses taken: ${p.courses.slice(0, 40).join(", ")} — assess major-prep completeness for their intended major and each target.` : ""}
@@ -137,7 +153,7 @@ ${p.courses.length ? `- Courses taken: ${p.courses.slice(0, 40).join(", ")} — 
 # Materials
 ${input.whyTransfer ? `## "Why transfer" essay\n${input.whyTransfer}` : "## \"Why transfer\" essay\n(not provided)"}
 ${input.statement ? `\n## Personal statement\n${input.statement}` : ""}
-${input.activities ? `\n## Activities list (their own descriptions)\n${input.activities}` : ""}
+${p.activities.length ? `\n## Activities, one per line (title — detail — hours/week — years)\n${p.activities.map((a) => `${a.title || "(untitled)"} — ${a.detail || "no detail given"} — ${a.hours != null ? `${a.hours}h/wk` : "hours not given"} — ${a.years != null ? `${a.years}yr` : "duration not given"}`).join("\n")}` : input.activities ? `\n## Activities list (their own descriptions)\n${input.activities}` : ""}
 
 # Your task
 Return ONLY a JSON object (no markdown fences, no commentary) with exactly this shape:
@@ -149,7 +165,7 @@ Return ONLY a JSON object (no markdown fences, no commentary) with exactly this 
   "essay": ${input.whyTransfer ? `{"grade": "<letter>", "notes": [{"quote": "<exact short quote from their essay>", "issue": "<what's wrong or working>", "fix": "<concrete rewrite direction>"}, ... 4-7 notes], "direction": "<2-3 sentences: overall rewrite direction>"}` : "null"},
   "statement": ${input.statement ? `{"grade": "<letter>", "notes": [{"quote": "...", "issue": "...", "fix": "..."}, ... 3-5 notes]}` : "null"},
   "activities": ${input.activities ? `{"grade": "<letter>", "notes": [{"quote": "<their description>", "issue": "...", "fix": "..."}, ... 3-6 notes], "reframes": ["<rewritten activity description they can use>", ...]}` : "null"},
-  "perSchool": [{"school": "<target name exactly as given>", "verdict": "<2-3 sentences: how THIS application lands at THIS school, using the school intelligence>", "moves": ["<school-specific move>", ...]}],
+  "perSchool": [{"school": "<target name exactly as given>", "verdict": "<2-3 sentences: how THIS application lands at THIS school, using the school intelligence>", "moves": ["<school-specific move>", ...], "chance": {"lo": <integer 0-100, adjusted low end>, "hi": <integer 0-100, adjusted high end, hi >= lo>, "tier": "<one of: TAG guarantee, Likely, Strong target, Target, Reach, High reach, Long shot>"}, "chanceRationale": "<one sentence: why this band sits above/at/below the stated statistical baseline, citing ONE specific thing the baseline couldn't see>"}],
   "actions": ["<highest-priority action first - the 3-6 things to do before submitting>"]
 }
 Quotes must be verbatim from the applicant's materials. Be direct about problems; flattery costs admissions.`;

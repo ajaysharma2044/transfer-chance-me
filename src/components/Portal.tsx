@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import { estimateAll, fmtPct, MODEL, TAG_CAMPUSES, tagFloor } from "../engine";
 import type { Estimate, Profile } from "../engine";
 import type { Session } from "../lib/auth";
@@ -9,6 +8,7 @@ import { analyzeCourses, MAJOR_LABEL as MAJOR_TEXT } from "../lib/coursework";
 import type { CourseGaps as CourseGapsResult } from "../lib/coursework";
 import { cloudEnabled } from "../lib/supabase";
 import { pullProfile, pushDoc, pushSchools } from "../lib/sync";
+import { dispatchListChanged } from "../lib/listEvents";
 import ucData from "../data/uc_data.json";
 import Tile from "./Tile";
 import CampusPhoto from "./CampusPhoto";
@@ -16,13 +16,13 @@ import Report from "./Report";
 import ActionPlan from "./ActionPlan";
 import CourseGaps from "./CourseGaps";
 import { buildPlan, liftLabel } from "../lib/actionplan";
-import type { MoveLever, MoveTag, Plan, PlannedMove } from "../lib/actionplan";
+import type { Plan, PlannedMove } from "../lib/actionplan";
 import { countdown, DEADLINES } from "../lib/deadlines";
 import { admitBand, bandPos, BAND_MAX, BAND_MIN } from "../lib/band";
 import type { AdmitBand } from "../lib/band";
 import { blockerFor } from "../lib/blockers";
 import type { Blocker } from "../lib/blockers";
-import { HIGH_SCHOOL_FACT, readerSheet } from "../lib/reader";
+import { readerSheet } from "../lib/reader";
 import { useCountUp, useInView } from "../lib/reveal";
 import { markOf } from "../lib/schools";
 import {
@@ -72,24 +72,6 @@ const STATUS_LABEL: Record<Status, string> = {
   waitlisted: "Waitlisted",
   accepted: "Accepted",
   rejected: "Rejected",
-};
-
-const TAG_COLOR: Record<MoveTag, string> = {
-  Extracurricular: "var(--teal)",
-  Credential: "var(--accent)",
-  Coursework: "var(--blue)",
-  Timeline: "var(--coral)",
-  Essay: "var(--accent)",
-};
-
-/** Which reading-sheet row a move repairs. readerSheet() emits its dimensions
- *  in a fixed order — 01 academic, 02 context, 03 preparation, 04 engagement,
- *  05 narrative, 06 circumstance — so a move's lever maps to a row number, and
- *  the plan and the sheet reconcile at three words a move. */
-const FEEDS_LABEL: Record<MoveLever, string> = {
-  ecLevel: "feeds row 04", ptk: "feeds row 04", honors: "feeds row 04",
-  essay: "feeds row 05", igetc: "feeds row 03", courses: "feeds row 03",
-  none: "",
 };
 
 const SIGNAL_LABEL: Record<string, string> = {
@@ -183,29 +165,7 @@ function shortCampus(name: string): string {
   return name.replace(/^UC /, "").replace(/^University of /, "");
 }
 
-/* ── 3.1 · the sticky readout ─────────────────────────────────────────── */
-
-function Bar({ best, next }: { best: Estimate; next: Plan["next"] }) {
-  return (
-    <div className="po-bar" role="status">
-      <span className="po-bar-pos">
-        <Tile name={best.school.name} size={18} />
-        <b className="num">{fmtPct(best.lo)}–{fmtPct(best.hi)}%</b>
-        <span>{best.school.name}</span>
-        <i>{best.tier}</i>
-      </span>
-      {next && (
-        <span className={`po-bar-wall${next.days <= 45 ? " soon" : ""}`}>
-          <em>WALL</em>
-          <b className="num">{next.days}d</b>
-          <span>{next.school} · {next.label}</span>
-        </span>
-      )}
-    </div>
-  );
-}
-
-/* ── 3.1b · the hero ───────────────────────────────────────────────────────
+/* ── 3.1 · the hero ────────────────────────────────────────────────────────
    One premium block in place of the four dense strips this replaced (status
    bar, file line, two gauges, funnel). Same figures, same sources — the only
    thing that changed is that the page now opens on the number the reader came
@@ -215,49 +175,54 @@ function Bar({ best, next }: { best: Estimate; next: Plan["next"] }) {
    value, so nothing here can display a tween artefact as a real estimate. */
 
 function PortalHero({
-  profile, best, plan, measured, atTarget, tracked, blocked, go,
+  profile, best, plan, atTarget, tracked, blocked, go, onAdd,
 }: {
-  profile: Profile; best: Estimate; plan: Plan;
-  measured: number; atTarget: number; tracked: number; blocked: number;
+  profile: Profile; best: Estimate | null; plan: Plan;
+  atTarget: number; tracked: number; blocked: number;
   go: (r: string) => void;
+  /** Called when the empty-state CTA is clicked — opens the add-school picker. */
+  onAdd: () => void;
 }) {
   const [ref, seen] = useInView<HTMLElement>();
 
-  /* The odds figure does NOT count up, deliberately.
-   *
-   * The sticky bar renders the same band a few pixels above this, unanimated.
-   * A tween therefore puts two different values for one number on screen at
-   * once — "12–13%" under a bar reading "90–99%" — for about a second on every
-   * load. On a page whose entire claim is that it does not invent numbers,
-   * a headline figure that is wrong on arrival is the wrong thing to spend
-   * motion on. The figure is exact from the first frame; the ENTRANCE is what
-   * animates (see .po-hero-fig in portal.css).
-   *
-   * The deadline below still counts: nothing else on screen contradicts it,
-   * and a day count ticking up reads as a countdown rather than as an error. */
   const next = plan.next;
   const days = useCountUp(next?.days ?? 0, seen);
-  const open = plan.moves.filter((m) => !m.done).length;
   const trend = profile.gpaTrend === "upward" ? "↗" : profile.gpaTrend === "downward" ? "↘" : "";
 
   return (
-    <header className="po-hero g-wash" ref={ref}>
-      <div className="po-hero-photo" aria-hidden="true">
-        <CampusPhoto name={best.school.name} height={340} />
-      </div>
+    <header className={`po-hero${best ? " g-wash" : " po-hero-empty"}`} ref={ref}>
+      {best && (
+        <div className="po-hero-photo" aria-hidden="true">
+          <CampusPhoto name={best.school.name} height={340} />
+        </div>
+      )}
 
       <div className="po-hero-body">
-        <p className="po-hero-eyebrow">
-          <Tile name={best.school.name} size={20} />
-          Strongest position · {best.school.name}
-        </p>
+        {best ? (
+          <>
+            <p className="po-hero-eyebrow">
+              <Tile name={best.school.name} size={20} />
+              Strongest position · {best.school.name}
+            </p>
 
-        <p className="po-hero-fig">
-          <b className={`num g-text po-hero-num${seen ? " in" : ""}`}>
-            {fmtPct(best.lo)}–{fmtPct(best.hi)}%
-          </b>
-          <span className="po-hero-tier">{best.tier}</span>
-        </p>
+            <p className="po-hero-fig">
+              <b className={`num g-text po-hero-num${seen ? " in" : ""}`}>
+                {fmtPct(best.lo)}–{fmtPct(best.hi)}%
+              </b>
+              <span className="po-hero-tier">{best.tier}</span>
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="po-hero-eyebrow">Your portal</p>
+            <p className="po-hero-fig">
+              <b className="g-text po-hero-num in">Add your target schools</b>
+              <span className="po-hero-tier">
+                Odds appear once you pick where you want to transfer.
+              </span>
+            </p>
+          </>
+        )}
 
         <dl className="po-hero-id">
           <div><dt>GPA</dt><dd className="num">{profile.gpa.toFixed(2)}{trend}</dd></div>
@@ -266,9 +231,6 @@ function PortalHero({
           <div><dt>Entering</dt><dd>{profile.standing}</dd></div>
         </dl>
 
-        {/* Credentials the old file line carried. Kept because each one moves a
-            real number in the engine — a filled chip means the engine used it,
-            an empty one means it had nothing to use. */}
         <ul className="po-hero-creds">
           <li className={profile.igetc ? "on" : ""}>IGETC</li>
           <li className={profile.ptk ? "on" : ""}>PTK</li>
@@ -282,14 +244,23 @@ function PortalHero({
         </ul>
 
         <div className="po-hero-acts">
-          <button type="button" className="btn" onClick={() => go("check")}>Edit my profile</button>
-          <button type="button" className="btn-quiet" onClick={() => window.print()}>
-            Download report
-          </button>
+          {best ? (
+            <>
+              <button type="button" className="btn" onClick={() => go("check")}>Edit my profile</button>
+              <button type="button" className="btn-quiet" onClick={() => window.print()}>
+                Download report
+              </button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="btn" onClick={onAdd}>Add schools</button>
+              <button type="button" className="btn-quiet" onClick={() => go("check")}>Edit my profile</button>
+            </>
+          )}
         </div>
       </div>
 
-      {next && (
+      {best && next && (
         <aside className={`po-hero-wall${next.days <= 45 ? " urgent" : ""}`}>
           <span className="po-hero-wlabel">Nearest deadline</span>
           <b className="num">{Math.round(days)}<i>days</i></b>
@@ -297,125 +268,18 @@ function PortalHero({
         </aside>
       )}
 
-      {/* The funnel, kept because every stage is counted rather than asserted —
-          but as four figures rather than a sentence with arrows in it. */}
-      <ol className="po-hero-funnel num" aria-label="How the list narrows">
-        <li><b>{fmt(measured)}</b><span>measured</span></li>
-        <li><b>{atTarget}</b><span>at target</span></li>
-        <li><b>{tracked}</b><span>tracked</span></li>
-        <li className={blocked ? "hot" : ""}><b>{blocked}</b><span>blocked</span></li>
-        <li className="po-hero-funnel-gain">
-          <b>{plan.stackedPp >= 0.1 ? `+${plan.stackedPp.toFixed(1)}` : open}</b>
-          <span>{plan.stackedPp >= 0.1 ? `pts across ${open} moves` : "moves open"}</span>
-        </li>
-      </ol>
+      {best && (
+        <ol className="po-hero-funnel num" aria-label="Your list">
+          <li><b>{atTarget}</b><span>at target</span></li>
+          <li><b>{tracked}</b><span>tracked</span></li>
+          <li className={blocked ? "hot" : ""}><b>{blocked}</b><span>blocked</span></li>
+        </ol>
+      )}
     </header>
   );
 }
 
-/* ── 3.5 · the one move ───────────────────────────────────────────────── */
-
-function MovePanel({ m }: { m: PlannedMove }) {
-  // The fit bar reads minWeeks against weeksLeft, so the caption reads the
-  // same comparison. `m.feasible` is measured against the LAST window on the
-  // list, which is a different (looser) question.
-  const over = m.minWeeks > m.weeksLeft;
-  const width = clamp((m.minWeeks / Math.max(1, Math.max(m.minWeeks, m.weeksLeft))) * 100);
-  return (
-    <article
-      className={`po-move${over ? " over" : ""}`}
-      style={{ "--mc": TAG_COLOR[m.tag] } as CSSProperties}
-      aria-labelledby="po-move-h"
-    >
-      <header>
-        <span className="po-move-rank num">01</span>
-        <span className="po-move-tag">{m.tag}</span>
-        <h2 id="po-move-h">{m.title}</h2>
-        <span className="po-move-lift">{liftLabel(m)}</span>
-      </header>
-
-      <div className="po-move-fit">
-        <span className="po-move-flabel">Fits</span>
-        <span className="po-fit" aria-hidden="true">
-          <span className="po-fit-need" style={{ width: `${width}%` }} />
-        </span>
-        <span className="po-move-fnum num">
-          {over
-            ? `no longer fits · ${m.minWeeks}w needed, ${m.weeksLeft}w left`
-            : `${m.minWeeks}w minimum inside ${m.weeksLeft}w left`}
-        </span>
-        <span className="po-move-when">{m.deadlineLabel}</span>
-      </div>
-
-      {m.movers.length > 0 && (
-        <p className="po-move-movers">
-          <span className="po-move-flabel">Moves</span>
-          {m.movers.map((mv) => (
-            <span key={mv.name} className="po-move-mover">
-              <Tile name={mv.name} size={16} />
-              {mv.name}
-              <b className="num">{fmtPct(mv.from)}→{fmtPct(mv.to)}%</b>
-            </span>
-          ))}
-        </p>
-      )}
-
-      <p className="po-move-why">{m.why}</p>
-      {FEEDS_LABEL[m.lever] && <p className="po-move-feeds">{FEEDS_LABEL[m.lever]}</p>}
-
-      <details className="po-move-more">
-        <summary>the steps</summary>
-        <ol>{m.steps.map((s) => <li key={s}>{s}</li>)}</ol>
-        <p>{m.realism}</p>
-        <p>{m.proof}</p>
-      </details>
-    </article>
-  );
-}
-
-/* ── 3.6 · one linear day axis ────────────────────────────────────────── */
-// x ∝ days, linear or not at all: evenly spacing ticks for tidiness lies
-// about the gap between Sep 30 and Feb 1. Replaces three separate renderings
-// of the same countdown() data.
-
-function Walls({ plan }: { plan: Plan }) {
-  const windows = plan.windows.slice(0, 6);
-  if (windows.length === 0) return null;
-  const maxDays = Math.max(1, ...windows.map((w) => w.days));
-  return (
-    <section className="po-walls" role="region" tabIndex={0} aria-label="Your deadlines">
-      <span className="po-walls-a">Today</span>
-      <span className="po-walls-b num">+{maxDays}d</span>
-      <ul className="po-walls-ax">
-        {windows.map((w) => (
-          <li
-            key={`${w.school}-${w.label}`}
-            style={{ left: `${clamp((w.days / maxDays) * 100)}%` }}
-            className={w.days <= 45 ? "soon" : ""}
-            title={w.note}
-          >
-            <b className="num">{w.days}d</b>
-            <span>{w.school}</span>
-            <i>{w.label}</i>
-          </li>
-        ))}
-      </ul>
-      <ul className="po-walls-list">
-        {windows.slice(0, 3).map((w) => (
-          <li key={`${w.school}-${w.label}`} className={w.days <= 45 ? "soon" : ""}>
-            <b className="num">{w.days}d</b>
-            <span>{w.school}</span>
-            <i>{w.label}</i>
-          </li>
-        ))}
-        {windows.length > 3 && <li className="po-walls-more num">+{windows.length - 3} more</li>}
-      </ul>
-      <p className="po-walls-note">Typical fall-transfer dates · verify on the school's site</p>
-    </section>
-  );
-}
-
-/* ── 3.7 · THE LEDGER ─────────────────────────────────────────────────── */
+/* ── 3.2 · THE LEDGER ─────────────────────────────────────────────────── */
 
 type Sort = "odds" | "due" | "band";
 
@@ -567,8 +431,15 @@ function Ledgerette({ label, tone, names }: { label: string; tone: "in" | "out";
 
 /* ── 3.8 · the reading sheet ──────────────────────────────────────────── */
 
-function ReadingSheet({ profile, ests }: { profile: Profile; ests: Estimate[] }) {
-  const picks = ests.slice(0, 6);
+function ReadingSheet({ profile, ests, targets }: { profile: Profile; ests: Estimate[]; targets: string[] }) {
+  /* Read against the STUDENT'S schools only. The old sheet picked the top 6
+   *  by odds — schools the student never named — and asked them to read
+   *  themselves against strangers. */
+  const targetSet = useMemo(() => new Set(targets), [targets]);
+  const picks = useMemo(
+    () => ests.filter((e) => targetSet.has(e.school.name)).slice(0, 6),
+    [ests, targetSet],
+  );
   const [pick, setPick] = useState(0);
   const [openDim, setOpenDim] = useState<string | null>(null);
   const target = picks[Math.min(pick, picks.length - 1)];
@@ -634,8 +505,7 @@ function ReadingSheet({ profile, ests }: { profile: Profile; ests: Estimate[] })
       </ol>
 
       <p className="po-read-foot">
-        <span>Readings, not odds · n={fmt(ADMIT_FILES)} admitted files</span>
-        <span>High school r={HIGH_SCHOOL_FACT.corr} — not on this sheet</span>
+        <span className="num">n={fmt(ADMIT_FILES)} admitted files</span>
       </p>
     </section>
   );
@@ -1305,6 +1175,7 @@ export default function Portal({ session, profile, go, onChange }: Props) {
 
   useEffect(() => {
     localStorage.setItem(LIST_KEY, JSON.stringify(list));
+    dispatchListChanged();
   }, [list]);
 
   // ── Ledger sync (both directions) ──────────────────────────────────────
@@ -1356,15 +1227,11 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   );
   const byName = useMemo(() => new Map(ests.map((e) => [e.school.name, e])), [ests]);
 
-  // The ledger. An empty list is seeded from the engine's top 8 and says so;
-  // the first edit materialises the seed into a real list.
-  const seeded = list.length === 0;
-  const base = useMemo<ListEntry[]>(
-    () => (list.length
-      ? list
-      : ests.slice(0, 8).map((e) => ({ school: e.school.name, status: "planning" as Status, note: "" }))),
-    [list, ests],
-  );
+  // The ledger. The student picks the schools — the app never suggests any as
+  // if they were theirs, because the whole point of a portal is that the list
+  // is *their* list. Empty until they add one.
+  const base = list;
+  const hasSchools = base.length > 0;
 
   const rows = useMemo(() => {
     const rs = base.filter((r) => byName.has(r.school));
@@ -1395,8 +1262,14 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   const blockedRows = rows.filter((r) => blockers.get(r.school)?.structural).length;
   const targets = ests.filter((e) => e.p >= 0.12).length;
   const essayMove = plan.moves.find((m) => m.lever === "essay" && !m.done) ?? null;
-  const topMove = plan.moves.find((m) => !m.done) ?? plan.moves[0] ?? null;
   const listed = new Set(base.map((l) => l.school));
+  /** The strongest odds inside THE STUDENT'S list — never the top of the full
+   *  208. Null means they haven't added a school yet, in which case the hero
+   *  drops its odds figure and the page asks them to pick their targets. */
+  const bestListed = useMemo(
+    () => ests.find((e) => listed.has(e.school.name)) ?? null,
+    [ests, listed],
+  );
 
   const hits = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -1425,46 +1298,56 @@ export default function Portal({ session, profile, go, onChange }: Props) {
 
   return (
     <div className="shell po">
-      <Bar best={ests[0]} next={plan.next} />
       <PortalHero
         profile={profile}
-        best={ests[0]}
+        best={bestListed}
         plan={plan}
-        measured={MODEL.schools.length}
         atTarget={targets}
         tracked={rows.length}
         blocked={blockedRows}
         go={go}
+        onAdd={() => setAdding(true)}
       />
-
-      {topMove && <div data-fx><MovePanel m={topMove} /></div>}
-      <div data-fx><Walls plan={plan} /></div>
 
       <section className="po-led" aria-labelledby="po-led-h" data-fx>
         <header className="po-led-head">
           <h2 id="po-led-h">Your ledger</h2>
           <span className="po-led-scope num">
-            {rows.length} tracked · {bandedRows} banded · {blockedRows} blocked
-            {seeded && " · seeded from your top 8"}
+            {hasSchools ? `${rows.length} schools · ${bandedRows} banded` : "Not started"}
           </span>
-          <span className="po-led-sorts">
-            <button
-              type="button" className={sort === "odds" ? "on" : ""}
-              aria-pressed={sort === "odds"} onClick={() => setSort("odds")}
-            >Odds</button>
-            <button
-              type="button" className={sort === "due" ? "on" : ""}
-              aria-pressed={sort === "due"} onClick={() => setSort("due")}
-            >Due</button>
-            <button
-              type="button" className={sort === "band" ? "on" : ""}
-              aria-pressed={sort === "band"} onClick={() => setSort("band")}
-            >Band</button>
-          </span>
+          {hasSchools && (
+            <span className="po-led-sorts">
+              <button
+                type="button" className={sort === "odds" ? "on" : ""}
+                aria-pressed={sort === "odds"} onClick={() => setSort("odds")}
+              >Odds</button>
+              <button
+                type="button" className={sort === "due" ? "on" : ""}
+                aria-pressed={sort === "due"} onClick={() => setSort("due")}
+              >Due</button>
+              <button
+                type="button" className={sort === "band" ? "on" : ""}
+                aria-pressed={sort === "band"} onClick={() => setSort("band")}
+              >Band</button>
+            </span>
+          )}
           <button type="button" className="btn btn-sm" onClick={() => setAdding((a) => !a)}>
-            {adding ? "Done" : "+ Add"}
+            {adding ? "Done" : hasSchools ? "+ Add" : "+ Add schools"}
           </button>
         </header>
+
+        {!hasSchools && !adding && (
+          <div className="po-led-empty">
+            <p>
+              <b>Pick the schools you want to transfer to.</b>
+              Add them below to see your odds, deadlines, and what's blocking each one — all
+              scored against your saved profile.
+            </p>
+            <button type="button" className="btn" onClick={() => setAdding(true)}>
+              Add your first school
+            </button>
+          </div>
+        )}
 
         {adding && (
           <div className="po-pick">
@@ -1494,6 +1377,7 @@ export default function Portal({ session, profile, go, onChange }: Props) {
           </div>
         )}
 
+        {hasSchools && (
         <div className="po-led-scroll" role="region" tabIndex={0} aria-label="Your ledger table">
           <div className="po-led-cols" aria-hidden="true">
             <span className="po-led-colgrid">
@@ -1586,50 +1470,51 @@ export default function Portal({ session, profile, go, onChange }: Props) {
             })}
           </ul>
         </div>
+        )}
 
-        <p className="po-led-foot">
-          <span>
-            {bandedTotal()} of {MODEL.schools.length} measured schools have an admitted-GPA band ·
-            the rest carry their official rate and nothing invented
-          </span>
-          <span className="po-led-key">
-            <em className="po-key-study" /> study corpus
-            <em className="po-key-observed" /> observed outcomes
-            <em className="po-key-you" /> you {profile.gpa.toFixed(2)}
-          </span>
-          <span className="num">
-            Scale {BAND_MIN.toFixed(2)} ── {BAND_MAX.toFixed(2)} · ~ typical dates, verify
-          </span>
-        </p>
+        {hasSchools && (
+          <p className="po-led-foot">
+            <span className="num">
+              {bandedTotal()} of {MODEL.schools.length} schools with admitted-GPA bands
+            </span>
+            <span className="po-led-key">
+              <em className="po-key-study" /> study
+              <em className="po-key-observed" /> observed
+              <em className="po-key-you" /> you {profile.gpa.toFixed(2)}
+            </span>
+            <span className="num">
+              {BAND_MIN.toFixed(2)}–{BAND_MAX.toFixed(2)}
+            </span>
+          </p>
+        )}
       </section>
 
-      <div className="po-cols" data-fx>
-        <ReadingSheet profile={profile} ests={ests} />
-        <CorpusPanel profile={profile} targets={rows.map((r) => r.school)} />
-      </div>
+      {hasSchools && (
+        <>
+          <div className="po-cols" data-fx>
+            <ReadingSheet profile={profile} ests={ests} targets={rows.map((r) => r.school)} />
+            <CorpusPanel profile={profile} targets={rows.map((r) => r.school)} />
+          </div>
 
-      <section className="po-planwrap" data-fx>
-        <UcSection profile={profile} ests={ests} go={go} />
-      </section>
+          <section className="po-planwrap" data-fx>
+            <UcSection profile={profile} ests={ests} go={go} />
+          </section>
 
-      <div data-fx>
-        <PrepLine profile={profile} gaps={gaps} go={go} />
-      </div>
+          <div data-fx>
+            <PrepLine profile={profile} gaps={gaps} go={go} />
+          </div>
 
-      <section className="po-planwrap" data-fx>
-        <WritingSection profile={profile} onChange={onChange} go={go} essayMove={essayMove} />
-      </section>
+          <section className="po-planwrap" data-fx>
+            <WritingSection profile={profile} onChange={onChange} go={go} essayMove={essayMove} />
+          </section>
 
-      <section className="po-planwrap po-plan" data-fx>
-        <ActionPlan profile={profile} ests={ests} plan={plan} />
-      </section>
+          <section className="po-planwrap po-plan" data-fx>
+            <ActionPlan profile={profile} ests={ests} plan={plan} />
+          </section>
 
-      <section className="po-hs" data-fx>
-        <b className="num">{HIGH_SCHOOL_FACT.corr}</b>
-        <p>{HIGH_SCHOOL_FACT.line}</p>
-      </section>
-
-      <Report profile={profile} ests={ests} date={new Date().toLocaleDateString()} />
+          <Report profile={profile} ests={ests} date={new Date().toLocaleDateString()} />
+        </>
+      )}
     </div>
   );
 }

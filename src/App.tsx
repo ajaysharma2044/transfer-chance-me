@@ -5,17 +5,13 @@ import { analyzeEssay } from "./lib/essay";
 import { getSession, initAuth, logOut, setSession } from "./lib/auth";
 import { pullProfile, pushProfile, syncReady } from "./lib/sync";
 import type { Session } from "./lib/auth";
-import Intake from "./components/Intake";
-import Results, { ResultsGate } from "./components/Results";
 import Landing from "./components/Landing";
 import SchoolPage from "./components/SchoolPage";
 import Pricing from "./components/Pricing";
 import Auth from "./components/Auth";
-import Portal from "./components/Portal";
-import FileFlow from "./components/FileFlow";
+import Audit from "./components/Audit";
 import AppShell from "./components/AppShell";
 import Account from "./components/Account";
-import Review from "./components/Review";
 import CollegePage from "./components/CollegePage";
 import SchoolsIndex from "./components/SchoolsIndex";
 import Admin from "./components/admin/Admin";
@@ -30,16 +26,13 @@ import { useScrollFx } from "./hooks/useScrollFx";
 //   #/schools/<id>  per-college page
 //   #/admin[/...]   internal staff console (server decides access, not this)
 
+type AuditAnchor = "profile" | "schools" | "deep";
 type View =
   | { kind: "landing" }
-  | { kind: "intake" }
-  | { kind: "results" }
+  | { kind: "audit"; anchor?: AuditAnchor }
   | { kind: "pricing" }
   | { kind: "auth" }
-  | { kind: "portal" }
-  | { kind: "file" }
   | { kind: "account" }
-  | { kind: "review" }
   | { kind: "browse" }
   | { kind: "college"; idx: number }
   | { kind: "school"; name: string }
@@ -65,16 +58,34 @@ const AUTH_RETURN_ERROR = (() => {
   try { return decodeURIComponent(m[1].replace(/\+/g, " ")); } catch { return m[1]; }
 })();
 
+/* Where each of the retired sibling routes lands inside the new /audit page.
+ * Kept as a plain map — the routes themselves are gone from the sidebar, but
+ * bookmarks and email links from before still resolve to something sensible. */
+const AUDIT_REDIRECTS: Record<string, AuditAnchor> = {
+  check: "profile",
+  file: "profile",
+  portal: "schools",
+  results: "schools",
+  review: "deep",
+};
+
 function viewFromHash(): View {
   const h = window.location.hash.replace(/^#\/?/, "").replace(/\/+$/, "");
-  if (h === "check") return { kind: "intake" };
-  if (h === "results") return { kind: "results" };
+
+  // The one audit page and its section anchors. `#/audit`, `#/audit/profile`,
+  // `#/audit/schools`, `#/audit/deep` all resolve here.
+  if (h === "audit") return { kind: "audit" };
+  if (h.startsWith("audit/")) {
+    const a = h.slice("audit/".length);
+    if (a === "profile" || a === "schools" || a === "deep") return { kind: "audit", anchor: a };
+    return { kind: "audit" };
+  }
+  // Retired routes redirect to /audit at the right section.
+  if (h in AUDIT_REDIRECTS) return { kind: "audit", anchor: AUDIT_REDIRECTS[h] };
+
   if (h === "pricing") return { kind: "pricing" };
   if (h === "login") return { kind: "auth" };
-  if (h === "portal") return { kind: "portal" };
-  if (h === "file") return { kind: "file" };
   if (h === "account") return { kind: "account" };
-  if (h === "review") return { kind: "review" };
   if (h === "browse") return { kind: "browse" };
   // Staff console. The sub-path is handed to Admin unparsed; nothing about
   // reaching this route grants anything — api/_admin.ts decides on the server.
@@ -157,7 +168,7 @@ export default function App() {
 
       if (arrivalPending && s && event === "SIGNED_IN") {
         arrivalPending = false;
-        let next = "portal";
+        let next = "audit";
         try {
           const pending = sessionStorage.getItem(NEXT_KEY);
           if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
@@ -221,6 +232,20 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
+  // Retired routes redirect at the view layer, but the browser URL still
+  // reads the old path — a user who clicks "Edit my profile" (which calls
+  // go("check")) sees `#/check` in the bar even though Audit is rendering.
+  // Normalise the URL to the canonical `#/audit/<anchor>` whenever a redirect
+  // fired, so the URL matches what the reader sees.
+  useEffect(() => {
+    if (view.kind !== "audit") return;
+    const h = window.location.hash.replace(/^#\/?/, "").replace(/\/+$/, "");
+    if (h === "audit" || h.startsWith("audit/")) return;
+    if (!(h in AUDIT_REDIRECTS)) return;
+    const anchor = view.anchor ?? AUDIT_REDIRECTS[h];
+    history.replaceState(null, "", `#/audit/${anchor}`);
+  }, [view]);
+
   // Scroll choreography for the whole app, not just the landing page.
   // Re-keyed on the route because it queries the DOM once per run: after a
   // route change the previous page's [data-fx] nodes are gone and the new
@@ -243,13 +268,14 @@ export default function App() {
   function handleAuth(s: Session) {
     setSession(s);
     setSessionState(s);
-    // Where a new account lands. An empty file has nothing for the dashboard
-    // to be a dashboard OF — every figure on it would read as an em dash — so
-    // a first sign-in goes to the file flow to upload a transcript, and only
-    // an account that already has something lands on the portal.
-    let next = profile.docs.length || profile.gpa !== DEFAULT_PROFILE.gpa ? "portal" : "file";
+    // Everyone lands on the audit page. The stepped nav inside it puts a
+    // first-time user on section 1 (profile) and a returning user with a
+    // filled profile on section 2 or 3 — whichever step is next for them.
+    const started = profile.docs.length > 0 || profile.gpa !== DEFAULT_PROFILE.gpa;
+    let next = started ? "audit/schools" : "audit/profile";
     try {
-      // Came from the results gate? Send them straight to what they were promised.
+      // Came from the results gate? Send them straight to what they were
+      // promised — a bare route or one of the audit anchors, either way.
       const pending = sessionStorage.getItem(NEXT_KEY);
       if (pending) { next = pending; sessionStorage.removeItem(NEXT_KEY); }
     } catch { /* ok */ }
@@ -268,36 +294,29 @@ export default function App() {
      AppShell owns that landmark and nesting it is invalid.
      `auth` is deliberately absent: the sidebar would advertise a signed-in
      product to someone who is not signed in yet. */
-  const SHELL_ROUTES = new Set(["portal", "file", "results", "review", "account", "intake"]);
+  const SHELL_ROUTES = new Set(["audit", "account"]);
   const inShell = session !== null && SHELL_ROUTES.has(view.kind);
 
   const page = (
     <>
-      {view.kind === "landing" && <Landing onStart={() => nav("check")} onOpenSchool={openSchool} />}
-      {/* Intake is gated too. Its first step is a transcript upload, and an
-          upload from someone with no account has nowhere to be stored — it
-          would live in one browser and quietly vanish. The landing page, the
-          pricing page and the school directory stay public; the funnel is
-          "read the landing page → sign up → build your file". */}
-      {view.kind === "intake" && (
-        session
-          ? <Intake profile={profile} onChange={setProfile} onDone={() => nav("results")} />
-          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
-      )}
-      {view.kind === "results" && (
+      {view.kind === "landing" && <Landing onStart={() => nav("audit")} onOpenSchool={openSchool} />}
+      {/* The single signed-in page. Profile, schools, and deep review as one
+          linear flow — the anchor comes off the URL and picks the section. */}
+      {view.kind === "audit" && (
         session ? (
-          <Results profile={profile} onRevise={() => nav("check")} onOpenSchool={openSchool} />
-        ) : (
-          <ResultsGate
+          <Audit
+            key={view.anchor ?? "top"}
+            session={session}
             profile={profile}
-            onSignup={() => {
-              try { sessionStorage.setItem(NEXT_KEY, "results"); } catch { /* ok */ }
-              nav("login");
-            }}
+            onChange={setProfile}
+            go={nav}
+            anchor={view.anchor}
           />
+        ) : (
+          <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
         )
       )}
-      {view.kind === "pricing" && <Pricing onStart={() => nav("check")} />}
+      {view.kind === "pricing" && <Pricing onStart={() => nav("audit")} />}
       {view.kind === "account" && (
         session
           ? <Account session={session} onLogout={logout} />
@@ -317,29 +336,6 @@ export default function App() {
           notice={AUTH_RETURN_ERROR}
         />
       )}
-      {/* Portal has its own signed-out card, but it is a dead end: a sentence
-          and a button that goes somewhere else. Every other gated route shows
-          the real form, so this one does too — one login screen, reached the
-          same way from anywhere. */}
-      {view.kind === "portal" && (
-        session
-          ? <Portal session={session} profile={profile} go={nav} onChange={setProfile} />
-          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
-      )}
-      {view.kind === "file" && (
-        session
-          ? <FileFlow profile={profile} onChange={setProfile} go={nav} />
-          : <Auth onDone={handleAuth} />
-      )}
-      {/* Signed-out visitors never reach the review. It is the page where a
-          student pastes their essays and transcript, it spends real money per
-          run, and with the proxy on those materials are stored against an
-          account — which there has to BE. */}
-      {view.kind === "review" && (
-        session
-          ? <Review profile={profile} onChange={setProfile} />
-          : <Auth onDone={(s) => { setRecovery(false); handleAuth(s); }} notice={AUTH_RETURN_ERROR} />
-      )}
       {view.kind === "browse" && <SchoolsIndex go={nav} />}
       {view.kind === "college" && <CollegePage idx={view.idx} go={nav} />}
       {view.kind === "admin" && <Admin sub={view.sub} go={nav} />}
@@ -347,7 +343,7 @@ export default function App() {
         <SchoolPage
           name={view.name}
           onBack={() => nav("")}
-          onStart={() => nav("check")}
+          onStart={() => nav("audit")}
           onOpenSchool={openSchool}
         />
       )}
@@ -358,7 +354,7 @@ export default function App() {
     return (
       <>
         <div className="topbar" aria-hidden="true" />
-        <AppShell session={session} route={view.kind === "intake" ? "check" : view.kind} go={nav} onLogout={logout}>
+        <AppShell session={session} route={view.kind} go={nav} onLogout={logout}>
           {page}
         </AppShell>
       </>
@@ -376,21 +372,20 @@ export default function App() {
           </a>
           <nav className="mastnav">
             <a className="btn-quiet" href="#/browse">Schools</a>
-            <a className="btn-quiet" href="#/review">Deep review</a>
             <a className="btn-quiet" href="#/pricing">Pricing</a>
             {session ? (
               <>
                 {/* Renders only for an account holding a staff role, and that
                     is cosmetic: #/admin is a URL anyone can type. */}
                 <AdminNavLink />
-                <a className="btn-quiet" href="#/portal">Portal</a>
+                <a className="btn-quiet" href="#/audit">My audit</a>
                 <a className="btn-quiet" href="#/account">Account</a>
                 <button type="button" className="btn-quiet" onClick={logout}>Log out</button>
               </>
             ) : (
               <a className="btn-quiet" href="#/login">Log in</a>
             )}
-            <a className="btn btn-sm" href="#/check">Check my chances</a>
+            <a className="btn btn-sm" href="#/audit">Check my chances</a>
           </nav>
         </header>
       </div>

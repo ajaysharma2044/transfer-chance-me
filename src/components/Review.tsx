@@ -399,8 +399,14 @@ export default function Review({ profile, onChange }: Props) {
                 <h3>School by school</h3>
                 {result.perSchool.map((v) => (
                   <div className="rv-school" key={v.school}>
-                    <div className="rv-school-h"><Tile name={v.school} size={24} /> <b>{v.school}</b></div>
+                    <div className="rv-school-h">
+                      <Tile name={v.school} size={24} /> <b>{v.school}</b>
+                      {v.chance && (
+                        <span className="rv-chance">{v.chance.lo}–{v.chance.hi}% · {v.chance.tier}</span>
+                      )}
+                    </div>
                     <p>{v.verdict}</p>
+                    {v.chanceRationale && <p className="rv-chance-why">{v.chanceRationale}</p>}
                     <ul>{v.moves.map((m) => <li key={m}>{m}</li>)}</ul>
                   </div>
                 ))}

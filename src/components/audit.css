@@ -1,0 +1,174 @@
+/* Audit — the stepped signed-in page.
+ *
+ * The three inner components (FileFlow, Portal, Review) each ship their own
+ * chrome; this file adds ONLY the stepped nav, the section headers, and the
+ * locked-state card. Everything else is inherited from the tokens in
+ * index.css so the audit looks like the rest of the shell.
+ */
+
+.audit {
+  padding: 24px 0 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* ── The step indicator ─────────────────────────────────────────────────── */
+
+.audit-steps {
+  position: sticky;
+  top: var(--as-top, 0);
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  backdrop-filter: saturate(140%) blur(10px);
+}
+
+.audit-step {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+.audit-step:hover { border-color: var(--line-strong); }
+.audit-step b {
+  grid-row: 1 / span 2;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 700; letter-spacing: -0.01em;
+  background: var(--bg-soft);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+.audit-step span {
+  font-size: 13.5px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink);
+}
+.audit-step i {
+  font-style: normal;
+  font-size: 11px; font-weight: 500;
+  color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+.audit-step.done b {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff;
+  border-color: transparent;
+}
+.audit-step.done i { color: var(--teal); }
+
+.audit-step.ready b {
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  color: #fff;
+  border-color: transparent;
+}
+.audit-step.ready i { color: var(--accent); }
+
+.audit-step.locked { opacity: 0.75; }
+.audit-step.locked b { color: var(--ink-3); }
+.audit-step.locked:hover { cursor: not-allowed; border-color: var(--line); }
+
+/* ── Section headers ────────────────────────────────────────────────────── */
+
+.audit-sec { scroll-margin-top: 24px; }
+
+.audit-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.audit-num {
+  grid-row: 1 / span 2;
+  font-size: 44px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--ink-3);
+  line-height: 1;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.audit-head h2 {
+  margin: 0;
+  font-size: 26px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.audit-dek {
+  margin: 4px 0 0;
+  font-size: 14px; color: var(--ink-2); line-height: 1.5;
+  max-width: 60ch;
+}
+
+/* ── Locked state for section 3 ────────────────────────────────────────── */
+
+.audit-locked {
+  background: var(--bg);
+  border: 1px dashed var(--line-strong);
+  border-radius: 14px;
+  padding: 40px 32px;
+  display: flex; flex-direction: column; gap: 14px;
+  align-items: flex-start;
+}
+.audit-locked-h b {
+  font-size: 20px; font-weight: 650; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.audit-locked-p {
+  margin: 0;
+  font-size: 14px; color: var(--ink-2); line-height: 1.55;
+  max-width: 56ch;
+}
+.audit-locked-p a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.audit-locked-p a:hover { text-decoration: underline; }
+
+.audit-locked-check {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13.5px; color: var(--ink-3);
+}
+.audit-locked-check li {
+  display: flex; align-items: center; gap: 10px;
+}
+.audit-locked-check li::before {
+  content: "";
+  width: 14px; height: 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: transparent;
+  flex-shrink: 0;
+}
+.audit-locked-check li.ok::before {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  border-color: transparent;
+}
+.audit-locked-check li.ok { color: var(--ink); }
+
+/* ── Small screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .audit-steps { grid-template-columns: 1fr; }
+  .audit-step { grid-template-rows: auto; }
+  .audit-num { font-size: 32px; }
+  .audit-head h2 { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audit-step { transition: none; }
+}

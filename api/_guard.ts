@@ -210,6 +210,36 @@ function checkSection(
   if (extra.reframes) checkStringArray(s.reframes, `${path}.reframes`, errors);
 }
 
+const VALID_TIERS = new Set([
+  "TAG guarantee", "Likely", "Strong target", "Target", "Reach", "High reach", "Long shot",
+]);
+
+/** perSchool[].chance — the model's odds band, anchored to the statistical
+ *  baseline handed to it in the prompt (see schoolContext() in
+ *  src/lib/review.ts). Bounds-checked here so a hallucinated number (negative,
+ *  >100, hi < lo, an unlisted tier) can't reach the report unnoticed. */
+function checkChance(v: unknown, path: string, errors: string[]): void {
+  if (typeof v !== "object" || v === null || Array.isArray(v)) {
+    errors.push(`${path}: expected an object with lo, hi and tier`);
+    return;
+  }
+  const c = v as Record<string, unknown>;
+  const lo = c.lo;
+  const hi = c.hi;
+  if (typeof lo !== "number" || !Number.isFinite(lo) || lo < 0 || lo > 100) {
+    errors.push(`${path}.lo: expected a number 0-100`);
+  }
+  if (typeof hi !== "number" || !Number.isFinite(hi) || hi < 0 || hi > 100) {
+    errors.push(`${path}.hi: expected a number 0-100`);
+  }
+  if (typeof lo === "number" && typeof hi === "number" && hi < lo) {
+    errors.push(`${path}: hi must be >= lo`);
+  }
+  if (typeof c.tier !== "string" || !VALID_TIERS.has(c.tier)) {
+    errors.push(`${path}.tier: expected one of ${[...VALID_TIERS].join(", ")}`);
+  }
+}
+
 /** Validate a parsed model response against the ReviewResult shape in
  *  src/lib/review.ts (minus generatedAt, which the client stamps). */
 export function validateReview(json: unknown): Validation {
@@ -240,6 +270,10 @@ export function validateReview(json: unknown): Validation {
       if (!nonEmptyString(s.school)) errors.push(`perSchool[${i}].school: expected a non-empty string`);
       if (!nonEmptyString(s.verdict)) errors.push(`perSchool[${i}].verdict: expected a non-empty string`);
       checkStringArray(s.moves, `perSchool[${i}].moves`, errors);
+      checkChance(s.chance, `perSchool[${i}].chance`, errors);
+      if (!nonEmptyString(s.chanceRationale)) {
+        errors.push(`perSchool[${i}].chanceRationale: expected a non-empty string`);
+      }
     });
   }
 
