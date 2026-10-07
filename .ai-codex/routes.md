@@ -8,13 +8,13 @@ Hash-based SPA router in `src/App.tsx` (`viewFromHash()` parses `location.hash`,
 |---|---|---|---|
 | `#/` | landing | `Landing` | Marketing page |
 | `#/check` | check | `Intake` | 3-step profile intake |
-| `#/results` | results | `Results` | Chance estimates for all 43 measured schools. **Gated**: no session → `ResultsGate` (blurred teaser + create-account card); signup stores `tcm.next.v1` = "results" so `handleAuth` returns here instead of the portal |
+| `#/results` | results | `Results` | Chance estimates for all 208 modeled schools. **Gated**: no session → `ResultsGate` (blurred teaser + create-account card); signup stores `tcm.next.v1` = "results" so `handleAuth` returns here instead of the portal |
 | `#/pricing` | pricing | `Pricing` | Free / Plus $9 / Counselor $49 (waitlists) |
 | `#/login` | login | `Auth` | Local accounts + optional Google sign-in |
 | `#/portal` | portal | `Portal` | Signed-in dashboard (redirects to login if no session) |
 | `#/review` | review | `Review` | Claude-powered deep application review |
 | `#/browse` | browse | `SchoolsIndex` | Directory index of all 4,025 IPEDS schools |
-| `#/college/<idx>` | college | `CollegePage` | Profile for any directory school (`idx` = row index in `public/schools.json`); redirects to `#/schools/<id>` when the school is one of the 31 measured (alias map `featuredIdFor`) |
+| `#/college/<idx>` | college | `CollegePage` | Profile for any directory school (`idx` = row index in `public/schools.json`); redirects to `#/schools/<id>` when the school is one of the 208 modeled (alias map `featuredIdFor`) |
 | `#/schools/<id>` | school | `SchoolPage` | Deep page for a measured school (`id` = `School.id` from model.json) |
 
 ## Serverless API (Vercel, optional — app runs fully client-side without it)

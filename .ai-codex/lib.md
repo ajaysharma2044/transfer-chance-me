@@ -1,9 +1,9 @@
 # Library signatures
 
 ## src/engine.ts — the chance engine (heart of the product)
-- `MODEL: { meta, schools: School[] }` — model.json + 7 UC campuses appended at module load from `src/data/uc_data.json` (31 schools total)
+- `MODEL: { meta, schools: School[] }` — model.json (24) + 7 UC campuses from `src/data/uc_data.json` + 177 CDS-researched schools from `src/data/extra_schools.json`, all appended at module load (**208 schools total**)
 - `TAG_CAMPUSES: Record<string, number>` — UC TAG min GPAs (Davis 3.2, Irvine 3.4, Merced 2.8, Riverside 2.7, Santa Barbara 3.4, Santa Cruz 3.0)
-- `estimate(profile: Profile, s: School): Estimate` — baseline = official rate × logistic GPA-position factor × multipliers (CA-CC→UC ×1.5, IGETC ×1.15, UC junior gate ×0.25, CS/eng: ×0.35 at UCs / ×0.55–0.65 at rate<15 schools / ×0.75 elsewhere (reporting-bias discount — CS success stories over-reported vs actual seats; user-mandated, keep harsh), business ×0.4 UC / ×0.75, veteran hooks, essay named ×1.3, PTK ×1.12, honors ×1.08, gpaTrend ×1.08/×0.9, ecLevel campus ×1.05 / national ×1.08). TAG early-return: CA-CC junior meeting min GPA → p=0.95, tier "TAG guarantee". Schools with no published GPA range (UCs + extra_schools) estimate median from selectivity; drivers labeled "estimated". `src/data/extra_schools.json` (CDS-researched additions) appends after the UC loop — same null-GPA shape.
+- `estimate(profile: Profile, s: School): Estimate` — baseline = official rate × logistic GPA-position factor × multipliers (CA-CC→UC ×1.5, IGETC ×1.15, UC junior gate ×0.25, CS/eng: ×0.35 at UCs / ×0.55–0.65 at rate<15 schools / ×0.75 elsewhere (reporting-bias discount — CS success stories over-reported vs actual seats; user-mandated, keep harsh), business ×0.4 UC / ×0.75, veteran hooks, essay named ×1.3, PTK ×1.12, honors ×1.08, gpaTrend ×1.08/×0.9, ecLevel campus ×1.05 / national ×1.08). TAG early-return: CA-CC junior meeting min GPA → p=0.95, tier "TAG guarantee". Schools with no published study GPA range take observed admit percentiles from the outcome corpus (`admitSignature`, ≥8 admits) when available, else estimate position from the official admit rate (UCs keep their own rate-scaled estimate); only the rate-scaled fallback is labeled "estimated". `src/data/extra_schools.json` (CDS-researched additions) appends after the UC loop — same null-GPA shape.
 - `estimateAll(profile): Estimate[]` — sorted descending by p
 - `fmtPct(x: number): string`
 
@@ -26,7 +26,7 @@
 - `googleEnabled: boolean` (gated on `VITE_GOOGLE_CLIENT_ID`); `mountGoogleButton(el, onSession)` — Google Identity Services
 
 ## src/lib/schools.ts
-- `MARKS: Record<name, SchoolMark>` — color/mono/word/domain for all 31 measured schools
+- `MARKS: Record<name, SchoolMark>` — color/mono/word/domain for all 208 modeled schools
 - `logoUrl(name, size=64)` — Google favicon service (`s2/favicons?domain=`); never ship trademarked logo files
 - `markOf(name): SchoolMark` — with monogram fallback
 
@@ -35,7 +35,7 @@
 - `searchDirectory(all, q, limit=12)`; `KIND_LABEL`, `SIZE_LABEL`
 
 ## src/lib/deadlines.ts
-- `DEADLINES: Record<school, {month, day, note?}>` — all 31 (UCs Nov 30, TAG Sep 30 notes)
+- `DEADLINES: Record<school, {month, day, note?}>` — 157 schools (UCs Nov 30, TAG Sep 30 notes)
 - `countdown(school, from?): Countdown | null` — next-occurrence day math
 
 ## src/lib/pdf.ts
