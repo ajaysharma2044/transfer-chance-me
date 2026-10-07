@@ -37,7 +37,7 @@ interface Profile {
 ## ReviewResult (src/lib/review.ts)
 `{ grade, summary, strengths[], risks[], essay: {grade, notes: {quote,issue,fix}[], direction} | null, statement | null, activities: {..., reframes[]} | null, perSchool: {school, verdict, moves[]}[], actions[], generatedAt }`
 
-## localStorage keys (all client-side; site promises nothing leaves the browser)
+## localStorage keys (client-side cache; signed in, the profile/schools/written+uploaded material also sync to Supabase — `src/lib/sync.ts`, RLS in `supabase/schema.sql`. The deep review additionally sends materials to Anthropic — `src/lib/review.ts`. Accurate privacy wording lives in `src/lib/privacy.ts`.)
 | Key | Contents |
 |---|---|
 | `tcm.profile.v1` | Profile |

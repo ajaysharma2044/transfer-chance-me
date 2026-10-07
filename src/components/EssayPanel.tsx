@@ -24,7 +24,7 @@ export default function EssayPanel({ profile, onChange }: Props) {
       <textarea
         id="essay"
         rows={7}
-        placeholder="Paste a draft and we'll check it for the things admits' essays actually do — analyzed on your device, never uploaded."
+        placeholder="Paste a draft and we'll check it for the things admits' essays actually do — analyzed on your device as you type."
         value={profile.essayText}
         onChange={(e) => setText(e.target.value)}
       />

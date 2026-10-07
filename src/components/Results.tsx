@@ -70,7 +70,7 @@ export function ResultsGate({ profile, onSignup }: { profile: Profile; onSignup:
           <ul>
             <li>School-by-school odds with the exact drivers</li>
             <li>Saved to your portal with deadlines &amp; tracker</li>
-            <li>Everything stays in your browser</li>
+            <li>Private to your account — delete it anytime</li>
           </ul>
           <button type="button" className="btn" onClick={onSignup}>Create free account</button>
           <p className="gate-alt">Already have one? <button type="button" className="linklike" onClick={onSignup}>Log in</button></p>
