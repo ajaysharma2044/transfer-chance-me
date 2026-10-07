@@ -9,6 +9,7 @@ import model from "./data/model.json";
 import ucData from "./data/uc_data.json";
 import extraSchools from "./data/extra_schools.json";
 import fittedModel from "./data/fitted_model.json";
+import { admitSignature } from "./lib/similar";
 
 export interface Counsel {
   typical: string;
@@ -488,21 +489,64 @@ export function estimate(profile: Profile, s: School): Estimate {
   } else {
     // ── Positional heuristic: schools without enough outcome rows to fit
     // (UC campuses besides UCLA/Berkeley, and schools outside the T25
-    // corpus) still use GPA-vs-observed-distribution plus hand levers. ──
-    const noGpaData = s.gpa.p50 == null && UC.has(s.name);
-    const med = s.gpa.p50 ?? (noGpaData ? Math.min(3.7, Math.max(3.25, 3.9 - (s.rate / 100) * 0.8)) : 3.95);
-    const q25 = s.gpa.p25 ?? (noGpaData ? med - 0.25 : med - 0.12);
+    // corpus) still use GPA-vs-admit-distribution plus hand levers. ──
+    //
+    // Where that admit distribution comes from, in priority order:
+    //   study    — model.json percentiles (a researched distribution)
+    //   observed — the outcome corpus (admitSignature, ≥8 recorded admits)
+    //   estimated — scaled off the official admit rate, last resort only
+    //
+    // Only the estimated branch is fabricated, and it MUST scale with the
+    // rate. Assuming a 3.95 median for every unbanded school is what collapsed
+    // near-open-admission schools (Sacramento State 92.6%, Cleveland State
+    // 100%) to ~18% for a mid-GPA applicant: a 3.04 then sat ~9σ below an
+    // invented elite median. A school that admits 92% of applicants does not
+    // have a 3.95 median admit. The display band (band.ts) already reads these
+    // observed percentiles; the engine now agrees with it instead of inventing
+    // its own. See tests/engine-odds.test.ts.
+    const sig = s.gpa.p50 == null && !UC.has(s.name) ? admitSignature(s.name) : null;
+    const ucNoGpa = s.gpa.p50 == null && UC.has(s.name);
+    let med: number;
+    let q25: number;
+    let posSource: "study" | "observed" | "estimated";
+    if (s.gpa.p50 != null) {
+      med = s.gpa.p50;
+      q25 = s.gpa.p25 ?? med - 0.12;
+      posSource = "study";
+    } else if (sig) {
+      med = sig.gpaMedian;
+      q25 = sig.gpaP25;
+      posSource = "observed";
+    } else if (ucNoGpa) {
+      // UC stopped publishing admitted-GPA ranges; estimate position from
+      // campus selectivity (unchanged behavior for the UC campuses).
+      med = Math.min(3.7, Math.max(3.25, 3.9 - (s.rate / 100) * 0.8));
+      q25 = med - 0.25;
+      posSource = "estimated";
+    } else {
+      // No study band and no observed sample. The official rate is the only
+      // signal: selective → high and narrow, open-admission → low and wide.
+      med = Math.min(3.9, Math.max(3.0, 3.95 - (s.rate / 100) * 0.95));
+      q25 = med - Math.min(0.45, Math.max(0.12, 0.12 + (s.rate / 100) * 0.33));
+      posSource = "estimated";
+    }
     const mid = (med + q25) / 2;
     const spread = Math.max(0.045, (med - q25) / 1.35);
     const gpaFactor = 0.22 + 2.2 / (1 + Math.exp(-(profile.gpa - mid) / spread));
     corePBase = base * gpaFactor;
-    const est = noGpaData ? " (estimated — UC no longer publishes admitted-GPA ranges)" : "";
+    const srcWord = posSource === "estimated" ? "estimated" : "observed";
+    const est =
+      posSource !== "estimated"
+        ? ""
+        : ucNoGpa
+          ? " (estimated — UC no longer publishes admitted-GPA ranges)"
+          : " (estimated from the official admit rate — no GPA distribution published)";
     if (profile.gpa >= med) {
-      drivers.push({ dir: "up", text: `Your ${profile.gpa.toFixed(2)} sits at or above the ${noGpaData ? "estimated" : "observed"} admit median (${med.toFixed(2)})${est}` });
+      drivers.push({ dir: "up", text: `Your ${profile.gpa.toFixed(2)} sits at or above the ${srcWord} admit median (${med.toFixed(2)})${est}` });
     } else if (profile.gpa >= q25) {
       drivers.push({ dir: "flat", text: `Your ${profile.gpa.toFixed(2)} is inside the admit range (25th percentile ${q25.toFixed(2)}, median ${med.toFixed(2)})${est}` });
     } else {
-      drivers.push({ dir: "down", text: `Your ${profile.gpa.toFixed(2)} is below the 25th percentile of ${noGpaData ? "estimated" : "observed"} admits (${q25.toFixed(2)})${est}` });
+      drivers.push({ dir: "down", text: `Your ${profile.gpa.toFixed(2)} is below the 25th percentile of ${srcWord} admits (${q25.toFixed(2)})${est}` });
     }
     const floor = s.counsel?.floor;
     if (floor != null && profile.gpa < floor) {
