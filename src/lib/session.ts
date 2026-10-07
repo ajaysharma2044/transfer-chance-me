@@ -29,6 +29,12 @@ export const PER_USER_KEYS = [
   "tcm.owner.v1",        // the owner stamp below
 ] as const;
 
+/** The keys holding the student's own material — the subset "Delete my data"
+ *  clears while the login stays (session, owner stamp and API key are kept). */
+export const USER_MATERIAL_KEYS = [
+  "tcm.profile.v1", "tcm.list.v1", "tcm.review.v1", "tcm.appdocs.v1",
+] as const;
+
 const OWNER_KEY = "tcm.owner.v1";
 const NEXT_KEY = "tcm.next.v1"; // sessionStorage: post-login redirect target
 
@@ -60,6 +66,14 @@ export function clearUserLocalState(): void {
     try { localStorage.removeItem(k); } catch { /* ignore */ }
   }
   try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ignore */ }
+}
+
+/** Clear the signed-in user's material without logging them out — used by
+ *  "Delete my data" (D14). Session, owner stamp and API key are kept. */
+export function clearUserMaterial(): void {
+  for (const k of USER_MATERIAL_KEYS) {
+    try { localStorage.removeItem(k); } catch { /* ignore */ }
+  }
 }
 
 export type LoginSyncAction = "adopt-cloud" | "push-local" | "reset-local";

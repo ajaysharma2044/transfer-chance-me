@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_PROFILE, MODEL } from "./engine";
 import type { Profile } from "./engine";
 import { analyzeEssay } from "./lib/essay";
 import { getSession, initAuth, logOut, setSession } from "./lib/auth";
-import { pullProfile, pushProfile, syncReady } from "./lib/sync";
-import { clearUserLocalState, getProfileOwner, loginSyncAction, setProfileOwner } from "./lib/session";
+import { deleteAllData, pullProfile, pushProfile, syncReady } from "./lib/sync";
+import { clearUserLocalState, clearUserMaterial, getProfileOwner, loginSyncAction, setProfileOwner } from "./lib/session";
+import { deleteMyData } from "./lib/accountData";
 import type { Session } from "./lib/auth";
 import Landing from "./components/Landing";
 import SchoolPage from "./components/SchoolPage";
@@ -232,12 +233,20 @@ export default function App() {
   }, [session?.email]);
 
   // Push edits up, debounced, so a refresh or another device sees them.
+  // suppressPush lets "Delete my data" (D14) stop the push and cancel a
+  // scheduled one before the cloud delete, so it can't re-upload the deleted
+  // profile ~1.2s later.
+  const suppressPush = useRef(false);
+  const pushTimer = useRef<number | null>(null);
   useEffect(() => {
-    if (!session) return;
-    const t = window.setTimeout(() => {
-      pushProfile(profile).catch(() => { /* offline is not an error here */ });
+    if (!session || suppressPush.current) return;
+    pushTimer.current = window.setTimeout(() => {
+      pushTimer.current = null;
+      if (!suppressPush.current) pushProfile(profile).catch(() => { /* offline is not an error here */ });
     }, 1200);
-    return () => clearTimeout(t);
+    return () => {
+      if (pushTimer.current != null) { clearTimeout(pushTimer.current); pushTimer.current = null; }
+    };
   }, [profile, session]);
 
   useEffect(() => {
@@ -311,6 +320,20 @@ export default function App() {
     nav("");
   }
 
+  // "Delete my data" (login stays). Stop the debounced push and clear in-memory
+  // + local material before the cloud delete so nothing re-uploads it (D14).
+  async function handleDeleteMyData() {
+    await deleteMyData({
+      suppress: (on) => { suppressPush.current = on; },
+      cancelPendingPush: () => {
+        if (pushTimer.current != null) { clearTimeout(pushTimer.current); pushTimer.current = null; }
+      },
+      clearLocalMaterial: () => clearUserMaterial(),
+      resetProfile: () => setProfile(DEFAULT_PROFILE),
+      deleteCloud: () => deleteAllData(),
+    });
+  }
+
   /* Routes that belong to the signed-in product rather than the marketing
      site. Inside the shell these render WITHOUT their own <main>, because
      AppShell owns that landmark and nesting it is invalid.
@@ -341,7 +364,7 @@ export default function App() {
       {view.kind === "pricing" && <Pricing onStart={() => nav("audit")} />}
       {view.kind === "account" && (
         session
-          ? <Account session={session} onLogout={logout} />
+          ? <Account session={session} onLogout={logout} onDeleteData={handleDeleteMyData} />
           : <Auth
               onDone={(s) => {
                 try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ok */ }
