@@ -13,7 +13,7 @@
 import { useEffect, useState } from "react";
 import type { Profile } from "../engine";
 import type { Session } from "../lib/auth";
-import { DEFAULT_PROFILE } from "../engine";
+import { isProfileScorable } from "../lib/profile";
 import { subscribeListChanged } from "../lib/listEvents";
 import FileFlow from "./FileFlow";
 import Portal from "./Portal";
@@ -29,17 +29,6 @@ interface Props {
   go: (r: string) => void;
   /** Which section to scroll to on mount — parsed by App.tsx from `#/audit/<anchor>`. */
   anchor?: "profile" | "schools" | "deep";
-}
-
-/** A profile is scorable once GPA is set to something the student actually
- *  chose (not the default 3.0) AND a major is selected. Anything less and
- *  section 3's AI audit would render generic advice. */
-function isProfileScorable(p: Profile): boolean {
-  return (
-    p.gpa !== DEFAULT_PROFILE.gpa
-    && !!p.major
-    && p.major !== DEFAULT_PROFILE.major
-  );
 }
 
 /** Read the school list once. `useSchoolCount` below keeps it live. */
