@@ -4,6 +4,7 @@ import type { Profile } from "./engine";
 import { analyzeEssay } from "./lib/essay";
 import { getSession, initAuth, logOut, setSession } from "./lib/auth";
 import { pullProfile, pushProfile, syncReady } from "./lib/sync";
+import { clearUserLocalState, getProfileOwner, loginSyncAction, setProfileOwner } from "./lib/session";
 import type { Session } from "./lib/auth";
 import Landing from "./components/Landing";
 import SchoolPage from "./components/SchoolPage";
@@ -187,30 +188,46 @@ export default function App() {
     if (AUTH_RETURN_ERROR) window.location.hash = "#/login";
   }, []);
 
-  // On sign-in, adopt the account's saved profile so a user's work follows
-  // them to a new device. A local profile that is still untouched must not
-  // overwrite the stored one, so the pull wins unless the user has edited.
+  // On sign-in, reconcile local and cloud profiles. A user's work follows them
+  // to a new device, an anonymous guest draft is adopted into the new account,
+  // and — critically (D1) — local data stamped with a DIFFERENT owner is never
+  // pushed into this account; it is discarded and the account starts clean.
   useEffect(() => {
     if (!session) return;
+    const email = session.email;
     let live = true;
     (async () => {
       try {
         if (!(await syncReady())) return;
         const cloud = await pullProfile();
         if (!live) return;
-        // Merge over the defaults, never adopt the stored object verbatim.
-        // A row written before a field existed has no key for it, and the
-        // app treats several of these as always-present (profile.activities
-        // .length, profile.courses.length). Spreading defaults first is what
-        // makes every older row forward-compatible; loadProfile() does the
-        // same for the localStorage copy.
-        if (cloud.profile) setProfile({ ...DEFAULT_PROFILE, ...cloud.profile });
-        else await pushProfile(profile);
+        const action = loginSyncAction({
+          hasCloudProfile: cloud.profile != null,
+          localOwner: getProfileOwner(),
+          userEmail: email,
+        });
+        if (action === "adopt-cloud") {
+          // Merge over the defaults, never adopt the stored object verbatim:
+          // a row written before a field existed has no key for it, and the
+          // app treats several as always-present (activities, courses).
+          setProfile({ ...DEFAULT_PROFILE, ...cloud.profile });
+        } else if (action === "push-local") {
+          // This user's own returning data, or an anonymous guest draft.
+          await pushProfile(profile);
+        } else {
+          // reset-local: local data belongs to a different account. Never push
+          // it — discard it and start clean. Keep this user's session mirror,
+          // which the blanket clear also removes.
+          clearUserLocalState();
+          setSession(session);
+          setProfile(DEFAULT_PROFILE);
+        }
+        setProfileOwner(email);
       } catch { /* sync is best-effort; never block the app on it */ }
     })();
     return () => { live = false; };
-    // Deliberately keyed on identity only: this is an adopt-on-login step,
-    // not a subscription to every profile keystroke.
+    // Deliberately keyed on identity only: an adopt-on-login step, not a
+    // subscription to every profile keystroke.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.email]);
 
@@ -284,6 +301,11 @@ export default function App() {
 
   function logout() {
     logOut().catch(() => { /* clearing locally is enough to log out here */ });
+    // D1: wipe this user's material so the next account on this device can't
+    // read it, and reset in-memory state (clearing storage alone leaves the
+    // profile in memory for the login-sync effect to push).
+    clearUserLocalState();
+    setProfile(DEFAULT_PROFILE);
     setSession(null);
     setSessionState(null);
     nav("");
