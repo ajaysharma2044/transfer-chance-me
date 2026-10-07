@@ -4,7 +4,7 @@ Tracked per `docs/spec_v3.md` Part 6. Claude records blockers here instead of re
 Last updated 2026-10-07.
 
 ## Credentials / env (put in the worktree's untracked `.env` — never pasted in chat)
-- [ ] `OPENROUTER_API_KEY` — needed from Step 23 (extraction) and Step 30 (audits) live mode on. Until present, **all model work runs against mocks/fixtures**. Direct Anthropic `ANTHROPIC_API_KEY` is the configured fallback.
+- [x] `OPENROUTER_API_KEY` — **provided** (in the worktree `.env.local`, 2026-10-07; confirmed working by a smoke call). Needed from the **first paid call** onward. Direct Anthropic `ANTHROPIC_API_KEY` is the configured fallback (not set — optional).
 - [ ] Supabase for live testing: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and server-only `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`. Then run migrations (`supabase/migrations/`).
 - [ ] Stripe **test** keys + webhook secret (Step 33 live test).
 
