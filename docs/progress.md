@@ -1,12 +1,18 @@
 # Progress — read this first
 
-Living status for the v3 execution (`docs/spec_v3.md`). Updated every commit.
+Living status for the v3 execution. **New session: read this file, then the
+full `docs/spec_v3.md` (now the complete verbatim spec + PART 8), then continue.**
 Last updated: 2026-10-07.
+
+## Execution order (PART 8 §2, overrides the numbering)
+Steps **1–11, 12–14, 20, 25, 15, 16, 17, 18, 19, 21–24, 26–38**.
 
 ## Budget (OpenRouter + Anthropic aggregate)
 - Cap: **$25 total**, **$1 per audit**, **stop after 3 real full audits**.
+- PART 8 §1 split: extraction benchmark ≤ **$3** · tagging (50 rec, ≤2 models) ≤ **$4** · 3 real audits ≤ **$3** + retries · ~**$15 reserve** (owner approval to spend). Full-corpus tagging out of scope under this budget.
 - Spent: **$0.000015** (one smoke call). Reserved open: $0. Remaining: ~**$24.99998**.
 - Real full audits used: **0 / 3**.
+- External-model inputs exclude author_id, usernames, URLs, post ids (PART 8 §4) — local join key only.
 - Ledger: `DATA_DIR/derived/ledger.json` (outside the repo), enforced by
   `netlify/functions/_ledger.ts` + `_llm.ts` before every paid call.
 
