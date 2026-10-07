@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:full": "netlify dev",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "@vercel/node": "^5.10.1",
     "@vitejs/plugin-react": "^6.0.4",
+    "netlify-cli": "^27.11.2",
     "oxlint": "^1.75.0",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
