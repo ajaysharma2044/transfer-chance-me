@@ -1,6 +1,6 @@
 // One tiny real OpenRouter call through the ledger, to confirm the key works
 // and that cost is reserved + reconciled. Prints model, reply, tokens and cost
-// only — never the key. Run: npx vite-node scripts/llm_smoke.ts
+// only — never the key. Run: npx tsx scripts/llm_smoke.ts
 
 import { loadEnvLocal } from "./_loadenv";
 import { callModel, defaultLedger } from "../netlify/functions/_llm";

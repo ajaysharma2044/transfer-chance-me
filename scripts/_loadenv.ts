@@ -1,5 +1,5 @@
 // Load KEY=VALUE pairs from .env.local into process.env for standalone scripts
-// (vite-node/tsx do not populate process.env from .env.local the way the dev
+// (tsx and plain node do not populate process.env from .env.local the way the dev
 // server does). Never logs values. Does not overwrite vars already set.
 
 import { existsSync, readFileSync } from "node:fs";

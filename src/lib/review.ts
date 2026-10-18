@@ -13,7 +13,7 @@ const RESULT_STORE = "tcm.review.v1";
 // "/api/review"), the prompt is POSTed there and the server holds the
 // Anthropic key. When unset, the original browser-key path is used.
 export const REVIEW_ENDPOINT: string =
-  (import.meta.env.VITE_REVIEW_ENDPOINT as string | undefined) ?? "";
+  (import.meta.env?.VITE_REVIEW_ENDPOINT as string | undefined) ?? "";
 export const proxyMode = REVIEW_ENDPOINT.length > 0;
 
 export function getApiKey(): string {

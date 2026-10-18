@@ -2,7 +2,7 @@
 // it to a file, so the enriched prompt can be inspected and sent to the live
 // backend without going through the browser.
 //
-//   npx vite-node scripts/preview_prompt.ts [outfile]
+//   npx tsx scripts/preview_prompt.ts [outfile]
 //
 // This imports the same buildPrompt the app calls — not a copy — so what this
 // writes is what a student's review request contains, field notes included.

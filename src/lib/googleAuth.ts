@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-export const GOOGLE_CLIENT_ID: string = (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) ?? "";
+export const GOOGLE_CLIENT_ID: string = (import.meta.env?.VITE_GOOGLE_CLIENT_ID as string | undefined) ?? "";
 export const googleEnabled = GOOGLE_CLIENT_ID.length > 0;
 
 let gisLoading: Promise<void> | null = null;

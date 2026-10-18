@@ -1,9 +1,9 @@
 // Create / delete / list test accounts against live Supabase via the admin API
 // (service-role key). Test accounts only (tcm-test+<n>@…), created confirmed so
 // email verification isn't a blocker. Usage:
-//   npx vite-node scripts/test_users.ts create tcm-test+verify1@example.com <password>
-//   npx vite-node scripts/test_users.ts delete tcm-test+verify1@example.com
-//   npx vite-node scripts/test_users.ts list
+//   npx tsx scripts/test_users.ts create tcm-test+verify1@example.com <password>
+//   npx tsx scripts/test_users.ts delete tcm-test+verify1@example.com
+//   npx tsx scripts/test_users.ts list
 
 import { loadEnvLocal } from "./_loadenv";
 loadEnvLocal();

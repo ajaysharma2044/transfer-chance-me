@@ -1,304 +1,325 @@
-# Transfer Chance Me — Implementation Brief
+# Transfer Chance Me — repository-grounded implementation and launch prompt
 
-> Saved per the brief's own instruction ("Save this brief as `docs/spec.md`").
-> This is the spec of record. The **Reality reconciliation** appendix at the
-> bottom records figures verified against the shipped repo on 2026-10-06 — the
-> brief asks that actual contents be verified before figures are repeated in
-> product copy, so the appendix, not the brief body, is the source of truth for
-> counts.
+> Saved verbatim per §1 ("Save this prompt as docs/spec.md") on 2026-10-17.
+> **Lineage:** `docs/spec_v2.md` (first brief, 2026-10-06, carries the early implementation log) → `docs/spec_v3.md` (master execution spec + PART 8 budget split/overrides) → **this file (current execution reference)**. Where they conflict, this file governs; spec_v3 PART 8 still records the owner-authorized paid budget ($25 split) and the external-model field exclusions.
+> **Reconciliation:** this review examined `main` @ `538dcb7`; the active branch `claude/transfer-chance-me-impl-2a8520` carries commits beyond it. Finding-by-finding status against the current code is in `docs/repo-audit.md`; live step status in `docs/progress.md` (read first in any new session).
 
----
+Prepared 17 October 2026. Repository reviewed: https://github.com/ajaysharma2044/transfer-chance-me
+Reviewed branch: main. Reviewed commit: 538dcb7874e52111703cd207caab2897c8296101.
+This file is the prompt. Give the entire file to the implementation agent with access to the actual repository, configured services, and authorized research data. The assignment below is to implement and verify the product. This review itself did not change application code, deploy anything, charge anyone, or verify the live backend.
 
-## 0. Full internal data access and privacy implementation boundary
+## 1. Assignment and execution authority
 
-The priority is complete access to the data already collected or otherwise authorized for this project. The owner will implement production privacy rules separately. Do not interpret public-display safeguards as limits on what the internal research pipeline may preserve, inspect, analyze, or export.
+Take the existing Transfer Chance Me application from its actual current state to a release candidate that real transfer applicants can reliably use. Inspect the checkout first, reconcile changes since the reviewed commit, preserve working features, implement missing functionality, and demonstrate the complete applicant journey on a production-equivalent preview.
 
-- Preserve complete original source files and every available field, including full narratives, essays, activities, exact institutions, dates, source identifiers, and original provenance where present in authorized material.
-- Never overwrite raw data with an anonymized or simplified version. Maintain raw, normalized, enriched, and display-ready layers separately with stable record mappings.
-- Deliver the full machine-readable dataset, complete field inventory, all discovered patterns, missingness and coverage tables, and full ranked comparable-applicant results. Do not return only a summary, eight examples, or selected favorable findings.
-- Keep thin, rare, incomplete, rejected, contradictory, and unusual records. Flag them; do not silently discard them. A small sample limits confidence, not access to the observations.
-- Preserve optional contextual or sensitive fields already lawfully supplied in the authorized source. Document them separately. Do not infer missing sensitive attributes, require new disclosures, or treat them as justified predictors without evidence.
-- Raw excerpts may be used in restricted internal evidence tracing. Public presentation can later use redaction, paraphrasing, aggregation, and access controls defined by the owner.
-- Do not withhold useful analysis, recommendations, or available institutional information to force a TU upsell. Protect specifically identified confidential assets through access controls rather than weakening the audit.
-- Do not stop internal work to demand a privacy-policy document, blanket anonymization signoff, or a commercial terms review unrelated to the specific operation. If a particular operation has a real access, processing, or disclosure restriction, identify it precisely and continue everything else.
-- This authorizes complete use of available project data, not new access to private accounts, bypassing access controls, unauthorized external disclosure, or public release of raw student records.
+Save this prompt as docs/spec.md. Follow CLAUDE.md and .ai-codex/ for repository conventions, except where this brief explicitly replaces outdated product behavior or inaccurate claims. Do not return another specification and stop. Complete all authorized reversible implementation and verification work; commit coherent verified stages without committing credentials, private applicant data, or unrelated changes.
 
-These instructions override conflicting instructions in this brief and earlier versions about automatic anonymization, rare-record suppression, internal display caps, and privacy-policy approval gates. Build the production display layer separately; do not enable raw applicant exports for ordinary customers.
+This brief authorizes development, migrations prepared and tested against an isolated environment, synthetic test accounts, test-mode billing, local/browser testing, and release preparation. It does not itself authorize a public production launch, live charges, purchases, unsolicited outreach, or unlimited model spending. Prepare the exact release candidate before asking for any final deployment or commercial approval that is still required. Reuse an existing authorized budget; otherwise prepare mocks and request one concrete capped budget for paid validation. Continue independent work while blocked.
 
-> **Implementer's boundary note (added 2026-10-06, not part of the original brief).**
-> This repository's checked-in `CLAUDE.md` states the corpus contains *real
-> student records, some belonging to minors*, and mandates: every table under
-> row-level security, the service-role key never shipped to the browser,
-> `deleteAllData()` always reachable, and raw private records kept out of
-> source control and public assets. Section 0 and those mandates are
-> compatible, and both are honored: raw/normalized/enriched layers are kept
-> separate, thin and rare records are flagged not dropped, and nothing here
-> weakens an existing safeguard. The safeguards above are treated as hard
-> constraints, not "approval gates" to route around. Where a specific
-> operation (e.g. raw applicant export, or sending student narratives to an
-> external model) touches one, it is called out at that operation and kept
-> within the access already configured in the repo — not broadened silently.
+Do not stop after 15 turns or at an arbitrary stage. Maintain a resumable checkpoint when context or runtime limits require it. Ask only genuinely blocking questions, batched with a recommended default. Missing research sources must not stop unrelated product work. New optional ideas belong in docs/ideas.md unless the owner explicitly changes scope.
 
-## 1. Mission and product judgment
+## 2. What was actually found
 
-Build Transfer Chance Me into a useful automated product for college transfer applicants. Its core experience is a deep, personalized assessment of the applicant's materials against their target schools, grounded in official requirements, available applicant outcomes, and clearly identified expert judgment.
+Treat these as findings at the reviewed commit, not promises about another branch or live deployment.
 
-The audience and product identity are fixed. Features, packaging, report structure, pricing, model selection, and implementation details are adaptable. Do not assume the only valuable output is a percentage or a PDF. Use the existing deep-audit direction as the starting point and improve it when evidence or implementation reveals a better solution.
-
-The product should answer:
-
-1. Which schools make sense for me, and why?
-2. Am I eligible, prepared, and on time for each school and intended major?
-3. What helps or hurts my application, including individual activities, essays, awards, coursework, and transfer reasons?
-4. How should my opportunities, responsibilities, and academic trajectory change the interpretation of my record?
-5. Which recorded applicants are meaningfully comparable, and what happened to them?
-6. What exactly should I change, in what order, before which deadlines?
-7. What is known, estimated, missing, or worth verifying directly with a school?
-
-Build for the applicant's decision, not for the appearance of analytical sophistication. A specific prerequisite warning can be more useful than an unreliable probability. A good audit should make a student understand their situation and act differently.
-
-## 2. Autonomy and authority
-
-- Inspect the repository, `CLAUDE.md`, relevant `.ai-codex/` instructions, branch, working changes, data, tools, environment, tests, and deployment setup before making assumptions. Never print secrets.
-- This brief supersedes earlier product scope, session limits, and approval gates that conflict with it. Respect actual tool permissions, credential boundaries, and requirements protecting data or unrelated work. Report substantive conflicts; do not treat every old convention as a reason to stop.
-- Continue through every stage that can be completed with available inputs. Do not stop after an arbitrary number of turns, at S2, or after writing a design document.
-- Ask only for information or authorization genuinely required to proceed. Batch blocking questions and state a recommended default. Continue independent work while waiting.
-- Make reversible implementation decisions yourself. Draft rubrics, select technical approaches, improve prompts, add dependencies when justified, and revise schemas without asking for routine approval.
-- Integrate new user instructions into the active work. Record optional future ideas separately; do not automatically reject useful corrections as scope creep.
-- Use short implementation notes where necessary. Avoid documentation rituals that delay working software.
-- Preserve unrelated changes. Commit coherent verified work when repository instructions and available access permit it; never commit private applicant materials or credentials.
-- Public launch, live charging, contacting people, and purchases require their own authorization. Build and test these paths now without waiting for launch approval.
-
-## 3. Existing project: inspect and reuse
-
-The earlier brief described the following components. Treat this as a map to verify, not guaranteed current state:
-
-- React 19 and Vite SPA, hash routing in `src/App.tsx`, audit flow in `src/components/Audit.tsx`.
-- Chance engine `src/engine.ts`; `src/lib/band.ts`, `blockers.ts`, `actionplan.ts`.
-- Upload components `FileFlow.tsx`, `ImportPanel.tsx`; PDF parsing, extraction, essay and coursework helpers under `src/lib/`.
-- Similar-profile search and `src/data/similar.json`, reportedly 856 people and 2,158 decisions.
-- School intelligence, prompts, coursework data, official baselines, and IPEDS school search files under `src/data/` and `public/`.
-- OpenRouter review proxy, JSON guards, cost logging, Netlify background functions and polling.
-- Supabase authentication, RLS, deletion, and admin portal.
-- Existing build scripts and roughly 260 Vitest tests.
-
-The corpus is reportedly about 8,910 to 10,000 outcomes, not necessarily that many complete applications or distinct applicants. Verify actual contents and reconcile figures before repeating them in product copy.
-
-Reuse working systems. Refactor where necessary, but do not rebuild the entire app to accommodate the specification. Netlify is the preferred deployment target if the current project still supports it. Archive obsolete provider wiring only after verifying it is unused. Preserve useful migration options until the replacement works.
-
-Keep existing commands working where applicable: `npm run dev`, `npm run build`, `npm test`, `npm run typecheck:netlify`, `npm run export:signups`, and `python3 scripts/build_model.py`.
-
-## 4. First priority: foundation defects
-
-Investigate these reported issues and fix those still present:
-
-1. Odds compression: GPA 3.04, CS, four-year public reportedly produces 14–26% for Sacramento State against a 92.6% overall rate and 13–26% for Cleveland State against 100%. Trace major adjustments, missing GPA data, logistic behavior, tier labels, and baseline applicability. An overall rate is not automatically a valid CS baseline. Do not force numerical agreement without relevant evidence. Add regression cases for legitimate high-admit and selective-school behavior.
-2. Privacy copy that says writing stays in the browser when backend processing is active. Describe actual behavior accurately.
-3. Profile completeness that shows "Fill in" despite required fields being present. Define required fields explicitly.
-4. An intermittent cold-run test. Identify and fix the source of nondeterminism if reproducible.
-5. Stale architecture instructions, model names, and backend claims. Update affected documentation.
-6. Excessive initial bundle size. Measure it and lazy-load large datasets and expensive routes where worthwhile.
-
-Existing discounts and multipliers are hypotheses unless justified. Preserve a previously mandated adjustment initially, document its effect, and flag contradictory evidence rather than silently treating it as statistically correct.
-
-## 5. Data inventory and evidence
-
-Inventory accessible local sources, including `../data/`, processed outcome CSVs, briefs, existing JSON datasets, and supplied expert material. Record rows, distinct applicants, decisions, schools, years, fields, missingness, duplicate risk, source provenance, and available narrative depth.
-
-Produce a concise source catalog, data dictionary, and coverage grid. Then use the findings to adapt implementation and continue. Missing essays should limit essay-pattern claims, not prevent transcript extraction or the entire audit.
-
-Separate:
-
-- Official requirements and published institutional statistics.
-- Observed counts and patterns in the recorded sample.
-- Expert advice and unvalidated rules.
-- Model judgments and inferred interpretations.
-- User-confirmed facts and extraction guesses.
-
-Do not flatten this into a universal evidence ranking: official requirements establish eligibility, applicant observations establish sample patterns, and expert judgment can inform qualitative advice. Each has a different role.
-
-Self-reported outcomes are selected, incomplete, and often acceptance-biased. Label sample rates "among recorded applicants." Never present them as population admission probabilities. Use supported weighting or selection corrections where feasible, and explain what remains unidentified. A correction cannot manufacture representativeness.
-
-For important claims, retain traceable evidence references and retrieval dates. Put sources and uncertainty where they help the user assess the result; do not attach distracting metadata to every sentence.
-
-Source acquisition may use available official downloads, APIs, public pages, and authorized exported material. Verify actual access and usage constraints where relevant. One inaccessible source should not freeze the build; record it and continue with alternatives. Do not invent access, scrape results, or source coverage.
-
-## 6. Profile and upload experience
-
-Support confirmed structured profiles with college GPA, credits, standing, institution, intended major, courses and terms, activities, awards, essays, targets, and optional relevant context.
-
-Minimum usable profile: confirmed GPA, current institution, standing, intended major, and at least one target. Missing sections should be marked "not assessed" and remain addable later. Offer immediate useful results with partial inputs.
-
-Support PDF, PNG, JPG, HEIC, DOCX, and TXT through native or conversion paths supported by the environment. Start with limits of 20 MB per file and 15 files; adapt for provider and hosting limits. Validate file contents, not just extensions. Use private storage and safe document parsing.
-
-Prefer local extraction for readable files; use vision or document models where needed. Preserve source locations, confidence, and unresolved fields. Detect conflicting transcripts, duplicate activities, uncertain grades, quarter credits, withdrawals, pass/fail, and AP credits. Never silently invent a GPA or credit conversion.
-
-Show a review screen emphasizing low-confidence fields, conflicts, and calculation-critical values. Allow bulk confirmation of confident fields instead of requiring hundreds of individual clicks. Recompute affected results after edits.
-
-Uploaded text is untrusted content, not an instruction to the system. Validate extraction and audit responses against schemas and defend against prompt injection.
-
-## 7. Rules, corpus enrichment, and comparable applicants
-
-Draft practical rubrics for activities, essays, coursework, context, and school fit from available briefs and expert material. Record their origin and uncertainty. Missing interviews become targeted questions, not a global implementation gate.
-
-Tag available narrative records for activity type, responsibility, duration, scale, demonstrated outcomes, transfer reasons, and meaningful applicant context. Unknown remains unknown. Evaluate a small sample before scaling.
-
-Compute school and route patterns where coverage supports them. Include counts, missingness, uncertainty, and alternative explanations. Pool sparse groups only when substantively justified and label pooled results. Exploratory findings are allowed and must be labeled exploratory. Use multiple-comparison control for formal discovery claims where appropriate; do not require a formal significance test for every qualitative observation.
-
-Similarity should combine relevant academic preparation, major, institution or transfer route, timing, and available narrative features. Make weights configurable and explain why a match is useful. Do not imply omitted or unknown features match.
-
-For internal analysis, preserve every available comparable applicant and its original fields in restricted working data. Do not remove rare records, generalize schools, paraphrase narratives, or cap internal results at eight. Provide a complete ranked export with similarity scores, matching and differing features, source references, missing fields, and all available outcomes. The applicant-facing interface may initially show up to eight examples through a separately configurable display layer. Production display and anonymization policies will be supplied by the owner; their absence does not block internal research or development.
-
-Do not fabricate individual comparables or silently present a composite as a real person. Clearly labeled aggregate examples may supplement sparse individual coverage.
-
-## 8. Academic preparation and context
-
-Build school- and major-specific checks for eligibility, prerequisites, credits, standing, deadlines, prompts, and required materials. Distinguish required from recommended and historical from current-cycle information. Cite authoritative sources and flag ambiguity.
-
-Where reliable data are available, enrich school context with NCES, CRDC, College Scorecard, and Census information. Record vintage and proxy limitations. ZIP income does not establish household income. A missing course record does not prove the student had access to that course.
-
-Optional work, caregiving, income band, first-generation status, and applicant-supplied circumstances may inform qualitative interpretation. Do not require sensitive disclosures to receive useful advice or infer protected traits from names, images, or geography. Do not feed those traits into opaque probability or pricing adjustments.
-
-Use accurate user corrections over erroneous lookups while retaining provenance. Missing context should reduce confidence, not block the product.
-
-## 9. Odds and validation
-
-Keep deterministic calculations separate from qualitative assessments. The model may explain odds and identify missing information; it must not arbitrarily change percentages based on persuasive prose.
-
-Use the most relevant available official baseline: school, college, major, residency, or transfer route where supported. Do not double-count GPA or multiply correlated adjustments as if independent.
-
-Evaluate meaningful model changes against simple baselines using held-out outcomes, calibration, Brier score, subgroup checks, and uncertainty. Split by applicant as well as time where possible; prevent the same person's decisions leaking across training and evaluation. Sparse cells and shifts across cycles require caution.
-
-Held-out performance on a selected self-reported corpus does not establish real-world calibration. Say exactly what was tested. Do not promise the model will beat the baseline or suppress a failed comparison.
-
-If individualized odds are not defensible, implement readiness and selectivity tiers, show relevant official rates separately, and expose experimental estimates only with suitable labeling or behind a feature flag. Continue building the useful parts. Never fake precision to satisfy an acceptance criterion.
-
-## 10. Audit quality and commercial boundaries
-
-Provide concrete advice. Analyze each supplied activity, essay, award, and course issue rather than producing generic praise. For important findings, explain the observed issue, why it matters, the proposed change, a concrete example, and relevant limits.
-
-Activities: assess responsibility, continuity, impact, coherence, and presentation. Give specific description improvements grounded in the student's real accomplishments. Avoid inventing outcomes or encouraging fabricated projects.
-
-Essays: assess prompt fit, transfer rationale, specificity, evidence, structure, voice, and school relevance. Quote relevant user-provided passages and give line edits, direction, and sample revised passages. Keep help faithful to the student's experiences. Do not add a universal full-rewrite ban; implement editing depth as a configurable product choice, beginning with diagnostics and examples.
-
-Do not intentionally degrade advice to create an upsell. Preserve genuinely confidential TU documents and methods through a specific access policy when they are identified. That does not prohibit giving generally available admissions guidance or useful fixes. Offer TU help for execution, complex decisions, and human review, with the user's consent before sharing a summary.
-
-Use clear, direct prose and useful comparisons. Follow verified brand guidance, but avoid arbitrary punctuation linting and unverified authority claims. "Made by students who transferred into multiple Ivies" may appear only if the claim is substantiated.
-
-## 11. Architecture, performance, and cost
-
-Prefer the existing React, Netlify, Supabase, and review infrastructure when suitable. Use deterministic code for eligibility, calculations, lookups, similarity, deadlines, and billing state. Use models for extraction and qualitative reasoning.
-
-Make the corpus pipeline idempotent, cached, resumable, and runnable with one documented command, preferably `python3 -m pipeline run --stages <list>`. Maintain input hashes, model and prompt versions, provenance, checkpoints, and run summaries.
-
-Use local inference only if the available machine and measured quality make it worthwhile. "Local" is not automatically cheap or accurate. Benchmark a small sample against API alternatives and select a practical approach.
-
-Parallelize independent audit sections with bounded concurrency. Reuse extracted materials, retrieval results, and stable prompt blocks. Validate responses, retry selectively, handle partial failure, and update the UI as sections finish. Avoid repeated calls for the same unchanged material.
-
-Targets: deterministic preview under one second; first useful audit section within 15 seconds of confirmed inputs; full audit around 90 seconds at p50 and 150 seconds at p90. Measure upload/extraction separately and report end-to-end timing too. Targets guide optimization and are not permission to pretend slow runs passed.
-
-Start with a configurable $1 per-audit API target. Use any already authorized spending envelope for model tests and small runs; do not ask merely because a model name changes. When no paid allowance is established, prepare dry runs or mocks and request one concrete budget for the remaining paid work. Estimate large jobs before executing them and enforce actual authorized caps. Do not assume this brief authorizes unlimited spending.
-
-## 12. Storage, privacy, and billing
-
-The owner will implement production privacy, retention, anonymization, and applicant-facing disclosure policies. Do not invent additional privacy requirements or make their implementation a prerequisite for internal data collection, research, exports, or analysis. Preserve original authorized source material in restricted working storage and keep cleaned, tagged, and derived data as separate layers. Keep credentials server-side and raw private records out of public assets, source control, and unrestricted logs. Prepare interfaces for later access and deletion controls without claiming production readiness before those controls exist.
-
-Document which processors and storage locations the implementation actually uses. Keep provider configuration explicit. Do not delete source material, redact internal exports, or send private materials to newly selected external processors merely because it is convenient. Source-preserving internal work proceeds now; external processing must remain within the actual authorization provided. Production retention and account-deletion policy is owner-defined and can be integrated later.
-
-Implement free preview and paid access as configuration, not hard-coded product truth. Starting hypothesis: preview includes target overview, top risk, one activity assessment, and up to three comparables; full audit is $79 one-time. Keep pricing, preview depth, and packaging easy to change. Do not spend most paid-model cost before purchase unless the economics justify it.
-
-Build Stripe in test mode with server-verified prices, webhook signature validation, idempotent fulfillment, ownership checks, and clear entitlement rules. Decide and document what one purchase includes, including reruns and edits. Browser redirects alone must not unlock paid content.
-
-## 13. Output contract and interface
-
-Adapt the existing schemas into an `AuditResult` with:
-
-- Summary and the most consequential next action.
-- Per-school eligibility, preparation, selectivity or supported estimates, strengths, concerns, evidence, deadlines, and recommendations.
-- Individual activity assessments, concrete improvements, and truthful example descriptions.
-- Essay diagnostics, referenced passages, school-specific prompt fit, and suggested edits.
-- Coursework, grade trend, prerequisite and credit uncertainties.
-- Awards and relevant context.
-- Comparable recorded applicants or labeled aggregate evidence.
-- Ordered actions with realistic dates and effort. Claim numerical admission lifts only when defensible.
-- Optional TU handoff, with no forced sharing.
-- Internal provenance, model versions, timing, costs, warnings, and section status.
-
-Support progressive results, clear missing-data states, edits, accessible mobile layouts, and export. An incomplete report must say which sections failed or lack inputs. A polished screenshot is not a substitute for working user flows.
-
-## 14. Delivery order and checks
-
-Work in dependency order, overlapping independent tasks when practical:
-
-1. Inspect, establish baseline, and fix foundation defects.
-2. Inventory sources and adapt the design to actual coverage.
-3. Draft rubrics and build clean corpus, patterns, and comparable search.
-4. Build upload extraction, confirmation, eligibility, and context.
-5. Build the audit engine, progressive interface, and exports.
-6. Implement secure persistence, deletion, test checkout, entitlements, and admin handoff.
-7. Verify integrated flows, quality, cost, speed, and documentation.
-
-Begin with Cornell, Berkeley, and Michigan as contrasting evaluation cases if the data support them, then expand coverage. A pilot limits claims, not architecture or useful implementation elsewhere. Do not equate a prestige list with complete school coverage.
-
-Use regression tests for real bugs; schema and fixture tests for extraction; checks for privacy, prompt injection, authorization, and payments; and end-to-end tests for critical applicant flows. Include scanned and rotated documents, multiple transcripts, quarter credits, withdrawals, pass/fail, and AP credit. Use synthetic fixtures in source control.
-
-Run relevant tests after changes and one integrated suite at the end. Repeat suites when diagnosing instability or after material changes, not as a ritual after every stage.
-
-Human evaluation targets: 50 tagging examples around 90% accuracy, at least 10 varied upload fixtures around 95% critical-field accuracy, 10 useful similarity matches with at least eight judged appropriate, and 20 audits with at least 16 judged client-ready. Define denominators and severity of mistakes. High aggregate accuracy cannot hide invented GPA or credits.
-
-Prepare review samples and rubrics without waiting for the user to grade them. Automated checks can establish technical readiness; missing human review remains pending and does not block unrelated implementation. Do not label it passed.
-
-Trace three worked school assessments back to official requirements and available corpus evidence. Investigate negative cases and unsupported recommendations, not only impressive examples.
-
-## 15. Completion and handoff
-
-Keep progressing until available authorized work is completed or a real dependency prevents further progress. Leave a resumable checkpoint for long jobs and context limits.
-
-Report:
-
-- Implemented behavior and where to review it.
-- Tests actually run and material results.
-- Verified corpus coverage, distinct applicants, and decisions.
-- Representative reports and evidence traces.
-- Measured costs, timing, and bundle changes.
-- Remaining gaps, failed targets, and human reviews still pending.
-- Exact minimal steps for missing credentials, data, or launch approval.
-
-Collect opt-in future outcomes and human corrections for ongoing validation. Expert signoff improves quality but does not establish statistical causation. Do not mark a rule "confirmed" merely because 30 selected records support it. Track evidence strength and competing explanations.
-
-Refresh requirements and deadlines when they change, official statistics when released, and corpus-derived outputs after new data or method changes. Distinguish new coverage from real-world changes.
-
-Start now: inspect the actual project, state your main findings briefly, fix the highest-impact verified problems, and continue into the build. Do not return another plan and wait for permission to perform work this brief already authorizes.
-
----
-
-## Appendix — Reality reconciliation (verified against the repo, 2026-10-06)
-
-Figures the brief quotes "reportedly", checked against the shipped data. Use these, not the brief body, in any product copy.
-
-| Claim in brief | Verified in repo | Notes |
+| Area | Verified repository state | Consequence |
 |---|---|---|
-| `../data/` sibling dir with processed CSVs | **Absent** | No sibling `../data/` exists from the worktree. `scripts/build_model.py` references `../data/processed` as its input; that input is not present here. The shipped `src/data/*.json` are the build outputs. |
-| similar.json "856 people and 2,158 decisions" | **856 people, 2,158 records, 96 schools** (`meta`) | Confirmed. Per-person decision arrays are stored as admit/deny index lists (`a`/`d`), not a `decisions` field. |
-| corpus "≈8,910–10,000 outcomes" | **model.json meta: 8,910 rows, 4,243 admits, 24 schools, 2011–2026** | The 8,910 is the T25 study rows behind model.json; distinct from the 856-author / 2,158-record outcome corpus in similar.json. Two different datasets — don't conflate. |
-| "OpenRouter review proxy" | **Not present.** `api/review.ts` proxies the **Anthropic** Messages API; review model is `claude-sonnet-5`. | Stale provider name (defect #5). No OpenRouter wiring found. |
-| Routes: "43 measured schools" | **208 school entries** total in `MODEL.schools` (24 study + 7 UC appended + 177 extra); **41 banded** (24 study + 17 observed), 167 unbanded. | `.ai-codex/routes.md` "43" and `lib.md`/`schema.md` "31" are both stale (defect #5). |
-| "~260 Vitest tests" | **266 tests, 12 files** (after this change added `engine-odds.test.ts`). | — |
-| Deployment: "Netlify preferred" | Configs present for **Netlify, Vercel, Cloudflare/Wrangler** simultaneously (`netlify.toml`, `vercel.json`, `wrangler.toml`, `CLOUDFLARE.md`). | Needs reconciliation — brief says archive obsolete provider wiring only after verifying unused. |
+| Stack | React 19, Vite 8, TypeScript 6, handwritten CSS, hash router, Supabase SDK; Netlify, Vercel, and Cloudflare code coexist | Extend the existing app; use Netlify as the release target unless actual deployment evidence supports changing it |
+| Main user flow | App.tsx routes into Audit.tsx, which mounts FileFlow, Portal, and Review | Repair this integrated journey rather than building another disconnected intake/report flow |
+| Profile gate | Audit.tsx:isProfileScorable requires GPA and major to differ from DEFAULT_PROFILE; actual defaults are 3.8 and cs, despite its comment saying 3.0 | A confirmed 3.8 GPA or CS major can keep an otherwise valid applicant locked out |
+| Target list | Audit.tsx counts the tracker list; Review.tsx initializes separate targets from essay mentions or Cornell/UCLA/Michigan | The user can unlock using one list and receive analysis for another |
+| Actual AI entry point | Review.tsx:go calls runPanel from src/lib/panel.ts | The older runReview implementation is not the primary execution path |
+| Panel transport | panel.ts:callModel treats a successful response as immediate Anthropic-shaped content; it does not follow Netlify's 202 job/poll contract | Queued responses yield empty model text rather than a completed specialist report |
+| Worker output contract | review-background.ts calls validateReview, which requires the older full review shape, including strengths and perSchool | Specialist and lead shapes in panel.ts do not satisfy the worker's validator |
+| Job authorization | Netlify review POST accepts a browser-composed prompt; GET retrieves by UUID; no account verification or owner association is implemented in those handlers | A UUID is a bearer capability, not account authorization; paid compute and student report access need explicit ownership checks |
+| Job concurrency | _jobs.ts reads and deletes prompts; comments acknowledge non-atomic counters and claim races | Duplicate workers, quota consumption, and paid fulfillment need transactional protection |
+| Persistence | Supabase schema has profiles and documents; review/panel caches use global localStorage keys; sync errors are often swallowed | There is no durable versioned applicant report history or dependable saved-state UX |
+| Authentication | Supabase auth, email confirmation/recovery and Google paths exist, with a local-account fallback | Real production auth must be required by configuration, and live isolation/recovery must be verified |
+| Hosting mismatch | Netlify publishes review and contribute only; /api/* falls through to a 404. Account deletion and admin handlers live as Vercel-style api/ functions | Account deletion/admin cannot be assumed to work on Netlify; port or adapt them explicitly |
+| Admin gaps | src/components/admin/api.ts explicitly documents missing staff-roster and internal-notes endpoints and no notes table | Complete only essential support paths; hide unfinished controls or implement them truthfully |
+| Billing | Pricing.tsx advertises free plus $9/$49 coming-soon waitlists; emails stay on the device; no Stripe implementation in the reviewed tree | No real checkout, payment fulfillment, entitlement, or owner-accessible waitlist exists |
+| Uploads | ImportPanel.tsx accepts PDF/TXT, caps at six files and 20 MB each; pdf.ts extracts PDF text and otherwise calls file.text() | Scans, image formats, DOCX and HEIC are not working upload paths just because the brief requests them |
+| Upload integrity | Parsed fields are applied directly; awards/school name receive limited overwrite protection; files are saved as transcript text | Add extraction review, typed document kinds, conflicts, and field-level provenance |
+| Privacy wording | Some newer views distinguish sync/proxy behavior, but ImportPanel.tsx still says parsed material is never uploaded while calling pushDoc; README says everything stays client-side | Audit every reachable route and align claims with actual processing and storage |
+| Probability engine | Fitted path covers 24 school intercepts; heuristic path handles others. Missing non-UC GPA percentiles fall back to median 3.95 | Broad-access schools can receive implausible penalties and text describing an invented median as observed |
+| Guarantees | TAG path returns 95% and a "TAG guarantee" after a small subset of checks | Eligibility cannot be certified from GPA, institution type, residency, and standing alone |
+| Model judgments | Older review prompt allows the model to adjust numeric odds; prompts contain categorical claims about essays/activities and misuse a high-school/college-GPA correlation | Remove unsupported probability changes and overstatements; preserve useful qualitative advice |
+| Corpus | model.json metadata states 8,910 outcomes, 4,243 admits, 24 schools, 2011–2026 | These are artifact metadata; underlying raw counts were not independently reconstructed in this review |
+| Comparables | similar.json actually contains 856 compressed people and 2,158 accept/deny entries across 96 school names | This is not 8,910 complete application files, essays, or distinct students |
+| Comparable fields | Shipped person fields are only a,d,f,g,i,m,y | No original narratives, stable source IDs, exact source institution, or complete evidence references can be reconstructed from this JSON |
+| Model coverage | Runtime assembles 208 school records; extra_schools has 177 entries. intel.json has 21 school entries plus metadata; prompts.json has 14 entries | A searchable school or estimated rate is not a fully researched school/major/cycle |
+| Reproducibility | Builders expect sibling ../data/processed, absent from this review checkout; engine.ts references a scripts/fit_admit_model.py absent from the tree | Do not pretend original corpus enrichment or model fitting is reproducible from the repo alone |
+| Tests | npm run build passed; npm run typecheck:netlify passed; 260 tests in 11 files passed after build | Existing tests do not establish a working integrated panel, live RLS, billing, or production deployment |
+| Clean test prerequisite | Running tests before the build failed because the bundle-secret test requires dist | This observed failure is deterministic missing setup, not proof of an intermittent cold-run defect |
+| Lint | Exit 0 with an exhaustive-deps warning at Portal.tsx around line 1271 | Resolve if touched; do not claim a warning-free baseline |
+| Bundle | Main JS approximately 1,149.30 kB / 356.09 kB gzip; CSS 184.18 kB / 34.34 kB gzip. PDF chunk and worker are already separate | Measure initial-route loading and split expensive routes/data; do not propose redoing PDF lazy loading as if absent |
 
-### Implementation log
+The attached historical note reports successful live Supabase login and session persistence after resuming a paused project. Treat that as historical operator evidence only. This repository review did not verify current service health, credentials, migrations, deployment, isolation, or paid-model output.
 
-- **2026-10-06 — Defect #1 (odds compression): FIXED & verified.** Root cause: the engine's positional heuristic (`src/engine.ts`) fabricated an elite admit-GPA distribution (median 3.95 / p25 3.83) for any non-UC school lacking published study percentiles, ignoring the observed corpus percentiles the display band already uses. A 3.04 CS applicant then scored ~9σ below an invented median. Fix: prefer `admitSignature()` observed percentiles, else scale the fabricated median off the official admit rate. Result: Sacramento State 17.7%→58.9%, Cleveland State 17.3%→85.0%; selective schools unchanged (UCLA 4.2%, MIT 0.5%). Regression tests in `tests/engine-odds.test.ts`. Full suite 266/266 green; `tsc -p tsconfig.app.json` clean; `npm run build` clean. The mandated CS discount was preserved (flagged as a hypothesis per §4).
-- **2026-10-06 — Defect #2 (privacy copy): FIXED & verified.** The app has three data paths — on-device deterministic work, the deep AI review (sends application text to Anthropic whether or not signed in), and signed-in Supabase sync. The old copy ignored the review path and made a blanket "everything stays in your browser" claim (`Results.tsx`) and "never uploaded" claims (`EssayPanel`, `ImportPanel`) that the sync + review behaviour contradicts — the exact thing `CLAUDE.md` forbids. Fix: a single source of truth (`src/lib/privacy.ts`) now carries the accurate three-path wording, used in the Landing FAQ; the misleading inline strings were corrected; the stale `.ai-codex/schema.md` "nothing leaves the browser" note was updated. Guard + content tests in `tests/privacy-copy.test.ts`; verified rendered in the browser preview. Full suite 272/272.
-- **2026-10-06 — Defect #3 (profile completeness "Fill in"): FIXED & verified.** `isProfileScorable()` in `Audit.tsx` tested whether GPA/major *differed from the defaults* (3.8 and "cs") as a proxy for "user filled this in", so a real 3.8 applicant or any CS applicant was told to "Fill in" a complete profile. Required fields are now defined explicitly in `src/lib/profile.ts` by presence/validity (valid GPA + institution + standing + major; the target is gated separately by the tracker count). `schoolName` was considered as an "engaged" signal but rejected — the Intake flow lets a user set `institution` via a toggle without `schoolName`, so requiring it would create a new false-negative. Unit tests in `tests/profile-scorable.test.ts`; suite 276/276; tsc clean. Note/tradeoff: an untouched default profile now reads "Ready" (its required fields are all present); a stricter "user-confirmed" gate would need a touched-flag on `Profile` — deferred as out of scope for a defect fix.
-- **2026-10-06 — Defect #4 (intermittent cold-run test): FIXED & verified.** The flake was `tests/no-secrets-in-bundle.test.ts`: it scans the built `dist/` for leaked secrets, but `vitest run` does not build, so the result flipped on whether someone built first — green warm, red on a cold checkout / CI (confirmed: the very first suite run in this session failed it). Not RNG/time (three warm runs were stable; the admin-auth tests use real `Date.now()` but with minute-to-hour margins). Fix: a `beforeAll` builds the bundle on demand only when `dist/` is absent, so the security scan is deterministic cold or warm and never silently checks nothing. Verified by deleting `dist/` and running the file cold → green (it rebuilt in ~5s).
-- **2026-10-06 — Defect #5 (stale docs/counts): FIXED (docs).** Corrected the `.ai-codex` counts to the verified reality: `routes.md` and `lib.md` said 31/43 "measured" schools, actually **208 modeled** (24 study + 7 UC + 177 `extra_schools.json`); `MARKS` is 208, `DEADLINES` is 157 (was "all 31"); `schema.md`'s `School.gpa` shape was `{p25,p50,p75}`, actually `{p10,p25,p50,p75,p90}`, and it omitted `extra_schools.json` entirely. Also synced `lib.md`'s engine description to the defect-#1 change (observed-corpus percentiles before the rate-scaled estimate) and fixed the `schema.md` privacy-storage note (done with defect #2). No "OpenRouter" references remain in docs; `api/review.ts` is Anthropic. Remaining doc work: none outstanding in `.ai-codex`; `README`/`DEPLOY`/deploy-config reconciliation still pending.
-- **Measured (defect #6):** initial JS chunk `index-*.js` = ~1,150 kB (~357 kB gzip), over Vite's 500 kB warning. PDF.js is already split into its own lazy chunk. Candidate for dataset lazy-loading + route code-splitting.
+## 3. Product definition and release boundaries
 
-### v3 execution log (now follows `docs/spec_v3.md`)
+The product helps a transfer applicant decide where to apply, identify eligibility and preparation gaps, improve actual materials, compare relevant recorded outcomes, and leave with an ordered plan. A useful application audit is the primary output. Percentages are optional where defensible; unsupported numerical precision is not a launch requirement.
 
-- **2026-10-07 — v3 spec adopted.** Saved `docs/spec_v3.md` (current execution reference) and `docs/manual_todo.md` (owner-only actions: OpenRouter/Supabase/Stripe keys, $25 budget, grading packets). Validated: `DATA_DIR=/Users/ajaysharma/claude chance me/data` (168 MB) is present and matches the spec (the earlier "no ../data" finding was the worktree); branch `claude/transfer-chance-me-impl-2a8520` clean. v3's D4 confirms my earlier defect-#3 fix was only half right — a default profile now reads "Ready" — to be completed under Step 7 (per-field confirmed tracking).
-- **2026-10-07 — Step 2 / D1 (account isolation): FIXED & verified (logic + build).** Logout cleared only the session key, leaving `tcm.profile.v1` (essays/activities/awards), `tcm.list.v1`, `tcm.review.v1`, `tcm.appdocs.v1` in localStorage; and the login-sync effect pushed the in-memory profile into an empty cloud row — writing user A's materials (some from minors) into user B's account. New `src/lib/session.ts`: `clearUserLocalState()` wipes every per-user key (but keeps `tcm.users.v1`, the local-account registry — clearing it would lock users out — and `tcm.waitlist.v1`), plus an owner stamp (`tcm.owner.v1`) and a pure `loginSyncAction()` that returns adopt-cloud / push-local / **reset-local** so A's data is never pushed into B. Wired into `App.tsx` logout + sync effect. Tests: `tests/account-isolation.test.ts` (6, incl. the cross-account reset guard). Suite 282/282; tsc clean. Full App-effect E2E is Step 36 (no DOM harness yet).
-- **2026-10-07 — Step 1 / D11 (env template): FIXED & verified (env portion).** `.env.example` was missing `ALLOWED_ORIGIN`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and the two Upstash vars, and didn't flag that `VITE_REVIEW_ENDPOINT` is required in production. Rewrote it to document every variable the code reads, grouped client (public, VITE_) vs server-only (secrets), required vs optional, with production notes; added `DATA_DIR` for the pipeline. New `tests/env-example-coverage.test.ts` scans `src/api/netlify/functions/scripts` for `import.meta.env.*` / `process.env.*` and fails if any lacks a `NAME=` line. Suite 284/284. **Deferred within Step 1:** the `config/paths.ts` + `pipeline/config.py` DATA_DIR source of truth and `build_model.py --dry-run` land with the pipeline skeleton (Step 12), where they are first exercised — building them now would be speculative dead code.
-- **NEW defect D14 (found during Step 2, not yet fixed):** "Delete my data (login stays)" in `Account.tsx` calls `deleteAllData()` on the cloud but does not clear local material or reset the in-memory profile, so the debounced push effect (`App.tsx`) re-uploads the just-deleted profile ~1.2 s later — the data comes back. Distinct from the D1 cross-account leak; needs App to reset the profile (material-only clear that keeps the session) on data deletion. Scheduled with the account-data hardening around Step 5.
-- **2026-10-07 — Real services wired + cost ledger (Sections 1 & 3): DONE.** Copied the owner's `.env.local` into the worktree (gitignored, not tracked; no values printed), mirrored `SUPABASE_URL`; all six OpenRouter/Supabase vars set. Built the minimal **cost ledger** (`netlify/functions/_ledger.ts`) and the single ledgered call module (`_llm.ts`) with `config/budgets.ts` ($25 total / $1 per audit / 3-audit stop, conservative pricing) + `config/paths.ts` (DATA_DIR → `derived/ledger.json`). 10 tests (`tests/ledger.test.ts`, `tests/llm.test.ts`) prove reservation, reconciliation, failure-release, and **refusal before dispatch** when the budget is spent. Made exactly one tiny **real OpenRouter smoke call** through the ledger: key valid, cost **$0.000015**, remaining ~$24.99998, 0/3 audits used. Suite 294/294; tsc app + netlify typecheck clean. Added `docs/progress.md` (read-first step matrix + budget). **Deferred to next turn:** `netlify dev`/`dev:full` (Section 2), live-Supabase E2E with test accounts (Section 4, fix D14 first), the full verbatim `spec_v3.md` rewrite and the guest-draft "keep what I entered" choice (Section 6).
+The first release must support these jobs:
+1. Create an account and return later without losing work.
+2. Enter a profile manually or import supported documents and confirm important fields.
+3. Select target schools, intended programs, entry terms and cycles once, using one shared target list.
+4. Receive an immediate preparation/selectivity preview with explicit coverage and missing inputs.
+5. Purchase the configured full audit in test mode and receive access only after server verification.
+6. Run a grounded audit with visible progress, meaningful partial results, and recoverable failures.
+7. Reopen the exact saved audit, edit inputs, see what is outdated, and rerun within published purchase limits.
+8. Export an applicant-safe report, manage account data, and request optional human help through an explicit opt-in.
+
+Separate three milestones: internal implementation complete, limited beta ready, and paid public launch ready. A pending owner policy must not block restricted internal research; unresolved production access controls, misleading claims, failed checkout, or broken reports do block public launch. A free beta may launch without live billing only if all paid CTAs are disabled and its scope is explicit. Do not call that the paid launch.
+
+Default packaging is configurable: free deterministic preview; full audit at $79 one-time. Replace conflicting $9/$49 placeholders. Start with six target programs per purchase, one successful full audit and two user-requested revision reruns within 30 days. This is an editable commercial default, not a research finding. System retries and failed runs never consume a successful-run allowance. State the rules before checkout and enforce them server-side. More targets can be saved, but clearly identify which six are included. Do not silently omit paid targets. Change these defaults if owner instructions already establish different terms.
+
+## 4. Stage A — establish and repair the actual foundation
+
+Read repository instructions, current HEAD, working changes, runtime versions, scripts, data inventory and deployment configuration. Inspect credential presence without printing values. Check whether the available data lives outside the repository before declaring it missing globally. Record external datasets as dependencies without copying private records into git.
+
+Run baseline checks in the correct dependency order: install from lockfile, build, then tests; Netlify typecheck and lint can run independently once dependencies exist. Use npm run build or referenced project typechecks, not bare tsc --noEmit against the empty root config. Add a documented aggregate npm run verify that builds before bundle tests. Preserve existing commands, and repair/document export:signups if its vite-node runtime dependency is unavailable from a clean lockfile install.
+
+Create a short docs/repo-audit.md: verified behavior, file references, reproduced bugs, tests, active host, source availability, unknowns and launch blockers. Recheck all findings above against current code; mark fixed items rather than blindly reimplementing them.
+
+Replace default-value comparisons with explicit field presence/confirmation. Valid 3.8, CS, junior standing or any other legitimate default-valued choice must work. Minimum usable profile: confirmed college GPA and scale, current institution identity/type, standing, intended major or an explicitly chosen undecided pathway, and one target. Optional material remains "not provided," never a zero grade. Migrate old profiles without inventing confirmation; offer one review/confirm action rather than erasing them.
+
+Make the target list shared between tracker, preview, audit, purchase scope and export. Use stable school IDs and per-target college/program/major/term/cycle fields. Remove default Cornell/UCLA/Michigan targets unless explicitly selected by the applicant. Normalize aliases without merging distinct programs such as Columbia GS versus Columbia College or Cornell Dyson versus another college.
+
+Acceptance: browser flow with confirmed GPA 3.8 and major CS unlocks; GPA changes do not silently change confirmation of unrelated fields; zero targets stays locked with a clear explanation; refresh preserves selected targets; audit request contains exactly the displayed purchase targets.
+
+## 5. Stage B — one typed audit execution contract
+
+Repair the panel/worker integration first. Choose one coherent path and retire duplicate production behavior only after the replacement works. Prefer one applicant-facing parent audit job with server-side section scheduling, bounded specialist concurrency, a final synthesis, and durable status. Reuse the existing worker and polling infrastructure where practical. Keeping a monolithic first release is acceptable only if it delivers the required material-level coverage and partial failure handling; a five-call panel is not inherently better.
+
+Do not submit browser-authored system prompts to a publicly funded model proxy. The browser submits structured, schema-validated applicant inputs or a confirmed snapshot ID. The server resolves ownership, target coverage, evidence, entitlement and prompt version, then constructs the trusted instructions. Applicant text, retrieved text, uploaded files and specialist outputs remain untrusted data. Never let documents choose model providers, tool calls, system rules, scores or access privileges.
+
+Define request/result schemas shared by server, client and tests. The worker must validate the actual requested section shape, not require every specialist to return the legacy full ReviewResult. Validate arrays, enums, lengths, school IDs, quote references, numeric bounds and result size. Reject unsupported schema versions. Parse JSON safely; do not cast arbitrary objects to interfaces and declare them valid.
+
+Use a contract along these lines, adapting names to current conventions:
+
+```ts
+type SectionState = 'queued' | 'running' | 'complete' | 'not_provided'
+  | 'unsupported' | 'failed' | 'cancelled';
+
+type EvidenceKind = 'official_requirement' | 'official_statistic'
+  | 'recorded_sample' | 'expert_judgment' | 'model_interpretation'
+  | 'user_confirmed' | 'extraction_candidate';
+
+interface AuditSnapshot {
+  id: string;
+  ownerId: string;
+  schemaVersion: string;
+  profileVersion: number;
+  targetVersion: number;
+  materialVersionIds: string[];
+  contentHash: string;
+  createdAt: string;
+}
+
+interface AuditResult {
+  id: string;
+  snapshotId: string;
+  schemaVersion: string;
+  status: 'queued' | 'running' | 'complete' | 'partial' | 'failed' | 'cancelled';
+  summary: { assessment: string; nextAction: string } | null;
+  sections: Record<string, { status: SectionState; errorCode?: string; updatedAt: string }>;
+  schools: SchoolAssessment[];
+  activities: ActivityAssessment[];
+  essays: EssayAssessment[];
+  coursework: CourseworkAssessment | null;
+  awards: AwardAssessment[];
+  comparables: ComparableDisplay[];
+  actions: ActionItem[];
+  warnings: string[];
+  generatedAt: string | null;
+}
+```
+
+Define the referenced types in code. School assessment includes scope/cycle coverage, eligibility state (meets_checked_requirements, does_not_meet, conditional, unknown), preparation, separate official rates, optional supported estimate, strengths, concerns, source IDs and next actions. Material assessments reference stable input IDs. Actions carry priority, target school if relevant, source finding, realistic due date, effort estimate and dependencies. Store sensitive internal execution metadata separately from applicant-visible payloads.
+
+Create/poll behavior: authorized POST returns 202 with parent job ID and polling hints; authorized GET returns typed status plus completed sections. Persist the job ID so refresh resumes. Support a polling deadline, exponential backoff with jitter and Retry-After, cancellation, retrying only failed sections, and clear terminal errors. A queued response must never be parsed as model output. Render sections as they finish, not only progress labels. Lead failure must not hide completed specialists. A missing essay is not_provided; it is not a failed worker.
+
+Timeouts and retries live in configuration. Distinguish provider rejection, malformed output, configuration absence, network failure, user cancellation and exhausted budget. A single bounded schema-repair retry may be appropriate; avoid overlapping browser, worker and platform retries that multiply charges. Sanitize upstream errors before rendering. Validate the configured provider/model with a small authorized smoke request rather than assuming hard-coded model names still work.
+
+Acceptance: actual deployed Netlify 202 → polling → specialist result → final result flow; malformed specialist result fails only that section; provider timeout yields a recoverable partial report; closing/reopening the tab resumes; duplicate starts do not duplicate billing or successful-run consumption.
+
+## 6. Stage C — identity, persistence, concurrency and deletion
+
+Require verified Supabase authentication for production private operations. The local session mirror is UI state, never authority. Production builds missing backend/model configuration must show a clear unavailable state and fail release configuration checks; never silently substitute a fake local account or require customers to bring an API key. Retain local mode only as an explicitly labeled development mode if useful.
+
+Authenticate review start, poll, retry, cancel, report read/export, upload signing, checkout and account actions. Associate jobs and reports with verified auth.uid(). Guessed or leaked UUIDs must not grant another account access. Return a consistent not-found response for inaccessible resources where appropriate. Keep CORS as a browser control, not authentication.
+
+Use Postgres transactions/RPCs or another already approved durable mechanism for exact job claims, allowance reservations, entitlement creation and idempotency. Current Blobs read/delete is not an atomic claim. Workers must acquire a lease/claim; only the winning attempt may write the authoritative result. Expired worker leases need a documented recovery rule. Authenticate worker invocation and bind it to a known pending job; a replayed worker request must not launch fresh paid calls or overwrite a completed report with an error. Bound the number of simultaneous model calls across a parent job and per account.
+
+Extend schema through numbered migrations, preserving existing profiles, documents, staff roles and audit logs. Suggested logical entities: profile/material versions or immutable snapshots, targets, audits, sections/jobs, purchases, webhook events, entitlements/run reservations, deletion tasks and consent/handoff records. Every applicant-owned row needs RLS and an ownership-preserving write policy; billing entitlements must not be writable by the browser. Raw uploads live in a private bucket, under validated owner prefixes. Staff access must follow existing assigned-case roles and audit semantics.
+
+Persist complete results and immutable input snapshots server-side. Keep enough model/prompt/data version metadata to reproduce why an old report said something. Never silently rewrite historical reports when school data or prompts change. Mark results outdated after material input changes and offer a permitted rerun. Cache only using owner + snapshot/input hash + relevant model/prompt/evidence versions. Prevent cross-account cache reuse.
+
+Fix local/cloud races: complete identity hydration before account-specific writes; do not push account A's local profile into a new account B with no cloud data. Namespace or clear profile, target, document, review, panel, job and API-key caches on account changes. Invalidate pending debounce callbacks on logout/deletion. Show saved/saving/offline/failed status and retry; do not claim "saved to account" after swallowing a failed write. Preserve an unsaved draft safely rather than losing it on a failed sync.
+
+Port existing Vercel-style account deletion and essential admin APIs into Netlify-compatible handlers or add a verified compatibility adapter. Enumerate actual routes and test each through the host router; unit-tested source under api/ is not a deployed Netlify function. Preserve server-side staff verification, recent-auth requirements, assignment restrictions and audit-log protections. Do not weaken them to simplify porting.
+
+Implement two explicit operations: delete applicant data while retaining login, and delete account. Cover documents, private uploads, profiles, targets, snapshots, reports, queued jobs, caches and contributions where applicable to the owner's retention policy. Prevent a running worker or delayed autosave from recreating deleted data. Retry partial failures and explain retained operational/payment records according to the configured policy; do not promise literal deletion of every payment record. Preserve required staff audit history without breaking self-service deletion for ordinary applicants.
+
+Current Blobs expiry is enforced on read and deletion is opportunistic. Add actual scheduled cleanup for abandoned prompts/results if Blobs remains in the architecture; a one-hour timestamp is not proof of physical erasure. Cancel/revoke access promptly and verify eventual cleanup.
+
+Acceptance: account A versus B isolation through UI, API and direct anon-key/RLS probes; expired/forged JWTs; refresh/login/logout; slow hydration versus edits; cross-tab account changes; deletion during an active audit; no data reappears after refresh; storage listing is private; no service credentials in bundle/logs.
+
+## 7. Stage D — import, extraction and confirmation
+
+Use the existing text/PDF extraction before adding new processors. Implement PDF, TXT and DOCX plus PNG/JPG and scanned PDFs through a tested OCR/vision path. Add HEIC only through an actually supported conversion path. If a conversion cannot be shipped in the deployment environment, disable that format visibly with a useful alternative; never accept binary bytes as text or advertise nonexistent support. Do not call the full requested upload scope complete until the supported path works.
+
+Defaults: 20 MB per file, 15 files per profile, configurable total storage/page/pixel/decompression limits. Validate content signatures and MIME; reject corrupt, encrypted, oversize or unsafe inputs with per-file errors. Avoid sending large base64 uploads through function request limits. Use signed private uploads when server processing is necessary. Preserve original authorized files separately from extracted/normalized data. Deduplicate by owner/content hash while allowing intentional versions.
+
+Classify document kind. Do not save every upload as transcript. Track file ID/hash, kind, parser version, pages/locations, extraction confidence, warnings and typed candidates. Preserve candidates separately from confirmed values. Critical fields include institution, term, course/grade/credits, GPA and scale, credit system, academic standing and dates. Handle semester versus quarter units, withdrawals, incompletes, pass/fail, AP/IB/dual enrollment, repeated courses, multiple institutions, A+ scales and cumulative versus term GPA. Transferable-credit totals require school-specific review; do not assume every earned credit transfers.
+
+Present one review screen emphasizing conflicts, low-confidence fields and calculation-critical items. Permit bulk confirmation of unambiguous fields. User-confirmed corrections outrank extraction guesses without overwriting the original evidence. Conflicting transcripts must not be resolved by upload order. Show affected calculations before accepting a change. Unknown stays unknown; calculations must expose assumptions and must not invent grades or a GPA.
+
+Treat uploaded instructions as data. No model may execute embedded requests, reveal other students, change scores on demand or request additional access. Validate output against schema and confirm quoted snippets/locations exist. Do not silently truncate long documents: chunk them or state exactly what was not assessed. Preserve manual entry as a complete working route when extraction fails.
+
+Acceptance fixtures: readable PDF, rotated/scanned transcript, photo with poor lighting, DOCX, TXT, supported HEIC, corrupt file, password-protected PDF, conflicting transcripts, quarter units, P/F/W/AP/repeats, 4.33 scale, document with prompt injection, oversized file, duplicate upload and interrupted upload. Report critical-field accuracy by field and severity; no invented grade/GPA is acceptable even if aggregate accuracy looks high.
+
+## 8. Stage E — school requirements and honest estimates
+
+Build a school/program/entry-term/cycle coverage registry. Distinguish searchable directory coverage, official transfer-rate coverage, verified requirements, current prompts, prerequisite mapping, narrative intelligence and comparable sample coverage. The current 208 engine records, 96 comparable schools, 21 intelligence entries and 14 prompt entries are different denominators.
+
+Store requirements and statistics as versioned structured facts: school/program ID, requirement type, required/recommended, threshold/value, applicability conditions, cycle, source URL, relevant quote/location, retrieved/verified dates, and status. Current official school/program instructions govern current eligibility. Self-reported samples inform sample patterns; expert rubrics inform qualitative interpretation. These roles cannot be substituted for each other.
+
+Prioritize Cornell, Berkeley and Michigan as contrasting full assessments, plus Sacramento State and Cleveland State as broad-access regression cases. Architecture must support other schools; the interface must identify limited coverage rather than inventing full major-level research for all 208. Never charge for six supposedly complete assessments if only three have useful evidence; disclose the available depth before purchase and provide an honest unsupported state.
+
+Replace evergreen month/day countdowns with actual cycles, entry terms, dates, timezone and deadline type. Handle priority versus final, school versus program, rolling versus firm, separate materials dates, deadlines already passed and unannounced cycles. Do not move a missed deadline into next year automatically and imply the current application remains open. Verify current-cycle deadlines and prompts from official sources; if inaccessible, mark unverified and provide a direct official link. Separate source retrieval date from the cycle it describes.
+
+Repair missing-GPA fallback in engine.ts. Non-UC schools with no GPA sample currently inherit 3.95 and can be described as having observed percentiles. Unknown percentiles must remain unknown. Do not make a GPA distribution from selectivity and call it observed. Reproduce the supplied 3.04 GPA / CS / four-year public Sacramento State and Cleveland State scenarios, trace each term, and compare against relevant official rate scope. Do not force a CS individual estimate to equal the overall school rate.
+
+Keep deterministic eligibility, calculations and numeric estimates separate from generative feedback. Remove LLM adjustment of chance percentages and any action plan that claims unsupported percentage-point lifts. All fitted coefficients, heuristic multipliers, caps, tier thresholds and interval construction need documented meaning. In particular, a 45% threshold labeled "Likely" needs replacement or clear reconsideration. A heuristic spread is not a statistical confidence interval.
+
+Review double-counted GPA/major/feeder effects. Preserve an old mandated adjustment as an identified experimental configuration while assessing evidence; do not present it as validated. Default production output to readiness/selectivity tiers plus separately labeled official historical rates when individual calibration is unsupported. Allow experimental numeric estimates only behind an explicit flag with method, scope and limitations.
+
+Fix TAG/other guarantees. California residency is not interchangeable with California community college attendance. Check current approved institution/pathway, entry year, actual major exclusions, credit/subject requirements, prerequisites, deadlines, application steps and continuing conditions. If not all are verified, say "potential pathway; requirements still to verify." Do not turn a partly checked guarantee into a 95% modeled prediction.
+
+Validate meaningful model changes against simple baselines using held-out outcomes, Brier/calibration/discrimination measures and subgroup checks where sample permits. Group by applicant/source and time to prevent a person's different decisions leaking across splits. Reproduce existing fitted model metrics only if training code/data are actually available. Existing JSON metadata is not a rerun. Report failures and selection bias. Prior correction does not establish representativeness or individualized calibration.
+
+Acceptance: three worked school assessments trace to official requirements and available corpus evidence; broad-access schools do not show invented 3.95 observed medians; no LLM changes numeric estimates; unknown prerequisites remain unknown; a passed cycle deadline is shown as passed; TAG cannot be labeled confirmed with unchecked conditions.
+
+## 9. Stage F — authorized corpus, patterns and comparables
+
+Inventory every actually accessible authorized research source, including sibling datasets, supplied exports and expert briefs. Count raw rows, distinct source records, pseudonymous applicants, applicant-cycles, decisions, schools, years, narrative fields, missingness, conflicting records and duplicates. Preserve complete original authorized source data in restricted storage. Keep raw, normalized, enriched and applicant-display layers separate with stable mappings. Never overwrite raw material with anonymized display output.
+
+The repo-only compressed corpus cannot supply missing essays or original citations. Document missing data and exact import steps; do not regenerate narratives, source URLs or identifiers. Do not claim the full 8,910 outcomes were inspected because their count appears in metadata. Distinguish global research corpus from the 856-person display subset and fitted model's 2,891-row training metadata.
+
+Review build_similar_corpus.py carefully: it groups by author, takes median GPA across records, picks modal major/institution, uses most recent year and pools decisions. This can combine distinct application cycles into a synthetic profile. Preserve per-cycle/applicant facts and decision-level provenance; flag uncertain links and contradictions. Keep source namespaces when grouping author IDs. Missing GPA, major, international status, long major names, unresolved school aliases or rare outcomes must not cause silent loss from the internal dataset. Record exclusions from a specific analysis separately from preservation of the source record.
+
+Build an idempotent/resumable pipeline with one documented entry point, configurable input paths and stages, content hashes, versions, checkpoints, exclusion logs and coverage deltas. Keep the existing builder commands as compatible aliases where practical. Fix the absent model-fitting-script reference or restore the actual authorized implementation; never fabricate an equivalent model and report it as the original.
+
+Derive narrative tags only where narratives exist: role, responsibility, duration, scale, observed outcomes, activity type, transfer reasons and supplied context. Draft rubrics before bulk tagging and evaluate a small sample. Unknown is not a negative. Compute patterns with counts, denominators, missingness and alternatives. State "among recorded applicants" rather than population probability. An admit-only activity mix cannot establish which activities cause admission. A near-zero high-school/college-GPA correlation does not demonstrate that high-school results cannot predict admission conditional on other facts.
+
+Similarity must expose matching and differing features, missing fields, cycle, original outcomes, shared targets, similarity method and source references where available. Use configurable meaningful weights; do not call a score calibrated confidence. Current fallback to the whole corpus when strict matches are scarce must be labeled "broader comparison," with discrepancies shown. Best-of-returned score normalization must not imply the top weak match is a perfect match.
+
+Provide an owner/staff-authorized complete ranked export without an arbitrary eight-record internal cap. Export all authorized original fields with stable links to source records and matching explanations. Applicant display is a separate safe projection: default up to eight appropriate examples, no raw private identities/narratives or source links that defeat the owner's display policy. Inspect even compressed public tuples for re-identification risk before continuing public bundling. The owner's production display policy can be integrated independently while restricted research proceeds. Ordinary customers cannot call internal exports.
+
+Acceptance: reproducible count reconciliation; no silent exclusions; applicant-cycle separation test; missingness/export reports; ten similarity review examples with at least eight judged substantively appropriate; empty/sparse cohorts render honestly; no fabricated individual comparables.
+
+## 10. Stage G — audit quality and applicant interface
+
+An audit must analyze the user's actual materials and each purchased target. Do not fill space with generalized praise or repeat the same advice across four specialties. Each major finding explains: observed evidence, why it matters, concrete change, truthful example, confidence/limits and source where relevant.
+
+Activities: assess every supplied activity's responsibility, duration, contribution, coherence and presentation. Use stable activity IDs and show original plus suggested description. Keep work and caregiving meaningful. Use existing real numbers; when details are missing, ask for them or use labeled placeholders. Never fabricate impact, hours, leadership or accomplishments to make an activity look stronger. Do not assume campus involvement always dominates outside achievement merely because it is more common in a selected corpus.
+
+Essays: assess the correct school/term prompt, word/character limit, transfer rationale, specificity, evidence, structure, voice and fit. Reference actual passages and verify literal quotes. Suggest edits/revised examples faithful to supplied experiences. Separate a proposed research lead from a verified school offering. Do not invent professors, resources, student history or program availability. Treat editing depth as configurable; start with diagnostics and examples, permitting deeper editing if the product supports it.
+
+Academics: show confirmed GPA/scale, grade trend only when the underlying sequence supports it, earned versus potentially transferable credits, requirement matches, unresolved equivalencies and school-specific prep. An absent course list means "not assessed," not "missing every prerequisite." Awards should receive individual comments where supplied. Optional context may explain time/opportunity constraints; never infer protected characteristics from names, images or ZIP codes or use them for hidden price/probability changes.
+
+Summary: one clear overall assessment and most consequential next action. School cards: eligibility/prep, separate official historical statistics, selectivity or supported estimates, reasons, concerns and realistic actions. Action plan: ordered by eligibility, deadline and material impact; concrete dates and dependencies, not invented admission lifts. Surface conflicting specialist advice and resolve it against verified facts rather than silently averaging grades.
+
+Build on current light minimal SaaS design, Inter and brand colors. Reuse school tiles and shared components. Keep one clear flow; avoid asking for the same essay/list in multiple places. Support keyboard and screen-reader operation, focus management after errors, sensible labels, responsive layouts around 375/768/1440 px, reduced motion, readable report text and actionable empty/error states. Do not require optional essays before showing deterministic eligibility/prep output.
+
+Applicant report history must display scope, generated date, inputs version, outdated status, completed/missing/failed sections and rerun allowance. Implement print/PDF export with selectable text, proper pagination, sources and honest missing-data states. Keep internal prompts, costs, raw private records and staff notes out of applicant exports. JSON account export should include only the user's own authorized data.
+
+Optional TU handoff asks permission, previews the exact summary/materials to share, and records consent. Do not intentionally weaken the audit to upsell human help. Do not make unsupported authority claims; the repository's mandated "multiple Ivies" line must be substantiated before public display or changed with owner resolution. The build should continue while that marketing claim is pending.
+
+Quality evaluation: prepare 20 varied synthetic or explicitly authorized audits across GPA/major/institution/data-completeness combinations, aiming for at least 16 client-ready in human review. Include weak/contradictory applications and sparse schools, not only impressive files. Provide a rubric and samples without waiting for the owner to create them. Mark human judgment pending until actually reviewed; automated schema success is not human-quality approval.
+
+## 11. Stage H — checkout, entitlements and abuse controls
+
+Implement Stripe test mode behind configuration. Browser requests a server-created Checkout Session using an allowed product/price configuration. Never trust amount, currency, owner ID, allowance count or price from the browser. Bind checkout to a verified user and immutable purchase scope. Block duplicate simultaneous sessions/purchases or explain intentional separate purchases.
+
+Verify webhook signatures on raw request bytes. Store event IDs uniquely and process idempotently. Handle asynchronous payment completion/failure, duplicate/out-of-order events, abandoned checkout, session expiry, refunds and disputes. Grant access from verified payment state; redirect query strings, localStorage or a Checkout success page must not unlock anything. Use a transaction to create entitlement and reserve a successful-run allowance. Resolve the case where payment succeeds before the browser returns and where the browser returns before webhook delivery.
+
+Failed work releases or preserves allowance according to one documented state machine. Concurrent clicks cannot spend the same entitlement twice or produce unlimited paid calls. Persist purchase/entitlement/report associations. Refund and dispute behavior should be explicit and reversible where possible; do not delete student data merely because a payment changes state.
+
+Free preview runs only bounded low-cost work. Server-enforce free allowances and per-user/IP abuse controls with atomic accounting where exactness matters. IP counters alone are insufficient and can penalize shared-campus networks. Put actual hard provider spending limits and account/job cost caps in place. Do not run four full specialists before asking the user to purchase unless measured conversion economics justify it.
+
+Test matrix: completed payment; cancellation; declined/pending payment; forged webhook; forged price; wrong account; duplicate event; out-of-order refund; simultaneous starts; expired session; authenticated access after refresh; failure before/after allowance reservation. No live charges in these tests.
+
+Replace device-only waitlists with an owner-readable durable opt-in record if retaining a waitlist, or remove them. Do not say "we'll email you" if nobody can access the submission. Creating an email record does not authorize unsolicited campaigns.
+
+## 12. Stage I — operations, performance and release
+
+Use one active Netlify deployment path with explicit route mapping and correct environment scopes. Keep useful alternate-host code until the active path works, then document or retire it to avoid contradictory contracts. Essential admin functions: authenticated case/report lookup under existing permissions, job/failure status, audited retry/entitlement repair, consented handoff, and minimal model cost/latency visibility. Hide unfinished notes/roster features or implement schema/endpoints and role tests. Do not build a large CRM as a launch dependency.
+
+Add structured operational events keyed by non-identifying job/correlation IDs: stage timing, provider/model, token usage, estimated versus billed cost when available, retries, failures and queue age. Never log raw essay/transcript text, secrets, student emails or model outputs containing private quotes. Analytics events may include signup, profile confirmation, targets saved, preview shown, checkout started/completed, audit started/partial/complete and export, with duplicate event handling. Keep these separate from model training/marketing consent.
+
+Measure the complete parent audit, not a single specialist. API cost includes extraction/OCR, all specialists, synthesis, retries and failed runs. Start with configurable target of $1 per complete audit. Enforce authorized test/batch budgets. Cache extraction and unchanged section results with correct version keys; do not reuse outdated school requirements. Skip irrelevant specialists rather than requesting a generic missing-material report from a paid model.
+
+Performance targets: deterministic preview under one second once required data is available; first useful AI section within 15 seconds after confirmed inputs; full audit about 90 seconds p50 and 150 seconds p90. Report sample size, input-size distribution, provider, warm/cold conditions and upload/extraction separately. A tiny smoke test cannot establish p90. Record missed targets honestly; use bounded concurrency, smaller scoped prompts and resume/retry before switching providers or adding infrastructure.
+
+Reduce initial JS from the measured ~356 kB gzip baseline. Initial target: under 250 kB gzip for initial-route JS if attainable without compromising working features. Lazy-load admin, audit/report routes and large datasets where beneficial; keep navigation/loading/error fallbacks. PDF is already lazy-loaded. Measure actual network-loaded initial chunks, not just renaming one big file. Avoid unnecessary font subsets. Recheck CSP and worker/OAuth/upload/payment requirements using actual response headers; comments claiming a CSP conflict are not evidence of a present conflict. Test checkout redirects and Supabase connectivity under the deployed policy.
+
+Add CI with clean install → lint/typechecks → build → unit/integration/bundle checks → critical browser E2E. Use synthetic fixtures in git; use server secrets only in protected integration environments. Deployment smoke checks must verify expected API content types/statuses, not accept a 200 HTML SPA as a working endpoint. Add non-sensitive service health checks, uptime/failure alerts, schema migration instructions, backup/restore evidence for persisted student reports and a release rollback procedure.
+
+Create concise operational docs: environment variable names/scopes, active host, migrations, initial owner setup, auth callback URLs, provider/model selection, test/live billing separation, storage/bucket policies, cleanup schedule, budget limits, common failure recovery, release and rollback steps. Update stale README and .ai-codex/ maps to actual behavior. Keep processor/storage descriptions accurate: current review jobs use Netlify Blobs, contribution code separately references Upstash, profiles/documents use Supabase, and models may use OpenRouter or Anthropic. Verify enabled paths before publishing that list; don't introduce a new processor for private records without actual authorization.
+
+## 13. Required verification and launch gates
+
+The following are acceptance requirements, not claims that they already pass.
+
+| Gate | Evidence required |
+|---|---|
+| Clean checkout | Documented install/verify commands pass from a fresh checkout; build prerequisite is automatic |
+| Core applicant flow | Real browser signup/confirmation or equivalent configured test identity → confirmed profile → selected targets → preview → test payment → audit → saved history → export |
+| Panel integration | Deployed 202/poll flow and actual section schemas work; no legacy full-review validator mismatch |
+| Account integrity | A/B isolation, direct RLS probes, logout/account switch, slow hydration and active-job deletion pass |
+| Uploads | Declared formats work; conflict review works; critical fields trace to source; manual fallback remains usable |
+| Data claims | Corpus counts/coverage reconcile where inputs exist; missing sources and unreproduced metrics are explicit |
+| School facts | Three worked assessments with current official requirements and scoped historical rates; stale dates and unknowns handled |
+| Probability honesty | No invented observed percentile, unverified guarantee, model-edited percentage or mislabeled confidence interval |
+| Billing | Signed/idempotent webhooks, server price, ownership and concurrent allowance tests pass in test mode |
+| Deployment | Account deletion and essential admin functions actually deployed on Netlify, not merely present under api/ |
+| Quality | Review samples and grading rubric prepared; required human results recorded honestly; no invented accomplishments or quotes |
+| Security/cleanup | Secrets/bundle checks; private storage; report ownership; prompt-injection fixtures; expired-job cleanup and deletion race tests |
+| Reliability | Refresh/resume, timeout, provider outage, partial result, retry, duplicate delivery and failed-save recovery work |
+| Performance/cost | Actual measured parent-job timing and costs with sample size; targets/misses reported |
+| UX | Mobile/desktop and keyboard checks; no dead CTAs, sample target leakage, fake saved state, false privacy copy or raw internal exports |
+| Owner readiness | Support path, display/retention policy and commercial terms resolved for public launch; test/live credentials and final deployment approval explicit |
+
+Use meaningful regression and integration tests for the actual defects. Add browser E2E tests because none of the existing 260 unit/integration tests proves the complete paid applicant journey. Do not pad coverage with tests mirroring trivial implementation details. Run the integrated suite after material changes and once at release; rerun further only when a failure or new change warrants it.
+
+Prepare human review sets: 50 available narrative tags with a target near 90% agreement where narrative data exists; at least 10 varied upload fixtures near 95% critical-field accuracy with zero fabricated critical academic values; ten similarity examples with at least eight appropriate; 20 audits with at least 16 client-ready. Define denominators and severity. If required source data is absent, mark that evaluation unavailable and avoid shipping claims dependent on it; continue evaluating the functioning product.
+
+## 14. Execution sequence and final handoff
+
+Implement in dependency order:
+1. Baseline, explicit completeness, shared targets and integration regression tests.
+2. Typed server-built audit contract, authenticated jobs, durable ownership and atomic claims.
+3. Reliable snapshots/sync/history, Netlify route parity and deletion lifecycle.
+4. Upload confirmation and school requirement/coverage registry; probability/guarantee corrections.
+5. Source-preserving corpus pipeline and honest comparable search as available data permits.
+6. Material-level audit quality, progressive UI and applicant-safe export.
+7. Test billing, entitlements, quota/cost controls and optional handoff.
+8. Full browser integration, operational readiness, measured speed/cost, documentation and release candidate.
+
+Independent reads/checks can be batched. Do not let a corpus rebuild delay fixing broken transport or a missing credential delay writing tests. Do not redesign the landing page before the core flow works. Do not replace the stack or add microservices absent a concrete measured need.
+
+At completion provide:
+- Reviewable preview/release candidate and exact commit(s).
+- What now works end to end, tied to actual evidence.
+- Test commands/results, browser journeys verified and integration environment used.
+- Corpus/coverage counts with distinction between metadata and reconstructed data.
+- Three sample school assessments and representative complete/partial reports.
+- Measured whole-audit cost/latency and initial bundle changes.
+- Missing credentials, human evaluations, policies, failed targets and remaining launch blockers.
+- Exact minimal owner steps to release, including any required final public deployment/live billing approval.
+- A resumable handoff with migrations, commands, versions, checkpoint locations and rollback steps.
+
+Never claim "fully ready" while a launch-critical gate is untested or failing. Never relabel a mock payment, mocked provider, localhost auth test or polished screenshot as a verified production journey. Keep implementing everything the available authorization and inputs permit; bring the owner a concrete release candidate and a precise remaining-dependency list.

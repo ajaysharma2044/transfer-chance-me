@@ -22,4 +22,5 @@ Last updated 2026-10-07.
 - [ ] Approve deploy and live charging when ready (no deploy / no live charging under this work order).
 
 ## Notes
-- Earlier background brief is `docs/spec.md`. v3 references it as "spec_v2.md"; there is no separate spec_v2.md — `spec.md` is that background and is retained. `spec_v3.md` is the current execution reference.
+- Spec lineage: `docs/spec_v2.md` (first brief, 2026-10-06) → `docs/spec_v3.md` (master spec + PART 8 budget split) → **`docs/spec.md` (17 Oct 2026 launch prompt — current)**. Read `docs/progress.md` first in any new session.
+- **Supabase free tier auto-pauses after ~7 idle days** and the project host drops out of DNS (NXDOMAIN), which surfaces as login "Failed to fetch". Happened 2026-10-07; the owner restored it from the dashboard. Before any live test: `nslookup nikfuakdulqmumsaisnn.supabase.co 1.1.1.1`. Keeping it awake, or moving to a paid plan, is an owner decision.

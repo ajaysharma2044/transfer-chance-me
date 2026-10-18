@@ -42,3 +42,6 @@ signups*.csv
 
 # scratch scripts
 ._*
+
+# netlify dev (edge/Deno) artifact
+deno.lock
