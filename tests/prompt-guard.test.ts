@@ -92,6 +92,15 @@ describe("screeningNote", () => {
   });
 });
 
+describe("guardSystem names the list the section actually has", () => {
+  it("defaults to the lead's risks and can point specialists at missing", () => {
+    const n = makeNonce();
+    expect(guardSystem(n)).toContain('an entry in "risks"');
+    expect(guardSystem(n, "missing")).toContain('an entry in "missing"');
+    expect(guardSystem(n, "missing")).not.toContain('"risks"');
+  });
+});
+
 /* ── Detection ─────────────────────────────────────────────────────────── */
 
 describe("detectInjection", () => {

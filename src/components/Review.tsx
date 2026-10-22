@@ -32,9 +32,12 @@ function loadDocs(): Docs {
 interface Props {
   profile: Profile;
   onChange: (p: Profile) => void;
+  /** Whether a session exists: signed in, the pasted materials are also saved
+   *  to the account (pushDoc below), and the privacy line must say so. */
+  signedIn: boolean;
 }
 
-export default function Review({ profile, onChange }: Props) {
+export default function Review({ profile, onChange, signedIn }: Props) {
   const [key, setKeyState] = useState(getApiKey());
   const [keyInput, setKeyInput] = useState("");
   const [docs, setDocs] = useState<Docs>(loadDocs);
@@ -133,13 +136,18 @@ export default function Review({ profile, onChange }: Props) {
           Paste your actual materials. A reviewer grounded in {Number(MODEL.meta.rows).toLocaleString()} real
           transfer outcomes reads everything and returns quote-level feedback, per-school verdicts, and a
           prioritized fix list.{" "}
-          {/* This sentence has to track what the deployment ACTUALLY does.
-              With the proxy on, materials pass through our server on the way
-              to the model — saying otherwise would be a false privacy claim on
-              the one page where students paste their most personal writing. */}
+          {/* This sentence has to track what the deployment ACTUALLY does, on
+              the one page where students paste their most personal writing.
+              Proxy mode: materials pass through our server to reach the model.
+              Browser-key mode: they go straight to Anthropic — but signed in,
+              go() below ALSO saves them to the account (pushDoc), so "never to
+              us" is only true signed out. CLAUDE.md: signed-in and signed-out
+              wording must differ. */}
           {proxyMode
             ? "Runs on your account: your materials pass through our server to reach the reviewer, and are stored on your account so you can come back to them."
-            : "Your materials go directly from your browser to the AI — never to us."}
+            : signedIn
+              ? "Your materials go from your browser straight to Anthropic — our review server never sees them — and are saved to your account so you can come back to them."
+              : "Your materials go directly from your browser to the AI, and signed out nothing is stored anywhere but this browser."}
         </p>
       </header>
 
@@ -289,6 +297,19 @@ export default function Review({ profile, onChange }: Props) {
             </div>
           )}
 
+          {panel && !busy && (panel.failed.length > 0 || panel.leadError) && (
+            <p className="rv-error" role="alert">
+              {panel.leadError
+                ? `The lead reviewer did not finish (${panel.leadError}) — the specialist reports below stand; run again for the verdict.`
+                : null}
+              {panel.failed.length > 0 && (
+                <>
+                  {" "}This report is partial: {panel.failed.map((f) => `${SPECIALISTS.find((s) => s.id === f.id)?.name ?? f.id} (${f.message})`).join("; ")}.
+                  {" "}Run again to fill the gaps.
+                </>
+              )}
+            </p>
+          )}
           {panel && !busy && (
             <article className="rv-report">
               <header className="rv-r-head">

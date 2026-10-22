@@ -2,7 +2,8 @@
 //
 // ROUTING: Pages only creates a route for a module that exports an `onRequest*`
 // handler. This module exports none, so it is never reachable over HTTP — it
-// exists purely to be imported by review.ts and contribute.ts.
+// exists purely to be imported by contribute.ts (the review proxy is
+// Netlify-only — see CLOUDFLARE.md §5).
 //
 // TYPES: the Cloudflare types below are declared locally on purpose, so that
 // functions/ needs no extra npm dependency and `npm run build` (tsc -b + vite

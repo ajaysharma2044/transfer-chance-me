@@ -95,6 +95,11 @@ export interface AuditProfile {
   courses: string[];
   awardsText: string;
   transferReason: string;
+  /** The remaining engine inputs, so the odds the server computes for the
+   *  brief are the odds the app showed (docs/spec.md §5: one engine, one answer). */
+  sat: number | null;
+  ecLevel: string;
+  essay: string;
 }
 
 export interface AuditInput {
@@ -240,10 +245,14 @@ function parseProfile(v: unknown): Parsed<AuditProfile> {
     return fail("input.profile.gpa must be a number between 0 and 5.");
   }
   const short: Record<string, string> = {};
-  for (const k of ["gpaTrend", "institution", "standing", "major", "hook"] as const) {
+  for (const k of ["gpaTrend", "institution", "standing", "major", "hook", "ecLevel", "essay"] as const) {
     const r = optText(v[k], `input.profile.${k}`, LIMITS.short);
     if (!r.ok) return r;
     short[k] = r.value;
+  }
+  const sat = v.sat;
+  if (sat !== undefined && sat !== null && (typeof sat !== "number" || !Number.isFinite(sat) || sat < 400 || sat > 1600)) {
+    return fail("input.profile.sat must be null or a score between 400 and 1600.");
   }
   for (const k of ["institution", "standing", "major"] as const) {
     if (short[k].trim().length === 0) return fail(`input.profile.${k} is required.`);
@@ -284,6 +293,9 @@ function parseProfile(v: unknown): Parsed<AuditProfile> {
       courses: courses as string[],
       awardsText: long.awardsText,
       transferReason: long.transferReason,
+      sat: typeof sat === "number" ? sat : null,
+      ecLevel: short.ecLevel,
+      essay: short.essay,
     },
   };
 }

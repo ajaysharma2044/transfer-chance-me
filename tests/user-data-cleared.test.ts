@@ -47,9 +47,14 @@ describe("clearing per-user storage tells the components holding copies", () => 
     expect(counts[USER_DATA_CLEARED_EVENT]).toBe(1);
   });
 
-  it("'Delete my data' broadcasts too", () => {
+  it("'Delete my data' broadcasts too, and takes the cached panel report with it", () => {
     const counts = listen();
+    // The report's notes quote the essay verbatim — it is material, not UI state.
+    g.localStorage!.setItem("tcm.panel.v1", JSON.stringify({ grade: "B", reports: [{ notes: [{ quote: "my essay line" }] }] }));
+    g.localStorage!.setItem("tcm.apikey.v1", "sk-ant-keep-me");
     clearUserMaterial();
+    expect(g.localStorage!.getItem("tcm.panel.v1")).toBeNull();
+    expect(g.localStorage!.getItem("tcm.apikey.v1")).toBe("sk-ant-keep-me"); // the login-side keys stay
     expect(counts[LIST_EVENT]).toBe(1);
     expect(counts[USER_DATA_CLEARED_EVENT]).toBe(1);
   });

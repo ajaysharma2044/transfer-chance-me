@@ -125,11 +125,14 @@ export const anthropicProvider: Provider = async ({ model, messages, maxTokens, 
     throw new Error(`Anthropic ${res.status}`);
   }
   const data = (await res.json()) as {
-    content?: { text?: string }[];
+    content?: { type?: string; text?: string }[];
     usage?: { input_tokens?: number; output_tokens?: number };
   };
+  // Models that think return a `thinking` block first; the answer is the
+  // `text` block, wherever it sits.
+  const textBlock = data.content?.find((b) => b.type === "text") ?? data.content?.find((b) => typeof b.text === "string");
   return {
-    text: data.content?.[0]?.text ?? "",
+    text: textBlock?.text ?? "",
     inputTokens: data.usage?.input_tokens ?? 0,
     outputTokens: data.usage?.output_tokens ?? 0,
   };
@@ -142,11 +145,12 @@ export async function callModel(args: CallArgs): Promise<LlmResult> {
   const provider = args.provider ?? openRouterProvider;
 
   // Reserve first. A BudgetExceededError here means we never dispatch.
+  const estIn = estInputTokens(args.messages);
   const id = ledger.reserve({
     kind: args.kind,
     provider: args.providerName ?? "openrouter",
     model,
-    inputTokens: estInputTokens(args.messages),
+    inputTokens: estIn,
     maxTokens: args.maxTokens,
     audit: args.audit,
     group: args.group,
@@ -156,14 +160,26 @@ export async function callModel(args: CallArgs): Promise<LlmResult> {
   const timer = setTimeout(() => controller.abort(), args.timeoutMs ?? 120_000);
   try {
     const res = await provider({ model, messages: args.messages, maxTokens: args.maxTokens, signal: controller.signal });
-    const costUsd = ledger.settle(id, {
-      inputTokens: res.inputTokens,
-      outputTokens: res.outputTokens,
-      actualUsd: res.costUsd,
-    });
+    // The call is paid for the moment the provider answers. A bookkeeping
+    // failure after that must never discard the reply or release spent
+    // budget: log it and keep the worst-case reservation on the books.
+    let costUsd: number;
+    try {
+      costUsd = ledger.settle(id, { inputTokens: res.inputTokens, outputTokens: res.outputTokens, actualUsd: res.costUsd });
+    } catch (settleErr) {
+      console.log(JSON.stringify({ evt: "ledger_settle_failed", id, message: String((settleErr as Error)?.message ?? settleErr).slice(0, 80) }));
+      costUsd = res.costUsd ?? ledger.cost(model, res.inputTokens, res.outputTokens);
+    }
     return { text: res.text, model, costUsd, inputTokens: res.inputTokens, outputTokens: res.outputTokens };
   } catch (e) {
-    ledger.fail(id);
+    // Our own timeout: the upstream generation may well have completed and
+    // been billed, so settle at the worst case rather than releasing it. A
+    // provider error (4xx/5xx, network) is not billed and frees the reservation.
+    if ((e as { name?: string } | null)?.name === "AbortError") {
+      try { ledger.settle(id, { inputTokens: estIn, outputTokens: args.maxTokens }); } catch { /* keep the reservation */ }
+    } else {
+      ledger.fail(id);
+    }
     throw e;
   } finally {
     clearTimeout(timer);

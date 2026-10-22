@@ -66,7 +66,9 @@ export function profileReadiness(p: Profile): Readiness {
 export function confirmFor(patch: Partial<Profile>): Confirmed {
   const out: Confirmed = {};
   for (const f of REQUIRED_CONFIRM_FIELDS) if (f in patch) out[f] = true;
-  if ("schoolName" in patch) out.institution = true;
+  // Picking a school confirms the institution it implies; clearing the name
+  // (schoolName: null) rejects a parsed value and confirms nothing.
+  if (patch.schoolName) out.institution = true;
   return out;
 }
 

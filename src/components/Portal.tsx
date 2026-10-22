@@ -1201,9 +1201,12 @@ export default function Portal({ session, profile, go, onChange }: Props) {
     pullProfile()
       .then(({ schools }) => {
         if (!live || !schools || loadList().length) return;
-        const adopted: ListEntry[] = Object.entries(schools).map(([school, v]) => ({
-          school, status: (v.status as Status) || "planning", note: v.notes ?? "", included: v.included,
-        }));
+        // jsonb does not keep key order; `order` does (see CloudSchool).
+        const adopted: ListEntry[] = Object.entries(schools)
+          .sort(([, a], [, b]) => (a.order ?? Infinity) - (b.order ?? Infinity))
+          .map(([school, v]) => ({
+            school, status: (v.status as Status) || "planning", note: v.notes ?? "", included: v.included,
+          }));
         if (adopted.length) setList(adopted);
       })
       .catch(() => { /* offline: the local list stands */ });
@@ -1217,8 +1220,8 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   useEffect(() => {
     if (!cloudEnabled || !session || !list.length) return;
     const t = window.setTimeout(() => {
-      const rec: Record<string, { status: string; notes: string; included?: boolean }> = {};
-      for (const l of list) rec[l.school] = { status: l.status, notes: l.note, included: l.included };
+      const rec: Record<string, { status: string; notes: string; included?: boolean; order: number }> = {};
+      list.forEach((l, i) => { rec[l.school] = { status: l.status, notes: l.note, included: l.included, order: i }; });
       pushSchools(rec).catch(() => { /* offline is not an error here */ });
     }, 1200);
     return () => clearTimeout(t);

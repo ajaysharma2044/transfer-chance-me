@@ -16,9 +16,15 @@ import { cloudEnabled, supabase } from "./supabase";
 
 export type DocKind = "transcript" | "essay" | "statement" | "activities" | "awards";
 
+/** One tracked school as the account stores it. `order` keeps the list's
+ *  position: it is a jsonb object in Postgres, whose key order is not kept,
+ *  and the implicit review scope is "the first MAX_INCLUDED" — so without it
+ *  a second device would review a different six. */
+export interface CloudSchool { status: string; notes: string; included?: boolean; order?: number }
+
 export interface CloudState {
   profile: Profile | null;
-  schools: Record<string, { status: string; notes: string; included?: boolean }> | null;
+  schools: Record<string, CloudSchool> | null;
 }
 
 /** The signed-in user's id, or null. Every write below is scoped to it. */
@@ -56,9 +62,7 @@ export async function pushProfile(
  * whole profile on each of those would race the debounced profile push in
  * App with a possibly-staler copy of the profile.
  */
-export async function pushSchools(
-  schools: Record<string, { status: string; notes: string; included?: boolean }>,
-): Promise<void> {
+export async function pushSchools(schools: Record<string, CloudSchool>): Promise<void> {
   const id = await uid();
   if (!id || !supabase) return;
   const { error } = await supabase

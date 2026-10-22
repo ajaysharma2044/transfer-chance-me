@@ -33,7 +33,7 @@
 //   ANTHROPIC_API_KEY  (used when OPENROUTER_API_KEY is absent)
 
 import { detectInjection, guardSystem, makeNonce, screeningNote, wrapUntrusted } from "../../api/_guard";
-import { buildSectionPrompt, SECTION_MAX_TOKENS, untrustedText } from "../../src/lib/audit/prompts";
+import { buildSectionPrompt, screeningText, SECTION_MAX_TOKENS } from "../../src/lib/audit/prompts";
 import { parseModelJson, pickSection, validateSection } from "../../src/lib/audit/schema";
 import { claimJob, getJob, putJob, RUN_BUDGET_MS, takeRequest } from "./_jobs.js";
 import type { JobState } from "./_jobs.js";
@@ -89,6 +89,11 @@ export default async function handler(req: Request): Promise<Response> {
   }
   if (!UUID_RE.test(jobId)) return ACCEPTED();
 
+  /* Only a job review.ts queued is worth claiming: this URL is public, and a
+   * made-up id must not leave a claim record (or anything else) behind. */
+  const queuedJob = await getJob(jobId).catch(() => null);
+  if (!queuedJob || queuedJob.status !== "pending") return ACCEPTED();
+
   /* The claim. Exactly one invocation per job gets past this line. */
   let claimed = true;
   try {
@@ -128,9 +133,11 @@ export default async function handler(req: Request): Promise<Response> {
    * into. Screening only counts shapes — the matched text stays in the review. */
   const nonce = makeNonce();
   const prompt = buildSectionPrompt(audit, (text) => wrapUntrusted(text, nonce).text);
-  const flags = detectInjection(untrustedText(audit));
+  // Screen exactly what this prompt fences (the lead sees reports, not the
+  // essay), and point the model at the list its section actually has.
+  const flags = detectInjection(screeningText(audit));
   const messages: Message[] = [
-    { role: "system", content: `${guardSystem(nonce)}\n\n${BREVITY}` },
+    { role: "system", content: `${guardSystem(nonce, audit.kind === "lead" ? "risks" : "missing")}\n\n${BREVITY}` },
     { role: "user", content: flags.length ? `${prompt}\n\n${screeningNote(flags.length)}` : prompt },
   ];
 
@@ -180,9 +187,10 @@ export default async function handler(req: Request): Promise<Response> {
         return ACCEPTED();
       }
       // The correction names our own field types only — never the model's
-      // text, which is a rephrasing of the student's material.
+      // text, which is a rephrasing of the student's material. An empty reply
+      // gets a placeholder: both APIs reject an empty assistant turn.
       messages.push(
-        { role: "assistant", content: reply.text },
+        { role: "assistant", content: reply.text.trim() || "(empty reply)" },
         { role: "user", content: correction(check.ok ? [] : check.errors) },
       );
     }
@@ -190,7 +198,11 @@ export default async function handler(req: Request): Promise<Response> {
     const e = err as { name?: string; message?: string } | null;
     if (err instanceof BudgetExceededError) {
       logUsage(via, model, kind, 402, Date.now() - started, spent, flags.length, attempts);
-      await finish(jobId, errorDoc("The review budget for this deployment is used up for now — try again later."));
+      // The per-audit cap is about THIS file's size; the other two are the
+      // deployment's envelope. Different advice for the student.
+      await finish(jobId, errorDoc(/per-audit/.test(err.message)
+        ? "This review is larger than one run allows — shorten your materials and run it again."
+        : "The review budget for this deployment is used up for now — try again later."));
       return ACCEPTED();
     }
     const aborted = e?.name === "AbortError" || /abort/i.test(e?.message ?? "");

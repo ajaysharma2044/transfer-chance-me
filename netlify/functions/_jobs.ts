@@ -53,7 +53,10 @@ const REQUEST_TTL_SEC = Math.ceil(PENDING_DEADLINE_MS / 1000);
 const STORE_NAME = "tcm-reviews";
 
 function jobs() {
-  return getStore(STORE_NAME);
+  // Strong consistency: the default is eventually consistent at the edge, and
+  // a poll must see the worker's `done` the moment it is written, just as the
+  // rate counter must see its own previous increment.
+  return getStore({ name: STORE_NAME, consistency: "strong" });
 }
 
 export interface QueuedRequest {
@@ -120,7 +123,10 @@ export async function putRequest(id: string, queued: QueuedRequest): Promise<voi
  * degrades to takeRequest's read-and-delete, which is one-shot in practice.
  */
 export async function claimJob(id: string): Promise<boolean> {
-  const r = (await jobs().set(claimKey(id), String(Date.now()), { onlyIfNew: true })) as { modified?: boolean } | undefined;
+  // Same envelope shape as every other record, so a sweeper can expire claims
+  // like anything else; the conditional write is what makes it a claim.
+  const env: Envelope<number> = { expires: Date.now() + PENDING_DEADLINE_MS, value: Date.now() };
+  const r = (await jobs().set(claimKey(id), JSON.stringify(env), { onlyIfNew: true })) as { modified?: boolean } | undefined;
   return r?.modified !== false;
 }
 

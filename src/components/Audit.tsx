@@ -129,7 +129,7 @@ export default function Audit({ session, profile, onChange, go, anchor }: Props)
           </p>
         </header>
         {ready ? (
-          <Review profile={profile} onChange={onChange} />
+          <Review profile={profile} onChange={onChange} signedIn={!!session} />
         ) : (
           <div className="audit-locked" role="note">
             <p className="audit-locked-h"><b>Locked</b></p>

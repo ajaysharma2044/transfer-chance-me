@@ -111,15 +111,21 @@ Set `VITE_REVIEW_ENDPOINT=/api/review` in the environment of the Vite process
 to exercise proxy mode locally (`.env.local` or the shell). `netlify dev` reads
 `.env.local` for the function env.
 
-Two quirks, both encoded in `package.json`:
+Three quirks, encoded in `package.json` and `netlify.toml`:
 
 - **Git worktrees.** `netlify-cli` finds the repository root by walking up to
   the first `.git` *directory*; in a worktree `.git` is a file, so it lands on
   the main checkout and bundles **its** functions — stale code with no error.
   `dev:full` therefore runs `netlify dev --cwd "$PWD"` from outside the
   directory, which makes the CLI treat the worktree as the base.
-- **ALLOWED_ORIGIN.** The project setting is injected into `netlify dev` and
-  will 403 `http://localhost:5200`. Export
+- **Its own Vite.** `netlify dev` starts a framework server and waits for it on
+  `targetPort`. `vite.config.ts` defaults `npm run dev` to 5199 (the documented
+  app port), so `netlify.toml` `[dev]` pins netlify dev's Vite to 5173 with
+  `--strictPort`; without that it binds 5199 and the CLI times out waiting on
+  5173.
+- **ALLOWED_ORIGIN.** The project setting is injected into `netlify dev`; the
+  function allows the request's own origin (so 8888 works), but
+  `http://localhost:5200` must be allowed explicitly: export
   `ALLOWED_ORIGIN=http://localhost:5200,http://localhost:8888` in the shell
   that starts `dev:full` (process env wins over project settings).
 

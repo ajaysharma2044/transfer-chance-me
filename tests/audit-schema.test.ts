@@ -128,6 +128,15 @@ describe("parseAuditRequest — structured inputs in, never a browser-authored p
     expect(r.ok).toBe(true);
   });
 
+  it("carries the remaining engine inputs and validates the SAT range", () => {
+    const ok = parseAuditRequest({ schemaVersion: 1, kind: "specialist", specialist: "fit", input: { ...input, profile: { ...input.profile, sat: 1500, ecLevel: "national", essay: "named" } } });
+    expect(ok.ok).toBe(true);
+    if (ok.ok) expect(ok.value.input.profile).toMatchObject({ sat: 1500, ecLevel: "national", essay: "named" });
+    const missing = parseAuditRequest({ schemaVersion: 1, kind: "specialist", specialist: "fit", input });
+    expect(missing.ok && missing.value.input.profile.sat).toBeNull();
+    expect(parseAuditRequest({ schemaVersion: 1, kind: "specialist", specialist: "fit", input: { ...input, profile: { ...input.profile, sat: 99 } } }).ok).toBe(false);
+  });
+
   it("caps applicant text lengths", () => {
     const long = { ...input, whyTransfer: "x".repeat(LIMITS.longText + 1) };
     expect(parseAuditRequest({ schemaVersion: 1, kind: "specialist", specialist: "essay", input: long }).ok).toBe(false);

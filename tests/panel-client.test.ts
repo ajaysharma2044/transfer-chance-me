@@ -144,4 +144,52 @@ describe("runPanel", () => {
     const t: Transport = { async run() { throw new AuditError("Sign in to run the deep audit.", "auth"); } };
     await expect(runPanel(input, undefined, undefined, t)).rejects.toMatchObject({ code: "auth" });
   });
+
+  it("a failed specialist is named on the result, so a partial panel is never shown as complete", async () => {
+    const { transport } = fakeTransport(["fit"]);
+    const r = await runPanel(input, undefined, undefined, transport);
+    expect(r.failed).toEqual([{ id: "fit", message: "boom" }]);
+    expect(r.leadError).toBeUndefined();
+  });
+
+  it("a lead failure keeps the four paid specialist reports and says the verdict is missing", async () => {
+    const seen: AuditRequest[] = [];
+    const t: Transport = {
+      async run(req) {
+        seen.push(req);
+        if (req.kind === "lead") throw new AuditError("The review service is busy — try again in a moment.", "server");
+        return section;
+      },
+    };
+    const stages: string[] = [];
+    const r = await runPanel(input, (id, state) => stages.push(`${id}:${state}`), undefined, t);
+    expect(r.reports).toHaveLength(4);
+    expect(r.grade).toBe("—");
+    expect(r.leadError).toMatch(/busy/);
+    expect(stages).toContain("lead:failed");
+    expect(seen.filter((q) => q.kind === "lead")).toHaveLength(1);
+  });
+});
+
+describe("proxyTransport resilience", () => {
+  it("rides out a 5xx on a poll instead of abandoning the running section", async () => {
+    const api = fakeApi([{ httpStatus: 502, error: "Could not reach the review store — try again." }, { status: "pending" }, { status: "done", result: { kind: "specialist", section } }]);
+    const t = proxyTransport({ endpoint: "/api/review", getToken: async () => "tok", fetch: api.fetch, sleep: noSleep });
+    expect(await t.run(specialistReq)).toEqual(section);
+  });
+
+  it("asks for the token before every request, so a refreshed session is what reaches the server", async () => {
+    const tokens = ["t1", "t2", "t3"];
+    const api = fakeApi([{ status: "pending" }, { status: "done", result: { kind: "specialist", section } }]);
+    const t = proxyTransport({ endpoint: "/api/review", getToken: async () => tokens.shift() ?? "tN", fetch: api.fetch, sleep: noSleep });
+    await t.run(specialistReq);
+    const sent = api.calls.map((c) => ((c.init?.headers ?? {}) as Record<string, string>).authorization);
+    expect(sent).toEqual(["Bearer t1", "Bearer t2", "Bearer t3"]);
+  });
+
+  it("a 413 from the server tells the student which box to shorten", async () => {
+    const api = fakeApi([], { startStatus: 413, startBody: { error: "input.profile.awardsText is longer than 2000 characters." } });
+    const t = proxyTransport({ endpoint: "/api/review", getToken: async () => "tok", fetch: api.fetch, sleep: noSleep });
+    await expect(t.run(specialistReq)).rejects.toMatchObject({ code: "input", message: /awards list is over 2,000 characters/ });
+  });
 });

@@ -9,7 +9,7 @@ import { admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW 
 import { hsPrompt, hsRules, hsStillHeavy, UNITS_HS_STILL_COUNTS } from "../lib/highschool";
 import { HIGH_SCHOOL_FACT } from "../lib/reader";
 import { markOf } from "../lib/schools";
-import { confirmAll, confirmFor, CONFIRM_FIELD_LABEL, profileReadiness } from "../lib/profile";
+import { confirmAll, confirmFor, CONFIRM_FIELD_LABEL, profileReadiness, REQUIRED_CONFIRM_FIELDS } from "../lib/profile";
 import { useScrollFx } from "../hooks/useScrollFx";
 import ImportPanel from "./ImportPanel";
 import SchoolSearch from "./SchoolSearch";
@@ -88,8 +88,9 @@ function sameValue(a: unknown, b: unknown): boolean {
 
 /**
  * One line per activity, in the shape the AI prompt already reads.
- * `activitiesText` stays the source of truth for src/lib/review.ts, so every
- * edit to a structured row rewrites it in the same commit.
+ * `activitiesText` stays the source of truth for the prompt
+ * (src/lib/audit/prompts.ts, via Review.tsx → panel.ts input.activities), so
+ * every edit to a structured row rewrites it in the same commit.
  */
 function joinActivities(rows: ActivityEntry[]): string {
   return rows
@@ -231,7 +232,12 @@ export default function FileFlow({
     (next: Profile) => {
       const hit = EXTRACTABLE.filter((k) => !sameValue(profile[k], next[k])).map(String);
       if (hit.length) setFromDoc((prev) => [...new Set([...prev, ...hit])]);
-      onChange(next);
+      // A document that changes a confirmed field un-confirms it: the new value
+      // is the parser's reading, not the student's word, until they say so again.
+      const confirmed = { ...(next.confirmed ?? profile.confirmed ?? {}) };
+      for (const f of REQUIRED_CONFIRM_FIELDS) if (!sameValue(profile[f], next[f])) delete confirmed[f];
+      if (!sameValue(profile.schoolName, next.schoolName)) delete confirmed.institution;
+      onChange({ ...next, confirmed });
     },
     [onChange, profile],
   );
@@ -249,7 +255,8 @@ export default function FileFlow({
   const activities = profile.activities;
   /**
    * Structured rows are the student's view; `activitiesText` is what the AI
-   * prompt reads (src/lib/review.ts), so both move together.
+   * prompt reads (src/lib/audit/prompts.ts, via Review.tsx → panel.ts), so
+   * both move together.
    *
    * The guard matters: a student who pasted a block of activities and then
    * clicked "add" once had rows=[{blank}], which joins to "" — and that would
@@ -516,7 +523,11 @@ function StepRecord({ profile, set }: { profile: Profile; set: (p: Partial<Profi
         <SchoolSearch
           profile={profile}
           onChange={(p) =>
-            set({ schoolName: p.schoolName, institution: p.institution, caResident: p.caResident, igetc: p.igetc })
+            // Only a real pick confirms the institution. Clearing (×) rejects
+            // a name the parser read; it must not vouch for the parsed type.
+            p.schoolName
+              ? set({ schoolName: p.schoolName, institution: p.institution, caResident: p.caResident, igetc: p.igetc })
+              : set({ schoolName: null })
           }
         />
         <p className="ff-read-note">

@@ -4,12 +4,11 @@
 # can deploy to Vercel, Cloudflare Pages or Netlify, and each platform reads
 # only its own file. Full instructions are in NETLIFY.md.
 #
-# ⚠ BEFORE THE FIRST DEPLOY, read NETLIFY.md → "Two CSPs, and you must pick
-# one". Vite copies public/_headers into dist/, and Netlify reads a _headers
-# file in the publish directory as well as this file. That second file carries
-# a DIFFERENT Content-Security-Policy (it allows Supabase; the one below, taken
-# verbatim from vercel.json, does not). Shipping both is not a style problem —
-# it decides whether signed-in sync works.
+# Vite copies public/_headers into dist/, and Netlify reads a _headers file in
+# the publish directory as well as this file, so there are two copies of the
+# Content-Security-Policy on this host (and a third in vercel.json). They are
+# kept identical by tests/csp.test.ts, which fails the build on drift —
+# background in NETLIFY.md → "CSP". Edit all three together or not at all.
 
 [build]
   command = "npm run build"
@@ -25,6 +24,19 @@
   # lives OUTSIDE the functions directory. esbuild follows the import graph and
   # bundles it. Switch bundlers and that import is what breaks first.
   node_bundler = "esbuild"
+
+# ── Local dev ───────────────────────────────────────────────────────────────
+# `netlify dev` starts the framework server itself and waits for it on
+# targetPort. vite.config.ts now defaults to 5199 (the documented app port),
+# which may already be another checkout's server, so netlify dev's own Vite is
+# pinned to 5173 and never competes with 5199/5200. Day to day the app is used
+# from `npm run dev -- --port 5200`, which proxies /api here; the UI on 8888 is
+# a convenience only (and its React HMR is unreliable through the proxy).
+[dev]
+  command = "npm run dev -- --port 5173 --strictPort"
+  targetPort = 5173
+  port = 8888
+  autoLaunch = false
 
 # ── Routing ─────────────────────────────────────────────────────────────────
 # Order matters, and the rules in this file are evaluated before the ones in

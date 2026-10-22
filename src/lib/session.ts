@@ -32,9 +32,11 @@ export const PER_USER_KEYS = [
 ] as const;
 
 /** The keys holding the student's own material — the subset "Delete my data"
- *  clears while the login stays (session, owner stamp and API key are kept). */
+ *  clears while the login stays (session, owner stamp and API key are kept).
+ *  The cached panel report is material too: its notes quote the essay
+ *  verbatim, so a deletion that left it behind was no deletion. */
 export const USER_MATERIAL_KEYS = [
-  "tcm.profile.v1", "tcm.list.v1", "tcm.review.v1", "tcm.appdocs.v1",
+  "tcm.profile.v1", "tcm.list.v1", "tcm.review.v1", "tcm.appdocs.v1", "tcm.panel.v1",
 ] as const;
 
 const OWNER_KEY = "tcm.owner.v1";

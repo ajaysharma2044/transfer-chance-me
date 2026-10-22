@@ -9,8 +9,8 @@
 // the database consults for RLS — and caches the answer for a minute, keyed by
 // a hash of the token, so a 3-second poll loop is not a verification request
 // per poll. The cache means a token revoked server-side stays accepted here for
-// up to CACHE_TTL_MS; polls are read-only on the caller's own job, so that
-// window buys nothing an attacker wants.
+// up to CACHE_TTL_MS — for polls only, which are read-only on the caller's own
+// job. Starting a job passes `fresh: true` and always re-verifies.
 //
 // Env (server-side): SUPABASE_URL (falls back to VITE_SUPABASE_URL) and
 // VITE_SUPABASE_ANON_KEY — the public anon key is all /auth/v1/user needs; the
@@ -29,6 +29,10 @@ export interface AuthDeps {
   url?: string;
   anonKey?: string;
   now?: () => number;
+  /** Skip the cache and ask Supabase now. Used when starting a job — the path
+   *  that spends money — so a revoked token cannot ride the cache window;
+   *  read-only polls keep using it. */
+  fresh?: boolean;
 }
 
 const CACHE_TTL_MS = 60_000;
@@ -54,7 +58,7 @@ export async function requireUser(req: Request, deps: AuthDeps = {}): Promise<Au
 
   const now = deps.now?.() ?? Date.now();
   const key = createHash("sha256").update(token).digest("hex");
-  const hit = cache.get(key);
+  const hit = deps.fresh ? undefined : cache.get(key);
   if (hit && hit.until > now) return { ok: true, caller: hit.caller };
 
   let res: Response;

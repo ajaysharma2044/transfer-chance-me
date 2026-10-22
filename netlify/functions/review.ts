@@ -38,8 +38,10 @@ import {
 
 export const config = { path: "/api/review" };
 
-/** Transport cap: three 20k-character texts, a course list, JSON-escaped. */
-const MAX_BODY_BYTES = 256 * 1024;
+/** Transport cap, sized from the schema rather than a prose guess: a lead
+ *  request carries three LIMITS.longText texts, the course list and four full
+ *  specialist reports, and JSON-escaping non-Latin text can triple bytes. */
+const MAX_BODY_BYTES = 1024 * 1024;
 
 /* ── Rate limiting ──────────────────────────────────────────────────────────
  * Starting a section is the path that spends money, so it is counted in
@@ -54,7 +56,9 @@ const MAX_BODY_BYTES = 256 * 1024;
  * this endpoint's store traffic to guard a request that costs nothing.
  */
 const START_MAX_PER_USER = 12;
-const START_MAX_PER_IP = 30;
+/** Loose on purpose: a community-college lab or campus Wi-Fi is one IP, and a
+ *  panel run is five starts. The per-user cap is the real one. */
+const START_MAX_PER_IP = 150;
 const START_WINDOW_SEC = 60;
 const POLL_MAX = 300;
 const POLL_WINDOW_SEC = 60;
@@ -112,6 +116,10 @@ function corsHeaders(req: Request): Headers | null {
   });
   const origin = req.headers.get("origin");
   if (!origin) return headers;
+  // Browsers send Origin on same-origin POSTs too. The site's own origin —
+  // whichever hostname it is being served on (custom domain, *.netlify.app,
+  // a deploy preview) — never needs listing.
+  if (normalizeOrigin(origin) === normalizeOrigin(new URL(req.url).origin)) return headers;
   const allowed = (process.env.ALLOWED_ORIGIN ?? "").split(",").map(normalizeOrigin).filter(Boolean);
   if (allowed.length === 0) return headers;
   if (!allowed.includes(normalizeOrigin(origin))) return null;
@@ -166,11 +174,20 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: "The review service is not configured on this deployment." }, 503, cors);
   }
 
-  const who = await requireUser(req);
+  // Cheap checks before the one that costs a Supabase round trip, so an
+  // unauthenticated loop cannot drive unbounded /auth/v1/user traffic.
+  const ip = clientIp(req);
+  if (!allowInMemory(`review:start:${ip}`, START_MAX_PER_IP, START_WINDOW_SEC)) {
+    const headers = new Headers(cors);
+    headers.set("Retry-After", String(START_WINDOW_SEC));
+    return json({ error: "Too many reviews at once — wait a minute and try again." }, 429, headers);
+  }
+
+  // Starting a job spends money: verify the session now, never from the cache.
+  const who = await requireUser(req, { fresh: true });
   if (!who.ok) return json({ error: who.error }, who.status, cors);
   const uid = who.caller.uid;
 
-  const ip = clientIp(req);
   const underUser = await bump(`start:user:${uid}`, START_MAX_PER_USER, START_WINDOW_SEC);
   const underIp = await bump(`start:ip:${ip}`, START_MAX_PER_IP, START_WINDOW_SEC);
   if (!underUser || !underIp) {
@@ -194,6 +211,9 @@ export default async function handler(req: Request): Promise<Response> {
     await putRequest(jobId, { req: audit, uid });
     await putJob(jobId, { status: "pending", started: Date.now(), uid });
   } catch {
+    // The request record holds the applicant's writing: never leave it behind
+    // without a job to consume it.
+    await dropJob(jobId).catch(() => {});
     return json({ error: "Could not queue the review — try again." }, 502, cors);
   }
 
@@ -241,10 +261,15 @@ export default async function handler(req: Request): Promise<Response> {
  * GET /api/review?job=<uuid>
  *
  * 200 {"status":"pending"}                            still running
- * 200 {"status":"done","result":{kind,section}}       the validated section
- * 200 {"status":"error","error":"…"}                  the run failed; safe to show
+ * 200 {"status":"done","result":{kind,section}}       the validated section — delivered ONCE
+ * 200 {"status":"error","error":"…"}                  the run failed; safe to show — delivered ONCE
  * 401                                                 no / expired session
- * 404 {"error":"…"}                                   unknown, expired, or not this user's job
+ * 404 {"error":"…"}                                   unknown, expired, already delivered, or not this user's job
+ * 429 / 503 (+ Retry-After)                           rate-limited / sign-in check unavailable: poll again
+ *
+ * Delivery is one-shot: a finished section quotes the student's essay, and the
+ * browser persists it the moment it arrives, so the store copy is deleted on
+ * the read that hands it over rather than kept for an hour "just in case".
  */
 async function poll(req: Request, cors: Headers): Promise<Response> {
   const jobId = new URL(req.url).searchParams.get("job") ?? "";
@@ -257,17 +282,24 @@ async function poll(req: Request, cors: Headers): Promise<Response> {
   }
 
   const who = await requireUser(req);
-  if (!who.ok) return json({ error: who.error }, who.status, cors);
+  if (!who.ok) {
+    const headers = new Headers(cors);
+    if (who.status === 503) headers.set("Retry-After", "5"); // the job is still running; come back
+    return json({ error: who.error }, who.status, headers);
+  }
 
   let state;
   try {
     state = await getJob(jobId);
   } catch {
-    return json({ error: "Could not reach the review store — try again." }, 502, cors);
+    const headers = new Headers(cors);
+    headers.set("Retry-After", "5");
+    return json({ error: "Could not reach the review store — try again." }, 502, headers);
   }
   // Absent, expired, and someone else's are the same answer: nothing to see.
   if (!state || state.uid !== who.caller.uid) {
     return json({ error: "That review has expired or was never started." }, 404, cors);
   }
+  if (state.status !== "pending") await dropJob(jobId).catch(() => {});
   return json(clientView(state), 200, cors);
 }
