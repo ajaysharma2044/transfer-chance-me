@@ -264,7 +264,19 @@ export interface Profile {
    */
   highSchool: string;
   hsGradYear: number | null;
+  /**
+   * Which required fields the student has explicitly confirmed — by editing
+   * them, or by the one-click review action. Readiness is confirmation, never
+   * "differs from the default": 3.8 / cs / junior ARE the defaults and must be
+   * confirmable as real values. Extraction fills values but never confirms
+   * them. See src/lib/profile.ts.
+   */
+  confirmed: Confirmed;
 }
+
+/** The fields a usable profile must have confirmed (docs/spec.md §4). */
+export type ConfirmField = "gpa" | "institution" | "standing" | "major";
+export type Confirmed = Partial<Record<ConfirmField, true>>;
 
 export const DEFAULT_PROFILE: Profile = {
   gpa: 3.8,
@@ -297,6 +309,7 @@ export const DEFAULT_PROFILE: Profile = {
   awardsText: "",
   highSchool: "",
   hsGradYear: null,
+  confirmed: {},
 };
 
 export interface Driver {

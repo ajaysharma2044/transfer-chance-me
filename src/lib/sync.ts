@@ -18,7 +18,7 @@ export type DocKind = "transcript" | "essay" | "statement" | "activities" | "awa
 
 export interface CloudState {
   profile: Profile | null;
-  schools: Record<string, { status: string; notes: string }> | null;
+  schools: Record<string, { status: string; notes: string; included?: boolean }> | null;
 }
 
 /** The signed-in user's id, or null. Every write below is scoped to it. */
@@ -37,7 +37,7 @@ export async function syncReady(): Promise<boolean> {
 
 export async function pushProfile(
   profile: Profile,
-  schools?: Record<string, { status: string; notes: string }>,
+  schools?: Record<string, { status: string; notes: string; included?: boolean }>,
 ): Promise<void> {
   const id = await uid();
   if (!id || !supabase) return;
@@ -57,7 +57,7 @@ export async function pushProfile(
  * App with a possibly-staler copy of the profile.
  */
 export async function pushSchools(
-  schools: Record<string, { status: string; notes: string }>,
+  schools: Record<string, { status: string; notes: string; included?: boolean }>,
 ): Promise<void> {
   const id = await uid();
   if (!id || !supabase) return;
