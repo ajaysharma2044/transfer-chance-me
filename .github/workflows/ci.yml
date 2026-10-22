@@ -1,0 +1,49 @@
+# The same gate as `npm run verify` locally: clean install, build (tsc -b +
+# vite), the test suite, the Netlify functions typecheck, lint.
+#
+# No secrets are needed or provided. The build runs unconfigured (no VITE_*
+# vars), which is also what tests/no-secrets-in-bundle.test.ts expects, and
+# the suite talks to no network: Supabase and the model provider are faked
+# in-process. Keep it that way — a CI job that needs a key is a job that can
+# leak one.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Clean install (lockfile is the contract)
+        run: npm ci
+
+      - name: Build, test, typecheck functions, lint
+        run: npm run verify
+        env:
+          CI: "true"
+
+      - name: No secrets in the bundle
+        # Belt and braces over the vitest check: fail on anything key-shaped.
+        run: |
+          if grep -rEl 'sk-ant-[A-Za-z0-9_-]{8,}|sk-or-v1-[A-Za-z0-9]{8,}|service_role' dist/assets; then
+            echo "key-shaped string found in dist/assets" >&2; exit 1
+          fi

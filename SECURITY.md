@@ -4,7 +4,7 @@ Audited: 2026-08-15. Scope: full repo (Vite + React + TS static app, hash-routed
 
 ## Verdict summary
 
-1. **The scariest asset in the app is the user's Anthropic API key in `localStorage`** (`tcm.apikey.v1`, set in `src/lib/review.ts`). There is no XSS today so it is not currently exfiltratable, but any future XSS or malicious browser extension gets it. The proxy in `api/review.ts` (see DEPLOY.md) removes browser-held keys entirely — deploy it.
+1. **The scariest asset in the app is the user's Anthropic API key in `localStorage`** (`tcm.apikey.v1`, set in `src/lib/review.ts`). There is no XSS today so it is not currently exfiltratable, but any future XSS or malicious browser extension gets it. The proxy in `netlify/functions/review.ts` (see NETLIFY.md) removes browser-held keys entirely — deploy it.
 2. **No XSS surface found** — zero `dangerouslySetInnerHTML` / `innerHTML` / `eval`; all user text and all LLM output render through React text nodes, which auto-escape. **OK.**
 3. **App dependencies audit clean (0 vulnerabilities).** 10 advisories (7 high) exist only in `@vercel/node`'s dev-only transitive deps (`undici` ≤6.27.0, `smol-toml`) added for the backend work; they never ship to the browser bundle and Vercel's production runtime does not use this local-emulation chain. Low priority, track upstream.
 4. **`.gitignore` did not cover `.env`** (only `*.local`). Fixed in this audit: `.env*` is now ignored, `.env.example` stays tracked. No real secrets were ever committed (see item 1 below).
@@ -43,7 +43,8 @@ Audited: 2026-08-15. Scope: full repo (Vite + React + TS static app, hash-routed
 |---|---|---|---|
 | `tcm.profile.v1` | `App.tsx` | GPA, school, major, courses, essay text, doc names | Personal-academic; moderate |
 | `tcm.appdocs.v1` | `components/Review.tsx` | Personal statement + activities drafts | Personal; moderate |
-| `tcm.review.v1` | `lib/review.ts` | Last AI review report | Derived from the above; moderate |
+| `tcm.panel.v1` | `lib/panel.ts` | Last AI panel report | Derived from the above; moderate |
+| `tcm.review.v1` | (legacy, no longer written) | Last single-shot review | Still cleared on logout / delete-my-data |
 | `tcm.apikey.v1` | `lib/review.ts` | **Anthropic API key (plaintext)** | **High** — spendable credential; removed entirely in proxy mode |
 | `tcm.users.v1` | `lib/auth.ts` | Local accounts: name, email, SHA-256(email-salted) password hash | Moderate — offline-crackable hashes; users may reuse passwords |
 | `tcm.session.v1` | `lib/auth.ts` | Current session email + name | Low |
@@ -61,7 +62,7 @@ Audited: 2026-08-15. Scope: full repo (Vite + React + TS static app, hash-routed
 
 ## Items that need a backend (summarized)
 
-- Server-held Anthropic key + rate limiting → **written, ready to deploy: `api/review.ts`** (see DEPLOY.md).
+- Server-held model key, session-authenticated and ledger-gated → **written: `netlify/functions/review.ts` + `review-background.ts`** (see NETLIFY.md). The earlier Vercel/Cloudflare `review` handlers were retired.
 - Opt-in dataset contributions with consent gate + PII scrub → **written: `api/contribute.ts`** (must not be wired to UI until privacy copy is updated — see DEPLOY.md "Data & consent").
 - Real accounts (password KDF, sessions), real waitlist storage, Google ID-token verification.
 - Security headers/CSP → **written: `vercel.json`** (a static host must send these; they cannot be set client-side).

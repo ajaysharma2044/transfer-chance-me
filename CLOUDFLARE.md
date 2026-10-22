@@ -1,12 +1,16 @@
 # Deploying Transfer Chance Me to Cloudflare Pages
 
-This replaces the Vercel path in `DEPLOY.md`. Same app, same API contracts — the
-two serverless handlers in `api/*.ts` are re-implemented as Cloudflare Pages
-Functions in `functions/api/*.ts`, and the security headers move from
-`vercel.json` into `public/_headers`.
+This replaces the Vercel path in `DEPLOY.md` for the static app and the
+contribution endpoint, and the security headers move from `vercel.json` into
+`public/_headers`.
 
-**Nothing in `src/` has to change to deploy on Cloudflare.** `src/lib/review.ts`
-still POSTs `{ prompt }` to `/api/review` and still reads `data.content[0].text`.
+**The deep-audit proxy is not on Cloudflare.** `/api/review` lives in
+`netlify/functions/` (see `NETLIFY.md`): it needs a background function with a
+15-minute budget, a job store with a conditional write, and Supabase-session
+authentication. The old `functions/api/review.ts` — one prompt, one reply, with
+the model asked to set per-school odds — was retired with the typed audit
+contract (`docs/spec.md` §5). On Cloudflare the app runs in **browser-key
+mode**; leave `VITE_REVIEW_ENDPOINT` unset.
 
 ---
 
@@ -15,7 +19,6 @@ still POSTs `{ prompt }` to `/api/review` and still reads `data.content[0].text`
 | Piece | Where it runs | Source |
 |---|---|---|
 | The React SPA | Cloudflare's CDN, static | `dist/` (built by `npm run build`) |
-| `POST /api/review` | Cloudflare Worker, on demand | `functions/api/review.ts` |
 | `POST /api/contribute` | Cloudflare Worker, on demand | `functions/api/contribute.ts` |
 | CSP + security headers | Cloudflare's CDN | `public/_headers` → `dist/_headers` |
 | SPA fallback | Cloudflare's CDN | `public/_redirects` → `dist/_redirects` |
@@ -37,7 +40,6 @@ Create these (contents supplied alongside this document):
 
 ```
 functions/api/_shared.ts          CORS, rate limit, body cap, env types
-functions/api/review.ts           POST /api/review
 functions/api/contribute.ts       POST /api/contribute
 public/_headers                   CSP + security + cache headers
 public/_redirects                 SPA fallback
@@ -46,7 +48,7 @@ wrangler.toml                     local dev + optional bindings
 scripts/check-bundle-secrets.sh   post-build secret leak check
 ```
 
-`functions/api/_shared.ts` is imported by the other two and is **not** an HTTP
+`functions/api/_shared.ts` is imported by `contribute.ts` and is **not** an HTTP
 route: Cloudflare only creates a route for a module that exports an `onRequest*`
 handler, and `_shared.ts` exports none.
 
@@ -121,7 +123,7 @@ via the `Env` binding.
 | Name | Type | Value | Notes |
 |---|---|---|---|
 | `NODE_VERSION` | Text | `22` | Build toolchain only |
-| `VITE_REVIEW_ENDPOINT` | Text | `/api/review` | Switches the app into proxy mode. Omit to stay in browser-key mode. |
+| `VITE_REVIEW_ENDPOINT` | — | leave unset | Proxy mode needs the Netlify functions (`NETLIFY.md`); this host has no `/api/review`. |
 | `VITE_GOOGLE_CLIENT_ID` | Text | `…apps.googleusercontent.com` | Public by design (OAuth client IDs are) |
 | `VITE_SUPABASE_URL` | Text | `https://<ref>.supabase.co` | Public |
 | `VITE_SUPABASE_ANON_KEY` | Text | `eyJ…` | Public **by design** — it is safe only because Row Level Security is on. Ship it with RLS enabled on every table. |
@@ -130,8 +132,7 @@ via the `Env` binding.
 
 | Name | Type | Value | Required for |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | **Secret** | `sk-ant-…` | `/api/review` |
-| `ALLOWED_ORIGIN` | Text | `https://transfer-chance-me.pages.dev` | both endpoints |
+| `ALLOWED_ORIGIN` | Text | `https://transfer-chance-me.pages.dev` | `/api/contribute` |
 | `SUPABASE_URL` | Text | `https://<ref>.supabase.co` | `/api/contribute` |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Secret** | `eyJ…` | `/api/contribute` |
 | `UPSTASH_REDIS_REST_URL` | Text | optional | legacy contribution store |
@@ -159,24 +160,15 @@ unset there.
 
 ---
 
-## 5. Turn on proxy mode (optional but recommended)
+## 5. Proxy mode is Netlify-only
 
-Setting `VITE_REVIEW_ENDPOINT=/api/review` moves the Anthropic key off your
-visitors' machines and onto your server. Two things follow from that, and neither
-is optional:
-
-- **The UI still asks for a key.** `src/components/Review.tsx` shows the "One-time
-  setup: your AI key" card and disables the Run button until a key is saved.
-  `src/lib/review.ts` already exports `proxyMode` for exactly this: change the
-  gate to `disabled={busy || (!proxyMode && !key)}` and wrap the key card in
-  `{!proxyMode && !key && …}`. See `DEPLOY.md` step 10.
-- **Several on-page promises become false.** The Review page says materials go
-  "never to us" and there is "no middleman server". In proxy mode they pass
-  through your Worker. `DEPLOY.md` §4 has the exact file/line table. The
-  PDF-parsing promises stay true (parsing is still client-side; only the
-  assembled prompt is sent) — reword them precisely rather than deleting them.
-  `functions/api/review.ts` stores nothing and logs nothing; keep it that way and
-  the corrected wording stays honest.
+Moving the model key off visitors' machines means running the deep audit on
+the server, and that path (`netlify/functions/review.ts` +
+`review-background.ts`) depends on a background function, Netlify Blobs and a
+verified Supabase session. There is no Cloudflare port. If proxy mode is the
+product, deploy on Netlify; a Cloudflare deployment stays in browser-key mode,
+and the Review page's wording follows `proxyMode` automatically
+(`src/lib/privacy.ts`, pinned by `tests/privacy-copy.test.ts`).
 
 ---
 
@@ -259,20 +251,18 @@ Replace `<host>` with your Pages URL.
 # 1. Security headers are present (proves _headers landed in dist/, not the root)
 curl -sI https://<host>/ | grep -i 'content-security-policy'
 
-# 2. Proxy works end to end -> JSON containing content[0].text
-curl -s -X POST https://<host>/api/review \
-  -H 'content-type: application/json' \
-  -d '{"prompt":"Say ok."}'
+# 2. There is no review proxy here -> the SPA fallback answers (see §12.7)
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://<host>/api/review
 
 # 3. A disallowed origin is refused -> 403
-curl -s -o /dev/null -w '%{http_code}\n' -X POST https://<host>/api/review \
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://<host>/api/contribute \
   -H 'content-type: application/json' -H 'origin: https://evil.example' \
-  -d '{"prompt":"x"}'
+  -d '{"profile":{},"materials":{}}'
 
 # 4. Rate limit trips -> a 429 within the first several calls
 for i in $(seq 1 8); do
-  curl -s -o /dev/null -w '%{http_code} ' -X POST https://<host>/api/review \
-    -H 'content-type: application/json' -d '{"prompt":"Say ok."}'
+  curl -s -o /dev/null -w '%{http_code} ' -X POST https://<host>/api/contribute \
+    -H 'content-type: application/json' -d '{"profile":{},"materials":{}}'
 done; echo
 
 # 5. Contribute refuses without consent -> 403
@@ -391,23 +381,18 @@ hosts will answer the same request differently.
 
 ## 12. Caveats you should know before launch
 
-1. **Long reviews may hit Cloudflare's edge timeout.** A 6000-token review can
-   take 60–90 seconds, and Cloudflare gives up on a request that has produced no
-   response in roughly 100 seconds (HTTP 524). The Function aborts upstream at 85
-   seconds and returns its own readable 504 first, so you get a real error rather
-   than a Cloudflare error page — but if timeouts show up in practice, the fix is
-   to stream: ask Anthropic for `stream: true`, pass the SSE through, and
-   accumulate in `src/lib/review.ts`. That is a client change, so it is out of
-   scope here, but it is the actual solution. Lowering `MAX_TOKENS` buys time
-   cheaply in the meantime. *(The Vercel path had the same problem, worse — Hobby
-   functions cap at 10s.)*
+1. **Long model calls do not fit a Cloudflare Pages Function.** A review
+   section can take a minute or two, and Cloudflare gives up on a request that
+   has produced no response in roughly 100 seconds (HTTP 524). This is one of
+   the reasons the deep audit runs on Netlify's background functions instead
+   (`NETLIFY.md`), with the result arriving by polling.
 
 2. **The origin allow-list is not authentication.** CORS is enforced by browsers.
    `curl` can omit or forge `Origin` at will, so `ALLOWED_ORIGIN` raises the bar
    against your endpoint being embedded on someone else's site; it does not stop
-   a determined person spending your Anthropic credit. The real controls are the
-   WAF rule in step 7 and, best, requiring a verified Supabase session JWT in
-   `functions/api/review.ts` once Supabase auth is live.
+   a determined caller. The real controls are the WAF rule in step 7 and, for
+   the paid endpoint, the verified Supabase session the Netlify review function
+   requires (`netlify/functions/_auth.ts`).
 
 3. **Free-plan limits.** Cloudflare Pages Functions on the free plan allow
    100,000 invocations/day, and each invocation has a CPU-time budget (waiting on
@@ -416,10 +401,11 @@ hosts will answer the same request differently.
    here. If you ever see error 1102, lower `MAX_BODY_BYTES` in `contribute.ts` or
    move to the paid plan.
 
-4. **The model is pinned in two places.** `functions/api/review.ts` and
-   `src/lib/review.ts` both name `claude-sonnet-5`. Change both together or proxy
-   mode and browser-key mode will silently produce different results at different
-   cost.
+4. **The model is pinned in two places.** `netlify/functions/review-background.ts`
+   (server, `OPENROUTER_MODEL` or Anthropic `claude-sonnet-5`) and
+   `src/lib/audit/client.ts` (browser-key mode, `claude-sonnet-5`). Change them
+   together or proxy mode and browser-key mode will silently produce different
+   results at different cost.
 
 5. **Supabase custom domains bypass the CSP.** `https://*.supabase.co` does not
    match a custom Supabase domain. If you configure one, add it to `connect-src`

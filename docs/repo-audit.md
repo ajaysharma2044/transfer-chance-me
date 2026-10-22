@@ -37,13 +37,13 @@ Legend: ✅ fixed on branch · 🟡 partially fixed / fixed to a weaker standard
 
 | Finding (brief §2) | Current status | Evidence / file refs |
 |---|---|---|
-| Profile gate: 3.8 / CS locked out by default-value comparison | 🟡 | Lockout removed — `src/lib/profile.ts` checks presence/validity (`26a16bb`). **Still open:** "defaults never count" / per-field confirmation — an untouched default profile reads Ready. Stage A |
-| Target list split (tracker vs Review's own targets, Cornell/UCLA/Michigan default) | ⬜ | `Review.tsx:38-39` seeds `["Cornell","UCLA","Michigan"]`; tracker is `tcm.list.v1` in `Audit.tsx:23`/`Portal.tsx:54`. (Checked: tracker is an array in both readers — no array/object mismatch.) Stage A |
-| Actual AI entry point is `panel.ts`, not `runReview` | ✔ | `Review.tsx:6,93` → `runPanel` |
-| Panel transport ignores Netlify 202/poll → empty text | ⬜ | `panel.ts:192-227` `callModel` returns `data.content?.[0]?.text ?? ""`; a `202 {status,jobId}` body yields `""`. Stage B |
-| Worker validator requires legacy full shape | ⬜ | `review-background.ts:196` → `validateReview` (`api/_guard.ts:245`) demands grade/summary/strengths/risks/actions/perSchool(+chance); specialist `{grade,headline,notes,actions,missing}` and lead `{grade,summary,strengths,risks,priorities}` both fail → every panel job errors on Netlify. Stage B |
-| Job authorization: UUID is the only capability | ⬜ | `review.ts:243` mints UUID; `poll()` checks regex only; worker dispatch is an unauthenticated HTTP POST with `{jobId}` (`review.ts:261`). Stage B/C |
-| Job concurrency: non-atomic claim/counters | ⬜ | `_jobs.ts:71-78` `takePrompt` read-then-delete; `bump()` read-modify-write (documented as not exact). Also **TTL mismatch**: `review.ts` advertises `expiresInMs` from `JOB_TTL_SEC=900`, `_jobs.ts` stores with `JOB_TTL_SEC=3600`. Stage C |
+| Profile gate: 3.8 / CS locked out by default-value comparison | ✅ | Per-field explicit confirmation: `Profile.confirmed`, `profileReadiness()` (`src/lib/profile.ts`); defaults never count, extraction never confirms, editing a field confirms only that field, "These are correct" confirms all. Browser-verified 2026-10-17 (`tests/profile-readiness.test.ts`) |
+| Target list split (tracker vs Review's own targets, Cornell/UCLA/Michigan default) | ✅ | One shared list `src/lib/targets.ts` (`tcm.list.v1`, `included` scope ≤ `MAX_INCLUDED_TARGETS` from `config/product.ts`); Review seeds nothing and sends exactly the displayed targets (`tests/targets.test.ts`, `tests/panel-client.test.ts`) |
+| Actual AI entry point is `panel.ts`, not `runReview` | ✅ | `runReview`/`buildPrompt`/`loadLastReview` removed; `src/lib/review.ts` keeps mode + key only |
+| Panel transport ignores Netlify 202/poll → empty text | ✅ | `src/lib/audit/client.ts` `proxyTransport`: POST typed request → 202 → poll until done/error/expiry, Supabase bearer on every call; E2E ×2 under `netlify dev` 2026-10-22 |
+| Worker validator requires legacy full shape | ✅ | `validateSection(kind)` in `src/lib/audit/schema.ts`, shared by worker, browser and tests; `validateReview` deleted (`tests/audit-schema.test.ts`) |
+| Job authorization: UUID is the only capability | ✅ | `netlify/functions/_auth.ts` verifies the session against Supabase `/auth/v1/user`; jobs carry the uid; poll is owner-only (404 otherwise); worker still accepts only a job id and now claims it atomically |
+| Job concurrency: non-atomic claim/counters | ✅ claim · ✔ counters | `claimJob()` = Blobs conditional write (`onlyIfNew`), one run per job; TTLs unified in `_jobs.ts` (`PENDING_DEADLINE_MS` advertised, `JOB_TTL_SEC` stored). `bump()` is still read-modify-write and documented as unfit for a paid quota |
 | Persistence: localStorage caches, swallowed sync errors, no history | 🟡 | Account-switch leak and delete-resurrection fixed (`session.ts`, `accountData.ts`; `9afa3d6`, `9376793`). No versioned report history; `pushDoc` still appends a new row every run (`Review.tsx:86-91`). Stage C |
 | Authentication: Supabase + local fallback | 🟡 | Live login + session persistence verified in a real browser 2026-10-07 (test account, deleted after). Local-account fallback still exists; "require by configuration" and the no-bring-your-own-key rule are open. Stage C |
 | Hosting mismatch: account deletion/admin are Vercel-only | ⬜ | `api/account/*`, `api/admin/*`; `netlify.toml` publishes only review/contribute. Stage C |
@@ -51,24 +51,27 @@ Legend: ✅ fixed on branch · 🟡 partially fixed / fixed to a weaker standard
 | Billing: $9/$49 placeholders, device-only waitlist, no Stripe | ⬜ | `Pricing.tsx` (`tcm.waitlist.v1`, "Plus plan, coming soon"). Stage H |
 | Uploads: PDF/TXT only, 6 files, 20 MB | ⬜ | `ImportPanel.tsx:21,35,90`. Stage D |
 | Upload integrity (direct apply, saved as transcript) | ⬜ | `ImportPanel.tsx:40-45`. Stage D |
-| Privacy wording | 🟡 | Components fixed with a single source of truth + guard tests (`src/lib/privacy.ts`, `c686c01`): Results gate, ImportPanel, EssayPanel, Landing FAQ now disclose sync **and** the AI-review upload. **README** still to be aligned. |
+| Privacy wording | ✅ | Components fixed with a single source of truth + guard tests (`src/lib/privacy.ts`, `c686c01`); README aligned 2026-10-22 (signed-in vs signed-out, the AI audit path) and its "near-zero weight on extracurriculars" line replaced by the pattern-beats-prestige finding |
 | Probability: missing non-UC GPA → invented 3.95 "observed" median | 🟡 | Fixed to a better standard (`9805658`): observed corpus percentiles via `admitSignature` first; fallback is rate-scaled and **labelled "estimated"**, never "observed"; regression tests (Sac State 3.04 CS 17.7%→58.9%, Cleveland 17.3%→85.0%, selective unchanged). **This brief's bar is stricter** — unknown must stay unknown, no distribution from selectivity — so the rate-scaled fallback is to be replaced by readiness/selectivity tiers + official rate in Stage E |
 | TAG returns 95% "guarantee" from a subset of checks | ⬜ | `engine.ts:428-445`. Stage E |
-| Model may adjust numeric odds | 🟡 | **Primary path (`panel.ts`) does not** — `oddsLine` is context only, output schemas carry no odds. The legacy `review.ts` prompt (`perSchool[].chance`) and `checkChance` remain; retire with the legacy path in Stage B |
+| Model may adjust numeric odds | ✅ | The only AI path is the panel: prompts carry the engine's odds as context, no output schema has an odds field (`tests/audit-prompts.test.ts`). The legacy `perSchool[].chance` prompt, `checkChance` and the Vercel/Cloudflare review handlers are deleted |
 | Corpus: 8,910 / 4,243 are artifact metadata | ✔ open | `model.json.meta`; raw reconciliation not yet done — now possible, `DATA_DIR` is present (`t25_applicants.csv` is 8,918 rows per spec_v3). Stage F |
 | Comparables: 856 people / 2,158 entries / 96 schools; fields `a,d,f,g,i,m,y` | ✔ | matches `similar.json.meta` and `src/lib/similar.ts` |
 | Model coverage 208 / 177 / 21 / 14 | ✔ (208, 177 recounted; 21/14 as reported) | `MODEL.schools.length === 208` asserted in tests |
 | Reproducibility: `../data/processed` absent; `scripts/fit_admit_model.py` absent | ✔ open | relative path fails from a worktree (data exists at `DATA_DIR`); fit script is not in the tree — `fitted_model.json` cannot be regenerated from the repo. Stage F |
 | Tests don't prove integrated panel/RLS/billing/deploy | ✔ | still true; E2E is Stage I |
 | Cold-run test failure = deterministic missing `dist` | ✅ | `no-secrets-in-bundle.test.ts` now builds on demand when `dist/` is absent (`807362b`); the brief's own reading ("not intermittent") matches |
-| Lint warning `Portal.tsx:1271` | ⬜ | present; fix when Portal is touched (Stage A shared targets) |
+| Lint warning `Portal.tsx:1271` | ✅ | `useMemo` for `listed`; lint clean |
 | Bundle ~1,149 kB / 356 kB gzip | ✔ corrected | see §1 — that is the unconfigured build; production-equivalent is 1,372 kB / 414 kB gzip |
 
 ## 3. Additional defects reproduced on the current branch this session
-- **Review spends outside the ledger.** `review-background.ts` calls OpenRouter/Anthropic directly and never touches `netlify/functions/_llm.ts`/`_ledger.ts` (built 2026-10-07, 10 tests). Until Stage B routes it through, the worker is unmetered — which is why `VITE_REVIEW_ENDPOINT` has deliberately been left unset locally.
-- **Browser-key mode is the live default.** With `VITE_REVIEW_ENDPOINT` unset, `Review.tsx:130-157` asks the visitor for their own `sk-ant-` key (the behaviour the brief forbids for customers). Stage B/C.
+- **Review spends outside the ledger.** ✅ Fixed — the worker calls the model only through `_llm.callModel` (reserve → dispatch → settle; five calls of a run share a `group`). The first live run then exposed that the ledger's JSON-snapshot persistence **lost entries under parallel workers** (three successful calls failed as "no entry to settle"); it is now an append-only event log (`ledger.jsonl`, `tests/ledger-log.test.ts`).
+- **Hidden reasoning blew the output cap.** Reproduced 2026-10-22: the first specialist reply stopped at exactly 4,000 output tokens (truncated JSON → retry). Fixed: `reasoning: { enabled: false }` on OpenRouter calls, `SECTION_MAX_TOKENS` 8,000/6,000, real price for `qwen/qwen3.7-plus` in `config/budgets.ts`.
+- **D1, in-memory half.** Reproduced 2026-10-22: after a sign-in that reset storage, Portal's React state still held the previous account's list and persisted it back (and pushed it) under the new account. Fixed: the clears broadcast `USER_DATA_CLEARED_EVENT`; Portal and Review reload from storage (`tests/user-data-cleared.test.ts`).
+- **Browser-key mode is the live default locally** only when `VITE_REVIEW_ENDPOINT` is unset; the Netlify project injects it, so production is proxy mode. Stage C decides whether bring-your-own-key survives at all.
 - **Dual CSP.** `netlify.toml` and `public/_headers` both set `Content-Security-Policy` and differ (Supabase hosts); Netlify applies both. Not yet reconciled (spec_v3 Step 8).
 - **`deno.lock`** is emitted by `netlify dev` (Deno edge tooling); now gitignored.
+- **netlify-cli in a git worktree** resolves the repository root to the main checkout and silently bundles its stale functions; `dev:full` now passes `--cwd` from outside the directory (NETLIFY.md).
 
 ## 4. Active host and deployment state
 - Declared target: **Netlify** (`netlify.toml`, functions `review`, `review-background`, `_jobs`, `contribute`). Vercel (`api/`, `vercel.json`) and Cloudflare (`functions/`, `wrangler.toml`) code coexist.
@@ -82,11 +85,11 @@ Present at `DATA_DIR`: `processed/{t25,analysis,context,shards}`, `outcomes.csv`
 Whether any Netlify site/plan exists (background functions may need a paid plan); whether the owner's `intel.json`/`playbook.json` claims are substantiated; the authority line ("multiple Ivies"); owner display/retention policy; whether the Supabase project will stay unpaused during multi-day work.
 
 ## 7. Launch blockers, in dependency order
-1. **AI path is broken on Netlify** (202 ignored + validator mismatch) and unmetered — Stage B.
-2. **No job ownership/auth**; non-atomic claims; TTL mismatch — Stage B/C.
+1. ~~AI path broken on Netlify and unmetered~~ ✅ Stage B (verified locally). **Open successor:** the spend ledger is a local file — in production `reserve()` cannot write and every audit fails safe; the `spend_ledger` table (Supabase, atomic) is required before the deep audit can run on a deploy — Stage C.
+2. ~~No job ownership/auth; non-atomic claims; TTL mismatch~~ ✅ Stage B.
 3. **Account deletion and admin not deployable on Netlify** — Stage C.
-4. Profile readiness (defaults count) and the split target list — Stage A.
-5. TAG 95% and the remaining estimated-median fallback; legacy model-set odds — Stage E / B.
+4. ~~Profile readiness and the split target list~~ ✅ Stage A.
+5. TAG 95% and the remaining estimated-median fallback — Stage E (model-set odds ✅ retired).
 6. Uploads limited to PDF/TXT; no confirmation screen — Stage D.
 7. No billing/entitlements; placeholder pricing — Stage H.
 8. Dual CSP; 414 kB gzip initial route — Stage I.

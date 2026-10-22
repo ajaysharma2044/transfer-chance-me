@@ -1,127 +1,136 @@
 # Deploying to Netlify
 
-Read this before deploying. One hard constraint shapes the whole design.
-
+Netlify is the host for the whole product: the static app **and** the deep-audit
+proxy. (Vercel and Cloudflare can serve the static app and `/api/contribute`
+only — see `DEPLOY.md` / `CLOUDFLARE.md`.) Read this before deploying; two
+constraints shape the design and one blocker still stands.
 
 ---
 
-## The constraint: a review takes ~104 seconds
+## The contract: structured request → 202 → poll (docs/spec.md §5)
 
-Measured this session against the live backend, not estimated:
+The browser never sends a prompt. `src/lib/panel.ts` builds a typed
+`AuditRequest` (`src/lib/audit/schema.ts`) per section — four specialists in
+parallel, then the lead with their reports — and the server authors the brief:
 
-| | prompt tokens | output tokens | wall time | cost |
+```
+POST /api/review            netlify/functions/review.ts
+                            verifies the Supabase session (Authorization: Bearer),
+                            parses the AuditRequest (size caps, ≤ MAX_INCLUDED_TARGETS),
+                            stores it under the caller's uid, fires the worker,
+                            answers 202 { status, jobId, pollAfterMs, expiresInMs }
+        (worker)            netlify/functions/review-background.ts
+                            claims the job (Blobs conditional write — one run per job),
+                            builds the prompt (src/lib/audit/prompts.ts) with the
+                            applicant's writing in ONE fenced block (api/_guard.ts),
+                            calls the model through the cost ledger, validates the
+                            reply for that section kind, retries the shape once,
+                            stores only the picked fields
+GET  /api/review?job=<id>   pending | done { kind, section } | error — owner only;
+                            anyone else gets 404
+```
+
+Why two halves: a synchronous Netlify function gets 10 seconds (26 at most); a
+background function gets 15 minutes but answers the caller 202 with an empty
+body, so the result has to travel through a store. The store is **Netlify
+Blobs** (`netlify/functions/_jobs.ts`): built in, no second vendor holding
+student essays. Expiry is a timestamp enforced on read (Blobs has no TTL); the
+request record — the applicant's text — is deleted when the worker claims it,
+the finished section stays readable for an hour.
+
+Odds never come from the model. The prompt carries the engine's numbers and
+asks for grades, notes and actions; `validateSection` has no odds field to
+accept.
+
+## Measured on this contract (2026-10-22, local `netlify dev`, OpenRouter `qwen/qwen3.7-plus`, reasoning disabled)
+
+| section | in | out | wall | cost (provider-reported) |
 |---|---|---|---|---|
-| Sonnet 4.5 | 3,994 | 4,681 | 104 s | $0.0822 |
-| qwen3.7-plus (live) | 3,743 | 6,722 | 115 s | $0.0098 |
+| specialist ×4 (parallel) | ~1.5k | 616–883 | 12–16 s | $0.0013–0.0016 each |
+| lead | 1.7k | 406 | 8 s | $0.0011 |
+| **whole panel** | | | **< 20 s** | **$0.0067** |
 
-Netlify's synchronous function limit is **10 seconds** (26 s on the highest
-plan). That is an order of magnitude short of every real review — while a
-two-sentence test call passes happily, which is how this ships broken.
+The first live run, before two fixes, looked very different and both fixes are
+load-bearing:
 
-**Streaming does not rescue it.** That is our constraint, not the platform's:
-`/api/review` validates the model's JSON before handing it back (`api/_guard.ts`),
-because the client `JSON.parse`s it and maps over the arrays. Validation needs
-the whole object, so there is nothing to send for the first ~104 s regardless.
-A stream would be 104 seconds of silence, then one chunk — inside the same
-execution limit.
+- **Output caps.** With `reasoning` left on, the model's hidden deliberation
+  counted against `max_tokens`: a specialist hit the 4,000-token cap exactly,
+  the JSON was truncated, validation failed, the retry spent again (109 s,
+  6,660 output tokens). `_llm.ts` now sends `reasoning: { enabled: false }` and
+  `SECTION_MAX_TOKENS` has headroom (8,000 / 6,000).
+- **The ledger file.** It was a JSON snapshot rewritten on every operation; the
+  four worker processes raced, three reservations vanished, and `settle()`
+  threw for calls that had already succeeded — three sections lost, money spent
+  and unrecorded. It is now an append-only event log (`ledger.jsonl`, see
+  `_ledger.ts`).
 
-A **background function** is the only Netlify runtime with a 15-minute budget.
-A background function answers the caller `202` with an empty body, so it cannot
-return the review. Hence the split:
+## Environment variables (Site configuration → Environment)
 
-```
-POST /api/review            → validates, stores the prompt, fires the worker,
-                              answers 202 { jobId }
-        (worker)            → review-background.ts, runs as long as it needs,
-                              writes the result to the job store
-GET  /api/review?job=<id>   → pending | done | error
-```
-
-## The job store: Netlify Blobs, no extra vendor
-
-The two halves run in different invocations and share nothing, so the prompt
-and the result have to live somewhere between them. That store is **Netlify
-Blobs** (`netlify/functions/_jobs.ts`) — built into the platform. No signup, no
-second bill, and no third party holding student essays.
-
-An earlier draft used Upstash Redis. That was the wrong call: it added a vendor
-to solve a problem the host already solves. It is gone.
-
-Two things Blobs does not give you, both handled in `_jobs.ts` and worth
-knowing before you edit it:
-
-- **No TTL.** Expiry is a timestamp written into each record and enforced on
-  read, with opportunistic deletion. There is no sweeper, so an unread expired
-  record lingers until something asks for it.
-- **No atomic compare-and-set.** The Redis draft claimed a job with `SET NX`,
-  so a replayed invocation could never buy the same review twice. The claim now
-  is `takePrompt()`, which reads and deletes in one step. Two invocations that
-  both read before either deletes would both proceed — a millisecond window,
-  and the cost of losing that race is one duplicate model call (~$0.01), not
-  corrupted data, since both write the same result to the same key.
-- The same non-atomicity applies to the rate-limit counter. It makes hammering
-  the paid endpoint expensive rather than free, which is its job. **Do not
-  reuse `bump()` for a paid quota or a free-audit allowance** — those need an
-  exact counter, and Postgres is already in this stack.
-
----
-
-## Environment variables (Netlify UI → Site configuration → Environment)
-
-Server-side, never `VITE_` prefixed — Vite inlines every `VITE_` var into the
-browser bundle, and `tests/no-secrets-in-bundle.test.ts` fails the build if a
-key reaches `dist/`:
+Server-side, never `VITE_` prefixed (Vite inlines every `VITE_` var into the
+browser bundle; `tests/no-secrets-in-bundle.test.ts` fails the build if a key
+reaches `dist/`):
 
 | Var | Required | Notes |
 |---|---|---|
 | `OPENROUTER_API_KEY` | yes | The live backend. |
-| `OPENROUTER_MODEL` | no | Defaults to `qwen/qwen3.7-plus`. |
-| `ANTHROPIC_API_KEY` | no | Fallback when OpenRouter is absent. |
-| `ALLOWED_ORIGIN` | **yes in prod** | e.g. `https://transferchance.me`. Without it any origin may call the endpoint. |
+| `OPENROUTER_MODEL` | no | Defaults to `qwen/qwen3.7-plus`. Add its price to `config/budgets.ts` or the ledger reserves at the conservative default and refuses sooner than it should. |
+| `ANTHROPIC_API_KEY` | no | Fallback when OpenRouter is absent (`anthropicProvider`). |
+| `SUPABASE_URL` | yes | Session verification (`_auth.ts` asks `/auth/v1/user`). Falls back to `VITE_SUPABASE_URL`. |
+| `ALLOWED_ORIGIN` | **yes in prod** | Comma-separated. Must include the site's own origin: browsers send `Origin` on same-origin POSTs, and an origin not on the list is a 403. The project's value is injected into `netlify dev` too — override it locally (see below). |
 | `PUBLIC_SITE_URL` | no | OpenRouter dashboard attribution only. |
 
-Build-time, and these **must** be set as build environment variables or they
-will not exist in the bundle:
+Build-time, and these **must** exist at build or they are not in the bundle:
 
 | Var | Notes |
 |---|---|
-| `VITE_SUPABASE_URL` | Accounts. |
-| `VITE_SUPABASE_ANON_KEY` | Safe to expose; row-level security is the protection. |
-| `VITE_REVIEW_ENDPOINT` | Set to `/api/review`. **If unset the app silently falls back to asking each visitor for their own API key** — it will not error, it will just quietly be the wrong product. |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Accounts. The anon key is public by design; RLS is the protection. `_auth.ts` also reads the anon key server-side, so the variable must be available to functions, not scoped to builds only. |
+| `VITE_REVIEW_ENDPOINT` | `/api/review` → proxy mode (the deep audit runs on the user's account through these functions). **This is set in the project today**, so a deploy of `main` ships proxy mode. Unset → browser-key mode. |
 
-## The CSP conflict — found and fixed
+## The blocker before a production deploy of this contract
 
-`vite` copies `public/_headers` into `dist/`, and Netlify reads a `_headers`
-file in the publish directory **as well as** `netlify.toml`. Those two carried
-different policies: `_headers` allowed Supabase, `netlify.toml` did not — and
-neither did `vercel.json`.
+The cost ledger lives at `DATA_DIR/derived/ledger.jsonl` (`config/paths.ts`).
+On Netlify that path does not exist and is not writable, so `reserve()` throws
+before dispatch and **every audit fails safe with "Could not reach the review
+service"**. That is the correct failure mode for an unaccounted paid call, and
+it means the deep audit cannot run in production until the spend ledger moves
+to Postgres (the `spend_ledger` table under RLS, atomic reserve/settle) or an
+equivalent durable store. `docs/progress.md` tracks it.
 
-That was a live bug on **both** hosts, not a tidiness problem. Whichever policy
-won, `connect-src` would have blocked `*.supabase.co` and every auth and sync
-call with it: **accounts broken in production, working perfectly in dev**, with
-the only symptom a console violation nobody was watching.
+Also known: the per-IP/per-user `bump()` counter in Blobs is not atomic (fine
+for a rate limit, never for a paid quota), and the auth cache accepts a revoked
+token for up to 60 s on read-only polls.
 
-All three files now carry the same origins, and `tests/csp.test.ts` fails the
-build if they drift apart again or if any required origin goes missing.
+## Local full-stack dev
 
-## The client change — done
+```bash
+npm run dev -- --port 5200     # the SPA, proxying /api → :8888 (vite.config.ts)
+npm run dev:full               # netlify dev on :8888 — functions + Blobs sandbox
+```
 
-`src/lib/review.ts` now handles both hosts from one code path, and **the status
-code is the discriminator**, so nothing has to be configured to match the
-deployment:
+Set `VITE_REVIEW_ENDPOINT=/api/review` in the environment of the Vite process
+to exercise proxy mode locally (`.env.local` or the shell). `netlify dev` reads
+`.env.local` for the function env.
 
-- **200** — Vercel's synchronous answer. Parsed exactly as before.
-- **202** — Netlify's queue. `pollForReview()` then polls
-  `GET /api/review?job=<id>` until `done` or `error`, and hands the result back
-  as a `Response` so the parsing below it never learns which host it is on.
+Two quirks, both encoded in `package.json`:
 
-Cadence and give-up time come from the server's own 202 (`pollAfterMs`,
-`expiresInMs`) rather than being hard-coded, bounded by the client's own
-`CLIENT_TIMEOUT_MS`. A transient 5xx on a single poll is retried; a 404 means
-the job expired and is surfaced as such.
+- **Git worktrees.** `netlify-cli` finds the repository root by walking up to
+  the first `.git` *directory*; in a worktree `.git` is a file, so it lands on
+  the main checkout and bundles **its** functions — stale code with no error.
+  `dev:full` therefore runs `netlify dev --cwd "$PWD"` from outside the
+  directory, which makes the CLI treat the worktree as the base.
+- **ALLOWED_ORIGIN.** The project setting is injected into `netlify dev` and
+  will 403 `http://localhost:5200`. Export
+  `ALLOWED_ORIGIN=http://localhost:5200,http://localhost:8888` in the shell
+  that starts `dev:full` (process env wins over project settings).
 
-The Anthropic-shaped response contract is unchanged — the worker stores exactly
-what `api/review.ts` returns, so `data.content[0].text` still works.
+Blobs runs in sandbox mode locally (`.netlify/blobs-serve`, gitignored); the
+conditional-write claim works there.
+
+## CSP
+
+`netlify.toml`, `public/_headers` and `vercel.json` carry the same policy and
+`tests/csp.test.ts` fails the build if they drift. Proxy mode is same-origin;
+browser-key mode still needs `https://api.anthropic.com` in `connect-src`.
 
 ## Deploy
 
@@ -132,17 +141,15 @@ netlify init           # link the repo
 netlify deploy --prod
 ```
 
-## What is NOT verified
+## What is verified, and what is not
 
-Stated plainly rather than implied:
-
-- **None of `netlify/functions/` has ever run.** It type-checks under
-  `tsconfig.netlify.json` and is written against the documented runtime, but no
-  request has gone through it. The Vercel handler is the one with a measured,
-  working round trip (104 s, $0.0098, valid JSON).
-- The background-function 15-minute budget, the 202 handshake and the polling
-  contract are from Netlify's documentation, not from a deploy on this account.
-- The Blobs job store has never talked to a real Netlify Blobs instance. The
-  expiry-on-read and claim-by-delete logic is unit-testable and untested.
-- `netlify dev` has not been run. The first real exercise of this path will be
-  the first deploy — expect to iterate once.
+- Verified locally under `netlify dev` with the real Supabase project and the
+  real OpenRouter backend: session gate (401 without a token, 401 on a bad
+  token), 202 handshake, polling, owner-only poll, the worker's claim, prompt
+  build, model call through the ledger, per-section validation and retry, and
+  the full five-call panel rendering in the browser (two runs; the numbers
+  above are the second).
+- **Not** verified: a Netlify deploy of this branch. The background-function
+  budget, Blobs in production, and the function env scopes come from the
+  documentation and the project settings, not from a deploy — and the ledger
+  blocker above means the deep audit would fail safe on one anyway.

@@ -2,14 +2,19 @@
 
 Your real chances of transferring into the T25 — estimated from **8,910 recorded transfer outcomes** (2011–2026) and every school's official Common Data Set.
 
-Enter your GPA, current school, major, and story; it positions you against each top-25 university's observed admitted-GPA distribution and official transfer admit rate, and explains every factor it weighed. Everything runs client-side — nothing leaves the browser.
+Enter your GPA, current school, major, and story; it positions you against each top-25 university's observed admitted-GPA distribution and official transfer admit rate, and explains every factor it weighed.
+
+**Where your material goes** (the wording in the app is pinned to `src/lib/privacy.ts`):
+- Transcripts, essays and the profile are parsed and scored on your device. **Signed out, they stay in this browser.**
+- **Signed in** (Supabase configured), your profile, school list and written/uploaded material are saved to your account under row-level security — readable and deletable only by you, from the app.
+- The deep AI audit is the one path that always leaves the device: it sends your application text to the model provider — through your own API key, or through our review server on your account (`netlify/functions/`, see `NETLIFY.md`).
 
 ## How the numbers are made
 
 - **Baseline**: each school's official transfer admit rate (CDS Section D / UC admit data) — never self-reported forum rates.
 - **GPA position**: your GPA against the school's observed admitted-GPA percentiles (1,197 admit GPAs across 24 schools).
 - **Levers**: feeder fit (e.g. CA community college → UC), standing, major lane, school-specific essays, veteran/comeback pipelines, Phi Theta Kappa.
-- **Deliberately near-zero weight on extracurriculars** — across 1,217 structured profiles, EC strength shows no admit advantage once GPA is held constant.
+- **Activities: pattern beats prestige** — across 1,217 structured profiles, admits' activities are mostly campus-anchored (club leadership, tutoring, research, PTK/honors) with specific, quantified outcomes; trophy activities alone do not rescue a GPA, so the engine weights the pattern, not the prestige.
 
 Per-school guidance ("who actually gets in", "what moves your file") is distilled from qualitative admit signatures built from the same corpus.
 

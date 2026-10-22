@@ -9,6 +9,6 @@ All pages are client-rendered React (Vite SPA). Entry: `src/main.tsx` → `src/A
 - **CollegePage** (`CollegePage.tsx`, `college.css`) — generic profile for any of 4,025 directory schools: photo banner, admit rate (IPEDS ADM2023 where present), kind/size/location; links into intake.
 - **SchoolsIndex** (`SchoolsIndex.tsx`) — searchable directory (`loadDirectory` + `searchDirectory`).
 - **Portal** (`Portal.tsx`, `portal.css`) — cards: profile file, best positions, timeline (deadlines), essay, docs; "My Schools" tracker (status + notes, `tcm.list.v1`); printable report.
-- **Review** (`Review.tsx`, `review.css`) — deep review flow: targets (≤6), paste materials, run `runReview`, render graded report; API-key setup card (browser-direct mode) or zero-setup (proxy mode).
+- **Review** (`Review.tsx`, `review.css`) — deep review flow (step 3 of the audit): targets come from the shared list (`src/lib/targets.ts`, ≤ MAX_INCLUDED), paste materials, run `runPanel` (4 specialists + lead, `src/lib/audit/*`), render the graded panel report; API-key setup card (browser-direct mode) or sign-in-required proxy mode. No model-set odds anywhere on the page.
 - **Auth** (`Auth.tsx`, `auth.css`) — signup/login tabs, Google button slot (only when `googleEnabled`).
 - **Pricing** (`Pricing.tsx`) — three tiers, local waitlist capture (`tcm.waitlist.v1`).

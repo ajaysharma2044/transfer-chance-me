@@ -7,11 +7,18 @@
 - `estimateAll(profile): Estimate[]` — sorted descending by p
 - `fmtPct(x: number): string`
 
-## src/lib/review.ts — deep review (Claude)
-- `proxyMode: boolean` — true when `VITE_REVIEW_ENDPOINT` set; else browser-direct with user key
+## src/lib/review.ts — deep-review mode + key
+- `REVIEW_ENDPOINT`, `proxyMode: boolean` — true when `VITE_REVIEW_ENDPOINT` set; else browser-direct with user key
 - `getApiKey() / setApiKey(k)` — localStorage `tcm.apikey.v1`
-- `runReview(input: ReviewInput): Promise<ReviewResult>` — builds dataset-grounded prompt (findings + per-school counsel + full profile + materials), calls claude-sonnet-5 (max_tokens 6000), parses JSON-shaped reply, caches to `tcm.review.v1`
-- `loadLastReview(): ReviewResult | null`
+- re-exports `intelLines(name)` from `src/lib/intel.ts` (T25 field notes per school; Node-safe, used by the worker too)
+
+## src/lib/panel.ts — the review panel (4 specialists + lead)
+- `SPECIALISTS`, `runPanel(input, onProgress?, signal?, transport?) → PanelResult` (cached `tcm.panel.v1`); one `auditId` per run; `toAuditProfile(profile)` strips Profile to the wire fields; `defaultTransport()` = proxy (POST → 202 → poll, Supabase bearer) or direct (user key)
+
+## src/lib/audit/ — the typed audit contract (docs/spec.md §5; shared with netlify/functions)
+- `schema.ts` — `AuditRequest` (schemaVersion 1, kind specialist|lead, structured `AuditInput`; never a prompt), `parseAuditRequest(body)` (size caps, 1..MAX_INCLUDED_TARGETS targets, optional UUID `auditId`), `validateSection(kind, json)`, `pickSection`, `parseModelJson`, `LIMITS`
+- `prompts.ts` — `buildSectionPrompt(req, fence)`: brief built by whoever runs the model; applicant text is the one fenced block; odds from `buildPlan` (engine), never model-set; `untrustedText(req)` for injection screening; `SECTION_MAX_TOKENS`
+- `client.ts` — `proxyTransport({endpoint, getToken})`, `directTransport(getKey)`, `AuditError{code: auth|config|rate|server|invalid|expired|aborted}`
 
 ## src/lib/extract.ts
 - `extractProfile(raw: string): Extraction` — regex extraction from transcript/app text: GPA, SAT, credits→standing, institution (CA-CC name roster first), PTK, honors, IGETC, veteran, major, courses
