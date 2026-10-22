@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:full": "cd / && netlify dev --cwd \"$OLDPWD\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck:netlify": "tsc -p tsconfig.netlify.json --noEmit",
-    "export:signups": "vite-node scripts/export_signups.ts"
+    "export:signups": "tsx scripts/export_signups.ts",
+    "verify": "npm run build && npm test && npm run typecheck:netlify && npm run lint"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -27,7 +29,9 @@
     "@types/react-dom": "^19.2.3",
     "@vercel/node": "^5.10.1",
     "@vitejs/plugin-react": "^6.0.4",
+    "netlify-cli": "^27.11.2",
     "oxlint": "^1.75.0",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.2",
     "vite": "^8.2.0",
     "vitest": "^4.1.10"

@@ -39,3 +39,18 @@ graphify-out/
 # Local Netlify folder
 .netlify
 signups*.csv
+
+# scratch scripts
+._*
+
+# netlify dev (edge/Deno) artifact
+deno.lock
+
+# Cost ledger / research data when DATA_DIR points inside the repo (the
+# tracked src/data/ is untouched by these anchored rules), host CLI state,
+# test coverage.
+/data/
+ledger.json
+ledger.jsonl
+.vercel/
+coverage/

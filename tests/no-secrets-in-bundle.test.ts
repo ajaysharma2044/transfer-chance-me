@@ -6,10 +6,16 @@
 // the safeguard is actually holding, in the built output, rather than trusting
 // that nobody ever renames a variable.
 //
-// Run `npm run build` first; the test skips with a clear message if dist/ is
-// missing, so it can never pass by silently checking nothing.
+// Determinism: this scan needs the built bundle, which `vitest run` does not
+// itself produce. Rather than pass or fail depending on whether someone ran
+// `npm run build` first (the old behaviour — green after a build, red on a
+// cold checkout or CI), beforeAll builds the bundle on demand when dist/ is
+// absent. It only builds when missing, so the warm inner loop stays fast, and
+// a build failure throws loudly here rather than letting the scan check
+// nothing.
 
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { execSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
@@ -28,9 +34,18 @@ function distExists(): boolean {
   try { return statSync(DIST).isDirectory(); } catch { return false; }
 }
 
+// Build the client bundle once if it is not already present, so the scan runs
+// against real output on a cold checkout too. Generous timeout: a cold build
+// runs tsc -b + vite build.
+beforeAll(() => {
+  if (!distExists()) {
+    execSync("npm run build", { cwd: process.cwd(), stdio: "ignore" });
+  }
+}, 180_000);
+
 describe("built client bundle", () => {
-  it("has been built (run `npm run build` before this suite)", () => {
-    expect(distExists(), "dist/ is missing — run `npm run build` first").toBe(true);
+  it("is present for the scan (built on demand when missing)", () => {
+    expect(distExists(), "dist/ was not produced by the on-demand build").toBe(true);
   });
 
   it("contains no service-role key and no server-only variable names", () => {

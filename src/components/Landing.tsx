@@ -7,6 +7,7 @@ import { admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW 
 import { markOf } from "../lib/schools";
 import { useReveal } from "../hooks/useReveal";
 import { countdown } from "../lib/deadlines";
+import { PRIVACY } from "../lib/privacy";
 import GpaStrip from "./GpaStrip";
 import CorpusField from "./CorpusField";
 import CampusPhoto from "./CampusPhoto";
@@ -1677,12 +1678,8 @@ export default function Landing({ onStart, onOpenSchool }: { onStart: () => void
         </details>
         <details>
           <summary>Is my transcript or essay stored anywhere?</summary>
-          <p>
-            It depends on whether you're signed in. Signed out, everything is parsed in your browser and
-            stays in that browser's storage. Signed in, your profile, school list, essays and the text read
-            off your transcript are saved to your account so your work follows you between devices — stored
-            against your login, readable only by you, and deletable by you at any time.
-          </p>
+          <p>{PRIVACY.onDevice} {PRIVACY.signedIn}</p>
+          <p>{PRIVACY.review}</p>
         </details>
         <details>
           <summary>How much do extracurriculars count?</summary>

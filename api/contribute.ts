@@ -48,7 +48,8 @@ function scrub(value: unknown): unknown {
   return value;
 }
 
-/* ── CORS (same policy as api/review.ts) ── */
+/* ── CORS — mirrors corsHeaders() in netlify/functions/review.ts, which also
+ *    accepts a comma-separated ALLOWED_ORIGIN and the site's own origin ── */
 
 function applyCors(req: VercelRequest, res: VercelResponse): boolean {
   const allowed = process.env.ALLOWED_ORIGIN ?? "";

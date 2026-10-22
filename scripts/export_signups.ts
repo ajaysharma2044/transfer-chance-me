@@ -1,6 +1,6 @@
 // Export every signup and their file to CSV, for the tracking spreadsheet.
 //
-//   SUPABASE_SERVICE_ROLE_KEY=... npx vite-node scripts/export_signups.ts [out.csv]
+//   SUPABASE_SERVICE_ROLE_KEY=... npx tsx scripts/export_signups.ts [out.csv]
 //
 // WHAT THIS DELIBERATELY DOES NOT EXPORT, and why:
 //
@@ -32,7 +32,7 @@ if (!url || !serviceKey) {
     "Missing config.\n" +
       "  VITE_SUPABASE_URL         (in .env.local already)\n" +
       "  SUPABASE_SERVICE_ROLE_KEY (Supabase dashboard → Settings → API → service_role)\n\n" +
-      "Run:  SUPABASE_SERVICE_ROLE_KEY=xxx npx vite-node scripts/export_signups.ts",
+      "Run:  SUPABASE_SERVICE_ROLE_KEY=xxx npx tsx scripts/export_signups.ts",
   );
   process.exit(1);
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { estimateAll, fmtPct, MODEL } from "../engine";
-import type { ActivityEntry, Estimate, Major, Profile, Standing, Tier } from "../engine";
+import type { ActivityEntry, ConfirmField, Estimate, Major, Profile, Standing, Tier } from "../engine";
 import { analyzeCourses, MAJOR_LABEL } from "../lib/coursework";
 import { analyzeEssay } from "../lib/essay";
 import { buildPlan, liftLabel } from "../lib/actionplan";
@@ -9,8 +9,10 @@ import { admitSignatures, CORPUS_META, countEligible, findSimilar, MATCH_WINDOW 
 import { hsPrompt, hsRules, hsStillHeavy, UNITS_HS_STILL_COUNTS } from "../lib/highschool";
 import { HIGH_SCHOOL_FACT } from "../lib/reader";
 import { markOf } from "../lib/schools";
+import { confirmAll, confirmFor, CONFIRM_FIELD_LABEL, profileReadiness, REQUIRED_CONFIRM_FIELDS } from "../lib/profile";
 import { useScrollFx } from "../hooks/useScrollFx";
 import ImportPanel from "./ImportPanel";
+import SchoolSearch from "./SchoolSearch";
 import CampusPhoto from "./CampusPhoto";
 import Tile from "./Tile";
 import "./fileflow.css";
@@ -86,8 +88,9 @@ function sameValue(a: unknown, b: unknown): boolean {
 
 /**
  * One line per activity, in the shape the AI prompt already reads.
- * `activitiesText` stays the source of truth for src/lib/review.ts, so every
- * edit to a structured row rewrites it in the same commit.
+ * `activitiesText` stays the source of truth for the prompt
+ * (src/lib/audit/prompts.ts, via Review.tsx → panel.ts input.activities), so
+ * every edit to a structured row rewrites it in the same commit.
  */
 function joinActivities(rows: ActivityEntry[]): string {
   return rows
@@ -215,8 +218,12 @@ export default function FileFlow({
   // at opacity 0 forever.
   useScrollFx([step]);
 
+  // A manual edit CONFIRMS the required field it touches (docs/spec.md §4).
+  // Extraction goes through handleImport below and never confirms anything —
+  // an extracted value is a candidate until the student confirms it.
   const set = useCallback(
-    (patch: Partial<Profile>) => onChange({ ...profile, ...patch }),
+    (patch: Partial<Profile>) =>
+      onChange({ ...profile, ...patch, confirmed: { ...profile.confirmed, ...confirmFor(patch) } }),
     [onChange, profile],
   );
 
@@ -225,7 +232,12 @@ export default function FileFlow({
     (next: Profile) => {
       const hit = EXTRACTABLE.filter((k) => !sameValue(profile[k], next[k])).map(String);
       if (hit.length) setFromDoc((prev) => [...new Set([...prev, ...hit])]);
-      onChange(next);
+      // A document that changes a confirmed field un-confirms it: the new value
+      // is the parser's reading, not the student's word, until they say so again.
+      const confirmed = { ...(next.confirmed ?? profile.confirmed ?? {}) };
+      for (const f of REQUIRED_CONFIRM_FIELDS) if (!sameValue(profile[f], next[f])) delete confirmed[f];
+      if (!sameValue(profile.schoolName, next.schoolName)) delete confirmed.institution;
+      onChange({ ...next, confirmed });
     },
     [onChange, profile],
   );
@@ -243,7 +255,8 @@ export default function FileFlow({
   const activities = profile.activities;
   /**
    * Structured rows are the student's view; `activitiesText` is what the AI
-   * prompt reads (src/lib/review.ts), so both move together.
+   * prompt reads (src/lib/audit/prompts.ts, via Review.tsx → panel.ts), so
+   * both move together.
    *
    * The guard matters: a student who pasted a block of activities and then
    * clicked "add" once had rows=[{blank}], which joins to "" — and that would
@@ -306,7 +319,14 @@ export default function FileFlow({
       </nav>
 
       <div className="ff-stage" ref={stageRef}>
-        {step === 0 && <StepUpload profile={profile} onImport={handleImport} fromDoc={fromDoc} />}
+        {step === 0 && (
+          <StepUpload
+            profile={profile}
+            onImport={handleImport}
+            fromDoc={fromDoc}
+            onConfirmAll={() => onChange(confirmAll(profile))}
+          />
+        )}
         {step === 1 && <StepRecord profile={profile} set={set} />}
         {step === 2 && <StepHighSchool profile={profile} set={set} targets={targets} />}
         {step === 3 && (
@@ -353,11 +373,13 @@ interface ReadRow {
   value: string | null;
   /** Which profile key would carry the document's fingerprint. */
   src: string;
+  /** Set on the four rows the audit's readiness rests on. */
+  confirm?: ConfirmField;
 }
 
 function StepUpload({
-  profile, onImport, fromDoc,
-}: { profile: Profile; onImport: (p: Profile) => void; fromDoc: string[] }) {
+  profile, onImport, fromDoc, onConfirmAll,
+}: { profile: Profile; onImport: (p: Profile) => void; fromDoc: string[]; onConfirmAll: () => void }) {
   const creds = [
     profile.ptk ? "Phi Theta Kappa" : null,
     profile.honors ? "Honors program" : null,
@@ -369,8 +391,10 @@ function StepUpload({
     profile.act != null ? `${profile.act} ACT` : null,
   ].filter(Boolean) as string[];
 
+  const readiness = profileReadiness(profile);
+
   const rows: ReadRow[] = [
-    { key: "gpa", label: "College GPA", value: profile.gpa.toFixed(2), src: "gpa" },
+    { key: "gpa", label: "College GPA", value: profile.gpa.toFixed(2), src: "gpa", confirm: "gpa" },
     { key: "scores", label: "Test scores", value: scores.length ? scores.join(" · ") : null, src: "sat" },
     {
       key: "standing",
@@ -379,12 +403,14 @@ function StepUpload({
         ? `${STANDING_LABEL[profile.standing]} · ${profile.credits} credits`
         : STANDING_LABEL[profile.standing],
       src: "standing",
+      confirm: "standing",
     },
     {
       key: "inst",
       label: "Currently at",
       value: profile.schoolName ?? INSTITUTION_LABEL[profile.institution],
       src: profile.schoolName ? "schoolName" : "institution",
+      confirm: "institution",
     },
     {
       key: "major",
@@ -393,6 +419,7 @@ function StepUpload({
         ? `${MAJOR_LABEL[profile.major]} · ${profile.majorDetail.trim()}`
         : MAJOR_LABEL[profile.major],
       src: "major",
+      confirm: "major",
     },
     { key: "creds", label: "Credentials", value: creds.length ? creds.join(" · ") : null, src: "ptk" },
     {
@@ -439,9 +466,36 @@ function StepUpload({
             ) : (
               <span className="ff-read-note">You can edit this on the next step</span>
             )}
+            {r.confirm && (
+              <span className={`ff-chip${profile.confirmed[r.confirm] ? " ff-chip-ok" : ""}`}>
+                {profile.confirmed[r.confirm] ? "Confirmed" : "Not confirmed yet"}
+              </span>
+            )}
           </div>
         ))}
       </div>
+
+      {readiness.ready ? (
+        <p className="ff-read-note">GPA, current school, standing and major are confirmed — the audit can read your file.</p>
+      ) : (
+        <div className="ff-confirm">
+          <p className="ff-read-note">
+            The audit rests on four facts you confirm yourself
+            {readiness.unconfirmed.length > 0 && (
+              <> — still to confirm: {readiness.unconfirmed.map((f) => CONFIRM_FIELD_LABEL[f]).join(", ")}</>
+            )}
+            {readiness.invalid.length > 0 && (
+              <> — needs a usable value first: {readiness.invalid.map((f) => CONFIRM_FIELD_LABEL[f]).join(", ")}</>
+            )}
+            . Editing a field on the next step confirms it too.
+          </p>
+          {readiness.unconfirmed.length > 0 && (
+            <button type="button" className="btn btn-sm" onClick={onConfirmAll}>
+              These are correct — confirm {readiness.unconfirmed.map((f) => CONFIRM_FIELD_LABEL[f]).join(", ")}
+            </button>
+          )}
+        </div>
+      )}
 
       <p className="ff-foot">
         An em dash means we genuinely do not know it. We would rather show you a blank than a
@@ -461,6 +515,23 @@ function StepRecord({ profile, set }: { profile: Profile; set: (p: Partial<Profi
         <p>
           A PDF gives us grades and course codes. Everything below changes how your file is read
           and has to come from you.
+        </p>
+      </div>
+
+      <div className="ff-field">
+        <span className="ff-sublabel">Current school</span>
+        <SchoolSearch
+          profile={profile}
+          onChange={(p) =>
+            // Only a real pick confirms the institution. Clearing (×) rejects
+            // a name the parser read; it must not vouch for the parsed type.
+            p.schoolName
+              ? set({ schoolName: p.schoolName, institution: p.institution, caResident: p.caResident, igetc: p.igetc })
+              : set({ schoolName: null })
+          }
+        />
+        <p className="ff-read-note">
+          Picking your school sets the institution type and the California-CC pathway, and confirms it.
         </p>
       </div>
 

@@ -13,14 +13,13 @@
 import { useEffect, useState } from "react";
 import type { Profile } from "../engine";
 import type { Session } from "../lib/auth";
-import { DEFAULT_PROFILE } from "../engine";
+import { CONFIRM_FIELD_LABEL, profileReadiness } from "../lib/profile";
+import { loadTargets } from "../lib/targets";
 import { subscribeListChanged } from "../lib/listEvents";
 import FileFlow from "./FileFlow";
 import Portal from "./Portal";
 import Review from "./Review";
 import "./audit.css";
-
-const LIST_KEY = "tcm.list.v1";
 
 interface Props {
   session: Session | null;
@@ -31,24 +30,9 @@ interface Props {
   anchor?: "profile" | "schools" | "deep";
 }
 
-/** A profile is scorable once GPA is set to something the student actually
- *  chose (not the default 3.0) AND a major is selected. Anything less and
- *  section 3's AI audit would render generic advice. */
-function isProfileScorable(p: Profile): boolean {
-  return (
-    p.gpa !== DEFAULT_PROFILE.gpa
-    && !!p.major
-    && p.major !== DEFAULT_PROFILE.major
-  );
-}
-
-/** Read the school list once. `useSchoolCount` below keeps it live. */
+/** Read the shared target list once. `useSchoolCount` below keeps it live. */
 function readListLength(): number {
-  try {
-    const raw = localStorage.getItem(LIST_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    return Array.isArray(arr) ? arr.length : 0;
-  } catch { return 0; }
+  return loadTargets().length;
 }
 
 /** Reactive count of the tracker list. Portal writes it; this reads and
@@ -60,7 +44,11 @@ function useSchoolCount(): number {
 }
 
 export default function Audit({ session, profile, onChange, go, anchor }: Props) {
-  const scorable = isProfileScorable(profile);
+  // Ready means CONFIRMED, not merely filled: an untouched default profile
+  // (3.8 / cs / junior) is not ready, and a student who really is 3.8 / CS /
+  // junior becomes ready by confirming exactly those values.
+  const readiness = profileReadiness(profile);
+  const scorable = readiness.ready;
   const schools = useSchoolCount();
   const ready = scorable && schools > 0;
 
@@ -95,7 +83,7 @@ export default function Audit({ session, profile, onChange, go, anchor }: Props)
           className={`audit-step${scorable ? " done" : ""}`}
           onClick={jump("profile")}
         >
-          <b>1</b><span>Profile</span><i>{scorable ? "Ready" : "Fill in"}</i>
+          <b>1</b><span>Profile</span><i>{scorable ? "Ready" : "Confirm"}</i>
         </a>
         <a
           href="#/audit/schools"
@@ -141,7 +129,7 @@ export default function Audit({ session, profile, onChange, go, anchor }: Props)
           </p>
         </header>
         {ready ? (
-          <Review profile={profile} onChange={onChange} />
+          <Review profile={profile} onChange={onChange} signedIn={!!session} />
         ) : (
           <div className="audit-locked" role="note">
             <p className="audit-locked-h"><b>Locked</b></p>
@@ -151,7 +139,17 @@ export default function Audit({ session, profile, onChange, go, anchor }: Props)
               <a href="#/audit/schools" onClick={jump("schools")}>step 2</a> to run your audit.
             </p>
             <ul className="audit-locked-check">
-              <li className={scorable ? "ok" : ""}>Profile is scorable (GPA + major set)</li>
+              <li className={scorable ? "ok" : ""}>
+                {scorable
+                  ? "Profile confirmed — GPA, current school, standing, major"
+                  : "Profile confirmed"}
+                {!scorable && readiness.unconfirmed.length > 0 && (
+                  <> — still to confirm: {readiness.unconfirmed.map((f) => CONFIRM_FIELD_LABEL[f]).join(", ")}</>
+                )}
+                {!scorable && readiness.invalid.length > 0 && (
+                  <> · needs a usable value: {readiness.invalid.map((f) => CONFIRM_FIELD_LABEL[f]).join(", ")}</>
+                )}
+              </li>
               <li className={schools > 0 ? "ok" : ""}>At least one target school added</li>
             </ul>
           </div>

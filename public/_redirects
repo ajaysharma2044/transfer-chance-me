@@ -2,10 +2,14 @@
 # output, so it lives in public/ and Vite copies it to dist/.
 #
 # Request resolution order on Pages:
-#   1. Pages Functions (functions/)  <- /api/review and /api/contribute match here
+#   1. Pages Functions (functions/)  <- only /api/contribute exists on this host;
+#      there is NO /api/review here (the deep-audit proxy is Netlify-only, see
+#      CLOUDFLARE.md §5), so a POST to it falls through to the catch-all below
+#      and gets the SPA shell with a 200.
 #   2. static assets in dist/
 #   3. these _redirects rules
-# The catch-all below therefore cannot swallow /api/*.
+# The catch-all therefore cannot swallow /api/contribute; it DOES answer
+# /api/review, which is one reason not to set VITE_REVIEW_ENDPOINT on Cloudflare.
 #
 # The app uses a HASH router (#/route), so the server almost always sees "/"
 # already. This rule is the safety net for anyone who types or bookmarks a clean

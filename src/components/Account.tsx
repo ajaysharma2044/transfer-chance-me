@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { authProvider, cloudEnabled, logOut, setPassword, setSession } from "../lib/auth";
 import type { Session } from "../lib/auth";
-import { deleteAllData, listDocs, pullProfile } from "../lib/sync";
+import { listDocs, pullProfile } from "../lib/sync";
 import { supabase } from "../lib/supabase";
 import "./account.css";
 
@@ -29,9 +29,13 @@ function errMsg(e: unknown): string {
 export default function Account({
   session,
   onLogout,
+  onDeleteData,
 }: {
   session: Session;
   onLogout: () => void;
+  /** Coordinated "delete my data": stops the debounced push and clears local
+   *  state before the cloud delete (D14). Supplied by App. */
+  onDeleteData: () => Promise<void>;
 }) {
   /* How this session signed in. undefined = still asking. */
   const [provider, setProvider] = useState<string | null | undefined>(undefined);
@@ -144,7 +148,7 @@ export default function Account({
     setDataErr(null);
     setDataBusy(true);
     try {
-      await deleteAllData();
+      await onDeleteData();
       setDataDone(true);
       setDataOpen(false);
       setDataText("");

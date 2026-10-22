@@ -6,7 +6,10 @@ import { pushDoc } from "../lib/sync";
 
 // The upload center: drop any mix of documents — transcript, Common App PDF,
 // activities list — and everything readable is folded into the profile.
-// All parsing happens on-device; files are never uploaded anywhere.
+// Parsing happens on-device and the raw file itself is never sent anywhere;
+// the TEXT read off it does leave under two conditions — it syncs to the
+// account when signed in (pushDoc, below), and the deep review sends it to
+// Anthropic. See src/lib/privacy.ts for the wording users see.
 
 interface Props {
   profile: Profile;
@@ -93,7 +96,8 @@ export default function ImportPanel({ profile, onChange }: Props) {
           <p className="import-title">Upload your application documents</p>
           <p className="import-sub">
             Transcript, Common App preview, activities list — PDF or text, several at once. We read
-            GPA, credits, courses, credentials, and more. Parsed on your device; never uploaded.
+            GPA, credits, courses, credentials, and more. Parsed on your device. Signed in, the text
+            saves to your account to follow you between devices; signed out, it stays in this browser.
           </p>
         </div>
         <button type="button" className="choice" onClick={() => inputRef.current?.click()}>

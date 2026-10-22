@@ -2,7 +2,8 @@
 //
 // ROUTING: Pages only creates a route for a module that exports an `onRequest*`
 // handler. This module exports none, so it is never reachable over HTTP — it
-// exists purely to be imported by review.ts and contribute.ts.
+// exists purely to be imported by contribute.ts (the review proxy is
+// Netlify-only — see CLOUDFLARE.md §5).
 //
 // TYPES: the Cloudflare types below are declared locally on purpose, so that
 // functions/ needs no extra npm dependency and `npm run build` (tsc -b + vite
@@ -42,7 +43,9 @@ export type PagesFunction<E> = (context: EventContext<E>) => Response | Promise<
  * public JS bundle; these are read only inside the Worker, at runtime.
  */
 export interface Env {
-  /** Server-held Anthropic key (sk-ant-…). Powers POST /api/review. */
+  /** Server-held Anthropic key (sk-ant-…). No Cloudflare route uses it any
+   *  more — the review proxy is Netlify-only (NETLIFY.md); kept so the Env
+   *  shape matches the documented variables. */
   ANTHROPIC_API_KEY?: string;
 
   /**
