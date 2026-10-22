@@ -23,6 +23,12 @@ export const budgets: Budgets = {
   max_real_audits: 3,
   default_pricing: { input_per_mtok: 10, output_per_mtok: 30 },
   pricing: {
+    // The live OpenRouter model. Measured 2026-10-22: 1,481 in + 4,000 out
+    // settled at $0.00559 (provider-reported), i.e. well under these figures,
+    // which are deliberately rounded UP. Without an entry here the default
+    // pricing reserves ~25x the real cost per call, and four parallel
+    // specialist reservations then trip the $1 per-audit cap on paper.
+    "qwen/qwen3.7-plus": { input_per_mtok: 0.6, output_per_mtok: 1.6 },
     // e.g. "anthropic/claude-sonnet-4.5": { input_per_mtok: 3, output_per_mtok: 15 },
   },
 };

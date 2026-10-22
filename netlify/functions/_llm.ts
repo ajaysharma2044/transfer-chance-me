@@ -36,10 +36,14 @@ export interface CallArgs {
   maxTokens: number;
   model?: string;
   audit?: boolean;
+  /** The audit this call belongs to — see LedgerEntry.group. */
+  group?: string;
   /** Injectable for tests and for a caller holding its own ledger. */
   ledger?: Ledger;
   /** Injectable for tests (mock) and for the Anthropic fallback. */
   provider?: Provider;
+  /** Recorded on the ledger entry; "openrouter" unless a caller says otherwise. */
+  providerName?: string;
   timeoutMs?: number;
 }
 
@@ -74,7 +78,16 @@ export const openRouterProvider: Provider = async ({ model, messages, maxTokens,
       "HTTP-Referer": process.env.PUBLIC_SITE_URL ?? "https://transfer-chance-me.local",
       "X-Title": "Transfer Chance Me",
     },
-    body: JSON.stringify({ model, messages, max_tokens: maxTokens, usage: { include: true } }),
+    body: JSON.stringify({
+      model,
+      messages,
+      max_tokens: maxTokens,
+      usage: { include: true },
+      // Hidden chain-of-thought counts against max_tokens and the bill, and
+      // the reply we need is a JSON object, not a deliberation. Models that
+      // cannot switch it off ignore this.
+      reasoning: { enabled: false },
+    }),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
@@ -93,6 +106,35 @@ export const openRouterProvider: Provider = async ({ model, messages, maxTokens,
   };
 };
 
+/** Anthropic direct, for deployments without an OpenRouter key. Same
+ *  {text, tokens} shape; cost is left to the ledger's price table because the
+ *  response carries none. */
+export const anthropicProvider: Provider = async ({ model, messages, maxTokens, signal }) => {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error("ANTHROPIC_API_KEY is not set");
+  const system = messages.filter((m) => m.role === "system").map((m) => m.content).join("\n\n");
+  const turns = messages.filter((m) => m.role !== "system").map((m) => ({ role: m.role, content: m.content }));
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    signal,
+    headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify({ model, max_tokens: maxTokens, system: system || undefined, messages: turns }),
+  });
+  if (!res.ok) {
+    // Status only: an auth error from this API can echo a key prefix back.
+    throw new Error(`Anthropic ${res.status}`);
+  }
+  const data = (await res.json()) as {
+    content?: { text?: string }[];
+    usage?: { input_tokens?: number; output_tokens?: number };
+  };
+  return {
+    text: data.content?.[0]?.text ?? "",
+    inputTokens: data.usage?.input_tokens ?? 0,
+    outputTokens: data.usage?.output_tokens ?? 0,
+  };
+};
+
 export async function callModel(args: CallArgs): Promise<LlmResult> {
   const model = args.model ?? process.env.OPENROUTER_MODEL;
   if (!model) throw new Error("no model: set OPENROUTER_MODEL or pass args.model");
@@ -102,11 +144,12 @@ export async function callModel(args: CallArgs): Promise<LlmResult> {
   // Reserve first. A BudgetExceededError here means we never dispatch.
   const id = ledger.reserve({
     kind: args.kind,
-    provider: "openrouter",
+    provider: args.providerName ?? "openrouter",
     model,
     inputTokens: estInputTokens(args.messages),
     maxTokens: args.maxTokens,
     audit: args.audit,
+    group: args.group,
   });
 
   const controller = new AbortController();

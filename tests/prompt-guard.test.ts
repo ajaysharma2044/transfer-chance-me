@@ -7,18 +7,15 @@
 // is what stops that, and a security control with no test is a control nobody
 // knows is broken.
 //
-// The validator matters for a different reason: the client does JSON.parse and
-// renders the result without a second look, so a malformed model reply reaches
-// a student as a crash.
+// The model's reply is validated per section in src/lib/audit/schema.ts
+// (tests/audit-schema.test.ts); this file covers the fence and the screening.
 
 import { describe, expect, it } from "vitest";
 import {
   detectInjection,
   guardSystem,
   makeNonce,
-  parseReviewJson,
   screeningNote,
-  validateReview,
   wrapUntrusted,
 } from "../api/_guard";
 
@@ -131,88 +128,3 @@ describe("detectInjection", () => {
   });
 });
 
-/* ── Response validation ───────────────────────────────────────────────── */
-
-const GOOD = {
-  grade: "B+",
-  summary: "A solid file with a thin essay.",
-  strengths: ["Upward GPA trend"],
-  risks: ["Essay names no programs"],
-  essay: { grade: "C", notes: [{ quote: "I want to transfer", issue: "vague", fix: "name a lab" }], direction: "Rewrite around one project." },
-  statement: null,
-  activities: { grade: "B", notes: [{ quote: "tutor", issue: "no scale", fix: "add hours" }], reframes: ["Led six tutors"] },
-  perSchool: [{
-    school: "UC Berkeley",
-    verdict: "Below the EECS median.",
-    moves: ["Finish ASSIST prereqs"],
-    chance: { lo: 12, hi: 22, tier: "Reach" },
-    chanceRationale: "The essay names no Berkeley-specific program, so this sits below the statistical baseline.",
-  }],
-  actions: ["Rewrite the essay"],
-};
-
-describe("validateReview", () => {
-  it("accepts a well-formed review", () => {
-    const v = validateReview(GOOD);
-    expect(v.errors).toEqual([]);
-    expect(v.ok).toBe(true);
-  });
-
-  it("accepts null for the optional sections", () => {
-    expect(validateReview({ ...GOOD, essay: null, activities: null }).ok).toBe(true);
-  });
-
-  const bad: [string, unknown][] = [
-    ["a bare string", "not an object"],
-    ["an array", [GOOD]],
-    ["null", null],
-    ["a missing grade", { ...GOOD, grade: undefined }],
-    ["an empty grade", { ...GOOD, grade: "" }],
-    ["a missing summary", { ...GOOD, summary: undefined }],
-    ["strengths as a string", { ...GOOD, strengths: "good at things" }],
-    ["risks containing a number", { ...GOOD, risks: ["fine", 42] }],
-    ["perSchool missing", { ...GOOD, perSchool: undefined }],
-    ["perSchool entry without a verdict", { ...GOOD, perSchool: [{ school: "Yale", moves: [] }] }],
-    ["perSchool entry with moves as a string", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: "y" }] }],
-    ["perSchool entry missing chance", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chanceRationale: "why" }] }],
-    ["perSchool entry with chance.hi < chance.lo", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 40, hi: 10, tier: "Target" }, chanceRationale: "why" }] }],
-    ["perSchool entry with an out-of-range chance.lo", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: -5, hi: 10, tier: "Target" }, chanceRationale: "why" }] }],
-    ["perSchool entry with an invalid tier", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 10, hi: 20, tier: "Basically certain" }, chanceRationale: "why" }] }],
-    ["perSchool entry missing chanceRationale", { ...GOOD, perSchool: [{ school: "Yale", verdict: "x", moves: [], chance: { lo: 10, hi: 20, tier: "Target" } }] }],
-    ["an essay note missing its fix", { ...GOOD, essay: { grade: "C", notes: [{ quote: "a", issue: "b" }], direction: "d" } }],
-    ["actions missing", { ...GOOD, actions: undefined }],
-  ];
-
-  for (const [name, value] of bad) {
-    it(`rejects ${name}`, () => {
-      const v = validateReview(value);
-      expect(v.ok, `should have been rejected: ${name}`).toBe(false);
-      expect(v.errors.length).toBeGreaterThan(0);
-    });
-  }
-
-  it("reports every problem at once, not just the first", () => {
-    const v = validateReview({ ...GOOD, grade: "", summary: "", strengths: 3 });
-    expect(v.errors.length).toBeGreaterThanOrEqual(3);
-  });
-});
-
-describe("parseReviewJson", () => {
-  it("parses a bare JSON object", () => {
-    const r = parseReviewJson('{"grade":"A"}');
-    expect(r.ok).toBe(true);
-  });
-
-  it("strips the markdown fence verbose models add", () => {
-    const r = parseReviewJson('```json\n{"grade":"A"}\n```');
-    expect(r.ok).toBe(true);
-    if (r.ok) expect((r.value as { grade: string }).grade).toBe("A");
-  });
-
-  it("reports truncated JSON rather than throwing", () => {
-    // This is the real failure seen with a verbose model against a low
-    // max_tokens: the reply is cut mid-string.
-    const r = parseReviewJson('{"grade":"A","summary":"it was going wel');
-    expect(r.ok).toBe(false);
-  });
-});

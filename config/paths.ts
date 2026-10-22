@@ -17,7 +17,9 @@ export function derivedDir(): string {
   return join(dataDir(), "derived");
 }
 
-/** Where model spend is recorded until the Supabase spend_ledger table exists. */
+/** Where model spend is recorded until the Supabase spend_ledger table exists:
+ *  an append-only event log. The older `ledger.json` snapshot beside it, if
+ *  present, seeds the state (see netlify/functions/_ledger.ts). */
 export function ledgerPath(): string {
-  return join(derivedDir(), "ledger.json");
+  return join(derivedDir(), "ledger.jsonl");
 }

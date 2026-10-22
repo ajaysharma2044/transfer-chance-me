@@ -8,7 +8,8 @@ import { analyzeCourses, MAJOR_LABEL as MAJOR_TEXT } from "../lib/coursework";
 import type { CourseGaps as CourseGapsResult } from "../lib/coursework";
 import { cloudEnabled } from "../lib/supabase";
 import { pullProfile, pushDoc, pushSchools } from "../lib/sync";
-import { dispatchListChanged } from "../lib/listEvents";
+import { subscribeListChanged } from "../lib/listEvents";
+import { loadTargets, saveTargets } from "../lib/targets";
 import ucData from "../data/uc_data.json";
 import Tile from "./Tile";
 import CampusPhoto from "./CampusPhoto";
@@ -49,9 +50,10 @@ interface ListEntry {
   school: string;
   status: Status;
   note: string;
+  /** Explicitly in the review / purchase scope — see src/lib/targets.ts. */
+  included?: boolean;
 }
 
-const LIST_KEY = "tcm.list.v1";
 const PROFILE_KEY = "tcm.profile.v1";
 /** Shared with Review.tsx — the personal statement lives here. */
 const DOCS_KEY = "tcm.appdocs.v1";
@@ -84,14 +86,10 @@ const fmt = (n: number): string => n.toLocaleString();
  *  mutates MODEL.meta.schools to 208, so meta is read field by field. */
 const ADMIT_FILES = Number(MODEL.meta.admits);
 
+/** The shared target list (src/lib/targets.ts) — the same list the audit gate
+ *  and the review read, so nothing here can drift from what gets analysed. */
 function loadList(): ListEntry[] {
-  try {
-    const raw = localStorage.getItem(LIST_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? (parsed as ListEntry[]) : [];
-  } catch {
-    return [];
-  }
+  return loadTargets() as ListEntry[];
 }
 
 /* ── UC data ──────────────────────────────────────────────────────────────
@@ -1174,9 +1172,20 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   const [sort, setSort] = useState<Sort>("odds");
 
   useEffect(() => {
-    localStorage.setItem(LIST_KEY, JSON.stringify(list));
-    dispatchListChanged();
+    saveTargets(list);
   }, [list]);
+
+  // The list is ONE shared store (src/lib/targets.ts): Review toggles
+  // `included` on it, and logout / a sign-in that found another account's data
+  // / "Delete my data" wipes it. Reload from storage whenever it changes
+  // outside this component, or the persist effect above would write this
+  // component's stale copy straight back — including the previous user's
+  // schools under the next account. Guarded by value so our own
+  // saveTargets() round-trip is a no-op rather than a loop.
+  useEffect(() => subscribeListChanged(() => {
+    const next = loadList();
+    setList((cur) => (JSON.stringify(cur) === JSON.stringify(next) ? cur : next));
+  }), []);
 
   // ── Ledger sync (both directions) ──────────────────────────────────────
   // The profile and the documents already reach the account; until this, the
@@ -1193,7 +1202,7 @@ export default function Portal({ session, profile, go, onChange }: Props) {
       .then(({ schools }) => {
         if (!live || !schools || loadList().length) return;
         const adopted: ListEntry[] = Object.entries(schools).map(([school, v]) => ({
-          school, status: (v.status as Status) || "planning", note: v.notes ?? "",
+          school, status: (v.status as Status) || "planning", note: v.notes ?? "", included: v.included,
         }));
         if (adopted.length) setList(adopted);
       })
@@ -1208,8 +1217,8 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   useEffect(() => {
     if (!cloudEnabled || !session || !list.length) return;
     const t = window.setTimeout(() => {
-      const rec: Record<string, { status: string; notes: string }> = {};
-      for (const l of list) rec[l.school] = { status: l.status, notes: l.note };
+      const rec: Record<string, { status: string; notes: string; included?: boolean }> = {};
+      for (const l of list) rec[l.school] = { status: l.status, notes: l.note, included: l.included };
       pushSchools(rec).catch(() => { /* offline is not an error here */ });
     }, 1200);
     return () => clearTimeout(t);
@@ -1262,7 +1271,7 @@ export default function Portal({ session, profile, go, onChange }: Props) {
   const blockedRows = rows.filter((r) => blockers.get(r.school)?.structural).length;
   const targets = ests.filter((e) => e.p >= 0.12).length;
   const essayMove = plan.moves.find((m) => m.lever === "essay" && !m.done) ?? null;
-  const listed = new Set(base.map((l) => l.school));
+  const listed = useMemo(() => new Set(base.map((l) => l.school)), [base]);
   /** The strongest odds inside THE STUDENT'S list — never the top of the full
    *  208. Null means they haven't added a school yet, in which case the hero
    *  drops its odds figure and the page asks them to pick their targets. */

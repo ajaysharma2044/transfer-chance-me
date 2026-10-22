@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:full": "netlify dev",
+    "dev:full": "cd / && netlify dev --cwd \"$OLDPWD\"",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",

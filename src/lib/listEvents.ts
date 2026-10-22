@@ -27,3 +27,23 @@ export function subscribeListChanged(fn: () => void): () => void {
     window.removeEventListener("storage", onStorage);
   };
 }
+
+/* The per-user keys were just wiped (logout, a sign-in that found another
+ * account's data, or "Delete my data"). Clearing storage alone is not enough:
+ * components keep their own copies in React state and would write the previous
+ * user's list or drafts straight back — into the next account. Every component
+ * that caches user material in state reloads from storage on this event. */
+
+export const USER_DATA_CLEARED_EVENT = "tcm-user-data-cleared";
+
+export function dispatchUserDataCleared(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(USER_DATA_CLEARED_EVENT));
+}
+
+export function subscribeUserDataCleared(fn: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const on = (): void => fn();
+  window.addEventListener(USER_DATA_CLEARED_EVENT, on);
+  return () => window.removeEventListener(USER_DATA_CLEARED_EVENT, on);
+}

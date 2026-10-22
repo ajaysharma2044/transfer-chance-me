@@ -1,6 +1,6 @@
-// The job store shared by review.ts (which writes the prompt and reads the
-// result) and review-background.ts (which reads the prompt and writes the
-// result).
+// The job store shared by review.ts (which writes the request and reads the
+// result) and review-background.ts (which claims the job, reads the request
+// and writes the result).
 //
 // This is Netlify Blobs, NOT Upstash Redis.
 //
@@ -11,19 +11,44 @@
 // Adding Upstash would have meant a new vendor storing essays and transcripts
 // to solve a problem the host already solves.
 //
-// Two consequences of Blobs rather than Redis, both handled below:
+// Consequences of Blobs rather than Redis, all handled below:
 //
-//   1. There is no INCR and no EX. Expiry is a timestamp written into the
-//      record and checked on read; counters are read-modify-write.
-//   2. Read-modify-write is not atomic. That is fine for what it is used for
-//      here (a per-IP request counter) and NOT fine for anything that must be
-//      exact — see the note on `bump`.
+//   1. There is no TTL. Expiry is a timestamp written into the record and
+//      checked on read.
+//   2. Read-modify-write is not atomic. Fine for a per-IP request counter
+//      (`bump`), NOT fine for anything that must be exact.
+//   3. There IS a conditional write (`onlyIfNew`), which is what makes the
+//      worker's claim one-shot: two invocations for the same job cannot both
+//      run — and pay for — it.
+//
+// With the typed contract (docs/spec.md §5) the store holds the parsed
+// AuditRequest, never a browser-authored prompt, and every record carries the
+// uid that started it — poll() refuses anyone else.
 
 import { getStore } from "@netlify/blobs";
+import type { AuditRequest, Section, SectionKind } from "../../src/lib/audit/schema";
 
-/** How long a finished review stays readable. Long enough to survive a reload
+/** How long a finished section stays readable. Long enough to survive a reload
  *  and a slow reader; short enough that student material is not kept around. */
 export const JOB_TTL_SEC = 60 * 60; // 1 hour
+
+/** Budget for the worker's WHOLE run, retry included — well inside Netlify's
+ *  15-minute background ceiling, so a hung upstream still leaves time to
+ *  record a readable failure. */
+export const RUN_BUDGET_MS = 600_000;
+
+/** Poll cadence, sent in the 202 so the client does not hard-code a copy. */
+export const POLL_AFTER_MS = 3_000;
+
+/** Past this a still-pending job is dead: the worker's budget plus a margin
+ *  for the trigger and the store. Sent in the 202 as expiresInMs, so a client
+ *  that misses a worker failure stops polling. */
+export const PENDING_DEADLINE_MS = RUN_BUDGET_MS + 60_000;
+
+/** How long the request — the applicant's writing — may sit unclaimed. The
+ *  worker deletes it on claim, so this only matters when the worker never
+ *  arrives. */
+const REQUEST_TTL_SEC = Math.ceil(PENDING_DEADLINE_MS / 1000);
 
 const STORE_NAME = "tcm-reviews";
 
@@ -31,10 +56,28 @@ function jobs() {
   return getStore(STORE_NAME);
 }
 
+export interface QueuedRequest {
+  req: AuditRequest;
+  /** Supabase user id of the caller who started the job. */
+  uid: string;
+}
+
+export interface JobResult { kind: SectionKind; section: Section }
+
 export type JobState =
-  | { status: "pending"; started: number }
-  | { status: "done"; result: unknown; finished: number }
-  | { status: "error"; error: string; finished: number };
+  | { status: "pending"; started: number; uid: string }
+  | { status: "done"; result: JobResult; finished: number; uid: string }
+  | { status: "error"; error: string; finished: number; uid: string };
+
+type Distribute<T> = T extends unknown ? Omit<T, "uid"> : never;
+export type JobView = Distribute<JobState>;
+
+/** What a poll returns: the state minus the owner id, which the caller is. */
+export function clientView(state: JobState): JobView {
+  const { uid: _uid, ...visible } = state;
+  void _uid;
+  return visible as JobView;
+}
 
 interface Envelope<T> {
   /** Unix ms after which this record is treated as absent. */
@@ -62,19 +105,31 @@ async function write<T>(key: string, value: T, ttlSec: number): Promise<void> {
 /* ── Jobs ──────────────────────────────────────────────────────────────── */
 
 const jobKey = (id: string) => `job/${id}`;
-const promptKey = (id: string) => `prompt/${id}`;
+const reqKey = (id: string) => `req/${id}`;
+const claimKey = (id: string) => `claim/${id}`;
 
-export async function putPrompt(id: string, prompt: string): Promise<void> {
-  await write(promptKey(id), prompt, JOB_TTL_SEC);
+export async function putRequest(id: string, queued: QueuedRequest): Promise<void> {
+  await write(reqKey(id), queued, REQUEST_TTL_SEC);
 }
 
-export async function takePrompt(id: string): Promise<string | null> {
-  const p = await read<string>(promptKey(id));
-  // The worker reads the prompt exactly once. Deleting it here means student
-  // material is not left sitting in the store for the full hour just because
-  // the result is.
-  if (p !== null) await jobs().delete(promptKey(id)).catch(() => {});
-  return p;
+/**
+ * Claim a job before running it. A conditional write: exactly one caller is
+ * told `true`, so a replayed or duplicated worker invocation stops here
+ * instead of buying a second model call. If the store ever answers without a
+ * `modified` flag (an emulator that predates conditional writes), the claim
+ * degrades to takeRequest's read-and-delete, which is one-shot in practice.
+ */
+export async function claimJob(id: string): Promise<boolean> {
+  const r = (await jobs().set(claimKey(id), String(Date.now()), { onlyIfNew: true })) as { modified?: boolean } | undefined;
+  return r?.modified !== false;
+}
+
+export async function takeRequest(id: string): Promise<QueuedRequest | null> {
+  const q = await read<QueuedRequest>(reqKey(id));
+  // The worker reads the request exactly once. Deleting it here means student
+  // material is not left sitting in the store just because the result is.
+  if (q !== null) await jobs().delete(reqKey(id)).catch(() => {});
+  return q;
 }
 
 export async function putJob(id: string, state: JobState): Promise<void> {
@@ -88,7 +143,8 @@ export async function getJob(id: string): Promise<JobState | null> {
 export async function dropJob(id: string): Promise<void> {
   await Promise.all([
     jobs().delete(jobKey(id)).catch(() => {}),
-    jobs().delete(promptKey(id)).catch(() => {}),
+    jobs().delete(reqKey(id)).catch(() => {}),
+    jobs().delete(claimKey(id)).catch(() => {}),
   ]);
 }
 

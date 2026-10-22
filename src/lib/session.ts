@@ -7,6 +7,8 @@
 // in-memory profile into a freshly signed-in account with an empty cloud row,
 // writing one student's materials — some from minors — into another's account.
 
+import { dispatchListChanged, dispatchUserDataCleared } from "./listEvents";
+
 /**
  * Per-user keys cleared on logout and account deletion.
  *
@@ -66,6 +68,7 @@ export function clearUserLocalState(): void {
     try { localStorage.removeItem(k); } catch { /* ignore */ }
   }
   try { sessionStorage.removeItem(NEXT_KEY); } catch { /* ignore */ }
+  announceCleared();
 }
 
 /** Clear the signed-in user's material without logging them out — used by
@@ -74,6 +77,15 @@ export function clearUserMaterial(): void {
   for (const k of USER_MATERIAL_KEYS) {
     try { localStorage.removeItem(k); } catch { /* ignore */ }
   }
+  announceCleared();
+}
+
+/** Storage is clean; now the components holding copies in React state must
+ *  drop theirs, or the first edit writes the previous account's list or drafts
+ *  back under the new owner. */
+function announceCleared(): void {
+  dispatchListChanged();
+  dispatchUserDataCleared();
 }
 
 export type LoginSyncAction = "adopt-cloud" | "push-local" | "reset-local";
